@@ -1,0 +1,364 @@
+version: '2'
+
+services:
+  # CA per HospitalA
+  ca_hospitala:
+    image: hyperledger/fabric-ca:latest
+    environment:
+      - FABRIC_CA_HOME=/etc/hyperledger/fabric-ca-server
+      - FABRIC_CA_SERVER_CA_NAME=ca-hospitala
+      - FABRIC_CA_SERVER_TLS_ENABLED=true
+      - FABRIC_CA_SERVER_TLS_CERTFILE=/etc/hyperledger/fabric-ca-server-config/ca.hospitala.example.com-cert.pem
+      - FABRIC_CA_SERVER_TLS_KEYFILE=/etc/hyperledger/fabric-ca-server-config/PRIV_SK
+    ports:
+      - "7054:7054"
+    command: sh -c 'fabric-ca-server start -b admin:adminpw -d'
+    volumes:
+      - ./crypto-config/peerOrganizations/hospitala.example.com/ca/:/etc/hyperledger/fabric-ca-server-config
+    container_name: ca_hospitala
+    networks:
+      - fabricnet
+
+  # CA per HospitalB
+  ca_hospitalb:
+      image: hyperledger/fabric-ca:latest
+      environment:
+        - FABRIC_CA_HOME=/etc/hyperledger/fabric-ca-server
+        - FABRIC_CA_SERVER_CA_NAME=ca-hospitalb
+        - FABRIC_CA_SERVER_TLS_ENABLED=true
+        - FABRIC_CA_SERVER_TLS_CERTFILE=/etc/hyperledger/fabric-ca-server-config/ca.hospitalb.example.com-cert.pem
+        - FABRIC_CA_SERVER_TLS_KEYFILE=/etc/hyperledger/fabric-ca-server-config/PRIV_SK
+      ports:
+        - "8054:7054"
+      command: sh -c 'fabric-ca-server start -b admin:adminpw -d'
+      volumes:
+        - ./crypto-config/peerOrganizations/hospitalb.example.com/ca/:/etc/hyperledger/fabric-ca-server-config
+      container_name: ca_hospitalb
+      networks:
+        - fabricnet
+
+  # CA per Laboratorio Analisi
+  ca_lab:
+    image: hyperledger/fabric-ca:latest
+    environment:
+      - FABRIC_CA_HOME=/etc/hyperledger/fabric-ca-server
+      - FABRIC_CA_SERVER_CA_NAME=ca-lab
+      - FABRIC_CA_SERVER_TLS_ENABLED=true
+      - FABRIC_CA_SERVER_TLS_CERTFILE=/etc/hyperledger/fabric-ca-server-config/ca.lab.example.com-cert.pem
+      - FABRIC_CA_SERVER_TLS_KEYFILE=/etc/hyperledger/fabric-ca-server-config/PRIV_SK
+      - "9054:7054"
+    command: sh -c 'fabric-ca-server start -b admin:adminpw -d'
+    volumes:
+      - ./crypto-config/peerOrganizations/lab.example.com/ca/:/etc/hyperledger/fabric-ca-server-config
+    container_name: ca_lab
+    networks:
+      - fabricnet
+
+  # CA per Farmacia
+  ca_pharmacy:
+    image: hyperledger/fabric-ca:latest
+    environment:
+      - FABRIC_CA_HOME=/etc/hyperledger/fabric-ca-server
+      - FABRIC_CA_SERVER_CA_NAME=ca-pharmacy
+      - FABRIC_CA_SERVER_TLS_ENABLED=true
+      - FABRIC_CA_SERVER_TLS_CERTFILE=/etc/hyperledger/fabric-ca-server-config/ca.pharmacy.example.com-cert.pem
+      - FABRIC_CA_SERVER_TLS_KEYFILE=/etc/hyperledger/fabric-ca-server-config/PRIV_SK
+    ports:
+      - "10054:7054"
+    command: sh -c 'fabric-ca-server start -b admin:adminpw -d'
+    volumes:
+      - ./crypto-config/peerOrganizations/pharmacy.example.com/ca/:/etc/hyperledger/fabric-ca-server-config
+    container_name: ca_pharmacy
+    networks:
+      - fabricnet
+
+  # CA per Dottori
+  ca_doctors:
+    image: hyperledger/fabric-ca:latest
+    environment:
+      - FABRIC_CA_HOME=/etc/hyperledger/fabric-ca-server
+      - FABRIC_CA_SERVER_CA_NAME=ca-doctors
+      - FABRIC_CA_SERVER_TLS_ENABLED=true
+      - FABRIC_CA_SERVER_TLS_CERTFILE=/etc/hyperledger/fabric-ca-server-config/ca.doctors.example.com-cert.pem
+      - FABRIC_CA_SERVER_TLS_KEYFILE=/etc/hyperledger/fabric-ca-server-config/PRIV_SK
+    ports:
+      - "11054:7054"
+    command: sh -c 'fabric-ca-server start -b admin:adminpw -d'
+    volumes:
+      - ./crypto-config/peerOrganizations/doctors.example.com/ca/:/etc/hyperledger/fabric-ca-server-config
+    container_name: ca_doctors
+    networks:
+      - fabricnet
+
+  orderer.example.com:
+    image: hyperledger/fabric-orderer:latest
+    environment:
+      - ORDERER_GENERAL_LOGLEVEL=info
+      - ORDERER_GENERAL_LISTENADDRESS=0.0.0.0
+      - ORDERER_GENERAL_GENESISMETHOD=file
+      - ORDERER_GENERAL_GENESISFILE=/var/hyperledger/orderer/orderer.genesis.block
+      - ORDERER_GENERAL_LOCALMSPID=OrdererMSP
+      - ORDERER_GENERAL_LOCALMSPDIR=/var/hyperledger/orderer/msp
+      - ORDERER_GENERAL_TLS_ENABLED=true
+      - ORDERER_GENERAL_TLS_PRIVATEKEY=/var/hyperledger/orderer/tls/server.key
+      - ORDERER_GENERAL_TLS_CERTIFICATE=/var/hyperledger/orderer/tls/server.crt
+      - ORDERER_GENERAL_TLS_ROOTCAS=[/var/hyperledger/orderer/tls/ca.crt]
+    working_dir: /opt/gopath/src/github.com/hyperledger/fabric
+    command: orderer
+    volumes:
+    - ./channel-artifacts/genesis.block:/var/hyperledger/orderer/orderer.genesis.block
+    - ./crypto-config/ordererOrganizations/example.com/orderers/orderer.example.com/msp:/var/hyperledger/orderer/msp
+    - ./crypto-config/ordererOrganizations/example.com/orderers/orderer.example.com/tls/:/var/hyperledger/orderer/tls
+    - ./data/orderer:/var/hyperledger/production/orderer
+    ports:
+      - "7050:7050"
+    container_name: orderer.example.com
+    networks:
+      - fabricnet
+
+
+  # Peer0 di HospitalA
+  peer0.hospitala.example.com:
+    image: hyperledger/fabric-peer:latest
+    environment:
+      - CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
+      - CORE_PEER_ID=peer0.hospitala.example.com
+      - CORE_PEER_ADDRESS=peer0.hospitala.example.com:7051
+      - CORE_PEER_LISTENADDRESS=0.0.0.0:7051
+      - CORE_PEER_CHAINCODEADDRESS=peer0.hospitala.example.com:7052
+      - CORE_PEER_CHAINCODELISTENADDRESS=0.0.0.0:7052
+      - CORE_PEER_GOSSIP_BOOTSTRAP=peer0.hospitala.example.com:7051
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.hospitala.example.com:7051
+      - CORE_PEER_LOCALMSPID=HospitalAMSP
+      - CORE_PEER_TLS_ENABLED=true
+      - CORE_PEER_TLS_CERT_FILE=/etc/hyperledger/fabric/tls/server.crt
+      - CORE_PEER_TLS_KEY_FILE=/etc/hyperledger/fabric/tls/server.key
+      - CORE_PEER_TLS_ROOTCERT_FILE=/etc/hyperledger/fabric/tls/ca.crt
+      - CORE_LEDGER_HISTORY_ENABLEHISTORYDATABASE=true
+    volumes:
+      - /var/run/:/host/var/run/
+      - ./crypto-config/peerOrganizations/hospitala.example.com/peers/peer0.hospitala.example.com/msp:/etc/hyperledger/fabric/msp
+      - ./crypto-config/peerOrganizations/hospitala.example.com/peers/peer0.hospitala.example.com/tls:/etc/hyperledger/fabric/tls
+      - ./data/peer0.hospitala.example.com:/var/hyperledger/production
+    ports:
+      - "7051:7051"
+      - "7053:7053"
+    container_name: peer0.hospitala.example.com
+    networks:
+      - fabricnet
+
+  # Peer1 di HospitalA
+  peer1.hospitala.example.com:
+    image: hyperledger/fabric-peer:latest
+    environment:
+      - CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
+      - CORE_PEER_ID=peer1.hospitala.example.com
+      - CORE_PEER_ADDRESS=peer1.hospitala.example.com:7151
+      - CORE_PEER_LISTENADDRESS=0.0.0.0:7151
+      - CORE_PEER_CHAINCODEADDRESS=peer1.hospitala.example.com:7152
+      - CORE_PEER_CHAINCODELISTENADDRESS=0.0.0.0:7152
+      - CORE_PEER_GOSSIP_BOOTSTRAP=peer0.hospitala.example.com:7051
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer1.hospitala.example.com:7151
+      - CORE_PEER_LOCALMSPID=HospitalAMSP
+      - CORE_PEER_TLS_ENABLED=true
+      - CORE_PEER_TLS_CERT_FILE=/etc/hyperledger/fabric/tls/server.crt
+      - CORE_PEER_TLS_KEY_FILE=/etc/hyperledger/fabric/tls/server.key
+      - CORE_PEER_TLS_ROOTCERT_FILE=/etc/hyperledger/fabric/tls/ca.crt
+      - CORE_LEDGER_HISTORY_ENABLEHISTORYDATABASE=true
+    volumes:
+      - /var/run/:/host/var/run/
+      - ./crypto-config/peerOrganizations/hospitala.example.com/peers/peer1.hospitala.example.com/msp:/etc/hyperledger/fabric/msp
+      - ./crypto-config/peerOrganizations/hospitala.example.com/peers/peer1.hospitala.example.com/tls:/etc/hyperledger/fabric/tls
+      - ./data/peer1.hospitala.example.com:/var/hyperledger/production
+    ports:
+      - "7151:7151"
+      - "7153:7153"
+    container_name: peer1.hospitala.example.com
+    networks:
+      - fabricnet
+
+  # Peer0 di HospitalB
+  peer0.hospitalb.example.com:
+    image: hyperledger/fabric-peer:latest
+    environment:
+      - CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
+      - CORE_PEER_ID=peer0.hospitalb.example.com
+      - CORE_PEER_ADDRESS=peer0.hospitalb.example.com:8051
+      - CORE_PEER_LISTENADDRESS=0.0.0.0:8051
+      - CORE_PEER_CHAINCODEADDRESS=peer0.hospitalb.example.com:8052
+      - CORE_PEER_CHAINCODELISTENADDRESS=0.0.0.0:8052
+      - CORE_PEER_GOSSIP_BOOTSTRAP=peer1.hospitala.example.com:7151
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.hospitalb.example.com:8051
+      - CORE_PEER_LOCALMSPID=HospitalBMSP
+      - CORE_PEER_TLS_ENABLED=true
+      - CORE_PEER_TLS_CERT_FILE=/etc/hyperledger/fabric/tls/server.crt
+      - CORE_PEER_TLS_KEY_FILE=/etc/hyperledger/fabric/tls/server.key
+      - CORE_PEER_TLS_ROOTCERT_FILE=/etc/hyperledger/fabric/tls/ca.crt
+      - CORE_LEDGER_HISTORY_ENABLEHISTORYDATABASE=true
+    volumes:
+      - /var/run/:/host/var/run/
+      - ./crypto-config/peerOrganizations/hospitalb.example.com/peers/peer0.hospitalb.example.com/msp:/etc/hyperledger/fabric/msp
+      - ./crypto-config/peerOrganizations/hospitalb.example.com/peers/peer0.hospitalb.example.com/tls:/etc/hyperledger/fabric/tls
+      - ./data/peer0.hospitalb.example.com:/var/hyperledger/production
+    ports:
+      - "8051:8051"
+      - "8053:8053"
+    container_name: peer0.hospitalb.example.com
+    networks:
+      - fabricnet
+
+  # Peer1 di HospitalB
+  peer1.hospitalb.example.com:
+    image: hyperledger/fabric-peer:latest
+    environment:
+      - CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
+      - CORE_PEER_ID=peer1.hospitalb.example.com
+      - CORE_PEER_ADDRESS=peer1.hospitalb.example.com:8151
+      - CORE_PEER_LISTENADDRESS=0.0.0.0:8151
+      - CORE_PEER_CHAINCODEADDRESS=peer1.hospitalb.example.com:8152
+      - CORE_PEER_CHAINCODELISTENADDRESS=0.0.0.0:8152
+      - CORE_PEER_GOSSIP_BOOTSTRAP=peer0.hospitalb.example.com:8051
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer1.hospitalb.example.com:8151
+      - CORE_PEER_LOCALMSPID=HospitalBMSP
+      - CORE_PEER_TLS_ENABLED=true
+      - CORE_PEER_TLS_CERT_FILE=/etc/hyperledger/fabric/tls/server.crt
+      - CORE_PEER_TLS_KEY_FILE=/etc/hyperledger/fabric/tls/server.key
+      - CORE_PEER_TLS_ROOTCERT_FILE=/etc/hyperledger/fabric/tls/ca.crt
+      - CORE_LEDGER_HISTORY_ENABLEHISTORYDATABASE=true
+    volumes:
+      - /var/run/:/host/var/run/
+      - ./crypto-config/peerOrganizations/hospitalb.example.com/peers/peer1.hospitalb.example.com/msp:/etc/hyperledger/fabric/msp
+      - ./crypto-config/peerOrganizations/hospitalb.example.com/peers/peer1.hospitalb.example.com/tls:/etc/hyperledger/fabric/tls
+      - ./data/peer1.hospitalb.example.com:/var/hyperledger/production
+    ports:
+      - "8151:8151"
+      - "8153:8153"
+    container_name: peer1.hospitalb.example.com
+    networks:
+      - fabricnet
+
+  # Peer1 del Lab
+  peer1.lab.example.com:
+    image: hyperledger/fabric-peer:latest
+    environment:
+      - CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
+      - CORE_PEER_ID=peer1.lab.example.com
+      - CORE_PEER_ADDRESS=peer1.lab.example.com:9151
+      - CORE_PEER_LISTENADDRESS=0.0.0.0:9151
+      - CORE_PEER_CHAINCODEADDRESS=peer1.lab.example.com:9152
+      - CORE_PEER_CHAINCODELISTENADDRESS=0.0.0.0:9152
+      - CORE_PEER_GOSSIP_BOOTSTRAP=peer0.lab.example.com:9051
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer1.lab.example.com:9151
+      - CORE_PEER_LOCALMSPID=LabMSP
+      - CORE_PEER_TLS_ENABLED=true
+      - CORE_PEER_TLS_CERT_FILE=/etc/hyperledger/fabric/tls/server.crt
+      - CORE_PEER_TLS_KEY_FILE=/etc/hyperledger/fabric/tls/server.key
+      - CORE_PEER_TLS_ROOTCERT_FILE=/etc/hyperledger/fabric/tls/ca.crt
+      - CORE_LEDGER_HISTORY_ENABLEHISTORYDATABASE=true
+    volumes:
+      - /var/run/:/host/var/run/
+      - ./crypto-config/peerOrganizations/lab.example.com/peers/peer1.lab.example.com/msp:/etc/hyperledger/fabric/msp
+      - ./crypto-config/peerOrganizations/lab.example.com/peers/peer1.lab.example.com/tls:/etc/hyperledger/fabric/tls
+      - ./data/peer1.lab.example.com:/var/hyperledger/production
+    ports:
+      - "9151:9151"
+      - "9153:9153"
+    container_name: peer1.lab.example.com
+    networks:
+      - fabricnet
+
+  # Peer0 della Pharmacy
+  peer0.pharmacy.example.com:
+    image: hyperledger/fabric-peer:latest
+    environment:
+      - CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
+      - CORE_PEER_ID=peer0.pharmacy.example.com
+      - CORE_PEER_ADDRESS=peer0.pharmacy.example.com:10051
+      - CORE_PEER_LISTENADDRESS=0.0.0.0:10051
+      - CORE_PEER_CHAINCODEADDRESS=peer0.pharmacy.example.com:10052
+      - CORE_PEER_CHAINCODELISTENADDRESS=0.0.0.0:10052
+      - CORE_PEER_GOSSIP_BOOTSTRAP=peer1.lab.example.com:9151
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.pharmacy.example.com:10051
+      - CORE_PEER_LOCALMSPID=PharmacyMSP
+      - CORE_PEER_TLS_ENABLED=true
+      - CORE_PEER_TLS_CERT_FILE=/etc/hyperledger/fabric/tls/server.crt
+      - CORE_PEER_TLS_KEY_FILE=/etc/hyperledger/fabric/tls/server.key
+      - CORE_PEER_TLS_ROOTCERT_FILE=/etc/hyperledger/fabric/tls/ca.crt
+      - CORE_LEDGER_HISTORY_ENABLEHISTORYDATABASE=true
+    volumes:
+      - /var/run/:/host/var/run/
+      - ./crypto-config/peerOrganizations/pharmacy.example.com/peers/peer0.pharmacy.example.com/msp:/etc/hyperledger/fabric/msp
+      - ./crypto-config/peerOrganizations/pharmacy.example.com/peers/peer0.pharmacy.example.com/tls:/etc/hyperledger/fabric/tls
+      - ./data/peer0.pharmacy.example.com:/var/hyperledger/production
+    ports:
+      - "10051:10051"
+      - "10053:10053"
+    container_name: peer0.pharmacy.example.com
+    networks:
+      - fabricnet
+
+  # Peer0 dei Doctors
+  peer0.doctors.example.com:
+    image: hyperledger/fabric-peer:latest
+    environment:
+      - CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
+      - CORE_PEER_ID=peer0.doctors.example.com
+      - CORE_PEER_ADDRESS=peer0.doctors.example.com:11051
+      - CORE_PEER_LISTENADDRESS=0.0.0.0:11051
+      - CORE_PEER_CHAINCODEADDRESS=peer0.doctors.example.com:11052
+      - CORE_PEER_CHAINCODELISTENADDRESS=0.0.0.0:11052
+      - CORE_PEER_GOSSIP_BOOTSTRAP=peer0.pharmacy.example.com:10051
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.doctors.example.com:11051
+      - CORE_PEER_LOCALMSPID=DoctorsMSP
+      - CORE_PEER_TLS_ENABLED=true
+      - CORE_PEER_TLS_CERT_FILE=/etc/hyperledger/fabric/tls/server.crt
+      - CORE_PEER_TLS_KEY_FILE=/etc/hyperledger/fabric/tls/server.key
+      - CORE_PEER_TLS_ROOTCERT_FILE=/etc/hyperledger/fabric/tls/ca.crt
+      - CORE_LEDGER_HISTORY_ENABLEHISTORYDATABASE=true
+    volumes:
+      - /var/run/:/host/var/run/
+      - ./crypto-config/peerOrganizations/doctors.example.com/peers/peer0.doctors.example.com/msp:/etc/hyperledger/fabric/msp
+      - ./crypto-config/peerOrganizations/doctors.example.com/peers/peer0.doctors.example.com/tls:/etc/hyperledger/fabric/tls
+      - ./data/peer0.doctors.example.com:/var/hyperledger/production
+    ports:
+      - "11051:11051"
+      - "11053:11053"
+    container_name: peer0.doctors.example.com
+    networks:
+      - fabricnet
+
+  # Peer1 dei Doctors
+  peer1.doctors.example.com:
+    image: hyperledger/fabric-peer:latest
+    environment:
+      - CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
+      - CORE_PEER_ID=peer1.doctors.example.com
+      - CORE_PEER_ADDRESS=peer1.doctors.example.com:11151
+      - CORE_PEER_LISTENADDRESS=0.0.0.0:11151
+      - CORE_PEER_CHAINCODEADDRESS=peer1.doctors.example.com:11152
+      - CORE_PEER_CHAINCODELISTENADDRESS=0.0.0.0:11152
+      - CORE_PEER_GOSSIP_BOOTSTRAP=peer0.doctors.example.com:11051
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer1.doctors.example.com:11151
+      - CORE_PEER_LOCALMSPID=DoctorsMSP
+      - CORE_PEER_TLS_ENABLED=true
+      - CORE_PEER_TLS_CERT_FILE=/etc/hyperledger/fabric/tls/server.crt
+      - CORE_PEER_TLS_KEY_FILE=/etc/hyperledger/fabric/tls/server.key
+      - CORE_PEER_TLS_ROOTCERT_FILE=/etc/hyperledger/fabric/tls/ca.crt
+      - CORE_LEDGER_HISTORY_ENABLEHISTORYDATABASE=true
+    volumes:
+      - /var/run/:/host/var/run/
+      - ./crypto-config/peerOrganizations/doctors.example.com/peers/peer1.doctors.example.com/msp:/etc/hyperledger/fabric/msp
+      - ./crypto-config/peerOrganizations/doctors.example.com/peers/peer1.doctors.example.com/tls:/etc/hyperledger/fabric/tls
+      - ./data/peer1.doctors.example.com:/var/hyperledger/production
+    ports:
+      - "11151:11151"
+      - "11153:11153"
+    container_name: peer1.doctors.example.com
+    networks:
+      - fabricnet
+
+
+
+networks:
+  fabricnet:
+    name: fabricnet

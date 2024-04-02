@@ -1,0 +1,241 @@
+Organizations:
+    - &OrdererOrg
+        Name: OrdererOrg
+        ID: OrdererMSP
+        MSPDir: crypto-config/ordererOrganizations/example.com/msp
+        Policies:
+            Readers:
+                Type: Signature
+                Rule: "OR('OrdererMSP.member')"
+            Writers:
+                Type: Signature
+                Rule: "OR('OrdererMSP.member')"
+            Admins:
+                Type: Signature
+                Rule: "OR('OrdererMSP.admin')"
+
+    - &HospitalA
+        Name: HospitalAMSP
+        ID: HospitalAMSP
+        MSPDir: crypto-config/peerOrganizations/hospitala.example.com/msp
+        Policies:
+            Readers:
+                Type: Signature
+                Rule: "OR('HospitalAMSP.member')"
+            Writers:
+                Type: Signature
+                Rule: "OR('HospitalAMSP.member')"
+            Admins:
+                Type: Signature
+                Rule: "OR('HospitalAMSP.admin')"
+        AnchorPeers:
+            - Host: peer0.hospitala.example.com
+              Port: 7051
+
+    - &HospitalB
+        Name: HospitalBMSP
+        ID: HospitalBMSP
+        MSPDir: crypto-config/peerOrganizations/hospitalb.example.com/msp
+        Policies:
+            Readers:
+                Type: Signature
+                Rule: "OR('HospitalBMSP.member')"
+            Writers:
+                Type: Signature
+                Rule: "OR('HospitalBMSP.member')"
+            Admins:
+                Type: Signature
+                Rule: "OR('HospitalBMSP.admin')"
+        AnchorPeers:
+            - Host: peer0.hospitalb.example.com
+              Port: 7051
+
+    - &Lab
+        Name: LabMSP
+        ID: LabMSP
+        MSPDir: crypto-config/peerOrganizations/lab.example.com/msp
+        Policies:
+            Readers:
+                Type: Signature
+                Rule: "OR('LabMSP.member')"
+            Writers:
+                Type: Signature
+                Rule: "OR('LabMSP.member')"
+            Admins:
+                Type: Signature
+                Rule: "OR('LabMSP.admin')"
+        AnchorPeers:
+            - Host: peer0.lab.example.com
+              Port: 7051
+
+    - &Pharmacy
+        Name: PharmacyMSP
+        ID: PharmacyMSP
+        MSPDir: crypto-config/peerOrganizations/pharmacy.example.com/msp
+        Policies:
+            Readers:
+                Type: Signature
+                Rule: "OR('PharmacyMSP.member')"
+            Writers:
+                Type: Signature
+                Rule: "OR('PharmacyMSP.member')"
+            Admins:
+                Type: Signature
+                Rule: "OR('PharmacyMSP.admin')"
+        AnchorPeers:
+            - Host: peer0.pharmacy.example.com
+              Port: 7051
+
+    - &Doctors
+        Name: DoctorsMSP
+        ID: DoctorsMSP
+        MSPDir: crypto-config/peerOrganizations/doctors.example.com/msp
+        Policies:
+            Readers:
+                Type: Signature
+                Rule: "OR('DoctorsMSP.member')"
+            Writers:
+                Type: Signature
+                Rule: "OR('DoctorsMSP.member')"
+            Admins:
+                Type: Signature
+                Rule: "OR('DoctorsMSP.admin')"
+        AnchorPeers:
+            - Host: peer0.doctors.example.com
+              Port: 7051
+
+Capabilities:
+    Channel: &ChannelCapabilities
+        V2_0: true
+    Orderer: &OrdererCapabilities
+        V2_0: true
+    Application: &ApplicationCapabilities
+        V2_0: true
+
+Application: &ApplicationDefaults
+    Organizations:
+    Policies:
+        Readers:
+            Type: ImplicitMeta
+            Rule: "ANY Readers"
+        Writers:
+            Type: ImplicitMeta
+            Rule: "ANY Writers"
+        Admins:
+            Type: ImplicitMeta
+            Rule: "MAJORITY Admins"
+    Capabilities:
+        <<: *ApplicationCapabilities
+
+Orderer: &OrdererDefaults
+    OrdererType: etcdraft
+    Addresses:
+        - orderer.example.com:7050
+    BatchTimeout: 2s
+    BatchSize:
+        MaxMessageCount: 10
+        AbsoluteMaxBytes: 99 MB
+        PreferredMaxBytes: 512 KB
+    EtcdRaft:
+        Consenters:
+            - Host: orderer.example.com
+              Port: 7050
+              ClientTLSCert: crypto-config/ordererOrganizations/example.com/orderers/orderer.example.com/tls/server.crt
+              ServerTLSCert: crypto-config/ordererOrganizations/example.com/orderers/orderer.example.com/tls/server.crt
+    Organizations:
+    Policies:
+        Readers:
+            Type: ImplicitMeta
+            Rule: "ANY Readers"
+        Writers:
+            Type: ImplicitMeta
+            Rule: "ANY Writers"
+        Admins:
+            Type: ImplicitMeta
+            Rule: "MAJORITY Admins"
+        BlockValidation:
+            Type: ImplicitMeta
+            Rule: "ANY Writers"
+
+Channel: &ChannelDefaults
+    Policies:
+        Readers:
+            Type: ImplicitMeta
+            Rule: "ANY Readers"
+        Writers:
+            Type: ImplicitMeta
+            Rule: "ANY Writers"
+        Admins:
+            Type: ImplicitMeta
+            Rule: "MAJORITY Admins"
+    Capabilities:
+        <<: *ChannelCapabilities
+
+Profiles:
+    HealthGenesis:
+        <<: *ChannelDefaults
+        Capabilities:
+            <<: *ChannelCapabilities
+        Orderer:
+            <<: *OrdererDefaults
+            Organizations:
+                - *OrdererOrg
+            Capabilities:
+                <<: *OrdererCapabilities
+        Application:
+            <<: *ApplicationDefaults
+            Organizations:
+                - *HospitalA
+                - *HospitalB
+                - *Lab
+                - *Pharmacy
+                - *Doctors
+            Capabilities:
+                <<: *ApplicationCapabilities
+        Consortiums:
+            HealthConsortium:
+                Organizations:
+                    - *HospitalA
+                    - *HospitalB
+                    - *Lab
+                    - *Pharmacy
+                    - *Doctors
+
+    HealthRecordsChannel:
+        Consortium: HealthConsortium
+        <<: *ChannelDefaults
+        Application:
+            <<: *ApplicationDefaults
+            Organizations:
+                - *HospitalA
+                - *HospitalB
+                - *Lab
+                - *Doctors
+            Capabilities:
+                <<: *ApplicationCapabilities
+
+    PrescriptionsChannel:
+        Consortium: HealthConsortium
+        <<: *ChannelDefaults
+        Application:
+            <<: *ApplicationDefaults
+            Organizations:
+                - *HospitalA
+                - *HospitalB
+                - *Pharmacy
+                - *Doctors
+            Capabilities:
+                <<: *ApplicationCapabilities
+
+    LabResultsChannel:
+        Consortium: HealthConsortium
+        <<: *ChannelDefaults
+        Application:
+            <<: *ApplicationDefaults
+            Organizations:
+                - *Lab
+                - *HospitalA
+                - *HospitalB
+                - *Doctors
+            Capabilities:
+                <<: *ApplicationCapabilities
