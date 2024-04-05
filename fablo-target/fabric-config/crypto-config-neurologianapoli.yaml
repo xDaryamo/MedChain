@@ -1,0 +1,8 @@
+PeerOrgs:
+  - Name: NeurologiaNapoli
+    Domain: neurologia.napoli.medchain.com
+    Specs:
+    Template:
+      Count: 2
+    Users:
+      Count: 1

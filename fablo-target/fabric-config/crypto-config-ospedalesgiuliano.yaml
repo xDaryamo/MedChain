@@ -1,0 +1,8 @@
+PeerOrgs:
+  - Name: OspedaleSGiuliano
+    Domain: ospedale-sgiuliano.aslnapoli2.medchain.com
+    Specs:
+    Template:
+      Count: 2
+    Users:
+      Count: 1
