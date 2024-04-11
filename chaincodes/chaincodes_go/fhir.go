@@ -5,20 +5,6 @@ import (
 	"time"
 )
 
-// Resource is the base structure for all FHIR resources. It includes fields common to all resources, such as ResourceType, ID, and Meta
-type Resource struct {
-	ResourceType Code       `json:"resourceType"`         // The name of the resource type
-	ID           Identifier `json:"identifier,omitempty"` // The logical id of the resource, as used in the URL for the resource
-	Meta         *Meta      `json:"meta,omitempty"`       // Metadata about the resource, including version, publication status, and timestamps
-}
-
-// Meta contains metadata about a FHIR resource, including version, source, and last update time
-type Meta struct {
-	VersionID   Identifier `json:"identifier,omitempty"`  // The version-specific identifier, as it appears in the version portion of the URL
-	LastUpdated time.Time  `json:"lastUpdated,omitempty"` // When the resource version last changed
-	Source      *Reference `json:"source,omitempty"`      // A uri that identifies the source of the data when the resource is not based on data maintained by the publisher
-}
-
 // Code represents a coded value following a coding system like LOINC or SNOMED CT
 type Code struct {
 	Coding []Coding `json:"coding"` // A reference to a code defined by a terminology system
@@ -44,30 +30,27 @@ type Reference struct {
 
 // Identifier is used to identify a specific instance of a resource
 type Identifier struct {
-	System string          `json:"system,omitempty"` // The namespace for the identifier
-	Value  string          `json:"value,omitempty"`  // The value of the identifier
-	Period Period          `json:"period,omitempty"` // The time period during which the identifier is valid
-	Type   CodeableConcept `json:"type,omitempty"`   // A coded type for the identifier
+	System string `json:"system,omitempty"` // The namespace for the identifier
+	Value  string `json:"value,omitempty"`  // The value of the identifier
 }
 
 // Patient represents a person receiving care or other health-related services
 type Patient struct {
-	Resource             `json:",inline"` // Inlines common resource fields like ResourceType, ID, and Meta
-	ID                   Identifier       `json:"identifier"`                     // Unique identifier for individuals receiving care
-	Active               bool             `json:"active,omitempty"`               // Whether the patient's record is in active use
-	Name                 HumanName        `json:"name,omitempty"`                 // A name associated with the patient
-	Telecom              ContactPoint     `json:"telecom,omitempty"`              // A contact detail for the individual
-	Gender               Code             `json:"gender,omitempty"`               // Gender of the patient
-	BirthDate            time.Time        `json:"date,omitempty"`                 // The birth date for the patient
-	Deceased             bool             `json:"deceased,omitempty"`             // Indicates if the patient is deceased
-	Address              Address          `json:"address,omitempty"`              // Addresses for the individual
-	MaritalStatus        CodeableConcept  `json:"maritalstatus,omitempty"`        // Marital (civil) status of a patient
-	MultipleBirth        []int            `json:"multiplebirth,omitempty"`        // Indicates if the patient is part of a multiple birth
-	Photo                Attachment       `json:"photo,omitempty"`                // Image of the patient
-	Contact              []Contact        `json:"contact,omitempty"`              // A contact party (e.g., guardian, partner, friend) for the patient
-	Communication        []Communication  `json:"commutication,omitempty"`        // A list of Languages which may be used to communicate with the patient
-	GeneralPractitioner  *Reference       `json:"generalpractitioner,omitempty"`  // Patient's primary care provider
-	ManagingOrganization *Reference       `json:"managingorganization,omitempty"` // Organization that is the custodian of the patient record
+	ID                   Identifier      `json:"identifier"`                     // Unique identifier for individuals receiving care
+	Active               bool            `json:"active,omitempty"`               // Whether the patient's record is in active use
+	Name                 HumanName       `json:"name,omitempty"`                 // A name associated with the patient
+	Telecom              []ContactPoint  `json:"telecom,omitempty"`              // A contact detail for the individual
+	Gender               Code            `json:"gender,omitempty"`               // Gender of the patient
+	BirthDate            time.Time       `json:"date,omitempty"`                 // The birth date for the patient
+	Deceased             bool            `json:"deceased,omitempty"`             // Indicates if the patient is deceased
+	Address              []Address       `json:"address,omitempty"`              // Addresses for the individual
+	MaritalStatus        CodeableConcept `json:"maritalstatus,omitempty"`        // Marital (civil) status of a patient
+	MultipleBirth        []int           `json:"multiplebirth,omitempty"`        // Indicates if the patient is part of a multiple birth
+	Photo                Attachment      `json:"photo,omitempty"`                // Image of the patient
+	Contact              []Contact       `json:"contact,omitempty"`              // A contact party (e.g., guardian, partner, friend) for the patient
+	Communication        []Communication `json:"commutication,omitempty"`        // A list of Languages which may be used to communicate with the patient
+	GeneralPractitioner  *Reference      `json:"generalpractitioner,omitempty"`  // Patient's primary care provider
+	ManagingOrganization *Reference      `json:"managingorganization,omitempty"` // Organization that is the custodian of the patient record
 }
 
 // ContactPoint specifies contact information for a person or organization
@@ -86,11 +69,9 @@ type Address struct {
 	Text       string `json:"text,omitempty"`       // A full text representation of the address
 	Line       string `json:"line,omitempty"`       // Address line details (e.g., street, PO Box)
 	City       string `json:"city,omitempty"`       // The city name.
-	District   string `json:"district,omitempty"`   // District name (e.g., county)
 	State      string `json:"state,omitempty"`      // State or province name
 	PostalCode string `json:"postalcode,omitempty"` // Postal code
 	Country    string `json:"country,omitempty"`    // Country name
-	Period     Period `json:"period,omitempty"`     // The period during which the address is valid
 }
 
 // Attachment holds content in a variety of formats
@@ -119,7 +100,6 @@ type Contact struct {
 	Address      Address         `json:"address,omitempty"`      // Address for the contact person
 	Gender       Code            `json:"gender,omitempty"`       // Gender of the contact person
 	Organization *Reference      `json:"organization,omitempty"` // Organization that is associated with the contact
-	Period       Period          `json:"period,omitempty"`       // The period during which this contact is valid
 }
 
 // Communication specifies a language which can be used to communicate with the patient
@@ -130,7 +110,6 @@ type Communication struct {
 
 // Organization represents an organized group of people or entities formed for a purpose
 type Organization struct {
-	Resource      `json:",inline"`
 	ID            Identifier            `json:"identifier"`              // Unique identifier for the organization
 	Active        bool                  `json:"active,omitempty"`        // Whether the organization's record is still in active use
 	Type          CodeableConcept       `json:"type,omitempty"`          // The kind of organization
@@ -148,18 +127,16 @@ type Qualification struct {
 	ID     Identifier      `json:"identifier"`       // Unique identifier for the qualification
 	Code   CodeableConcept `json:"code,omitempty"`   // Coded representation of the qualification
 	Status CodeableConcept `json:"status,omitempty"` // Status of the qualification
-	Period Period          `json:"period,omitempty"` // The period during which the qualification is valid
 	Issuer *Reference      `json:"issuer,omitempty"` // Organization that issued the qualification
 }
 
 // ExtendedContactDetail contains detailed contact information including addresses and telecom details
 type ExtendedContactDetail struct {
-	Purpose      CodeableConcept `json:"purpose,omitempty"`      // The purpose of this contact detail
-	Name         HumanName       `json:"name,omitempty"`         // Human name associated with the contact
-	Telecom      ContactPoint    `json:"telecom,omitempty"`      // Contact details (phone, email, etc.)
-	Address      Address         `json:"address,omitempty"`      // Address for the contact
-	Organization *Reference      `json:"organization,omitempty"` // Organization associated with the contact
-	Period       Period          `json:"period,omitempty"`       // The period during which this contact detail is valid
+	Name         HumanName    `json:"name,omitempty"`         // Human name associated with the contact
+	Telecom      ContactPoint `json:"telecom,omitempty"`      // Contact details (phone, email, etc.)
+	Address      Address      `json:"address,omitempty"`      // Address for the contact
+	Organization *Reference   `json:"organization,omitempty"` // Organization associated with the contact
+	Period       Period       `json:"period,omitempty"`       // The period during which this contact detail is valid
 }
 
 // Human Name
@@ -169,74 +146,42 @@ type HumanName struct {
 	Given  []string `json:"given,omitempty"`
 	Prefix []string `json:"prefix,omitempty"`
 	Suffix []string `json:"suffix,omitempty"`
-	Period Period   `json:"period,omitempty"`
 }
 
 // Encounter represents an interaction between a patient and healthcare provider(s) for the provision of healthcare service(s)
 type Encounter struct {
-	Resource        `json:",inline"`          // Inherits fields from the base Resource struct
-	ID              string                    `json:"id"`                        // The logical id of the resource.
-	Status          string                    `json:"status"`                    // Current state of the encounter (e.g., planned, in-progress, onhold, completed, cancelled)
-	StatusHistory   []EncounterStatusHistory  `json:"statusHistory,omitempty"`   // The past list of status codes (without the rest of the Encounter information)
-	Class           Coding                    `json:"class"`                     // Classification of the encounter (e.g., inpatient, outpatient, emergency)
-	ClassHistory    []EncounterClassHistory   `json:"classHistory,omitempty"`    // The past classifications of the encounter
-	Type            []CodeableConcept         `json:"type,omitempty"`            // Specific type of the encounter (e.g., consultation, follow-up)
-	ServiceType     CodeableConcept           `json:"serviceType,omitempty"`     // The broad type of service that is to be provided (e.g., primary care, surgical, rehabilitation)
-	Priority        *CodeableConcept          `json:"priority,omitempty"`        // Indicates the urgency of the encounter
-	Subject         Reference                 `json:"subject"`                   // The patient or group present at the encounter
-	EpisodeOfCare   []Reference               `json:"episodeOfCare,omitempty"`   // Episode(s) of care that this encounter should be recorded against
-	BasedOn         []Reference               `json:"basedOn,omitempty"`         // The request this encounter fulfills (e.g., referral or procedure request)
-	Participant     []EncounterParticipant    `json:"participant,omitempty"`     // Persons involved in the encounter other than the patient
-	Appointment     []Reference               `json:"appointment,omitempty"`     // The appointment that scheduled this encounter
-	Period          *Period                   `json:"period,omitempty"`          // The start and end time of the encounter
-	Length          *Duration                 `json:"length,omitempty"`          // Quantity of time the encounter lasted (in seconds)
-	ReasonCode      []CodeableConcept         `json:"reasonCode,omitempty"`      // Reason the encounter takes place, expressed as a code
-	ReasonReference []Reference               `json:"reasonReference,omitempty"` // Reason the encounter takes place, referenced as a resource
-	Diagnosis       []EncounterDiagnosis      `json:"diagnosis,omitempty"`       // The list of diagnosis relevant to this encounter
-	Location        []EncounterLocation       `json:"location,omitempty"`        // List of locations where the encounter takes place
-	Hospitalization *EncounterHospitalization `json:"hospitalization,omitempty"` // Details about the admission to a healthcare service
-	ServiceProvider *Reference                `json:"serviceProvider,omitempty"` // The organization that is primarily responsible for this Encounter's services
-	PartOf          *Reference                `json:"partOf,omitempty"`          // Another Encounter of which this encounter is a part of (e.g., follow-up)
-}
-
-// EncounterStatusHistory represents part of the encounter history
-type EncounterStatusHistory struct {
-	Status string `json:"status"` // The status in the history
-	Period Period `json:"period"` // The time period over which the status applied
-}
-
-// EncounterClassHistory represents the class history of the encounter
-type EncounterClassHistory struct {
-	Class  Coding `json:"class"`  // Inpatient | Outpatient | Ambulatory | Emergency +
-	Period Period `json:"period"` // The time period over which the class applied
+	ID              Identifier             `json:"id"`                        // The logical id of the resource.
+	Status          Code                   `json:"status"`                    // Current state of the encounter (e.g., planned, in-progress, onhold, completed, cancelled)
+	Class           Coding                 `json:"class"`                     // Classification of the encounter (e.g., inpatient, outpatient, emergency)
+	Type            []CodeableConcept      `json:"type,omitempty"`            // Specific type of the encounter (e.g., consultation, follow-up)
+	ServiceType     CodeableConcept        `json:"serviceType,omitempty"`     // The broad type of service that is to be provided (e.g., primary care, surgical, rehabilitation)
+	Priority        CodeableConcept        `json:"priority,omitempty"`        // Indicates the urgency of the encounter
+	Subject         *Reference             `json:"subject"`                   // The patient or group present at the encounter
+	BasedOn         []Reference            `json:"basedOn,omitempty"`         // The request that initiated this encounter
+	Participant     []EncounterParticipant `json:"participant,omitempty"`     // Persons involved in the encounter other than the patient
+	Appointment     *Reference             `json:"appointment,omitempty"`     // The appointment that scheduled this encounter
+	Period          Period                 `json:"period,omitempty"`          // The start and end time of the encounter
+	Length          Duration               `json:"length,omitempty"`          // Quantity of time the encounter lasted (in seconds)
+	ReasonCode      CodeableConcept        `json:"reasonCode,omitempty"`      // Reason the encounter takes place, expressed as a code
+	ReasonReference []CodeableConcept      `json:"reasonReference,omitempty"` // Reasons the encounter takes place, referenced as a resource
+	Diagnosis       []EncounterDiagnosis   `json:"diagnosis,omitempty"`       // The list of diagnosis relevant to this encounter
+	Location        []Location             `json:"location,omitempty"`        // List of locations where the encounter takes place
+	ServiceProvider *Reference             `json:"serviceProvider,omitempty"` // The organization that is primarily responsible for this Encounter's services
+	PartOf          *Reference             `json:"partOf,omitempty"`          // Another Encounter of which this encounter is a part of (e.g., follow-up)
 }
 
 // EncounterParticipant represents individuals involved in the encounter besides the patient
 type EncounterParticipant struct {
 	Type       []CodeableConcept `json:"type,omitempty"`       // Role of the participant in the encounter
-	Period     *Period           `json:"period,omitempty"`     // The period of time during the encounter that the participant participated
+	Period     Period            `json:"period,omitempty"`     // The period of time during the encounter that the participant participated
 	Individual *Reference        `json:"individual,omitempty"` // Persons involved in the encounter other than the patient
 }
 
 // EncounterDiagnosis represents the diagnosis relevant to the encounter
 type EncounterDiagnosis struct {
-	Condition Reference        `json:"condition"`      // The condition diagnosed
-	Use       *CodeableConcept `json:"use,omitempty"`  // Role that this diagnosis has within the encounter (e.g., admission, billing, discharge)
-	Rank      int              `json:"rank,omitempty"` // Ranking of the diagnosis (primary, secondary, etc.)
-}
-
-// EncounterLocation represents locations where the encounter takes place
-type EncounterLocation struct {
-	Location     Reference        `json:"location"`               // Location where the encounter takes place
-	Status       string           `json:"status,omitempty"`       // planned | active | reserved | completed
-	PhysicalType *CodeableConcept `json:"physicalType,omitempty"` // The type of location (Building | Room | Bed | Vehicle | Road)
-	Period       *Period          `json:"period,omitempty"`       // Time period during which the patient was present at the location
-}
-
-// EncounterHospitalization represents details about the admission to a healthcare service
-type EncounterHospitalization struct {
-	AdmitSource          *CodeableConcept `json:"admitSource,omitempty"`          // The source or reason for the admission
-	DischargeDisposition *CodeableConcept `json:"dischargeDisposition,omitempty"` // Category or location to which the patient is discharged
+	Condition Reference       `json:"condition"`      // The condition diagnosed
+	Use       CodeableConcept `json:"use,omitempty"`  // Role that this diagnosis has within the encounter (e.g., admission, billing, discharge)
+	Rank      int             `json:"rank,omitempty"` // Ranking of the diagnosis (primary, secondary, etc.)
 }
 
 // Period represents a start and an end time
@@ -270,41 +215,30 @@ type Availability struct {
 	Unavailability Period        `json:"unavailability,omitempty"` // Periods during which the location is not available
 }
 
-// Admission contains details about the admission of a patient to a location
-type Admission struct {
-	ID                   Identifier      `json:"identifier"`            // Unique identifier for the admission
-	Origin               *Reference      `json:"origin,omitempty"`      // The location from which the patient was admitted
-	Destination          *Reference      `json:"destination,omitempty"` // The location to which the patient is discharged
-	DischargeDisposition CodeableConcept `json:"discharge,omitempty"`   // Manner in which a patient was discharged from a location
-}
-
 // Quantity represents the amount of medication.
 type Quantity struct {
 	Value  float64 `json:"value"`            // The numeric value of the quantity.
 	Unit   string  `json:"unit,omitempty"`   // The unit of measurement for the quantity, e.g., mg for milligrams.
 	System string  `json:"system,omitempty"` // The system that the unit is derived from.
-	Code   string  `json:"code,omitempty"`   // The code for the unit.
 }
 
 // Practitioner represents a healthcare provider involved in the care of patients
 type Practitioner struct {
-	Resource      `json:",inline"` // Inherit fields from the base Resource struct
-	ID            Identifier       `json:"identifier"`              // Unique identifier for the practitioner
-	Active        bool             `json:"active,omitempty"`        // Whether the practitioner's record is active
-	Name          []HumanName      `json:"name,omitempty"`          // Names associated with the practitioner
-	Telecom       ContactPoint     `json:"telecom,omitempty"`       // Contact details for the practitioner
-	Gender        Code             `json:"gender,omitempty"`        // Gender of the practitioner
-	BirthDate     time.Time        `json:"date,omitempty"`          // Birth date of the practitioner
-	Deceased      bool             `json:"deceased,omitempty"`      // Indicates if the practitioner is deceased
-	Address       Address          `json:"address,omitempty"`       // Addresses for the practitioner
-	Photo         Attachment       `json:"photo,omitempty"`         // Photos associated with the practitioner
-	Qualification []Qualification  `json:"qualification,omitempty"` // Qualifications held by the practitioner
-	Communication []Communication  `json:"communication,omitempty"` // Languages the practitioner can communicate in
+	ID            Identifier      `json:"identifier"`              // Unique identifier for the practitioner
+	Active        bool            `json:"active,omitempty"`        // Whether the practitioner's record is active
+	Name          []HumanName     `json:"name,omitempty"`          // Names associated with the practitioner
+	Telecom       ContactPoint    `json:"telecom,omitempty"`       // Contact details for the practitioner
+	Gender        Code            `json:"gender,omitempty"`        // Gender of the practitioner
+	BirthDate     time.Time       `json:"date,omitempty"`          // Birth date of the practitioner
+	Deceased      bool            `json:"deceased,omitempty"`      // Indicates if the practitioner is deceased
+	Address       Address         `json:"address,omitempty"`       // Addresses for the practitioner
+	Photo         Attachment      `json:"photo,omitempty"`         // Photos associated with the practitioner
+	Qualification []Qualification `json:"qualification,omitempty"` // Qualifications held by the practitioner
+	Communication []Communication `json:"communication,omitempty"` // Languages the practitioner can communicate in
 }
 
 // AllergyIntolerance represents a patient's allergies or intolerances
 type AllergyIntolerance struct {
-	Resource           `json:",inline"`    // Inherit fields from the base Resource struct
 	ID                 Identifier          `json:"identifier"`                   // Unique identifier for the allergy or intolerance record
 	ClinicalStatus     CodeableConcept     `json:"clinicalStatus,omitempty"`     // Clinical status of the allergy or intolerance
 	VerificationStatus CodeableConcept     `json:"verificationStatus,omitempty"` // Verification status of the allergy or intolerance
@@ -335,27 +269,18 @@ type Annotation struct {
 
 // Observation represents measurements or simple assertions made about a patient
 type Observation struct {
-	Resource             `json:",inline"`       // Inherits fields from the base Resource struct
-	ID                   string                 `json:"id"`                             // Unique identifier for this Observation
-	Status               string                 `json:"status"`                         // The status of the observation (registered | preliminary | final | amended +)
-	Category             []CodeableConcept      `json:"category,omitempty"`             // Classification of the observation (e.g., laboratory, vital signs)
-	Code                 CodeableConcept        `json:"code"`                           // Describes what was observed
-	Subject              Reference              `json:"subject"`                        // Who and/or what the observation is about
-	Encounter            *Reference             `json:"encounter,omitempty"`            // The healthcare event (e.g., a patient encounter) during which the observation was made
-	EffectiveDateTime    time.Time              `json:"effectiveDateTime,omitempty"`    // The time or period when the observation was made
-	EffectivePeriod      Period                 `json:"effectivePeriod,omitempty"`      // A period of time during which the observation was made
-	Issued               time.Time              `json:"issued,omitempty"`               // The date and time this observation was made available
-	Performer            []Reference            `json:"performer,omitempty"`            // Who made the observation
-	ValueQuantity        Quantity               `json:"valueQuantity,omitempty"`        // The result of the observation
-	ValueCodeableConcept CodeableConcept        `json:"valueCodeableConcept,omitempty"` // The result of the observation
-	ValueString          string                 `json:"valueString,omitempty"`          // The result of the observation
-	ValueBoolean         bool                   `json:"valueBoolean,omitempty"`         // The result of the observation
-	ValueInteger         int                    `json:"valueInteger,omitempty"`         // The result of the observation
-	ValueRange           Range                  `json:"valueRange,omitempty"`           // The result of the observation
-	ValueRatio           Ratio                  `json:"valueRatio,omitempty"`           // The result of the observation
-	Interpretation       []CodeableConcept      `json:"interpretation,omitempty"`       // High-level interpretation of observation
-	Note                 []Annotation           `json:"note,omitempty"`                 // Comments about the observation
-	Component            []ObservationComponent `json:"component,omitempty"`            // Provides a specific result
+	ID              string                 `json:"id"`                        // Unique identifier for this Observation
+	Status          string                 `json:"status"`                    // The status of the observation (registered | preliminary | final | amended +)
+	Category        []CodeableConcept      `json:"category,omitempty"`        // Classification of the observation (e.g., laboratory, vital signs)
+	Code            CodeableConcept        `json:"code"`                      // Describes what was observed
+	Subject         *Reference             `json:"subject"`                   // Who and/or what the observation is about
+	Encounter       *Reference             `json:"encounter,omitempty"`       // The healthcare event (e.g., a patient encounter) during which the observation was made
+	EffectivePeriod Period                 `json:"effectivePeriod,omitempty"` // A period of time during which the observation was made
+	Issued          time.Time              `json:"issued,omitempty"`          // The date and time this observation was made available
+	Performer       []Reference            `json:"performer,omitempty"`       // Who made the observation
+	Interpretation  []CodeableConcept      `json:"interpretation,omitempty"`  // High-level interpretation of observation
+	Note            []Annotation           `json:"note,omitempty"`            // Comments about the observation
+	Component       []ObservationComponent `json:"component,omitempty"`       // Provides a specific result
 }
 
 // Range specifies a range of values
@@ -385,25 +310,22 @@ type ObservationComponent struct {
 
 // Procedure represents a healthcare procedure performed on a patient
 type Procedure struct {
-	Resource          `json:",inline"` // Inherits fields from the base Resource struct
-	ID                Identifier       `json:"identifier"`           // Unique identifier for the procedure
-	Subject           *Reference       `json:"subject,omitempty"`    // The patient the procedure was performed on
-	Code              CodeableConcept  `json:"code,omitempty"`       // The specific procedure performed
-	Status            Code             `json:"status,omitempty"`     // The status of the procedure (completed, planned, etc.)
-	Category          CodeableConcept  `json:"category,omitempty"`   // Classification of the procedure
-	Performer         *Reference       `json:"performed,omitempty"`  // The entities who performed the procedure
-	PartOf            *Reference       `json:"contained,omitempty"`  // A larger event of which this particular procedure is a component
-	BasedOn           *Reference       `json:"basedon,omitempty"`    // A request for this procedure
-	Reason            CodeableConcept  `json:"reason,omitempty"`     // The reason the procedure was performed
-	Encounter         *Reference       `json:"encounter,omitempty"`  // The encounter during which the procedure was performed
-	Note              []Annotation     `json:"note,omitempty"`       // Additional notes about the procedure
-	Reported          bool             `json:"reported,omitempty"`   // Whether the procedure was reported
-	ReportedReference *Reference       `json:"reportedby,omitempty"` // Who reported the procedure
+	ID                Identifier      `json:"identifier"`           // Unique identifier for the procedure
+	Subject           *Reference      `json:"subject,omitempty"`    // The patient the procedure was performed on
+	Code              CodeableConcept `json:"code,omitempty"`       // The specific procedure performed
+	Status            Code            `json:"status,omitempty"`     // The status of the procedure (completed, planned, etc.)
+	Category          CodeableConcept `json:"category,omitempty"`   // Classification of the procedure
+	Performer         *Reference      `json:"performed,omitempty"`  // The entities who performed the procedure
+	PartOf            *Reference      `json:"contained,omitempty"`  // A larger event of which this particular procedure is a component
+	BasedOn           *Reference      `json:"basedon,omitempty"`    // A request for this procedure
+	Reason            CodeableConcept `json:"reason,omitempty"`     // The reason the procedure was performed
+	Encounter         *Reference      `json:"encounter,omitempty"`  // The encounter during which the procedure was performed
+	Note              []Annotation    `json:"note,omitempty"`       // Additional notes about the procedure
+	ReportedReference *Reference      `json:"reportedby,omitempty"` // Who reported the procedure
 }
 
 // Immunization records information about a vaccination event
 type Immunization struct {
-	Resource            `json:",inline"`    // Inherits fields from the base Resource struct
 	ID                  Identifier          `json:"identifier"`             // Unique identifier for the immunization event
 	Patient             *Reference          `json:"patient,omitempty"`      // The patient who received the vaccine
 	VaccineCode         CodeableConcept     `json:"vaccineCode,omitempty"`  // Vaccine that was administered
@@ -423,7 +345,6 @@ type Immunization struct {
 
 // Condition captures information about a health condition diagnosed or identified in a patient
 type Condition struct {
-	Resource           `json:",inline"`    // Inherits fields from the base Resource struct
 	ID                 Identifier          `json:"id"`                           // Unique identifier for the condition instance
 	ClinicalStatus     CodeableConcept     `json:"clinicalStatus,omitempty"`     // Clinical status of the condition
 	VerificationStatus CodeableConcept     `json:"verificationStatus,omitempty"` // Verification status of the condition
@@ -446,7 +367,6 @@ type ConditionEvidence struct {
 
 // MedicationStatement represents information about medication that is being consumed by a patient
 type MedicationStatement struct {
-	Resource                  `json:",inline"`  // Inherits the common fields from Resource, such as ID and Meta
 	ID                        string            `json:"id"`                                  // Unique identifier for this particular MedicationStatement
 	Status                    string            `json:"status"`                              // Medication status (active, completed, entered-in-error, intended, stopped, on-hold)
 	MedicationCodeableConcept CodeableConcept   `json:"medicationCodeableConcept,omitempty"` // Identifies the medication being administered. This should be a codified drug name
@@ -482,7 +402,6 @@ type Repeat struct {
 
 // MedicationRequest represents a request for prescribing medication to a patient
 type MedicationRequest struct {
-	Resource                  `json:",inline"` // Inherits fields from the base Resource struct
 	ID                        Identifier       `json:"identifier"`                  // Unique identifier for this medication request
 	Status                    Code             `json:"status"`                      // The status of the prescription (e.g., active, cancelled, completed)
 	Intent                    Code             `json:"intent"`                      // The intention behind the prescription order (e.g., order, proposal, plan)
@@ -509,34 +428,30 @@ type Duration struct {
 	Value  float64 `json:"value"`            // The numeric value of the duration
 	Unit   string  `json:"unit,omitempty"`   // The unit of measurement for the duration, e.g., days, weeks
 	System string  `json:"system,omitempty"` // The system that the unit is derived from
-	Code   string  `json:"code,omitempty"`   // The code for the unit
 }
 
 // Insurance represents coverage provided to an individual or organization for healthcare costs
 type Insurance struct {
-	Resource     `json:",inline"` // Inherits fields from the base Resource struct
-	ID           Identifier       `json:"identifier"`             // Unique identifier for the insurance policy
-	Status       Coding           `json:"status,omitempty"`       // The status of the insurance (active, cancelled, etc.)
-	Type         CodeableConcept  `json:"type,omitempty"`         // The type of insurance (e.g., health, auto, property)
-	Subject      *Reference       `json:"subject,omitempty"`      // The individual or entity covered by the insurance
-	SubscriberID []Identifier     `json:"subscriberId,omitempty"` // Identifier for the subscriber of the policy
-	Plan         *Reference       `json:"plan,omitempty"`         // Specific plan details of the insurance
-	Payor        []Reference      `json:"payor,omitempty"`        // The organization or entity covering the insurance
-	Beneficiary  *Reference       `json:"beneficiary,omitempty"`  // Beneficiary of the insurance policy
-	Relationship *Reference       `json:"relationship,omitempty"` // Relationship of the beneficiary to the subscriber
-	Period       Period           `json:"period,omitempty"`       // Time period the insurance coverage is in effect
+	ID           Identifier      `json:"identifier"`             // Unique identifier for the insurance policy
+	Status       Coding          `json:"status,omitempty"`       // The status of the insurance (active, cancelled, etc.)
+	Type         CodeableConcept `json:"type,omitempty"`         // The type of insurance (e.g., health, auto, property)
+	Subject      *Reference      `json:"subject,omitempty"`      // The individual or entity covered by the insurance
+	SubscriberID Identifier      `json:"subscriberId,omitempty"` // Identifier for the subscriber of the policy
+	Plan         *Reference      `json:"plan,omitempty"`         // Specific plan details of the insurance
+	Payor        *Reference      `json:"payor,omitempty"`        // The organization or entity covering the insurance
+	Beneficiary  *Reference      `json:"beneficiary,omitempty"`  // Beneficiary of the insurance policy
+	Period       Period          `json:"period,omitempty"`       // Time period the insurance coverage is in effect
 }
 
 // Appointment represents a scheduled healthcare event for a patient
 type Appointment struct {
-	Resource    `json:",inline"` // Inherits fields from the base Resource struct
-	ID          Identifier       `json:"identifier"`            // Unique identifier for the appointment
-	Status      Coding           `json:"status,omitempty"`      // Current status of the appointment (booked, cancelled, etc.)
-	Subject     *Reference       `json:"subject,omitempty"`     // The patient that the appointment is for
-	Participant []Participant    `json:"participant,omitempty"` // Individuals involved in the appointment
-	Start       time.Time        `json:"start,omitempty"`       // Scheduled start time of the appointment
-	End         time.Time        `json:"end,omitempty"`         // Scheduled end time of the appointment
-	Booked      time.Time        `json:"booked,omitempty"`      // The time when the appointment was initially booked
+	ID          Identifier    `json:"identifier"`            // Unique identifier for the appointment
+	Status      Coding        `json:"status,omitempty"`      // Current status of the appointment (booked, cancelled, etc.)
+	Subject     *Reference    `json:"subject,omitempty"`     // The patient that the appointment is for
+	Participant []Participant `json:"participant,omitempty"` // Individuals involved in the appointment
+	Start       time.Time     `json:"start,omitempty"`       // Scheduled start time of the appointment
+	End         time.Time     `json:"end,omitempty"`         // Scheduled end time of the appointment
+	Booked      time.Time     `json:"booked,omitempty"`      // The time when the appointment was initially booked
 }
 
 // Participant details an individual's role in an appointment
@@ -549,7 +464,6 @@ type Participant struct {
 
 // ServiceRequest represents an order for a service to be performed.
 type ServiceRequest struct {
-	Resource       `json:",inline"`
 	ID             Identifier        `json:"identifier"`
 	Status         Code              `json:"status"`                   // e.g., active, on-hold, completed
 	Intent         Code              `json:"intent"`                   // e.g., order, original-order, reflex-order
