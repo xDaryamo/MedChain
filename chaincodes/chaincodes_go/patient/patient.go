@@ -2,7 +2,7 @@ package patient
 
 import (
 	"encoding/json"
-	"fmt"
+	"errors"
 
 	"github.com/hyperledger/fabric-contract-api-go/contractapi"
 	"github.com/xDaryamo/MedChain/fhir"
@@ -17,20 +17,20 @@ func (c *PatientContract) CreatePatient(ctx contractapi.TransactionContextInterf
 	var patient fhir.Patient
 	err := json.Unmarshal([]byte(patientJSON), &patient)
 	if err != nil {
-		return fmt.Errorf("failed to unmarshal patient: %v", err)
+		return errors.New("failed to unmarshal patient: " + err.Error())
 	}
 
 	exists, err := ctx.GetStub().GetState(patientID)
 	if err != nil {
-		return fmt.Errorf("failed to get patient: %v", err)
+		return errors.New("failed to get patient: " + err.Error())
 	}
 	if exists != nil {
-		return fmt.Errorf("patient already exists: %s", patientID)
+		return errors.New("patient already exists: " + patientID)
 	}
 
 	patientJSONBytes, err := json.Marshal(patient)
 	if err != nil {
-		return err
+		return errors.New("failed to marshal patient: " + err.Error())
 	}
 
 	// Save the new patient to the ledger
@@ -41,16 +41,16 @@ func (c *PatientContract) CreatePatient(ctx contractapi.TransactionContextInterf
 func (c *PatientContract) ReadPatient(ctx contractapi.TransactionContextInterface, patientID string) (*fhir.Patient, error) {
 	patientJSON, err := ctx.GetStub().GetState(patientID)
 	if err != nil {
-		return nil, fmt.Errorf("failed to read patient: %v", err)
+		return nil, errors.New("failed to read patient: " + err.Error())
 	}
 	if patientJSON == nil {
-		return nil, fmt.Errorf("patient does not exist: %s", patientID)
+		return nil, errors.New("patient does not exist: " + patientID)
 	}
 
 	var patient fhir.Patient
 	err = json.Unmarshal(patientJSON, &patient)
 	if err != nil {
-		return nil, fmt.Errorf("failed to unmarshal patient: %v", err)
+		return nil, errors.New("failed to unmarshal patient: " + err.Error())
 	}
 
 	return &patient, nil
@@ -60,10 +60,10 @@ func (c *PatientContract) ReadPatient(ctx contractapi.TransactionContextInterfac
 func (c *PatientContract) UpdatePatient(ctx contractapi.TransactionContextInterface, patientID string, patientJSON string) error {
 	exists, err := ctx.GetStub().GetState(patientID)
 	if err != nil {
-		return fmt.Errorf("failed to get patient: %v", err)
+		return errors.New("failed to get patient: " + err.Error())
 	}
 	if exists == nil {
-		return fmt.Errorf("patient does not exist: %s", patientID)
+		return errors.New("patient does not exist: " + patientID)
 	}
 
 	return ctx.GetStub().PutState(patientID, []byte(patientJSON))
@@ -73,10 +73,10 @@ func (c *PatientContract) UpdatePatient(ctx contractapi.TransactionContextInterf
 func (c *PatientContract) DeletePatient(ctx contractapi.TransactionContextInterface, patientID string) error {
 	exists, err := ctx.GetStub().GetState(patientID)
 	if err != nil {
-		return fmt.Errorf("failed to get patient: %v", err)
+		return errors.New("failed to get patient: " + err.Error())
 	}
 	if exists == nil {
-		return fmt.Errorf("patient does not exist: %s", patientID)
+		return errors.New("patient does not exist: " + patientID)
 	}
 
 	// Remove the patient record
