@@ -2,6 +2,8 @@ module github.com/xDaryamo/MedChain
 
 go 1.21.0
 
+replace github.com/xDaryamo/Medchain/fhir => ./fhir
+
 require github.com/hyperledger/fabric-contract-api-go v1.2.2
 
 require (
