@@ -3,13 +3,15 @@ package records
 import (
 	"encoding/json"
 	"errors"
+	"log"
+	"strings"
 
 	"github.com/hyperledger/fabric-contract-api-go/contractapi"
-	"github.com/xDaryamo/Medchain/fhir"
+	"github.com/xDaryamo/MedChain/fhir"
 )
 
-// MedicalRecordsContract represents the contract for managing medical records on the blockchain
-type MedicalRecordsContract struct {
+// MedicalRecordsChaincode represents the Chaincode for managing medical records on the blockchain
+type MedicalRecordsChaincode struct {
 	contractapi.Contract
 }
 
@@ -24,7 +26,7 @@ type MedicalRecords struct {
 }
 
 // CreateMedicalRecords creates a new medical record folder for a patient
-func (mc *MedicalRecordsContract) CreateMedicalRecords(ctx contractapi.TransactionContextInterface, patientID string, medicalRecordJSON string) error {
+func (mc *MedicalRecordsChaincode) CreateMedicalRecords(ctx contractapi.TransactionContextInterface, patientID string, medicalRecordJSON string) error {
 	// Deserialize JSON data into a Go data structure
 	var medicalRecord MedicalRecords
 	if err := json.Unmarshal([]byte(medicalRecordJSON), &medicalRecord); err != nil {
@@ -49,7 +51,7 @@ func (mc *MedicalRecordsContract) CreateMedicalRecords(ctx contractapi.Transacti
 }
 
 // GetMedicalRecords retrieves a patient's medical record folder from the blockchain
-func (mc *MedicalRecordsContract) GetMedicalRecords(ctx contractapi.TransactionContextInterface, patientID string) (*MedicalRecords, error) {
+func (mc *MedicalRecordsChaincode) GetMedicalRecords(ctx contractapi.TransactionContextInterface, patientID string) (*MedicalRecords, error) {
 	// Retrieve the medical record folder from the blockchain
 	medicalRecordJSON, err := ctx.GetStub().GetState(patientID)
 	if err != nil {
@@ -70,7 +72,7 @@ func (mc *MedicalRecordsContract) GetMedicalRecords(ctx contractapi.TransactionC
 }
 
 // UpdateMedicalRecords updates an existing medical record folder for a patient
-func (mc *MedicalRecordsContract) UpdateMedicalRecords(ctx contractapi.TransactionContextInterface, patientID string, updatedMedicalRecordJSON string) error {
+func (mc *MedicalRecordsChaincode) UpdateMedicalRecords(ctx contractapi.TransactionContextInterface, patientID string, updatedMedicalRecordJSON string) error {
 	// Retrieve the existing medical record folder
 	existingRecord, err := mc.GetMedicalRecords(ctx, patientID)
 	if err != nil {
@@ -102,7 +104,7 @@ func (mc *MedicalRecordsContract) UpdateMedicalRecords(ctx contractapi.Transacti
 }
 
 // DeleteMedicalRecords removes an existing medical record folder for a patient
-func (mc *MedicalRecordsContract) DeleteMedicalRecords(ctx contractapi.TransactionContextInterface, patientID string) error {
+func (mc *MedicalRecordsChaincode) DeleteMedicalRecords(ctx contractapi.TransactionContextInterface, patientID string) error {
 	// Check if the medical record folder for the patient exists
 	existingRecord, err := mc.GetMedicalRecords(ctx, patientID)
 	if err != nil {
@@ -114,4 +116,51 @@ func (mc *MedicalRecordsContract) DeleteMedicalRecords(ctx contractapi.Transacti
 
 	// Remove the medical record folder from the blockchain
 	return ctx.GetStub().DelState(patientID)
+}
+
+// SearchMedicalRecords allows searching for medical records based on specific conditions
+func (mc *MedicalRecordsChaincode) SearchMedicalRecords(ctx contractapi.TransactionContextInterface, query string) ([]*MedicalRecords, error) {
+	var results []*MedicalRecords
+
+	// Retrieve all medical records stored on the blockchain
+	iterator, err := ctx.GetStub().GetStateByRange("", "")
+	if err != nil {
+		return nil, err
+	}
+	defer iterator.Close()
+
+	// Iterate through all records and filter those that match the query
+	for iterator.HasNext() {
+		result, err := iterator.Next()
+		if err != nil {
+			return nil, err
+		}
+		var medicalRecord MedicalRecords
+		err = json.Unmarshal(result.Value, &medicalRecord)
+		if err != nil {
+			return nil, err
+		}
+
+		//Check if the value of the Identifier object in Condition matches the query
+		for _, condition := range medicalRecord.Conditions {
+
+			if strings.Contains(condition.ID.Value, query) {
+				results = append(results, &medicalRecord)
+			}
+
+		}
+	}
+
+	return results, nil
+}
+
+func main() {
+	chaincode, err := contractapi.NewChaincode(new(MedicalRecordsChaincode))
+	if err != nil {
+		log.Panic(errors.New("Error creating medical records chaincode: " + err.Error()))
+	}
+
+	if err := chaincode.Start(); err != nil {
+		log.Panic(errors.New("Error starting medical records chaincode: " + err.Error()))
+	}
 }
