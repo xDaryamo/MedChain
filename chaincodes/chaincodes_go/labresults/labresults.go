@@ -3,6 +3,7 @@ package labresults
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 	"log"
 
 	"github.com/hyperledger/fabric-contract-api-go/contractapi"
@@ -76,6 +77,31 @@ func (t *LabResultsChaincode) LabResultExists(ctx contractapi.TransactionContext
 		return false, errors.New("failed to read from world state")
 	}
 	return labResultAsBytes != nil, nil
+}
+
+// QueryLabResults retrieves lab results for a specific patient using the Observation struct
+func (t *LabResultsChaincode) QueryLabResults(ctx contractapi.TransactionContextInterface, patientID string) ([]fhir.Observation, error) {
+	queryString := fmt.Sprintf(`{"selector":{"docType":"observation","subject.reference":"%s", "category.text":"Laboratory"}}`, patientID)
+	resultsIterator, err := ctx.GetStub().GetQueryResult(queryString)
+	if err != nil {
+		return nil, err
+	}
+	defer resultsIterator.Close()
+
+	var results []fhir.Observation
+	for resultsIterator.HasNext() {
+		queryResponse, err := resultsIterator.Next()
+		if err != nil {
+			return nil, err
+		}
+
+		var observation fhir.Observation
+		if err := json.Unmarshal(queryResponse.Value, &observation); err != nil {
+			return nil, err
+		}
+		results = append(results, observation)
+	}
+	return results, nil
 }
 
 func main() {
