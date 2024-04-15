@@ -118,7 +118,6 @@ func (mc *MedicalRecordsChaincode) DeleteMedicalRecords(ctx contractapi.Transact
 	return ctx.GetStub().DelState(patientID)
 }
 
-// SearchMedicalRecords allows searching for medical records based on specific conditions
 func (mc *MedicalRecordsChaincode) SearchMedicalRecords(ctx contractapi.TransactionContextInterface, query string) ([]*MedicalRecords, error) {
 	var results []*MedicalRecords
 
@@ -141,13 +140,13 @@ func (mc *MedicalRecordsChaincode) SearchMedicalRecords(ctx contractapi.Transact
 			return nil, err
 		}
 
-		//Check if the value of the Identifier object in Condition matches the query
+		// Check if any condition matches the query
 		for _, condition := range medicalRecord.Conditions {
-
 			if strings.Contains(condition.ID.Value, query) {
-				results = append(results, &medicalRecord)
-			}
 
+				results = append(results, &medicalRecord)
+				break
+			}
 		}
 	}
 
