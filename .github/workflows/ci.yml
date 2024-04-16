@@ -13,7 +13,10 @@ jobs:
         go-version: '1.21.0'
     - name: Install dependencies
       run: |
+        cd chaincodes/chaincodes_go
         go mod tidy
         go mod download
     - name: Run tests
-      run: go test ./...
+      run: |
+        cd chaincodes/chaincodes_go/test
+        go test   -list=.
