@@ -1,0 +1,31 @@
+name: CI for Hyperledger Fabric Chaincode
+
+on: [push]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Go
+      uses: actions/setup-go@v2
+      with:
+        go-version: '1.21.0'
+    - name: Install dependencies
+      run: |
+        cd chaincodes/chaincodes_go
+        go mod tidy
+        go mod download
+    - name: Check for test directory
+      id: check-test-dir
+      run: |
+        if [ -d chaincodes/chaincodes_go/test ]; then
+          echo "TEST_DIR_EXISTS=true" >> $GITHUB_ENV
+        else
+          echo "TEST_DIR_EXISTS=false" >> $GITHUB_ENV
+        fi
+    - name: Run tests
+      if: env.TEST_DIR_EXISTS == 'true'
+      run: |
+        cd chaincodes/chaincodes_go/test
+        go test   -list=.
