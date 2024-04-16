@@ -14,18 +14,19 @@ type PatientContract struct {
 
 // CreatePatient adds a new patient record to the ledger
 func (c *PatientContract) CreatePatient(ctx contractapi.TransactionContextInterface, patientID string, patientJSON string) error {
-	var patient fhir.Patient
-	err := json.Unmarshal([]byte(patientJSON), &patient)
-	if err != nil {
-		return errors.New("failed to unmarshal patient: " + err.Error())
-	}
-
+	// Check if patient exists before unmarshaling JSON to avoid unnecessary processing
 	exists, err := ctx.GetStub().GetState(patientID)
 	if err != nil {
 		return errors.New("failed to get patient: " + err.Error())
 	}
 	if exists != nil {
 		return errors.New("patient already exists: " + patientID)
+	}
+
+	var patient fhir.Patient
+	err = json.Unmarshal([]byte(patientJSON), &patient)
+	if err != nil {
+		return errors.New("failed to unmarshal patient: " + err.Error())
 	}
 
 	patientJSONBytes, err := json.Marshal(patient)
@@ -66,7 +67,15 @@ func (c *PatientContract) UpdatePatient(ctx contractapi.TransactionContextInterf
 		return errors.New("patient does not exist: " + patientID)
 	}
 
-	return ctx.GetStub().PutState(patientID, []byte(patientJSON))
+	var patient fhir.Patient
+	if err := json.Unmarshal([]byte(patientJSON), &patient); err != nil {
+		return errors.New("failed to unmarshal patient: " + err.Error())
+	}
+
+	if err := ctx.GetStub().PutState(patientID, []byte(patientJSON)); err != nil {
+		return errors.New("failed to put state: " + err.Error())
+	}
+	return nil
 }
 
 // DeletePatient removes a patient record from the ledger
