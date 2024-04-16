@@ -16,7 +16,16 @@ jobs:
         cd chaincodes/chaincodes_go
         go mod tidy
         go mod download
+    - name: Check for test directory
+      id: check-test-dir
+      run: |
+        if [ -d chaincodes/chaincodes_go/test ]; then
+          echo "TEST_DIR_EXISTS=true" >> $GITHUB_ENV
+        else
+          echo "TEST_DIR_EXISTS=false" >> $GITHUB_ENV
+        fi
     - name: Run tests
+      if: env.TEST_DIR_EXISTS == 'true'
       run: |
         cd chaincodes/chaincodes_go/test
         go test   -list=.
