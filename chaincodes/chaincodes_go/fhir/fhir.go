@@ -26,6 +26,7 @@ type CodeableConcept struct {
 // Reference is a reference from one resource to another
 type Reference struct {
 	Reference string `json:"reference,omitempty"` // A reference to a location at which the other resource is found
+	Display   string `json:"display,omitempty"`
 }
 
 // Identifier is used to identify a specific instance of a resource
