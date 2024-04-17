@@ -81,7 +81,7 @@ func (t *LabResultsChaincode) LabResultExists(ctx contractapi.TransactionContext
 
 // QueryLabResults retrieves lab results for a specific patient using the Observation struct
 func (t *LabResultsChaincode) QueryLabResults(ctx contractapi.TransactionContextInterface, patientID string) ([]fhir.Observation, error) {
-	queryString := fmt.Sprintf(`{"selector":{"docType":"observation","subject.reference":"%s", "category.text":"Laboratory"}}`, patientID)
+	queryString := fmt.Sprintf(`{"selector":{"subject.reference":"%s", "category.text":"Laboratory"}}`, patientID)
 	resultsIterator, err := ctx.GetStub().GetQueryResult(queryString)
 	if err != nil {
 		return nil, err
