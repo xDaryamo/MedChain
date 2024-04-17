@@ -11,7 +11,7 @@ import (
 	"github.com/hyperledger/fabric-protos-go/peer"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
-	"github.com/xDaryamo/MedChain/records"
+	records "github.com/xDaryamo/MedChain"
 )
 
 // MockStub is a mock implementation of the ChaincodeStubInterface
