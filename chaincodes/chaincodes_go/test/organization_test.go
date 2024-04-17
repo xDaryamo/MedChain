@@ -13,8 +13,8 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/require"
+	organization "github.com/xDaryamo/MedChain"
 	"github.com/xDaryamo/MedChain/fhir"
-	"github.com/xDaryamo/MedChain/organization"
 )
 
 // MockStub is a mock implementation of the ChaincodeStubInterface
