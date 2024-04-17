@@ -2,6 +2,8 @@ module github.com/xDaryamo/MedChain
 
 go 1.20
 
+replace github.com/xDaryamo/Medchain/fhir => ./fhir
+
 require (
 	github.com/golang/protobuf v1.5.4
 	github.com/hyperledger/fabric-chaincode-go v0.0.0-20240124143825-7dec3c7e7d45
