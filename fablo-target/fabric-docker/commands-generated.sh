@@ -156,10 +156,10 @@ installChannels() {
 }
 
 installChaincodes() {
-  if [ -n "$(ls "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes-go")" ]; then
+  if [ -n "$(ls "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go")" ]; then
     local version="1.0"
     printHeadline "Packaging chaincode 'health-data-management'" "U1F60E"
-    chaincodeBuild "health-data-management" "golang" "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes-go" "16"
+    chaincodeBuild "health-data-management" "golang" "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go" "12"
     chaincodePackage "cli.ospedale-maresca.aslnapoli3.medchain.com" "peer0.ospedale-maresca.aslnapoli3.medchain.com:7041" "health-data-management" "$version" "golang" printHeadline "Installing 'health-data-management' for OspedaleMaresca" "U1F60E"
     chaincodeInstall "cli.ospedale-maresca.aslnapoli3.medchain.com" "peer0.ospedale-maresca.aslnapoli3.medchain.com:7041" "health-data-management" "$version" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem"
     chaincodeInstall "cli.ospedale-maresca.aslnapoli3.medchain.com" "peer1.ospedale-maresca.aslnapoli3.medchain.com:7042" "health-data-management" "$version" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem"
@@ -196,7 +196,7 @@ installChaincodes() {
     chaincodeCommit "cli.ospedale-maresca.aslnapoli3.medchain.com" "peer0.ospedale-maresca.aslnapoli3.medchain.com:7041" "public-health-channel" "health-data-management" "$version" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem" "peer0.ospedale-maresca.aslnapoli3.medchain.com:7041,peer0.ospedale-del-mare.aslnapoli1.medchain.com:7061,peer0.ospedale-sgiuliano.aslnapoli2.medchain.com:7081,peer0.medicina-generale.napoli.medchain.com:7101,peer0.neurologia.napoli.medchain.com:7121,peer0.farmacia-petrone.napoli.medchain.com:7141,peer0.farmacia-carbone.napoli.medchain.com:7161,peer0.laboratorio-analisi-cmo.medchain.com:7181,peer0.laboratorio-analisi-sdn.medchain.com:7201" "crypto-peer/peer0.ospedale-maresca.aslnapoli3.medchain.com/tls/ca.crt,crypto-peer/peer0.ospedale-del-mare.aslnapoli1.medchain.com/tls/ca.crt,crypto-peer/peer0.ospedale-sgiuliano.aslnapoli2.medchain.com/tls/ca.crt,crypto-peer/peer0.medicina-generale.napoli.medchain.com/tls/ca.crt,crypto-peer/peer0.neurologia.napoli.medchain.com/tls/ca.crt,crypto-peer/peer0.farmacia-petrone.napoli.medchain.com/tls/ca.crt,crypto-peer/peer0.farmacia-carbone.napoli.medchain.com/tls/ca.crt,crypto-peer/peer0.laboratorio-analisi-cmo.medchain.com/tls/ca.crt,crypto-peer/peer0.laboratorio-analisi-sdn.medchain.com/tls/ca.crt" ""
   else
     echo "Warning! Skipping chaincode 'health-data-management' installation. Chaincode directory is empty."
-    echo "Looked in dir: '$CHAINCODES_BASE_DIR/./chaincodes/chaincodes-go'"
+    echo "Looked in dir: '$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go'"
   fi
 
 }
@@ -215,9 +215,9 @@ installChaincode() {
   fi
 
   if [ "$chaincodeName" = "health-data-management" ]; then
-    if [ -n "$(ls "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes-go")" ]; then
+    if [ -n "$(ls "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go")" ]; then
       printHeadline "Packaging chaincode 'health-data-management'" "U1F60E"
-      chaincodeBuild "health-data-management" "golang" "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes-go" "16"
+      chaincodeBuild "health-data-management" "golang" "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go" "12"
       chaincodePackage "cli.ospedale-maresca.aslnapoli3.medchain.com" "peer0.ospedale-maresca.aslnapoli3.medchain.com:7041" "health-data-management" "$version" "golang" printHeadline "Installing 'health-data-management' for OspedaleMaresca" "U1F60E"
       chaincodeInstall "cli.ospedale-maresca.aslnapoli3.medchain.com" "peer0.ospedale-maresca.aslnapoli3.medchain.com:7041" "health-data-management" "$version" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem"
       chaincodeInstall "cli.ospedale-maresca.aslnapoli3.medchain.com" "peer1.ospedale-maresca.aslnapoli3.medchain.com:7042" "health-data-management" "$version" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem"
@@ -255,7 +255,7 @@ installChaincode() {
 
     else
       echo "Warning! Skipping chaincode 'health-data-management' install. Chaincode directory is empty."
-      echo "Looked in dir: '$CHAINCODES_BASE_DIR/./chaincodes/chaincodes-go'"
+      echo "Looked in dir: '$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go'"
     fi
   fi
 }
@@ -307,9 +307,9 @@ upgradeChaincode() {
   fi
 
   if [ "$chaincodeName" = "health-data-management" ]; then
-    if [ -n "$(ls "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes-go")" ]; then
+    if [ -n "$(ls "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go")" ]; then
       printHeadline "Packaging chaincode 'health-data-management'" "U1F60E"
-      chaincodeBuild "health-data-management" "golang" "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes-go" "16"
+      chaincodeBuild "health-data-management" "golang" "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go" "12"
       chaincodePackage "cli.ospedale-maresca.aslnapoli3.medchain.com" "peer0.ospedale-maresca.aslnapoli3.medchain.com:7041" "health-data-management" "$version" "golang" printHeadline "Installing 'health-data-management' for OspedaleMaresca" "U1F60E"
       chaincodeInstall "cli.ospedale-maresca.aslnapoli3.medchain.com" "peer0.ospedale-maresca.aslnapoli3.medchain.com:7041" "health-data-management" "$version" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem"
       chaincodeInstall "cli.ospedale-maresca.aslnapoli3.medchain.com" "peer1.ospedale-maresca.aslnapoli3.medchain.com:7042" "health-data-management" "$version" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem"
@@ -347,7 +347,7 @@ upgradeChaincode() {
 
     else
       echo "Warning! Skipping chaincode 'health-data-management' upgrade. Chaincode directory is empty."
-      echo "Looked in dir: '$CHAINCODES_BASE_DIR/./chaincodes/chaincodes-go'"
+      echo "Looked in dir: '$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go'"
     fi
   fi
 }
