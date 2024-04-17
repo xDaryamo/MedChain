@@ -13,8 +13,8 @@ import (
 	"github.com/hyperledger/fabric-protos-go/peer"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
+	prescription "github.com/xDaryamo/MedChain"
 	"github.com/xDaryamo/MedChain/fhir"
-	"github.com/xDaryamo/MedChain/prescription"
 )
 
 // MockStub is a mock implementation of the ChaincodeStubInterface
