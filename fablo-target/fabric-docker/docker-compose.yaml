@@ -67,7 +67,7 @@ services:
       - ../fabric-config/crypto-config/peerOrganizations/laboratorio-analisi-cmo.medchain.com/peers/peer0.laboratorio-analisi-cmo.medchain.com/tls/ca.crt:/var/hyperledger/cli/crypto-peer/peer0.laboratorio-analisi-cmo.medchain.com/tls/ca.crt:ro
       - ../fabric-config/crypto-config/peerOrganizations/laboratorio-analisi-sdn.medchain.com/peers/peer0.laboratorio-analisi-sdn.medchain.com/tls/ca.crt:/var/hyperledger/cli/crypto-peer/peer0.laboratorio-analisi-sdn.medchain.com/tls/ca.crt:ro
       - ../fabric-config/chaincode-packages:/var/hyperledger/cli/chaincode-packages/
-      - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes-go/:/var/hyperledger/cli/health-data-management/"
+      - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/:/var/hyperledger/cli/health-data-management/"
     networks:
       - basic
 
@@ -239,7 +239,7 @@ services:
       - ../fabric-config/crypto-config/peerOrganizations/laboratorio-analisi-cmo.medchain.com/peers/peer0.laboratorio-analisi-cmo.medchain.com/tls/ca.crt:/var/hyperledger/cli/crypto-peer/peer0.laboratorio-analisi-cmo.medchain.com/tls/ca.crt:ro
       - ../fabric-config/crypto-config/peerOrganizations/laboratorio-analisi-sdn.medchain.com/peers/peer0.laboratorio-analisi-sdn.medchain.com/tls/ca.crt:/var/hyperledger/cli/crypto-peer/peer0.laboratorio-analisi-sdn.medchain.com/tls/ca.crt:ro
       - ../fabric-config/chaincode-packages:/var/hyperledger/cli/chaincode-packages/
-      - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes-go/:/var/hyperledger/cli/health-data-management/"
+      - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/:/var/hyperledger/cli/health-data-management/"
     networks:
       - basic
 
@@ -281,8 +281,6 @@ services:
       - CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS=couchdb.peer0.ospedale-maresca.aslnapoli3.medchain.com:5984
       - CORE_LEDGER_STATE_COUCHDBCONFIG_USERNAME=peer0
       - CORE_LEDGER_STATE_COUCHDBCONFIG_PASSWORD=peer0Password
-      # enabled gateway
-      - CORE_PEER_GATEWAY_ENABLED=true
     working_dir: /etc/hyperledger/fabric/peer/
     command: peer node start
     ports:
@@ -345,8 +343,6 @@ services:
       - CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS=couchdb.peer1.ospedale-maresca.aslnapoli3.medchain.com:5984
       - CORE_LEDGER_STATE_COUCHDBCONFIG_USERNAME=peer1
       - CORE_LEDGER_STATE_COUCHDBCONFIG_PASSWORD=peer1Password
-      # enabled gateway
-      - CORE_PEER_GATEWAY_ENABLED=true
     working_dir: /etc/hyperledger/fabric/peer/
     command: peer node start
     ports:
@@ -435,7 +431,7 @@ services:
       - ../fabric-config/crypto-config/peerOrganizations/laboratorio-analisi-cmo.medchain.com/peers/peer0.laboratorio-analisi-cmo.medchain.com/tls/ca.crt:/var/hyperledger/cli/crypto-peer/peer0.laboratorio-analisi-cmo.medchain.com/tls/ca.crt:ro
       - ../fabric-config/crypto-config/peerOrganizations/laboratorio-analisi-sdn.medchain.com/peers/peer0.laboratorio-analisi-sdn.medchain.com/tls/ca.crt:/var/hyperledger/cli/crypto-peer/peer0.laboratorio-analisi-sdn.medchain.com/tls/ca.crt:ro
       - ../fabric-config/chaincode-packages:/var/hyperledger/cli/chaincode-packages/
-      - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes-go/:/var/hyperledger/cli/health-data-management/"
+      - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/:/var/hyperledger/cli/health-data-management/"
     networks:
       - basic
 
@@ -477,8 +473,6 @@ services:
       - CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS=couchdb.peer0.ospedale-del-mare.aslnapoli1.medchain.com:5984
       - CORE_LEDGER_STATE_COUCHDBCONFIG_USERNAME=peer0
       - CORE_LEDGER_STATE_COUCHDBCONFIG_PASSWORD=peer0Password
-      # enabled gateway
-      - CORE_PEER_GATEWAY_ENABLED=true
     working_dir: /etc/hyperledger/fabric/peer/
     command: peer node start
     ports:
@@ -541,8 +535,6 @@ services:
       - CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS=couchdb.peer1.ospedale-del-mare.aslnapoli1.medchain.com:5984
       - CORE_LEDGER_STATE_COUCHDBCONFIG_USERNAME=peer1
       - CORE_LEDGER_STATE_COUCHDBCONFIG_PASSWORD=peer1Password
-      # enabled gateway
-      - CORE_PEER_GATEWAY_ENABLED=true
     working_dir: /etc/hyperledger/fabric/peer/
     command: peer node start
     ports:
@@ -631,7 +623,7 @@ services:
       - ../fabric-config/crypto-config/peerOrganizations/laboratorio-analisi-cmo.medchain.com/peers/peer0.laboratorio-analisi-cmo.medchain.com/tls/ca.crt:/var/hyperledger/cli/crypto-peer/peer0.laboratorio-analisi-cmo.medchain.com/tls/ca.crt:ro
       - ../fabric-config/crypto-config/peerOrganizations/laboratorio-analisi-sdn.medchain.com/peers/peer0.laboratorio-analisi-sdn.medchain.com/tls/ca.crt:/var/hyperledger/cli/crypto-peer/peer0.laboratorio-analisi-sdn.medchain.com/tls/ca.crt:ro
       - ../fabric-config/chaincode-packages:/var/hyperledger/cli/chaincode-packages/
-      - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes-go/:/var/hyperledger/cli/health-data-management/"
+      - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/:/var/hyperledger/cli/health-data-management/"
     networks:
       - basic
 
@@ -673,8 +665,6 @@ services:
       - CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS=couchdb.peer0.ospedale-sgiuliano.aslnapoli2.medchain.com:5984
       - CORE_LEDGER_STATE_COUCHDBCONFIG_USERNAME=peer0
       - CORE_LEDGER_STATE_COUCHDBCONFIG_PASSWORD=peer0Password
-      # enabled gateway
-      - CORE_PEER_GATEWAY_ENABLED=true
     working_dir: /etc/hyperledger/fabric/peer/
     command: peer node start
     ports:
@@ -737,8 +727,6 @@ services:
       - CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS=couchdb.peer1.ospedale-sgiuliano.aslnapoli2.medchain.com:5984
       - CORE_LEDGER_STATE_COUCHDBCONFIG_USERNAME=peer1
       - CORE_LEDGER_STATE_COUCHDBCONFIG_PASSWORD=peer1Password
-      # enabled gateway
-      - CORE_PEER_GATEWAY_ENABLED=true
     working_dir: /etc/hyperledger/fabric/peer/
     command: peer node start
     ports:
@@ -827,7 +815,7 @@ services:
       - ../fabric-config/crypto-config/peerOrganizations/laboratorio-analisi-cmo.medchain.com/peers/peer0.laboratorio-analisi-cmo.medchain.com/tls/ca.crt:/var/hyperledger/cli/crypto-peer/peer0.laboratorio-analisi-cmo.medchain.com/tls/ca.crt:ro
       - ../fabric-config/crypto-config/peerOrganizations/laboratorio-analisi-sdn.medchain.com/peers/peer0.laboratorio-analisi-sdn.medchain.com/tls/ca.crt:/var/hyperledger/cli/crypto-peer/peer0.laboratorio-analisi-sdn.medchain.com/tls/ca.crt:ro
       - ../fabric-config/chaincode-packages:/var/hyperledger/cli/chaincode-packages/
-      - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes-go/:/var/hyperledger/cli/health-data-management/"
+      - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/:/var/hyperledger/cli/health-data-management/"
     networks:
       - basic
 
@@ -869,8 +857,6 @@ services:
       - CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS=couchdb.peer0.medicina-generale.napoli.medchain.com:5984
       - CORE_LEDGER_STATE_COUCHDBCONFIG_USERNAME=peer0
       - CORE_LEDGER_STATE_COUCHDBCONFIG_PASSWORD=peer0Password
-      # enabled gateway
-      - CORE_PEER_GATEWAY_ENABLED=true
     working_dir: /etc/hyperledger/fabric/peer/
     command: peer node start
     ports:
@@ -933,8 +919,6 @@ services:
       - CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS=couchdb.peer1.medicina-generale.napoli.medchain.com:5984
       - CORE_LEDGER_STATE_COUCHDBCONFIG_USERNAME=peer1
       - CORE_LEDGER_STATE_COUCHDBCONFIG_PASSWORD=peer1Password
-      # enabled gateway
-      - CORE_PEER_GATEWAY_ENABLED=true
     working_dir: /etc/hyperledger/fabric/peer/
     command: peer node start
     ports:
@@ -1023,7 +1007,7 @@ services:
       - ../fabric-config/crypto-config/peerOrganizations/laboratorio-analisi-cmo.medchain.com/peers/peer0.laboratorio-analisi-cmo.medchain.com/tls/ca.crt:/var/hyperledger/cli/crypto-peer/peer0.laboratorio-analisi-cmo.medchain.com/tls/ca.crt:ro
       - ../fabric-config/crypto-config/peerOrganizations/laboratorio-analisi-sdn.medchain.com/peers/peer0.laboratorio-analisi-sdn.medchain.com/tls/ca.crt:/var/hyperledger/cli/crypto-peer/peer0.laboratorio-analisi-sdn.medchain.com/tls/ca.crt:ro
       - ../fabric-config/chaincode-packages:/var/hyperledger/cli/chaincode-packages/
-      - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes-go/:/var/hyperledger/cli/health-data-management/"
+      - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/:/var/hyperledger/cli/health-data-management/"
     networks:
       - basic
 
@@ -1065,8 +1049,6 @@ services:
       - CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS=couchdb.peer0.neurologia.napoli.medchain.com:5984
       - CORE_LEDGER_STATE_COUCHDBCONFIG_USERNAME=peer0
       - CORE_LEDGER_STATE_COUCHDBCONFIG_PASSWORD=peer0Password
-      # enabled gateway
-      - CORE_PEER_GATEWAY_ENABLED=true
     working_dir: /etc/hyperledger/fabric/peer/
     command: peer node start
     ports:
@@ -1129,8 +1111,6 @@ services:
       - CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS=couchdb.peer1.neurologia.napoli.medchain.com:5984
       - CORE_LEDGER_STATE_COUCHDBCONFIG_USERNAME=peer1
       - CORE_LEDGER_STATE_COUCHDBCONFIG_PASSWORD=peer1Password
-      # enabled gateway
-      - CORE_PEER_GATEWAY_ENABLED=true
     working_dir: /etc/hyperledger/fabric/peer/
     command: peer node start
     ports:
@@ -1219,7 +1199,7 @@ services:
       - ../fabric-config/crypto-config/peerOrganizations/laboratorio-analisi-cmo.medchain.com/peers/peer0.laboratorio-analisi-cmo.medchain.com/tls/ca.crt:/var/hyperledger/cli/crypto-peer/peer0.laboratorio-analisi-cmo.medchain.com/tls/ca.crt:ro
       - ../fabric-config/crypto-config/peerOrganizations/laboratorio-analisi-sdn.medchain.com/peers/peer0.laboratorio-analisi-sdn.medchain.com/tls/ca.crt:/var/hyperledger/cli/crypto-peer/peer0.laboratorio-analisi-sdn.medchain.com/tls/ca.crt:ro
       - ../fabric-config/chaincode-packages:/var/hyperledger/cli/chaincode-packages/
-      - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes-go/:/var/hyperledger/cli/health-data-management/"
+      - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/:/var/hyperledger/cli/health-data-management/"
     networks:
       - basic
 
@@ -1261,8 +1241,6 @@ services:
       - CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS=couchdb.peer0.farmacia-petrone.napoli.medchain.com:5984
       - CORE_LEDGER_STATE_COUCHDBCONFIG_USERNAME=peer0
       - CORE_LEDGER_STATE_COUCHDBCONFIG_PASSWORD=peer0Password
-      # enabled gateway
-      - CORE_PEER_GATEWAY_ENABLED=true
     working_dir: /etc/hyperledger/fabric/peer/
     command: peer node start
     ports:
@@ -1351,7 +1329,7 @@ services:
       - ../fabric-config/crypto-config/peerOrganizations/laboratorio-analisi-cmo.medchain.com/peers/peer0.laboratorio-analisi-cmo.medchain.com/tls/ca.crt:/var/hyperledger/cli/crypto-peer/peer0.laboratorio-analisi-cmo.medchain.com/tls/ca.crt:ro
       - ../fabric-config/crypto-config/peerOrganizations/laboratorio-analisi-sdn.medchain.com/peers/peer0.laboratorio-analisi-sdn.medchain.com/tls/ca.crt:/var/hyperledger/cli/crypto-peer/peer0.laboratorio-analisi-sdn.medchain.com/tls/ca.crt:ro
       - ../fabric-config/chaincode-packages:/var/hyperledger/cli/chaincode-packages/
-      - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes-go/:/var/hyperledger/cli/health-data-management/"
+      - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/:/var/hyperledger/cli/health-data-management/"
     networks:
       - basic
 
@@ -1393,8 +1371,6 @@ services:
       - CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS=couchdb.peer0.farmacia-carbone.napoli.medchain.com:5984
       - CORE_LEDGER_STATE_COUCHDBCONFIG_USERNAME=peer0
       - CORE_LEDGER_STATE_COUCHDBCONFIG_PASSWORD=peer0Password
-      # enabled gateway
-      - CORE_PEER_GATEWAY_ENABLED=true
     working_dir: /etc/hyperledger/fabric/peer/
     command: peer node start
     ports:
@@ -1483,7 +1459,7 @@ services:
       - ../fabric-config/crypto-config/peerOrganizations/laboratorio-analisi-cmo.medchain.com/peers/peer0.laboratorio-analisi-cmo.medchain.com/tls/ca.crt:/var/hyperledger/cli/crypto-peer/peer0.laboratorio-analisi-cmo.medchain.com/tls/ca.crt:ro
       - ../fabric-config/crypto-config/peerOrganizations/laboratorio-analisi-sdn.medchain.com/peers/peer0.laboratorio-analisi-sdn.medchain.com/tls/ca.crt:/var/hyperledger/cli/crypto-peer/peer0.laboratorio-analisi-sdn.medchain.com/tls/ca.crt:ro
       - ../fabric-config/chaincode-packages:/var/hyperledger/cli/chaincode-packages/
-      - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes-go/:/var/hyperledger/cli/health-data-management/"
+      - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/:/var/hyperledger/cli/health-data-management/"
     networks:
       - basic
 
@@ -1525,8 +1501,6 @@ services:
       - CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS=couchdb.peer0.laboratorio-analisi-cmo.medchain.com:5984
       - CORE_LEDGER_STATE_COUCHDBCONFIG_USERNAME=peer0
       - CORE_LEDGER_STATE_COUCHDBCONFIG_PASSWORD=peer0Password
-      # enabled gateway
-      - CORE_PEER_GATEWAY_ENABLED=true
     working_dir: /etc/hyperledger/fabric/peer/
     command: peer node start
     ports:
@@ -1615,7 +1589,7 @@ services:
       - ../fabric-config/crypto-config/peerOrganizations/laboratorio-analisi-cmo.medchain.com/peers/peer0.laboratorio-analisi-cmo.medchain.com/tls/ca.crt:/var/hyperledger/cli/crypto-peer/peer0.laboratorio-analisi-cmo.medchain.com/tls/ca.crt:ro
       - ../fabric-config/crypto-config/peerOrganizations/laboratorio-analisi-sdn.medchain.com/peers/peer0.laboratorio-analisi-sdn.medchain.com/tls/ca.crt:/var/hyperledger/cli/crypto-peer/peer0.laboratorio-analisi-sdn.medchain.com/tls/ca.crt:ro
       - ../fabric-config/chaincode-packages:/var/hyperledger/cli/chaincode-packages/
-      - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes-go/:/var/hyperledger/cli/health-data-management/"
+      - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/:/var/hyperledger/cli/health-data-management/"
     networks:
       - basic
 
@@ -1657,8 +1631,6 @@ services:
       - CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS=couchdb.peer0.laboratorio-analisi-sdn.medchain.com:5984
       - CORE_LEDGER_STATE_COUCHDBCONFIG_USERNAME=peer0
       - CORE_LEDGER_STATE_COUCHDBCONFIG_PASSWORD=peer0Password
-      # enabled gateway
-      - CORE_PEER_GATEWAY_ENABLED=true
     working_dir: /etc/hyperledger/fabric/peer/
     command: peer node start
     ports:
