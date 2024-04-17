@@ -1,6 +1,6 @@
 module github.com/xDaryamo/MedChain
 
-go 1.21.0
+go 1.20
 
 replace github.com/xDaryamo/Medchain/fhir => ./fhir
 
