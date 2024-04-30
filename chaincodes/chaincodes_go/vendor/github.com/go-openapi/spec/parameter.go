@@ -85,6 +85,8 @@ type ParamProps struct {
 //
 // There are five possible parameter types.
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
 <<<<<<< HEAD
 =======
 <<<<<<< HEAD
@@ -118,6 +120,7 @@ type ParamProps struct {
 >>>>>>> master
 =======
 >>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 // * Path - Used together with [Path Templating](#pathTemplating), where the parameter value is actually part
 //   of the operation's URL. This does not include the host or base path of the API. For example, in `/items/{itemId}`,
 //   the path parameter is `itemId`.
@@ -140,6 +143,8 @@ type ParamProps struct {
 //   For example, for the header `Content-Disposition: form-data; name="submit-name"` the name of the parameter is
 //   `submit-name`. This type of form parameters is more commonly used for file transfers.
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
 <<<<<<< HEAD
 =======
 >>>>>>> master
@@ -147,6 +152,7 @@ type ParamProps struct {
 >>>>>>> master
 =======
 >>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 //
 // For more information: http://goo.gl/8us55a#parameterObject
 type Parameter struct {

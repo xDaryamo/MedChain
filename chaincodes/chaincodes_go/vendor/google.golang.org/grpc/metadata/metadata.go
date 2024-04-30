@@ -26,6 +26,10 @@ import (
 	"fmt"
 	"strings"
 <<<<<<< HEAD
+)
+
+=======
+<<<<<<< HEAD
 <<<<<<< HEAD
 =======
 <<<<<<< HEAD
@@ -54,6 +58,7 @@ func init() {
 )
 
 >>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 // DecodeKeyValue returns k, v, nil.
 //
 // Deprecated: use k and v directly instead.
@@ -181,6 +186,9 @@ type mdIncomingKey struct{}
 type mdOutgoingKey struct{}
 
 <<<<<<< HEAD
+// NewIncomingContext creates a new context with incoming md attached.
+=======
+<<<<<<< HEAD
 <<<<<<< HEAD
 // NewIncomingContext creates a new context with incoming md attached. md must
 // not be modified after calling this function.
@@ -199,6 +207,7 @@ type mdOutgoingKey struct{}
 =======
 // NewIncomingContext creates a new context with incoming md attached.
 >>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 func NewIncomingContext(ctx context.Context, md MD) context.Context {
 	return context.WithValue(ctx, mdIncomingKey{}, md)
 }
@@ -206,6 +215,9 @@ func NewIncomingContext(ctx context.Context, md MD) context.Context {
 // NewOutgoingContext creates a new context with outgoing md attached. If used
 // in conjunction with AppendToOutgoingContext, NewOutgoingContext will
 <<<<<<< HEAD
+// overwrite any previously-appended metadata.
+=======
+<<<<<<< HEAD
 <<<<<<< HEAD
 // overwrite any previously-appended metadata. md must not be modified after
 // calling this function.
@@ -224,6 +236,7 @@ func NewIncomingContext(ctx context.Context, md MD) context.Context {
 =======
 // overwrite any previously-appended metadata.
 >>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 func NewOutgoingContext(ctx context.Context, md MD) context.Context {
 	return context.WithValue(ctx, mdOutgoingKey{}, rawMD{md: md})
 }
@@ -267,6 +280,9 @@ func FromIncomingContext(ctx context.Context) (MD, bool) {
 
 // ValueFromIncomingContext returns the metadata value corresponding to the metadata
 <<<<<<< HEAD
+// key from the incoming metadata if it exists. Key must be lower-case.
+=======
+<<<<<<< HEAD
 <<<<<<< HEAD
 // key from the incoming metadata if it exists. Keys are matched in a case insensitive
 // manner.
@@ -285,6 +301,7 @@ func FromIncomingContext(ctx context.Context) (MD, bool) {
 =======
 // key from the incoming metadata if it exists. Key must be lower-case.
 >>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 //
 // # Experimental
 //
@@ -300,6 +317,8 @@ func ValueFromIncomingContext(ctx context.Context, key string) []string {
 		return copyOf(v)
 	}
 	for k, v := range md {
+<<<<<<< HEAD
+=======
 <<<<<<< HEAD
 <<<<<<< HEAD
 =======
@@ -317,10 +336,13 @@ func ValueFromIncomingContext(ctx context.Context, key string) []string {
 >>>>>>> master
 =======
 >>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 		// We need to manually convert all keys to lower case, because MD is a
 		// map, and there's no guarantee that the MD attached to the context is
 		// created using our helper functions.
 		if strings.ToLower(k) == key {
+<<<<<<< HEAD
+=======
 <<<<<<< HEAD
 <<<<<<< HEAD
 =======
@@ -329,6 +351,7 @@ func ValueFromIncomingContext(ctx context.Context, key string) []string {
 >>>>>>> master
 =======
 >>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 			return copyOf(v)
 		}
 	}
@@ -336,6 +359,9 @@ func ValueFromIncomingContext(ctx context.Context, key string) []string {
 }
 
 <<<<<<< HEAD
+// the returned slice must not be modified in place
+=======
+<<<<<<< HEAD
 <<<<<<< HEAD
 =======
 <<<<<<< HEAD
@@ -350,6 +376,7 @@ func ValueFromIncomingContext(ctx context.Context, key string) []string {
 =======
 // the returned slice must not be modified in place
 >>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 func copyOf(v []string) []string {
 	vals := make([]string, len(v))
 	copy(vals, v)
@@ -357,6 +384,9 @@ func copyOf(v []string) []string {
 }
 
 <<<<<<< HEAD
+// FromOutgoingContextRaw returns the un-merged, intermediary contents of rawMD.
+=======
+<<<<<<< HEAD
 <<<<<<< HEAD
 // fromOutgoingContextRaw returns the un-merged, intermediary contents of rawMD.
 =======
@@ -373,12 +403,15 @@ func copyOf(v []string) []string {
 =======
 // FromOutgoingContextRaw returns the un-merged, intermediary contents of rawMD.
 >>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 //
 // Remember to perform strings.ToLower on the keys, for both the returned MD (MD
 // is a map, there's no guarantee it's created using our helper functions) and
 // the extra kv pairs (AppendToOutgoingContext doesn't turn them into
 // lowercase).
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
 <<<<<<< HEAD
 func fromOutgoingContextRaw(ctx context.Context) (MD, [][]string, bool) {
 =======
@@ -390,11 +423,14 @@ func fromOutgoingContextRaw(ctx context.Context) (MD, [][]string, bool) {
 >>>>>>> master
 =======
 >>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 //
 // This is intended for gRPC-internal use ONLY. Users should use
 // FromOutgoingContext instead.
 func FromOutgoingContextRaw(ctx context.Context) (MD, [][]string, bool) {
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
 <<<<<<< HEAD
 =======
 >>>>>>> master
@@ -402,6 +438,7 @@ func FromOutgoingContextRaw(ctx context.Context) (MD, [][]string, bool) {
 >>>>>>> master
 =======
 >>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 	raw, ok := ctx.Value(mdOutgoingKey{}).(rawMD)
 	if !ok {
 		return nil, nil, false

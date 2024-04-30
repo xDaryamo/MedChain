@@ -41,6 +41,9 @@ func repairURI(in string) (*url.URL, string) {
 }
 
 <<<<<<< HEAD
+func fixWindowsURI(u *url.URL, in string) {
+=======
+<<<<<<< HEAD
 <<<<<<< HEAD
 func fixWindowsURI(_ *url.URL, _ string) {
 =======
@@ -57,4 +60,5 @@ func fixWindowsURI(u *url.URL, in string) {
 =======
 func fixWindowsURI(u *url.URL, in string) {
 >>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 }

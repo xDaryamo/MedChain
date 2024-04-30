@@ -36,6 +36,9 @@ if [[ "$1" = "-install" ]]; then
   pushd ./test/tools
   go install \
 <<<<<<< HEAD
+    golang.org/x/lint/golint \
+=======
+<<<<<<< HEAD
 <<<<<<< HEAD
 =======
 <<<<<<< HEAD
@@ -50,6 +53,7 @@ if [[ "$1" = "-install" ]]; then
 =======
     golang.org/x/lint/golint \
 >>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
     golang.org/x/tools/cmd/goimports \
     honnef.co/go/tools/cmd/staticcheck \
     github.com/client9/misspell/cmd/misspell
@@ -57,6 +61,9 @@ if [[ "$1" = "-install" ]]; then
   if [[ -z "${VET_SKIP_PROTO}" ]]; then
     if [[ "${GITHUB_ACTIONS}" = "true" ]]; then
 <<<<<<< HEAD
+      PROTOBUF_VERSION=22.0 # a.k.a v4.22.0 in pb.go files.
+=======
+<<<<<<< HEAD
 <<<<<<< HEAD
       PROTOBUF_VERSION=25.2 # a.k.a. v4.22.0 in pb.go files.
 =======
@@ -73,6 +80,7 @@ if [[ "$1" = "-install" ]]; then
 =======
       PROTOBUF_VERSION=22.0 # a.k.a v4.22.0 in pb.go files.
 >>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
       PROTOC_FILENAME=protoc-${PROTOBUF_VERSION}-linux-x86_64.zip
       pushd /home/runner/go
       wget https://github.com/google/protobuf/releases/download/v${PROTOBUF_VERSION}/${PROTOC_FILENAME}
@@ -108,6 +116,8 @@ not grep 'func Test[^(]' *_test.go
 not grep 'func Test[^(]' test/*.go
 
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
 <<<<<<< HEAD
 =======
 <<<<<<< HEAD
@@ -137,6 +147,7 @@ git grep -l 'interface{}' -- "*.go" 2>&1 | not grep -v '\.pb\.go\|protoc-gen-go-
 >>>>>>> master
 =======
 >>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 # - Do not import x/net/context.
 not git grep -l 'x/net/context' -- "*.go"
 
@@ -147,6 +158,8 @@ git grep -l '"math/rand"' -- "*.go" 2>&1 | not grep -v '^examples\|^stress\|grpc
 # - Do not use "interface{}"; use "any" instead.
 git grep -l 'interface{}' -- "*.go" 2>&1 | not grep -v '\.pb\.go\|protoc-gen-go-grpc'
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
 <<<<<<< HEAD
 =======
 >>>>>>> master
@@ -154,6 +167,7 @@ git grep -l 'interface{}' -- "*.go" 2>&1 | not grep -v '\.pb\.go\|protoc-gen-go-
 >>>>>>> master
 =======
 >>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 
 # - Do not call grpclog directly. Use grpclog.Component instead.
 git grep -l -e 'grpclog.I' --or -e 'grpclog.W' --or -e 'grpclog.E' --or -e 'grpclog.F' --or -e 'grpclog.V' -- "*.go" | not grep -v '^grpclog/component.go\|^internal/grpctest/tlogger_test.go'
@@ -163,6 +177,9 @@ not git grep "\(import \|^\s*\)\"github.com/golang/protobuf/ptypes/" -- "*.go"
 
 # - Ensure all usages of grpc_testing package are renamed when importing.
 <<<<<<< HEAD
+not git grep "\(import \|^\s*\)\"google.golang.org/grpc/interop/grpc_testing" -- "*.go" 
+=======
+<<<<<<< HEAD
 <<<<<<< HEAD
 not git grep "\(import \|^\s*\)\"google.golang.org/grpc/interop/grpc_testing" -- "*.go"
 =======
@@ -179,6 +196,7 @@ not git grep "\(import \|^\s*\)\"google.golang.org/grpc/interop/grpc_testing" --
 =======
 not git grep "\(import \|^\s*\)\"google.golang.org/grpc/interop/grpc_testing" -- "*.go" 
 >>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 
 # - Ensure all xds proto imports are renamed to *pb or *grpc.
 git grep '"github.com/envoyproxy/go-control-plane/envoy' -- '*.go' ':(exclude)*.pb.go' | not grep -v 'pb "\|grpc "'
@@ -186,6 +204,10 @@ git grep '"github.com/envoyproxy/go-control-plane/envoy' -- '*.go' ':(exclude)*.
 misspell -error .
 
 <<<<<<< HEAD
+# - gofmt, goimports, golint (with exceptions for generated code), go vet,
+# go mod tidy.
+=======
+<<<<<<< HEAD
 <<<<<<< HEAD
 # - gofmt, goimports, go vet, go mod tidy.
 =======
@@ -205,6 +227,7 @@ misspell -error .
 # - gofmt, goimports, golint (with exceptions for generated code), go vet,
 # go mod tidy.
 >>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 # Perform these checks on each module inside gRPC.
 for MOD_FILE in $(find . -name 'go.mod'); do
   MOD_DIR=$(dirname ${MOD_FILE})
@@ -213,6 +236,9 @@ for MOD_FILE in $(find . -name 'go.mod'); do
   gofmt -s -d -l . 2>&1 | fail_on_output
   goimports -l . 2>&1 | not grep -vE "\.pb\.go"
 <<<<<<< HEAD
+  golint ./... 2>&1 | not grep -vE "/grpc_testing_not_regenerate/.*\.pb\.go:"
+=======
+<<<<<<< HEAD
 <<<<<<< HEAD
 =======
 <<<<<<< HEAD
@@ -227,6 +253,7 @@ for MOD_FILE in $(find . -name 'go.mod'); do
 =======
   golint ./... 2>&1 | not grep -vE "/grpc_testing_not_regenerate/.*\.pb\.go:"
 >>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 
   go mod tidy -compat=1.19
   git status --porcelain 2>&1 | fail_on_output || \
@@ -235,6 +262,8 @@ for MOD_FILE in $(find . -name 'go.mod'); do
 done
 
 # - Collection of static analysis checks
+<<<<<<< HEAD
+=======
 <<<<<<< HEAD
 <<<<<<< HEAD
 =======
@@ -315,6 +344,7 @@ XXXXX PleaseIgnoreUnused'
 >>>>>>> master
 =======
 >>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 #
 # TODO(dfawley): don't use deprecated functions in examples or first-party
 # plugins.
@@ -405,6 +435,8 @@ lint_package_comment() {
 }
 lint_package_comment
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
 <<<<<<< HEAD
 =======
 >>>>>>> master
@@ -412,5 +444,6 @@ lint_package_comment
 >>>>>>> master
 =======
 >>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 
 echo SUCCESS

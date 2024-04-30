@@ -34,6 +34,11 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/connectivity"
 <<<<<<< HEAD
+	"google.golang.org/grpc/credentials"
+	"google.golang.org/grpc/internal"
+	"google.golang.org/grpc/internal/backoff"
+=======
+<<<<<<< HEAD
 <<<<<<< HEAD
 	"google.golang.org/grpc/internal"
 =======
@@ -56,6 +61,7 @@ import (
 	"google.golang.org/grpc/internal"
 	"google.golang.org/grpc/internal/backoff"
 >>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 	"google.golang.org/grpc/internal/channelz"
 	"google.golang.org/grpc/internal/grpcsync"
 	"google.golang.org/grpc/internal/idle"
@@ -69,6 +75,11 @@ import (
 
 	_ "google.golang.org/grpc/balancer/roundrobin"           // To register roundrobin.
 <<<<<<< HEAD
+	_ "google.golang.org/grpc/internal/resolver/dns"         // To register dns resolver.
+	_ "google.golang.org/grpc/internal/resolver/passthrough" // To register passthrough resolver.
+	_ "google.golang.org/grpc/internal/resolver/unix"        // To register unix resolver.
+=======
+<<<<<<< HEAD
 <<<<<<< HEAD
 	_ "google.golang.org/grpc/internal/resolver/passthrough" // To register passthrough resolver.
 	_ "google.golang.org/grpc/internal/resolver/unix"        // To register unix resolver.
@@ -95,6 +106,7 @@ import (
 	_ "google.golang.org/grpc/internal/resolver/passthrough" // To register passthrough resolver.
 	_ "google.golang.org/grpc/internal/resolver/unix"        // To register unix resolver.
 >>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 )
 
 const (
@@ -114,6 +126,9 @@ var (
 	// errConnClosing indicates that the connection is closing.
 	errConnClosing = errors.New("grpc: the connection is closing")
 <<<<<<< HEAD
+	// errConnIdling indicates the the connection is being closed as the channel
+=======
+<<<<<<< HEAD
 <<<<<<< HEAD
 	// errConnIdling indicates the connection is being closed as the channel
 =======
@@ -130,6 +145,7 @@ var (
 =======
 	// errConnIdling indicates the the connection is being closed as the channel
 >>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 	// is moving to an idle mode due to inactivity.
 	errConnIdling = errors.New("grpc: the connection is closing due to channel idleness")
 	// invalidDefaultServiceConfigErrPrefix is used to prefix the json parsing error for the default
@@ -164,6 +180,8 @@ const (
 )
 
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
 <<<<<<< HEAD
 =======
 <<<<<<< HEAD
@@ -173,12 +191,15 @@ const (
 >>>>>>> master
 =======
 >>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 // Dial creates a client connection to the given target.
 func Dial(target string, opts ...DialOption) (*ClientConn, error) {
 	return DialContext(context.Background(), target, opts...)
 }
 
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
 <<<<<<< HEAD
 =======
 >>>>>>> master
@@ -186,6 +207,7 @@ func Dial(target string, opts ...DialOption) (*ClientConn, error) {
 >>>>>>> master
 =======
 >>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 type defaultConfigSelector struct {
 	sc *ServiceConfig
 }
@@ -197,6 +219,8 @@ func (dcs *defaultConfigSelector) SelectConfig(rpcInfo iresolver.RPCInfo) (*ires
 	}, nil
 }
 
+<<<<<<< HEAD
+=======
 <<<<<<< HEAD
 <<<<<<< HEAD
 =======
@@ -222,6 +246,7 @@ func NewClient(target string, opts ...DialOption) (conn *ClientConn, err error) 
 >>>>>>> master
 =======
 >>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 // DialContext creates a client connection to the given target. By default, it's
 // a non-blocking dial (the function won't wait for connections to be
 // established, and connecting happens in the background). To make it a blocking
@@ -240,6 +265,8 @@ func NewClient(target string, opts ...DialOption) (conn *ClientConn, err error) 
 // e.g. to use dns resolver, a "dns:///" prefix should be applied to the target.
 func DialContext(ctx context.Context, target string, opts ...DialOption) (conn *ClientConn, err error) {
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
 <<<<<<< HEAD
 =======
 >>>>>>> master
@@ -247,10 +274,13 @@ func DialContext(ctx context.Context, target string, opts ...DialOption) (conn *
 >>>>>>> master
 =======
 >>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 	cc := &ClientConn{
 		target: target,
 		conns:  make(map[*addrConn]struct{}),
 		dopts:  defaultDialOptions(),
+<<<<<<< HEAD
+=======
 <<<<<<< HEAD
 <<<<<<< HEAD
 =======
@@ -271,6 +301,7 @@ func DialContext(ctx context.Context, target string, opts ...DialOption) (conn *
 >>>>>>> master
 =======
 >>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 		czData: new(channelzData),
 	}
 
@@ -292,6 +323,8 @@ func DialContext(ctx context.Context, target string, opts ...DialOption) (conn *
 	cc.exitIdleCond = sync.NewCond(&cc.mu)
 
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
 <<<<<<< HEAD
 =======
 >>>>>>> master
@@ -299,6 +332,7 @@ func DialContext(ctx context.Context, target string, opts ...DialOption) (conn *
 >>>>>>> master
 =======
 >>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 	disableGlobalOpts := false
 	for _, opt := range opts {
 		if _, ok := opt.(*disableGlobalDialOptions); ok {
@@ -317,6 +351,8 @@ func DialContext(ctx context.Context, target string, opts ...DialOption) (conn *
 		opt.apply(&cc.dopts)
 	}
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
 <<<<<<< HEAD
 	chainUnaryClientInterceptors(cc)
 	chainStreamClientInterceptors(cc)
@@ -332,6 +368,7 @@ func DialContext(ctx context.Context, target string, opts ...DialOption) (conn *
 >>>>>>> master
 =======
 >>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 
 	chainUnaryClientInterceptors(cc)
 	chainStreamClientInterceptors(cc)
@@ -348,6 +385,8 @@ func DialContext(ctx context.Context, target string, opts ...DialOption) (conn *
 	cc.csMgr = newConnectivityStateManager(cc.ctx, cc.channelzID)
 
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
 <<<<<<< HEAD
 =======
 >>>>>>> master
@@ -355,6 +394,7 @@ func DialContext(ctx context.Context, target string, opts ...DialOption) (conn *
 >>>>>>> master
 =======
 >>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 	if err := cc.validateTransportCredentials(); err != nil {
 		return nil, err
 	}
@@ -368,6 +408,8 @@ func DialContext(ctx context.Context, target string, opts ...DialOption) (conn *
 	}
 	cc.mkp = cc.dopts.copts.KeepaliveParams
 
+<<<<<<< HEAD
+=======
 <<<<<<< HEAD
 <<<<<<< HEAD
 =======
@@ -448,10 +490,13 @@ func DialContext(ctx context.Context, target string, opts ...DialOption) (conn *
 >>>>>>> master
 =======
 >>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 	if cc.dopts.copts.UserAgent != "" {
 		cc.dopts.copts.UserAgent += " " + grpcUA
 	} else {
 		cc.dopts.copts.UserAgent = grpcUA
+<<<<<<< HEAD
+=======
 <<<<<<< HEAD
 <<<<<<< HEAD
 =======
@@ -460,6 +505,7 @@ func DialContext(ctx context.Context, target string, opts ...DialOption) (conn *
 >>>>>>> master
 =======
 >>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 	}
 
 	if cc.dopts.timeout > 0 {
@@ -483,6 +529,8 @@ func DialContext(ctx context.Context, target string, opts ...DialOption) (conn *
 	}()
 
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
 <<<<<<< HEAD
 =======
 <<<<<<< HEAD
@@ -492,6 +540,7 @@ func DialContext(ctx context.Context, target string, opts ...DialOption) (conn *
 >>>>>>> master
 =======
 >>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 	if cc.dopts.bs == nil {
 		cc.dopts.bs = backoff.DefaultExponential
 	}
@@ -536,6 +585,8 @@ func DialContext(ctx context.Context, target string, opts ...DialOption) (conn *
 	}
 
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
 <<<<<<< HEAD
 =======
 >>>>>>> master
@@ -543,6 +594,7 @@ func DialContext(ctx context.Context, target string, opts ...DialOption) (conn *
 >>>>>>> master
 =======
 >>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 	// A blocking dial blocks until the clientConn is ready.
 	for {
 		s := cc.GetState()
@@ -575,6 +627,8 @@ func DialContext(ctx context.Context, target string, opts ...DialOption) (conn *
 // channel is a nested one, the same event is also added on the parent channel.
 func (cc *ClientConn) addTraceEvent(msg string) {
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
 <<<<<<< HEAD
 =======
 <<<<<<< HEAD
@@ -598,6 +652,7 @@ func (cc *ClientConn) addTraceEvent(msg string) {
 >>>>>>> master
 =======
 >>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 	ted := &channelz.TraceEventDesc{
 		Desc:     fmt.Sprintf("Channel %s", msg),
 		Severity: channelz.CtInfo,
@@ -610,6 +665,8 @@ func (cc *ClientConn) addTraceEvent(msg string) {
 	}
 	channelz.AddTraceEvent(logger, cc.channelzID, 0, ted)
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
 <<<<<<< HEAD
 =======
 >>>>>>> master
@@ -617,11 +674,16 @@ func (cc *ClientConn) addTraceEvent(msg string) {
 >>>>>>> master
 =======
 >>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 }
 
 type idler ClientConn
 
 <<<<<<< HEAD
+func (i *idler) EnterIdleMode() error {
+	return (*ClientConn)(i).enterIdleMode()
+=======
+<<<<<<< HEAD
 <<<<<<< HEAD
 func (i *idler) EnterIdleMode() {
 	(*ClientConn)(i).enterIdleMode()
@@ -643,6 +705,7 @@ func (i *idler) EnterIdleMode() error {
 func (i *idler) EnterIdleMode() error {
 	return (*ClientConn)(i).enterIdleMode()
 >>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 }
 
 func (i *idler) ExitIdleMode() error {
@@ -651,6 +714,10 @@ func (i *idler) ExitIdleMode() error {
 
 // exitIdleMode moves the channel out of idle mode by recreating the name
 <<<<<<< HEAD
+// resolver and load balancer.
+func (cc *ClientConn) exitIdleMode() error {
+=======
+<<<<<<< HEAD
 <<<<<<< HEAD
 // resolver and load balancer.  This should never be called directly; use
 // cc.idlenessMgr.ExitIdleMode instead.
@@ -674,11 +741,14 @@ func (cc *ClientConn) exitIdleMode() error {
 // resolver and load balancer.
 func (cc *ClientConn) exitIdleMode() error {
 >>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 	cc.mu.Lock()
 	if cc.conns == nil {
 		cc.mu.Unlock()
 		return errConnClosing
 	}
+<<<<<<< HEAD
+=======
 <<<<<<< HEAD
 <<<<<<< HEAD
 =======
@@ -749,6 +819,7 @@ func (cc *ClientConn) enterIdleMode() {
 >>>>>>> master
 =======
 >>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 	if cc.idlenessState != ccIdlenessStateIdle {
 		channelz.Infof(logger, cc.channelzID, "ClientConn asked to exit idle mode, current mode is %v", cc.idlenessState)
 		cc.mu.Unlock()
@@ -854,6 +925,8 @@ func (cc *ClientConn) enterIdleMode() error {
 
 	return nil
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
 <<<<<<< HEAD
 =======
 >>>>>>> master
@@ -861,6 +934,7 @@ func (cc *ClientConn) enterIdleMode() error {
 >>>>>>> master
 =======
 >>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 }
 
 // validateTransportCredentials performs a series of checks on the configured
@@ -900,6 +974,8 @@ func (cc *ClientConn) validateTransportCredentials() error {
 
 // channelzRegistration registers the newly created ClientConn with channelz and
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
 <<<<<<< HEAD
 =======
 <<<<<<< HEAD
@@ -921,6 +997,7 @@ func (cc *ClientConn) channelzRegistration(target string) {
 >>>>>>> master
 =======
 >>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 // stores the returned identifier in `cc.channelzID` and `cc.csMgr.channelzID`.
 // A channelz trace event is emitted for ClientConn creation. If the newly
 // created ClientConn is a nested one, i.e a valid parent ClientConn ID is
@@ -930,6 +1007,8 @@ func (cc *ClientConn) channelzRegistration(target string) {
 func (cc *ClientConn) channelzRegistration(target string) {
 	cc.channelzID = channelz.RegisterChannel(&channelzChannel{cc}, cc.dopts.channelzParentID, target)
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
 <<<<<<< HEAD
 =======
 >>>>>>> master
@@ -937,6 +1016,7 @@ func (cc *ClientConn) channelzRegistration(target string) {
 >>>>>>> master
 =======
 >>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 	cc.addTraceEvent("created")
 }
 
@@ -1004,6 +1084,8 @@ func getChainStreamer(interceptors []StreamClientInterceptor, curr int, finalStr
 
 // newConnectivityStateManager creates an connectivityStateManager with
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
 <<<<<<< HEAD
 =======
 <<<<<<< HEAD
@@ -1021,11 +1103,14 @@ func newConnectivityStateManager(ctx context.Context, channel *channelz.Channel)
 >>>>>>> master
 =======
 >>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 // the specified id.
 func newConnectivityStateManager(ctx context.Context, id *channelz.Identifier) *connectivityStateManager {
 	return &connectivityStateManager{
 		channelzID: id,
 		pubSub:     grpcsync.NewPubSub(ctx),
+<<<<<<< HEAD
+=======
 <<<<<<< HEAD
 <<<<<<< HEAD
 =======
@@ -1034,6 +1119,7 @@ func newConnectivityStateManager(ctx context.Context, id *channelz.Identifier) *
 >>>>>>> master
 =======
 >>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 	}
 }
 
@@ -1048,6 +1134,9 @@ type connectivityStateManager struct {
 	state      connectivity.State
 	notifyChan chan struct{}
 <<<<<<< HEAD
+	channelzID *channelz.Identifier
+=======
+<<<<<<< HEAD
 <<<<<<< HEAD
 	channelz   *channelz.Channel
 =======
@@ -1064,6 +1153,7 @@ type connectivityStateManager struct {
 =======
 	channelzID *channelz.Identifier
 >>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 	pubSub     *grpcsync.PubSub
 }
 
@@ -1080,6 +1170,11 @@ func (csm *connectivityStateManager) updateState(state connectivity.State) {
 		return
 	}
 	csm.state = state
+<<<<<<< HEAD
+	csm.pubSub.Publish(state)
+
+	channelz.Infof(logger, csm.channelzID, "Channel Connectivity change to %v", state)
+=======
 <<<<<<< HEAD
 <<<<<<< HEAD
 =======
@@ -1108,6 +1203,7 @@ func (csm *connectivityStateManager) updateState(state connectivity.State) {
 
 	channelz.Infof(logger, csm.channelzID, "Channel Connectivity change to %v", state)
 >>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 	if csm.notifyChan != nil {
 		// There are other goroutines waiting on this channel.
 		close(csm.notifyChan)
@@ -1162,6 +1258,8 @@ type ClientConn struct {
 
 	// The following are initialized at dial time, and are read-only after that.
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
 <<<<<<< HEAD
 =======
 <<<<<<< HEAD
@@ -1181,6 +1279,7 @@ type ClientConn struct {
 >>>>>>> master
 =======
 >>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 	target          string               // User's dial target.
 	parsedTarget    resolver.Target      // See parseTargetAndFindResolver().
 	authority       string               // See determineAuthority().
@@ -1190,6 +1289,8 @@ type ClientConn struct {
 	balancerWrapper *ccBalancerWrapper   // Uses gracefulswitch.balancer underneath.
 	idlenessMgr     idle.Manager
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
 <<<<<<< HEAD
 =======
 >>>>>>> master
@@ -1197,10 +1298,13 @@ type ClientConn struct {
 >>>>>>> master
 =======
 >>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 
 	// The following provide their own synchronization, and therefore don't
 	// require cc.mu to be held to access them.
 	csMgr              *connectivityStateManager
+<<<<<<< HEAD
+=======
 <<<<<<< HEAD
 <<<<<<< HEAD
 =======
@@ -1232,6 +1336,7 @@ type ClientConn struct {
 >>>>>>> master
 =======
 >>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 	blockingpicker     *pickerWrapper
 	safeConfigSelector iresolver.SafeConfigSelector
 	czData             *channelzData
@@ -1251,6 +1356,8 @@ type ClientConn struct {
 	idlenessState   ccIdlenessState            // Tracks idleness state of the channel.
 	exitIdleCond    *sync.Cond                 // Signalled when channel exits idle.
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
 <<<<<<< HEAD
 =======
 >>>>>>> master
@@ -1258,12 +1365,15 @@ type ClientConn struct {
 >>>>>>> master
 =======
 >>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 
 	lceMu               sync.Mutex // protects lastConnectionError
 	lastConnectionError error
 }
 
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
 <<<<<<< HEAD
 =======
 <<<<<<< HEAD
@@ -1273,6 +1383,7 @@ type ClientConn struct {
 >>>>>>> master
 =======
 >>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 // ccIdlenessState tracks the idleness state of the channel.
 //
 // Channels start off in `active` and move to `idle` after a period of
@@ -1305,6 +1416,8 @@ func (s ccIdlenessState) String() string {
 }
 
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
 <<<<<<< HEAD
 =======
 >>>>>>> master
@@ -1312,6 +1425,7 @@ func (s ccIdlenessState) String() string {
 >>>>>>> master
 =======
 >>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 // WaitForStateChange waits until the connectivity.State of ClientConn changes from sourceState or
 // ctx expires. A true value is returned in former case and false in latter.
 //
@@ -1352,6 +1466,8 @@ func (cc *ClientConn) GetState() connectivity.State {
 // release.
 func (cc *ClientConn) Connect() {
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
 <<<<<<< HEAD
 =======
 <<<<<<< HEAD
@@ -1373,6 +1489,7 @@ func (cc *ClientConn) Connect() {
 >>>>>>> master
 =======
 >>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 	cc.exitIdleMode()
 	// If the ClientConn was not in idle mode, we need to call ExitIdle on the
 	// LB policy so that connections can be created.
@@ -1397,6 +1514,8 @@ func (cc *ClientConn) scWatcher() {
 		}
 	}
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
 <<<<<<< HEAD
 =======
 >>>>>>> master
@@ -1404,6 +1523,7 @@ func (cc *ClientConn) scWatcher() {
 >>>>>>> master
 =======
 >>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 }
 
 // waitForResolvedAddrs blocks until the resolver has provided addresses or the
@@ -1429,6 +1549,8 @@ var emptyServiceConfig *ServiceConfig
 
 func init() {
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
 <<<<<<< HEAD
 	balancer.Register(pickfirstBuilder{})
 =======
@@ -1442,6 +1564,7 @@ func init() {
 >>>>>>> master
 =======
 >>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 	cfg := parseServiceConfig("{}")
 	if cfg.Err != nil {
 		panic(fmt.Sprintf("impossible error parsing empty service config: %v", cfg.Err))
@@ -1451,6 +1574,8 @@ func init() {
 	internal.SubscribeToConnectivityStateChanges = func(cc *ClientConn, s grpcsync.Subscriber) func() {
 		return cc.csMgr.pubSub.Subscribe(s)
 	}
+<<<<<<< HEAD
+=======
 <<<<<<< HEAD
 <<<<<<< HEAD
 =======
@@ -1486,6 +1611,7 @@ func (cc *ClientConn) updateResolverStateAndUnlock(s resolver.State, err error) 
 >>>>>>> master
 =======
 >>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 	internal.EnterIdleModeForTesting = func(cc *ClientConn) error {
 		return cc.enterIdleMode()
 	}
@@ -1510,6 +1636,8 @@ func (cc *ClientConn) updateResolverState(s resolver.State, err error) error {
 	defer cc.firstResolveEvent.Fire()
 	cc.mu.Lock()
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
 <<<<<<< HEAD
 =======
 >>>>>>> master
@@ -1517,6 +1645,7 @@ func (cc *ClientConn) updateResolverState(s resolver.State, err error) error {
 >>>>>>> master
 =======
 >>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 	// Check if the ClientConn is already closed. Some fields (e.g.
 	// balancerWrapper) are set to nil when closing the ClientConn, and could
 	// cause nil pointer panic if we don't have this check.
@@ -1530,6 +1659,9 @@ func (cc *ClientConn) updateResolverState(s resolver.State, err error) error {
 		// doesn't support service configs, or doesn't provide a service config
 		// with the new addresses.
 <<<<<<< HEAD
+		cc.maybeApplyDefaultServiceConfig(nil)
+=======
+<<<<<<< HEAD
 <<<<<<< HEAD
 		cc.maybeApplyDefaultServiceConfig()
 =======
@@ -1546,6 +1678,7 @@ func (cc *ClientConn) updateResolverState(s resolver.State, err error) error {
 =======
 		cc.maybeApplyDefaultServiceConfig(nil)
 >>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 
 		cc.balancerWrapper.resolverError(err)
 
@@ -1556,6 +1689,8 @@ func (cc *ClientConn) updateResolverState(s resolver.State, err error) error {
 
 	var ret error
 	if cc.dopts.disableServiceConfig {
+<<<<<<< HEAD
+=======
 <<<<<<< HEAD
 <<<<<<< HEAD
 =======
@@ -1573,10 +1708,13 @@ func (cc *ClientConn) updateResolverState(s resolver.State, err error) error {
 >>>>>>> master
 =======
 >>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 		channelz.Infof(logger, cc.channelzID, "ignoring service config from resolver (%v) and applying the default because service config is disabled", s.ServiceConfig)
 		cc.maybeApplyDefaultServiceConfig(s.Addresses)
 	} else if s.ServiceConfig == nil {
 		cc.maybeApplyDefaultServiceConfig(s.Addresses)
+<<<<<<< HEAD
+=======
 <<<<<<< HEAD
 <<<<<<< HEAD
 =======
@@ -1585,6 +1723,7 @@ func (cc *ClientConn) updateResolverState(s resolver.State, err error) error {
 >>>>>>> master
 =======
 >>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 		// TODO: do we need to apply a failing LB policy if there is no
 		// default, per the error handling design?
 	} else {
@@ -1593,6 +1732,9 @@ func (cc *ClientConn) updateResolverState(s resolver.State, err error) error {
 			if configSelector != nil {
 				if len(s.ServiceConfig.Config.(*ServiceConfig).Methods) != 0 {
 <<<<<<< HEAD
+					channelz.Infof(logger, cc.channelzID, "method configs in service config will be ignored due to presence of config selector")
+=======
+<<<<<<< HEAD
 <<<<<<< HEAD
 					channelz.Infof(logger, cc.channelz, "method configs in service config will be ignored due to presence of config selector")
 =======
@@ -1609,11 +1751,15 @@ func (cc *ClientConn) updateResolverState(s resolver.State, err error) error {
 =======
 					channelz.Infof(logger, cc.channelzID, "method configs in service config will be ignored due to presence of config selector")
 >>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 				}
 			} else {
 				configSelector = &defaultConfigSelector{sc}
 			}
 <<<<<<< HEAD
+			cc.applyServiceConfigAndBalancer(sc, configSelector, s.Addresses)
+=======
+<<<<<<< HEAD
 <<<<<<< HEAD
 			cc.applyServiceConfigAndBalancer(sc, configSelector)
 =======
@@ -1630,12 +1776,16 @@ func (cc *ClientConn) updateResolverState(s resolver.State, err error) error {
 =======
 			cc.applyServiceConfigAndBalancer(sc, configSelector, s.Addresses)
 >>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 		} else {
 			ret = balancer.ErrBadResolverState
 			if cc.sc == nil {
 				// Apply the failing LB only if we haven't received valid service config
 				// from the name resolver in the past.
 <<<<<<< HEAD
+				cc.applyFailingLB(s.ServiceConfig)
+=======
+<<<<<<< HEAD
 <<<<<<< HEAD
 				cc.applyFailingLBLocked(s.ServiceConfig)
 =======
@@ -1652,6 +1802,7 @@ func (cc *ClientConn) updateResolverState(s resolver.State, err error) error {
 =======
 				cc.applyFailingLB(s.ServiceConfig)
 >>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 				cc.mu.Unlock()
 				return ret
 			}
@@ -1661,6 +1812,9 @@ func (cc *ClientConn) updateResolverState(s resolver.State, err error) error {
 	var balCfg serviceconfig.LoadBalancingConfig
 	if cc.sc != nil && cc.sc.lbConfig != nil {
 <<<<<<< HEAD
+		balCfg = cc.sc.lbConfig.cfg
+=======
+<<<<<<< HEAD
 <<<<<<< HEAD
 		balCfg = cc.sc.lbConfig
 =======
@@ -1677,6 +1831,7 @@ func (cc *ClientConn) updateResolverState(s resolver.State, err error) error {
 =======
 		balCfg = cc.sc.lbConfig.cfg
 >>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 	}
 	bw := cc.balancerWrapper
 	cc.mu.Unlock()
@@ -1690,6 +1845,9 @@ func (cc *ClientConn) updateResolverState(s resolver.State, err error) error {
 }
 
 <<<<<<< HEAD
+// applyFailingLB is akin to configuring an LB policy on the channel which
+=======
+<<<<<<< HEAD
 <<<<<<< HEAD
 // applyFailingLBLocked is akin to configuring an LB policy on the channel which
 =======
@@ -1706,12 +1864,18 @@ func (cc *ClientConn) updateResolverState(s resolver.State, err error) error {
 =======
 // applyFailingLB is akin to configuring an LB policy on the channel which
 >>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 // always fails RPCs. Here, an actual LB policy is not configured, but an always
 // erroring picker is configured, which returns errors with information about
 // what was invalid in the received service config. A config selector with no
 // service config is configured, and the connectivity state of the channel is
 // set to TransientFailure.
 <<<<<<< HEAD
+//
+// Caller must hold cc.mu.
+func (cc *ClientConn) applyFailingLB(sc *serviceconfig.ParseResult) {
+=======
+<<<<<<< HEAD
 <<<<<<< HEAD
 func (cc *ClientConn) applyFailingLBLocked(sc *serviceconfig.ParseResult) {
 =======
@@ -1734,6 +1898,7 @@ func (cc *ClientConn) applyFailingLB(sc *serviceconfig.ParseResult) {
 // Caller must hold cc.mu.
 func (cc *ClientConn) applyFailingLB(sc *serviceconfig.ParseResult) {
 >>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 	var err error
 	if sc.Err != nil {
 		err = status.Errorf(codes.Unavailable, "error parsing service config: %v", sc.Err)
@@ -1741,6 +1906,8 @@ func (cc *ClientConn) applyFailingLB(sc *serviceconfig.ParseResult) {
 		err = status.Errorf(codes.Unavailable, "illegal service config type: %T", sc.Config)
 	}
 	cc.safeConfigSelector.UpdateConfigSelector(&defaultConfigSelector{nil})
+<<<<<<< HEAD
+=======
 <<<<<<< HEAD
 <<<<<<< HEAD
 =======
@@ -1758,6 +1925,7 @@ func (cc *ClientConn) applyFailingLB(sc *serviceconfig.ParseResult) {
 >>>>>>> master
 =======
 >>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 	cc.blockingpicker.updatePicker(base.NewErrPicker(err))
 	cc.csMgr.updateState(connectivity.TransientFailure)
 }
@@ -1767,6 +1935,8 @@ func (cc *ClientConn) handleSubConnStateChange(sc balancer.SubConn, s connectivi
 }
 
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
 <<<<<<< HEAD
 =======
 >>>>>>> master
@@ -1774,6 +1944,7 @@ func (cc *ClientConn) handleSubConnStateChange(sc balancer.SubConn, s connectivi
 >>>>>>> master
 =======
 >>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 // Makes a copy of the input addresses slice and clears out the balancer
 // attributes field. Addresses are passed during subconn creation and address
 // update operations. In both cases, we will clear the balancer attributes by
@@ -1788,6 +1959,8 @@ func copyAddressesWithoutBalancerAttributes(in []resolver.Address) []resolver.Ad
 	return out
 }
 
+<<<<<<< HEAD
+=======
 <<<<<<< HEAD
 <<<<<<< HEAD
 =======
@@ -1809,10 +1982,13 @@ func (cc *ClientConn) newAddrConnLocked(addrs []resolver.Address, opts balancer.
 >>>>>>> master
 =======
 >>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 // newAddrConn creates an addrConn for addrs and adds it to cc.conns.
 //
 // Caller needs to make sure len(addrs) > 0.
 func (cc *ClientConn) newAddrConn(addrs []resolver.Address, opts balancer.NewSubConnOptions) (*addrConn, error) {
+<<<<<<< HEAD
+=======
 <<<<<<< HEAD
 <<<<<<< HEAD
 =======
@@ -1821,6 +1997,7 @@ func (cc *ClientConn) newAddrConn(addrs []resolver.Address, opts balancer.NewSub
 >>>>>>> master
 =======
 >>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 	ac := &addrConn{
 		state:        connectivity.Idle,
 		cc:           cc,
@@ -1828,6 +2005,9 @@ func (cc *ClientConn) newAddrConn(addrs []resolver.Address, opts balancer.NewSub
 		scopts:       opts,
 		dopts:        cc.dopts,
 <<<<<<< HEAD
+		czData:       new(channelzData),
+=======
+<<<<<<< HEAD
 <<<<<<< HEAD
 		channelz:     channelz.RegisterSubChannel(cc.channelz, ""),
 =======
@@ -1844,10 +2024,13 @@ func (cc *ClientConn) newAddrConn(addrs []resolver.Address, opts balancer.NewSub
 =======
 		czData:       new(channelzData),
 >>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 		resetBackoff: make(chan struct{}),
 		stateChan:    make(chan struct{}),
 	}
 	ac.ctx, ac.cancel = context.WithCancel(cc.ctx)
+<<<<<<< HEAD
+=======
 <<<<<<< HEAD
 <<<<<<< HEAD
 =======
@@ -1867,6 +2050,7 @@ func (cc *ClientConn) newAddrConn(addrs []resolver.Address, opts balancer.NewSub
 >>>>>>> master
 =======
 >>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 	// Track ac in cc. This needs to be done before any getTransport(...) is called.
 	cc.mu.Lock()
 	defer cc.mu.Unlock()
@@ -1885,6 +2069,8 @@ func (cc *ClientConn) newAddrConn(addrs []resolver.Address, opts balancer.NewSub
 		Parent: &channelz.TraceEventDesc{
 			Desc:     fmt.Sprintf("Subchannel(id:%d) created", ac.channelzID.Int()),
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
 <<<<<<< HEAD
 =======
 >>>>>>> master
@@ -1892,11 +2078,14 @@ func (cc *ClientConn) newAddrConn(addrs []resolver.Address, opts balancer.NewSub
 >>>>>>> master
 =======
 >>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 			Severity: channelz.CtInfo,
 		},
 	})
 
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
 <<<<<<< HEAD
 	// Track ac in cc. This needs to be done before any getTransport(...) is called.
 =======
@@ -1910,6 +2099,7 @@ func (cc *ClientConn) newAddrConn(addrs []resolver.Address, opts balancer.NewSub
 >>>>>>> master
 =======
 >>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 	cc.conns[ac] = struct{}{}
 	return ac, nil
 }
@@ -1928,6 +2118,8 @@ func (cc *ClientConn) removeAddrConn(ac *addrConn, err error) {
 }
 
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
 <<<<<<< HEAD
 // Target returns the target string of the ClientConn.
 =======
@@ -1939,6 +2131,7 @@ func (cc *ClientConn) removeAddrConn(ac *addrConn, err error) {
 >>>>>>> master
 =======
 >>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 func (cc *ClientConn) channelzMetric() *channelz.ChannelInternalMetric {
 	return &channelz.ChannelInternalMetric{
 		State:                    cc.GetState(),
@@ -1957,6 +2150,8 @@ func (cc *ClientConn) channelzMetric() *channelz.ChannelInternalMetric {
 // Notice: This API is EXPERIMENTAL and may be changed or removed in a
 // later release.
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
 <<<<<<< HEAD
 =======
 >>>>>>> master
@@ -1964,10 +2159,13 @@ func (cc *ClientConn) channelzMetric() *channelz.ChannelInternalMetric {
 >>>>>>> master
 =======
 >>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 func (cc *ClientConn) Target() string {
 	return cc.target
 }
 
+<<<<<<< HEAD
+=======
 <<<<<<< HEAD
 <<<<<<< HEAD
 =======
@@ -1997,6 +2195,7 @@ func (cc *ClientConn) incrCallsFailed() {
 >>>>>>> master
 =======
 >>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 func (cc *ClientConn) incrCallsStarted() {
 	atomic.AddInt64(&cc.czData.callsStarted, 1)
 	atomic.StoreInt64(&cc.czData.lastCallStartedTime, time.Now().UnixNano())
@@ -2009,6 +2208,8 @@ func (cc *ClientConn) incrCallsSucceeded() {
 func (cc *ClientConn) incrCallsFailed() {
 	atomic.AddInt64(&cc.czData.callsFailed, 1)
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
 <<<<<<< HEAD
 =======
 >>>>>>> master
@@ -2016,6 +2217,7 @@ func (cc *ClientConn) incrCallsFailed() {
 >>>>>>> master
 =======
 >>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 }
 
 // connect starts creating a transport.
@@ -2060,6 +2262,9 @@ func equalAddresses(a, b []resolver.Address) bool {
 func (ac *addrConn) updateAddrs(addrs []resolver.Address) {
 	ac.mu.Lock()
 <<<<<<< HEAD
+	channelz.Infof(logger, ac.channelzID, "addrConn: updateAddrs curAddr: %v, addrs: %v", pretty.ToJSON(ac.curAddr), pretty.ToJSON(addrs))
+=======
+<<<<<<< HEAD
 <<<<<<< HEAD
 	channelz.Infof(logger, ac.channelz, "addrConn: updateAddrs curAddr: %v, addrs: %v", pretty.ToJSON(ac.curAddr), pretty.ToJSON(addrs))
 =======
@@ -2076,6 +2281,7 @@ func (ac *addrConn) updateAddrs(addrs []resolver.Address) {
 =======
 	channelz.Infof(logger, ac.channelzID, "addrConn: updateAddrs curAddr: %v, addrs: %v", pretty.ToJSON(ac.curAddr), pretty.ToJSON(addrs))
 >>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 
 	addrs = copyAddressesWithoutBalancerAttributes(addrs)
 	if equalAddresses(ac.addrs, addrs) {
@@ -2190,6 +2396,9 @@ func (cc *ClientConn) healthCheckConfig() *healthCheckConfig {
 
 func (cc *ClientConn) getTransport(ctx context.Context, failfast bool, method string) (transport.ClientTransport, balancer.PickResult, error) {
 <<<<<<< HEAD
+	return cc.blockingpicker.pick(ctx, failfast, balancer.PickInfo{
+=======
+<<<<<<< HEAD
 <<<<<<< HEAD
 	return cc.pickerWrapper.pick(ctx, failfast, balancer.PickInfo{
 =======
@@ -2206,12 +2415,16 @@ func (cc *ClientConn) getTransport(ctx context.Context, failfast bool, method st
 =======
 	return cc.blockingpicker.pick(ctx, failfast, balancer.PickInfo{
 >>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 		Ctx:            ctx,
 		FullMethodName: method,
 	})
 }
 
 <<<<<<< HEAD
+func (cc *ClientConn) applyServiceConfigAndBalancer(sc *ServiceConfig, configSelector iresolver.ConfigSelector, addrs []resolver.Address) {
+=======
+<<<<<<< HEAD
 <<<<<<< HEAD
 func (cc *ClientConn) applyServiceConfigAndBalancer(sc *ServiceConfig, configSelector iresolver.ConfigSelector) {
 =======
@@ -2228,6 +2441,7 @@ func (cc *ClientConn) applyServiceConfigAndBalancer(sc *ServiceConfig, configSel
 =======
 func (cc *ClientConn) applyServiceConfigAndBalancer(sc *ServiceConfig, configSelector iresolver.ConfigSelector, addrs []resolver.Address) {
 >>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 	if sc == nil {
 		// should never reach here.
 		return
@@ -2249,6 +2463,8 @@ func (cc *ClientConn) applyServiceConfigAndBalancer(sc *ServiceConfig, configSel
 		cc.retryThrottler.Store((*retryThrottler)(nil))
 	}
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
 <<<<<<< HEAD
 =======
 <<<<<<< HEAD
@@ -2258,6 +2474,7 @@ func (cc *ClientConn) applyServiceConfigAndBalancer(sc *ServiceConfig, configSel
 >>>>>>> master
 =======
 >>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 
 	var newBalancerName string
 	if cc.sc == nil || (cc.sc.lbConfig == nil && cc.sc.LB == nil) {
@@ -2270,6 +2487,8 @@ func (cc *ClientConn) applyServiceConfigAndBalancer(sc *ServiceConfig, configSel
 	}
 	cc.balancerWrapper.switchTo(newBalancerName)
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
 <<<<<<< HEAD
 =======
 >>>>>>> master
@@ -2277,10 +2496,13 @@ func (cc *ClientConn) applyServiceConfigAndBalancer(sc *ServiceConfig, configSel
 >>>>>>> master
 =======
 >>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 }
 
 func (cc *ClientConn) resolveNow(o resolver.ResolveNowOptions) {
 	cc.mu.RLock()
+<<<<<<< HEAD
+=======
 <<<<<<< HEAD
 <<<<<<< HEAD
 =======
@@ -2300,12 +2522,15 @@ func (cc *ClientConn) resolveNowLocked(o resolver.ResolveNowOptions) {
 >>>>>>> master
 =======
 >>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 	r := cc.resolverWrapper
 	cc.mu.RUnlock()
 	if r == nil {
 		return
 	}
 	go r.resolveNow(o)
+<<<<<<< HEAD
+=======
 <<<<<<< HEAD
 <<<<<<< HEAD
 =======
@@ -2314,6 +2539,7 @@ func (cc *ClientConn) resolveNowLocked(o resolver.ResolveNowOptions) {
 >>>>>>> master
 =======
 >>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 }
 
 // ResetConnectBackoff wakes up all subchannels in transient failure and causes
@@ -2346,6 +2572,8 @@ func (cc *ClientConn) Close() error {
 	}()
 
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
 <<<<<<< HEAD
 =======
 <<<<<<< HEAD
@@ -2364,6 +2592,7 @@ func (cc *ClientConn) Close() error {
 >>>>>>> master
 =======
 >>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 	cc.mu.Lock()
 	if cc.conns == nil {
 		cc.mu.Unlock()
@@ -2371,6 +2600,8 @@ func (cc *ClientConn) Close() error {
 	}
 
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
 <<<<<<< HEAD
 =======
 <<<<<<< HEAD
@@ -2380,11 +2611,14 @@ func (cc *ClientConn) Close() error {
 >>>>>>> master
 =======
 >>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 	for cc.idlenessState == ccIdlenessStateExitingIdle {
 		cc.exitIdleCond.Wait()
 	}
 
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
 <<<<<<< HEAD
 =======
 >>>>>>> master
@@ -2392,10 +2626,13 @@ func (cc *ClientConn) Close() error {
 >>>>>>> master
 =======
 >>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 	conns := cc.conns
 	cc.conns = nil
 	cc.csMgr.updateState(connectivity.Shutdown)
 
+<<<<<<< HEAD
+=======
 <<<<<<< HEAD
 <<<<<<< HEAD
 =======
@@ -2421,6 +2658,7 @@ func (cc *ClientConn) Close() error {
 >>>>>>> master
 =======
 >>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 	pWrapper := cc.blockingpicker
 	rWrapper := cc.resolverWrapper
 	bWrapper := cc.balancerWrapper
@@ -2442,6 +2680,8 @@ func (cc *ClientConn) Close() error {
 		idlenessMgr.Close()
 	}
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
 <<<<<<< HEAD
 =======
 >>>>>>> master
@@ -2449,6 +2689,7 @@ func (cc *ClientConn) Close() error {
 >>>>>>> master
 =======
 >>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 
 	for ac := range conns {
 		ac.tearDown(ErrClientConnClosing)
@@ -2458,6 +2699,9 @@ func (cc *ClientConn) Close() error {
 	// trace reference to the entity being deleted, and thus prevent it from being
 	// deleted right away.
 <<<<<<< HEAD
+	channelz.RemoveEntry(cc.channelzID)
+=======
+<<<<<<< HEAD
 <<<<<<< HEAD
 	channelz.RemoveEntry(cc.channelz.ID)
 =======
@@ -2474,6 +2718,7 @@ func (cc *ClientConn) Close() error {
 =======
 	channelz.RemoveEntry(cc.channelzID)
 >>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 
 	return nil
 }
@@ -2486,6 +2731,9 @@ type addrConn struct {
 	cc     *ClientConn
 	dopts  dialOptions
 <<<<<<< HEAD
+	acbw   balancer.SubConn
+=======
+<<<<<<< HEAD
 <<<<<<< HEAD
 	acbw   *acBalancerWrapper
 =======
@@ -2502,6 +2750,7 @@ type addrConn struct {
 =======
 	acbw   balancer.SubConn
 >>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 	scopts balancer.NewSubConnOptions
 
 	// transport is set when there's a viable transport (note: ac state may not be READY as LB channel
@@ -2522,6 +2771,10 @@ type addrConn struct {
 	resetBackoff chan struct{}
 
 <<<<<<< HEAD
+	channelzID *channelz.Identifier
+	czData     *channelzData
+=======
+<<<<<<< HEAD
 <<<<<<< HEAD
 	channelz *channelz.SubChannel
 =======
@@ -2541,6 +2794,7 @@ type addrConn struct {
 	channelzID *channelz.Identifier
 	czData     *channelzData
 >>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 }
 
 // Note: this requires a lock on ac.mu.
@@ -2552,6 +2806,8 @@ func (ac *addrConn) updateConnectivityState(s connectivity.State, lastErr error)
 	close(ac.stateChan)
 	ac.stateChan = make(chan struct{})
 	ac.state = s
+<<<<<<< HEAD
+=======
 <<<<<<< HEAD
 <<<<<<< HEAD
 =======
@@ -2572,12 +2828,15 @@ func (ac *addrConn) updateConnectivityState(s connectivity.State, lastErr error)
 >>>>>>> master
 =======
 >>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 	if lastErr == nil {
 		channelz.Infof(logger, ac.channelzID, "Subchannel Connectivity change to %v", s)
 	} else {
 		channelz.Infof(logger, ac.channelzID, "Subchannel Connectivity change to %v, last error: %s", s, lastErr)
 	}
 	ac.cc.handleSubConnStateChange(ac.acbw, s, lastErr)
+<<<<<<< HEAD
+=======
 <<<<<<< HEAD
 <<<<<<< HEAD
 =======
@@ -2586,6 +2845,7 @@ func (ac *addrConn) updateConnectivityState(s connectivity.State, lastErr error)
 >>>>>>> master
 =======
 >>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 }
 
 // adjustParams updates parameters used to create transports upon
@@ -2697,6 +2957,9 @@ func (ac *addrConn) tryAllAddrs(ctx context.Context, addrs []resolver.Address, c
 		ac.mu.Unlock()
 
 <<<<<<< HEAD
+		channelz.Infof(logger, ac.channelzID, "Subchannel picks a new address %q to connect", addr.Addr)
+=======
+<<<<<<< HEAD
 <<<<<<< HEAD
 		channelz.Infof(logger, ac.channelz, "Subchannel picks a new address %q to connect", addr.Addr)
 =======
@@ -2713,6 +2976,7 @@ func (ac *addrConn) tryAllAddrs(ctx context.Context, addrs []resolver.Address, c
 =======
 		channelz.Infof(logger, ac.channelzID, "Subchannel picks a new address %q to connect", addr.Addr)
 >>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 
 		err := ac.createTransport(ctx, addr, copts, connectDeadline)
 		if err == nil {
@@ -2766,6 +3030,9 @@ func (ac *addrConn) createTransport(ctx context.Context, addr resolver.Address, 
 	connectCtx, cancel := context.WithDeadline(ctx, connectDeadline)
 	defer cancel()
 <<<<<<< HEAD
+	copts.ChannelzParentID = ac.channelzID
+=======
+<<<<<<< HEAD
 <<<<<<< HEAD
 	copts.ChannelzParent = ac.channelz
 =======
@@ -2782,6 +3049,7 @@ func (ac *addrConn) createTransport(ctx context.Context, addr resolver.Address, 
 =======
 	copts.ChannelzParentID = ac.channelzID
 >>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 
 	newTr, err := transport.NewClientTransport(connectCtx, ac.cc.ctx, addr, copts, onClose)
 	if err != nil {
@@ -2791,6 +3059,9 @@ func (ac *addrConn) createTransport(ctx context.Context, addr resolver.Address, 
 		// newTr is either nil, or closed.
 		hcancel()
 <<<<<<< HEAD
+		channelz.Warningf(logger, ac.channelzID, "grpc: addrConn.createTransport failed to connect to %s. Err: %v", addr, err)
+=======
+<<<<<<< HEAD
 <<<<<<< HEAD
 		channelz.Warningf(logger, ac.channelz, "grpc: addrConn.createTransport failed to connect to %s. Err: %v", addr, err)
 =======
@@ -2807,6 +3078,7 @@ func (ac *addrConn) createTransport(ctx context.Context, addr resolver.Address, 
 =======
 		channelz.Warningf(logger, ac.channelzID, "grpc: addrConn.createTransport failed to connect to %s. Err: %v", addr, err)
 >>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 		return err
 	}
 
@@ -2879,6 +3151,9 @@ func (ac *addrConn) startHealthCheck(ctx context.Context) {
 		//
 		// TODO: add a link to the health check doc in the error message.
 <<<<<<< HEAD
+		channelz.Error(logger, ac.channelzID, "Health check is requested but health check function is not set.")
+=======
+<<<<<<< HEAD
 <<<<<<< HEAD
 		channelz.Error(logger, ac.channelz, "Health check is requested but health check function is not set.")
 =======
@@ -2895,6 +3170,7 @@ func (ac *addrConn) startHealthCheck(ctx context.Context) {
 =======
 		channelz.Error(logger, ac.channelzID, "Health check is requested but health check function is not set.")
 >>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 		return
 	}
 
@@ -2925,6 +3201,11 @@ func (ac *addrConn) startHealthCheck(ctx context.Context) {
 		if err != nil {
 			if status.Code(err) == codes.Unimplemented {
 <<<<<<< HEAD
+				channelz.Error(logger, ac.channelzID, "Subchannel health check is unimplemented at server side, thus health check is disabled")
+			} else {
+				channelz.Errorf(logger, ac.channelzID, "Health checking failed: %v", err)
+=======
+<<<<<<< HEAD
 <<<<<<< HEAD
 				channelz.Error(logger, ac.channelz, "Subchannel health check is unimplemented at server side, thus health check is disabled")
 			} else {
@@ -2951,6 +3232,7 @@ func (ac *addrConn) startHealthCheck(ctx context.Context) {
 			} else {
 				channelz.Errorf(logger, ac.channelzID, "Health checking failed: %v", err)
 >>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 			}
 		}
 	}()
@@ -3016,6 +3298,8 @@ func (ac *addrConn) tearDown(err error) {
 	ac.curAddr = resolver.Address{}
 
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
 <<<<<<< HEAD
 =======
 <<<<<<< HEAD
@@ -3033,11 +3317,14 @@ func (ac *addrConn) tearDown(err error) {
 >>>>>>> master
 =======
 >>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 	channelz.AddTraceEvent(logger, ac.channelzID, 0, &channelz.TraceEventDesc{
 		Desc:     "Subchannel deleted",
 		Severity: channelz.CtInfo,
 		Parent: &channelz.TraceEventDesc{
 			Desc:     fmt.Sprintf("Subchannel(id:%d) deleted", ac.channelzID.Int()),
+<<<<<<< HEAD
+=======
 <<<<<<< HEAD
 <<<<<<< HEAD
 =======
@@ -3046,6 +3333,7 @@ func (ac *addrConn) tearDown(err error) {
 >>>>>>> master
 =======
 >>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 			Severity: channelz.CtInfo,
 		},
 	})
@@ -3053,6 +3341,9 @@ func (ac *addrConn) tearDown(err error) {
 	// trace reference to the entity being deleted, and thus prevent it from
 	// being deleted right away.
 <<<<<<< HEAD
+	channelz.RemoveEntry(ac.channelzID)
+=======
+<<<<<<< HEAD
 <<<<<<< HEAD
 	channelz.RemoveEntry(ac.channelz.ID)
 =======
@@ -3069,6 +3360,7 @@ func (ac *addrConn) tearDown(err error) {
 =======
 	channelz.RemoveEntry(ac.channelzID)
 >>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 	ac.mu.Unlock()
 
 	// We have to release the lock before the call to GracefulClose/Close here
@@ -3096,6 +3388,8 @@ func (ac *addrConn) tearDown(err error) {
 }
 
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
 <<<<<<< HEAD
 =======
 <<<<<<< HEAD
@@ -3105,6 +3399,7 @@ func (ac *addrConn) tearDown(err error) {
 >>>>>>> master
 =======
 >>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 func (ac *addrConn) getState() connectivity.State {
 	ac.mu.Lock()
 	defer ac.mu.Unlock()
@@ -3139,6 +3434,8 @@ func (ac *addrConn) incrCallsFailed() {
 }
 
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
 <<<<<<< HEAD
 =======
 >>>>>>> master
@@ -3146,6 +3443,7 @@ func (ac *addrConn) incrCallsFailed() {
 >>>>>>> master
 =======
 >>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 type retryThrottler struct {
 	max    float64
 	thresh float64
@@ -3184,6 +3482,8 @@ func (rt *retryThrottler) successfulRPC() {
 }
 
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
 <<<<<<< HEAD
 =======
 <<<<<<< HEAD
@@ -3207,12 +3507,15 @@ func (ac *addrConn) incrCallsFailed() {
 >>>>>>> master
 =======
 >>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 type channelzChannel struct {
 	cc *ClientConn
 }
 
 func (c *channelzChannel) ChannelzMetric() *channelz.ChannelInternalMetric {
 	return c.cc.channelzMetric()
+<<<<<<< HEAD
+=======
 <<<<<<< HEAD
 <<<<<<< HEAD
 =======
@@ -3221,6 +3524,7 @@ func (c *channelzChannel) ChannelzMetric() *channelz.ChannelInternalMetric {
 >>>>>>> master
 =======
 >>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 }
 
 // ErrClientConnTimeout indicates that the ClientConn cannot establish the
@@ -3263,6 +3567,9 @@ func (cc *ClientConn) connectionError() error {
 // Doesn't grab cc.mu as this method is expected to be called only at Dial time.
 func (cc *ClientConn) parseTargetAndFindResolver() error {
 <<<<<<< HEAD
+	channelz.Infof(logger, cc.channelzID, "original dial target is: %q", cc.target)
+=======
+<<<<<<< HEAD
 <<<<<<< HEAD
 	channelz.Infof(logger, cc.channelz, "original dial target is: %q", cc.target)
 =======
@@ -3279,11 +3586,17 @@ func (cc *ClientConn) parseTargetAndFindResolver() error {
 =======
 	channelz.Infof(logger, cc.channelzID, "original dial target is: %q", cc.target)
 >>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 
 	var rb resolver.Builder
 	parsedTarget, err := parseTarget(cc.target)
 	if err != nil {
 <<<<<<< HEAD
+		channelz.Infof(logger, cc.channelzID, "dial target %q parse failed: %v", cc.target, err)
+	} else {
+		channelz.Infof(logger, cc.channelzID, "parsed dial target is: %+v", parsedTarget)
+=======
+<<<<<<< HEAD
 <<<<<<< HEAD
 		channelz.Infof(logger, cc.channelz, "dial target %q parse failed: %v", cc.target, err)
 	} else {
@@ -3310,6 +3623,7 @@ func (cc *ClientConn) parseTargetAndFindResolver() error {
 	} else {
 		channelz.Infof(logger, cc.channelzID, "parsed dial target is: %+v", parsedTarget)
 >>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 		rb = cc.getResolver(parsedTarget.URL.Scheme)
 		if rb != nil {
 			cc.parsedTarget = parsedTarget
@@ -3321,6 +3635,11 @@ func (cc *ClientConn) parseTargetAndFindResolver() error {
 	// We are here because the user's dial target did not contain a scheme or
 	// specified an unregistered scheme. We should fallback to the default
 	// scheme, except when a custom dialer is specified in which case, we should
+<<<<<<< HEAD
+	// always use passthrough scheme.
+	defScheme := resolver.GetDefaultScheme()
+	channelz.Infof(logger, cc.channelzID, "fallback to scheme %q", defScheme)
+=======
 <<<<<<< HEAD
 <<<<<<< HEAD
 =======
@@ -3353,10 +3672,13 @@ func (cc *ClientConn) parseTargetAndFindResolver() error {
 	defScheme := resolver.GetDefaultScheme()
 	channelz.Infof(logger, cc.channelzID, "fallback to scheme %q", defScheme)
 >>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 	canonicalTarget := defScheme + ":///" + cc.target
 
 	parsedTarget, err = parseTarget(canonicalTarget)
 	if err != nil {
+<<<<<<< HEAD
+=======
 <<<<<<< HEAD
 <<<<<<< HEAD
 =======
@@ -3374,10 +3696,13 @@ func (cc *ClientConn) parseTargetAndFindResolver() error {
 >>>>>>> master
 =======
 >>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 		channelz.Infof(logger, cc.channelzID, "dial target %q parse failed: %v", canonicalTarget, err)
 		return err
 	}
 	channelz.Infof(logger, cc.channelzID, "parsed dial target is: %+v", parsedTarget)
+<<<<<<< HEAD
+=======
 <<<<<<< HEAD
 <<<<<<< HEAD
 =======
@@ -3386,6 +3711,7 @@ func (cc *ClientConn) parseTargetAndFindResolver() error {
 >>>>>>> master
 =======
 >>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 	rb = cc.getResolver(parsedTarget.URL.Scheme)
 	if rb == nil {
 		return fmt.Errorf("could not get resolver for default scheme: %q", parsedTarget.URL.Scheme)
@@ -3408,6 +3734,8 @@ func parseTarget(target string) (resolver.Target, error) {
 }
 
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
 <<<<<<< HEAD
 // encodeAuthority escapes the authority string based on valid chars defined in
 // https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.
@@ -3423,6 +3751,7 @@ func parseTarget(target string) (resolver.Target, error) {
 >>>>>>> master
 =======
 >>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 func encodeAuthority(authority string) string {
 	const upperhex = "0123456789ABCDEF"
 
@@ -3512,6 +3841,8 @@ func (cc *ClientConn) determineAuthority() error {
 
 	endpoint := cc.parsedTarget.Endpoint()
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
 <<<<<<< HEAD
 =======
 <<<<<<< HEAD
@@ -3536,6 +3867,7 @@ func (cc *ClientConn) determineAuthority() error {
 >>>>>>> master
 =======
 >>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 	target := cc.target
 	switch {
 	case authorityFromDialOption != "":
@@ -3590,6 +3922,8 @@ func (cc *ClientConn) initResolverWrapper(creds credentials.TransportCredentials
 	cc.resolverWrapper = rw
 	cc.mu.Unlock()
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
 <<<<<<< HEAD
 =======
 >>>>>>> master
@@ -3597,5 +3931,6 @@ func (cc *ClientConn) initResolverWrapper(creds credentials.TransportCredentials
 >>>>>>> master
 =======
 >>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 	return nil
 }

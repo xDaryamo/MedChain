@@ -38,6 +38,9 @@ type pickerWrapper struct {
 	mu            sync.Mutex
 	done          bool
 <<<<<<< HEAD
+	idle          bool
+=======
+<<<<<<< HEAD
 <<<<<<< HEAD
 =======
 <<<<<<< HEAD
@@ -52,6 +55,7 @@ type pickerWrapper struct {
 =======
 	idle          bool
 >>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 	blockingCh    chan struct{}
 	picker        balancer.Picker
 	statsHandlers []stats.Handler // to record blocking picker calls
@@ -68,6 +72,8 @@ func newPickerWrapper(statsHandlers []stats.Handler) *pickerWrapper {
 func (pw *pickerWrapper) updatePicker(p balancer.Picker) {
 	pw.mu.Lock()
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
 <<<<<<< HEAD
 	if pw.done {
 =======
@@ -79,12 +85,15 @@ func (pw *pickerWrapper) updatePicker(p balancer.Picker) {
 >>>>>>> master
 =======
 >>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 	if pw.done || pw.idle {
 		// There is a small window where a picker update from the LB policy can
 		// race with the channel going to idle mode. If the picker is idle here,
 		// it is because the channel asked it to do so, and therefore it is sage
 		// to ignore the update from the LB policy.
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
 <<<<<<< HEAD
 =======
 >>>>>>> master
@@ -92,6 +101,7 @@ func (pw *pickerWrapper) updatePicker(p balancer.Picker) {
 >>>>>>> master
 =======
 >>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 		pw.mu.Unlock()
 		return
 	}
@@ -245,6 +255,8 @@ func (pw *pickerWrapper) close() {
 }
 
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
 <<<<<<< HEAD
 // reset clears the pickerWrapper and prepares it for being used again when idle
 // mode is exited.
@@ -260,6 +272,7 @@ func (pw *pickerWrapper) reset() {
 >>>>>>> master
 =======
 >>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 func (pw *pickerWrapper) enterIdleMode() {
 	pw.mu.Lock()
 	defer pw.mu.Unlock()
@@ -271,6 +284,8 @@ func (pw *pickerWrapper) enterIdleMode() {
 
 func (pw *pickerWrapper) exitIdleMode() {
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
 <<<<<<< HEAD
 =======
 >>>>>>> master
@@ -278,6 +293,7 @@ func (pw *pickerWrapper) exitIdleMode() {
 >>>>>>> master
 =======
 >>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 	pw.mu.Lock()
 	defer pw.mu.Unlock()
 	if pw.done {
@@ -285,6 +301,9 @@ func (pw *pickerWrapper) exitIdleMode() {
 	}
 	pw.blockingCh = make(chan struct{})
 <<<<<<< HEAD
+	pw.idle = false
+=======
+<<<<<<< HEAD
 <<<<<<< HEAD
 =======
 <<<<<<< HEAD
@@ -299,6 +318,7 @@ func (pw *pickerWrapper) exitIdleMode() {
 =======
 	pw.idle = false
 >>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 }
 
 // dropError is a wrapper error that indicates the LB policy wishes to drop the

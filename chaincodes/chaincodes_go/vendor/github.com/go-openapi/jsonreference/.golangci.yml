@@ -2,6 +2,8 @@ linters-settings:
   govet:
     check-shadowing: true
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
 <<<<<<< HEAD
 =======
 <<<<<<< HEAD
@@ -26,6 +28,7 @@ linters-settings:
 >>>>>>> master
 =======
 >>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
   gocyclo:
     min-complexity: 30
   maligned:
@@ -38,6 +41,8 @@ linters-settings:
   paralleltest:
     ignore-missing: true
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
 <<<<<<< HEAD
 =======
 >>>>>>> master
@@ -45,10 +50,15 @@ linters-settings:
 >>>>>>> master
 =======
 >>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 linters:
   enable-all: true
   disable:
     - maligned
+<<<<<<< HEAD
+    - lll
+    - gochecknoglobals
+=======
 <<<<<<< HEAD
 <<<<<<< HEAD
 =======
@@ -75,10 +85,13 @@ linters:
     - lll
     - gochecknoglobals
 >>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
     - godox
     - gocognit
     - whitespace
     - wsl
+<<<<<<< HEAD
+=======
 <<<<<<< HEAD
 <<<<<<< HEAD
 =======
@@ -125,6 +138,7 @@ linters:
 >>>>>>> master
 =======
 >>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
     - funlen
     - gochecknoglobals
     - gochecknoinits
@@ -152,6 +166,8 @@ linters:
     - varnamelen
     - exhaustruct
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
 <<<<<<< HEAD
 =======
 >>>>>>> master
@@ -159,3 +175,4 @@ linters:
 >>>>>>> master
 =======
 >>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master

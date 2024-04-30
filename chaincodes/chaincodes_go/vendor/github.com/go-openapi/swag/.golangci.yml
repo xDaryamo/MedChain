@@ -5,6 +5,8 @@ linters-settings:
     min-confidence: 0
   gocyclo:
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
 <<<<<<< HEAD
 =======
 <<<<<<< HEAD
@@ -25,6 +27,7 @@ linters-settings:
 >>>>>>> master
 =======
 >>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
     min-complexity: 25
   maligned:
     suggest-new: true
@@ -34,6 +37,8 @@ linters-settings:
     min-len: 3
     min-occurrences: 2
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
 <<<<<<< HEAD
 =======
 >>>>>>> master
@@ -41,6 +46,7 @@ linters-settings:
 >>>>>>> master
 =======
 >>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 
 linters:
   enable-all: true
@@ -49,6 +55,8 @@ linters:
     - lll
     - gochecknoinits
     - gochecknoglobals
+<<<<<<< HEAD
+=======
 <<<<<<< HEAD
 <<<<<<< HEAD
 =======
@@ -99,6 +107,7 @@ linters:
 >>>>>>> master
 =======
 >>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
     - nlreturn
     - testpackage
     - wrapcheck
@@ -131,6 +140,8 @@ linters:
     - nilnil
     - nonamedreturns
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
 <<<<<<< HEAD
 =======
 >>>>>>> master
@@ -138,4 +149,5 @@ linters:
 >>>>>>> master
 =======
 >>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
     - nosnakecase

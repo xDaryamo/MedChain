@@ -26,6 +26,8 @@ import (
 	"time"
 
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
 <<<<<<< HEAD
 =======
 <<<<<<< HEAD
@@ -44,11 +46,14 @@ import (
 >>>>>>> master
 =======
 >>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 	"github.com/golang/protobuf/proto"
 	"github.com/golang/protobuf/ptypes"
 	binlogpb "google.golang.org/grpc/binarylog/grpc_binarylog_v1"
 	"google.golang.org/grpc/metadata"
 	"google.golang.org/grpc/status"
+<<<<<<< HEAD
+=======
 <<<<<<< HEAD
 <<<<<<< HEAD
 =======
@@ -57,6 +62,7 @@ import (
 >>>>>>> master
 =======
 >>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 )
 
 type callIDGenerator struct {
@@ -116,6 +122,9 @@ func NewTruncatingMethodLogger(h, m uint64) *TruncatingMethodLogger {
 func (ml *TruncatingMethodLogger) Build(c LogEntryConfig) *binlogpb.GrpcLogEntry {
 	m := c.toProto()
 <<<<<<< HEAD
+	timestamp, _ := ptypes.TimestampProto(time.Now())
+=======
+<<<<<<< HEAD
 <<<<<<< HEAD
 	timestamp := timestamppb.Now()
 =======
@@ -132,6 +141,7 @@ func (ml *TruncatingMethodLogger) Build(c LogEntryConfig) *binlogpb.GrpcLogEntry
 =======
 	timestamp, _ := ptypes.TimestampProto(time.Now())
 >>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 	m.Timestamp = timestamp
 	m.CallId = ml.callID
 	m.SequenceIdWithinCall = ml.idWithinCallGen.next()
@@ -222,6 +232,9 @@ func (c *ClientHeader) toProto() *binlogpb.GrpcLogEntry {
 	}
 	if c.Timeout > 0 {
 <<<<<<< HEAD
+		clientHeader.Timeout = ptypes.DurationProto(c.Timeout)
+=======
+<<<<<<< HEAD
 <<<<<<< HEAD
 		clientHeader.Timeout = durationpb.New(c.Timeout)
 =======
@@ -238,6 +251,7 @@ func (c *ClientHeader) toProto() *binlogpb.GrpcLogEntry {
 =======
 		clientHeader.Timeout = ptypes.DurationProto(c.Timeout)
 >>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 	}
 	ret := &binlogpb.GrpcLogEntry{
 		Type: binlogpb.GrpcLogEntry_EVENT_TYPE_CLIENT_HEADER,

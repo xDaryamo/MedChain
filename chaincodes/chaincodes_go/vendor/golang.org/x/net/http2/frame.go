@@ -1511,6 +1511,8 @@ func (mh *MetaHeadersFrame) checkPseudos() error {
 
 func (fr *Framer) maxHeaderStringLen() int {
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
 <<<<<<< HEAD
 =======
 <<<<<<< HEAD
@@ -1529,6 +1531,7 @@ func (fr *Framer) maxHeaderStringLen() int {
 >>>>>>> master
 =======
 >>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 	v := fr.maxHeaderListSize()
 	if uint32(int(v)) == v {
 		return int(v)
@@ -1537,6 +1540,8 @@ func (fr *Framer) maxHeaderStringLen() int {
 	// so give them unlimited header lengths:
 	return 0
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
 <<<<<<< HEAD
 =======
 >>>>>>> master
@@ -1544,6 +1549,7 @@ func (fr *Framer) maxHeaderStringLen() int {
 >>>>>>> master
 =======
 >>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 }
 
 // readMetaFrame returns 0 or more CONTINUATION frames from fr and
@@ -1593,6 +1599,8 @@ func (fr *Framer) readMetaFrame(hf *HeadersFrame) (*MetaHeadersFrame, error) {
 			hdec.SetEmitEnabled(false)
 			mh.Truncated = true
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
 <<<<<<< HEAD
 			remainSize = 0
 =======
@@ -1606,6 +1614,7 @@ func (fr *Framer) readMetaFrame(hf *HeadersFrame) (*MetaHeadersFrame, error) {
 >>>>>>> master
 =======
 >>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 			return
 		}
 		remainSize -= size
@@ -1618,6 +1627,8 @@ func (fr *Framer) readMetaFrame(hf *HeadersFrame) (*MetaHeadersFrame, error) {
 	var hc headersOrContinuation = hf
 	for {
 		frag := hc.HeaderBlockFragment()
+<<<<<<< HEAD
+=======
 <<<<<<< HEAD
 <<<<<<< HEAD
 =======
@@ -1663,6 +1674,7 @@ func (fr *Framer) readMetaFrame(hf *HeadersFrame) (*MetaHeadersFrame, error) {
 >>>>>>> master
 =======
 >>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 		if _, err := hdec.Write(frag); err != nil {
 			return nil, ConnectionError(ErrCodeCompression)
 		}

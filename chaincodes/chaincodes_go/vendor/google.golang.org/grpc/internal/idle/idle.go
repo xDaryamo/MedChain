@@ -27,6 +27,10 @@ import (
 	"sync/atomic"
 	"time"
 <<<<<<< HEAD
+
+	"google.golang.org/grpc/grpclog"
+=======
+<<<<<<< HEAD
 <<<<<<< HEAD
 =======
 <<<<<<< HEAD
@@ -44,6 +48,7 @@ import (
 
 	"google.golang.org/grpc/grpclog"
 >>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 )
 
 // For overriding in unit tests.
@@ -55,6 +60,8 @@ var timeAfterFunc = func(d time.Duration, f func()) *time.Timer {
 // and exit from idle mode.
 type Enforcer interface {
 	ExitIdleMode() error
+<<<<<<< HEAD
+=======
 <<<<<<< HEAD
 <<<<<<< HEAD
 =======
@@ -74,6 +81,7 @@ type Manager struct {
 >>>>>>> master
 =======
 >>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 	EnterIdleMode() error
 }
 
@@ -96,6 +104,8 @@ func (noopManager) Close()             {}
 // in a critical section.
 type manager struct {
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
 <<<<<<< HEAD
 =======
 >>>>>>> master
@@ -103,6 +113,7 @@ type manager struct {
 >>>>>>> master
 =======
 >>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 	// State accessed atomically.
 	lastCallEndTime           int64 // Unix timestamp in nanos; time when the most recent RPC completed.
 	activeCallsCount          int32 // Count of active RPCs; -math.MaxInt32 means channel is idle or is trying to get there.
@@ -113,6 +124,10 @@ type manager struct {
 	// time and read-only after that.
 	enforcer Enforcer // Functionality provided by grpc.ClientConn.
 <<<<<<< HEAD
+	timeout  int64    // Idle timeout duration nanos stored as an int64.
+	logger   grpclog.LoggerV2
+=======
+<<<<<<< HEAD
 <<<<<<< HEAD
 	timeout  time.Duration
 =======
@@ -132,6 +147,7 @@ type manager struct {
 	timeout  int64    // Idle timeout duration nanos stored as an int64.
 	logger   grpclog.LoggerV2
 >>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 
 	// idleMu is used to guarantee mutual exclusion in two scenarios:
 	// - Opposing intentions:
@@ -149,6 +165,8 @@ type manager struct {
 	timer        *time.Timer
 }
 
+<<<<<<< HEAD
+=======
 <<<<<<< HEAD
 <<<<<<< HEAD
 =======
@@ -177,6 +195,7 @@ func (m *Manager) resetIdleTimerLocked(d time.Duration) {
 >>>>>>> master
 =======
 >>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 // ManagerOptions is a collection of options used by
 // NewManager.
 type ManagerOptions struct {
@@ -210,6 +229,8 @@ func (m *manager) resetIdleTimer(d time.Duration) {
 	if m.timer == nil {
 		// Only close sets timer to nil. We are done.
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
 <<<<<<< HEAD
 =======
 >>>>>>> master
@@ -217,10 +238,16 @@ func (m *manager) resetIdleTimer(d time.Duration) {
 >>>>>>> master
 =======
 >>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 		return
 	}
 
 	// It is safe to ignore the return value from Reset() because this method is
+<<<<<<< HEAD
+	// only ever called from the timer callback, which means the timer has
+	// already fired.
+	m.timer.Reset(d)
+=======
 <<<<<<< HEAD
 <<<<<<< HEAD
 =======
@@ -256,12 +283,16 @@ func (m *Manager) resetIdleTimer(d time.Duration) {
 	// already fired.
 	m.timer.Reset(d)
 >>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 }
 
 // handleIdleTimeout is the timer callback that is invoked upon expiry of the
 // configured idle timeout. The channel is considered inactive if there are no
 // ongoing calls and no RPC activity since the last time the timer fired.
 <<<<<<< HEAD
+func (m *manager) handleIdleTimeout() {
+=======
+<<<<<<< HEAD
 <<<<<<< HEAD
 func (m *Manager) handleIdleTimeout() {
 =======
@@ -278,12 +309,16 @@ func (m *manager) handleIdleTimeout() {
 =======
 func (m *manager) handleIdleTimeout() {
 >>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 	if m.isClosed() {
 		return
 	}
 
 	if atomic.LoadInt32(&m.activeCallsCount) > 0 {
 <<<<<<< HEAD
+		m.resetIdleTimer(time.Duration(m.timeout))
+=======
+<<<<<<< HEAD
 <<<<<<< HEAD
 		m.resetIdleTimer(m.timeout)
 =======
@@ -300,6 +335,7 @@ func (m *manager) handleIdleTimeout() {
 =======
 		m.resetIdleTimer(time.Duration(m.timeout))
 >>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 		return
 	}
 
@@ -309,6 +345,8 @@ func (m *manager) handleIdleTimeout() {
 		// Set the timer to fire after a duration of idle timeout, calculated
 		// from the time the most recent RPC completed.
 		atomic.StoreInt32(&m.activeSinceLastTimerCheck, 0)
+<<<<<<< HEAD
+=======
 <<<<<<< HEAD
 <<<<<<< HEAD
 =======
@@ -328,6 +366,7 @@ func (m *manager) handleIdleTimeout() {
 >>>>>>> master
 =======
 >>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 		m.resetIdleTimer(time.Duration(atomic.LoadInt64(&m.lastCallEndTime) + m.timeout - time.Now().UnixNano()))
 		return
 	}
@@ -347,6 +386,8 @@ func (m *manager) handleIdleTimeout() {
 	// Now that we've set the active calls count to -math.MaxInt32, it's time to
 	// actually move to idle mode.
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
 <<<<<<< HEAD
 =======
 >>>>>>> master
@@ -354,6 +395,7 @@ func (m *manager) handleIdleTimeout() {
 >>>>>>> master
 =======
 >>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 	if m.tryEnterIdleMode() {
 		// Successfully entered idle mode. No timer needed until we exit idle.
 		return
@@ -363,6 +405,10 @@ func (m *manager) handleIdleTimeout() {
 	// active, or because of an error from the channel. Undo the attempt to
 	// enter idle, and reset the timer to try again later.
 <<<<<<< HEAD
+	atomic.AddInt32(&m.activeCallsCount, math.MaxInt32)
+	m.resetIdleTimer(time.Duration(m.timeout))
+=======
+<<<<<<< HEAD
 <<<<<<< HEAD
 	m.resetIdleTimer(m.timeout)
 =======
@@ -382,6 +428,7 @@ func (m *manager) handleIdleTimeout() {
 	atomic.AddInt32(&m.activeCallsCount, math.MaxInt32)
 	m.resetIdleTimer(time.Duration(m.timeout))
 >>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 }
 
 // tryEnterIdleMode instructs the channel to enter idle mode. But before
@@ -391,6 +438,9 @@ func (m *manager) handleIdleTimeout() {
 // Return value indicates whether or not the channel moved to idle mode.
 //
 // Holds idleMu which ensures mutual exclusion with exitIdleMode.
+<<<<<<< HEAD
+func (m *manager) tryEnterIdleMode() bool {
+=======
 <<<<<<< HEAD
 <<<<<<< HEAD
 =======
@@ -422,11 +472,14 @@ func (m *manager) tryEnterIdleMode() bool {
 =======
 func (m *manager) tryEnterIdleMode() bool {
 >>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 	m.idleMu.Lock()
 	defer m.idleMu.Unlock()
 
 	if atomic.LoadInt32(&m.activeCallsCount) != -math.MaxInt32 {
 		// We raced and lost to a new RPC. Very rare, but stop entering idle.
+<<<<<<< HEAD
+=======
 <<<<<<< HEAD
 <<<<<<< HEAD
 =======
@@ -455,6 +508,7 @@ func (m *manager) tryEnterIdleMode() bool {
 >>>>>>> master
 =======
 >>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 		return false
 	}
 	if atomic.LoadInt32(&m.activeSinceLastTimerCheck) == 1 {
@@ -474,6 +528,8 @@ func (m *manager) tryEnterIdleMode() bool {
 
 	// Successfully entered idle mode.
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
 <<<<<<< HEAD
 =======
 >>>>>>> master
@@ -481,10 +537,15 @@ func (m *manager) tryEnterIdleMode() bool {
 >>>>>>> master
 =======
 >>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 	m.actuallyIdle = true
 	return true
 }
 
+<<<<<<< HEAD
+// OnCallBegin is invoked at the start of every RPC.
+func (m *manager) OnCallBegin() error {
+=======
 <<<<<<< HEAD
 <<<<<<< HEAD
 =======
@@ -512,6 +573,7 @@ func (m *manager) OnCallBegin() error {
 // OnCallBegin is invoked at the start of every RPC.
 func (m *manager) OnCallBegin() error {
 >>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 	if m.isClosed() {
 		return nil
 	}
@@ -524,6 +586,9 @@ func (m *manager) OnCallBegin() error {
 
 	// Channel is either in idle mode or is in the process of moving to idle
 	// mode. Attempt to exit idle mode to allow this RPC.
+<<<<<<< HEAD
+	if err := m.exitIdleMode(); err != nil {
+=======
 <<<<<<< HEAD
 <<<<<<< HEAD
 	if err := m.ExitIdleMode(); err != nil {
@@ -541,6 +606,7 @@ func (m *manager) OnCallBegin() error {
 =======
 	if err := m.exitIdleMode(); err != nil {
 >>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 		// Undo the increment to calls count, and return an error causing the
 		// RPC to fail.
 		atomic.AddInt32(&m.activeCallsCount, -1)
@@ -551,6 +617,8 @@ func (m *manager) OnCallBegin() error {
 	return nil
 }
 
+<<<<<<< HEAD
+=======
 <<<<<<< HEAD
 <<<<<<< HEAD
 =======
@@ -573,6 +641,7 @@ func (m *Manager) ExitIdleMode() error {
 >>>>>>> master
 =======
 >>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 // exitIdleMode instructs the channel to exit idle mode.
 //
 // Holds idleMu which ensures mutual exclusion with tryEnterIdleMode.
@@ -583,6 +652,8 @@ func (m *manager) exitIdleMode() error {
 	if !m.actuallyIdle {
 		// This can happen in two scenarios:
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
 <<<<<<< HEAD
 =======
 >>>>>>> master
@@ -590,12 +661,17 @@ func (m *manager) exitIdleMode() error {
 >>>>>>> master
 =======
 >>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 		// - handleIdleTimeout() set the calls count to -math.MaxInt32 and called
 		//   tryEnterIdleMode(). But before the latter could grab the lock, an RPC
 		//   came in and OnCallBegin() noticed that the calls count is negative.
 		// - Channel is in idle mode, and multiple new RPCs come in at the same
 		//   time, all of them notice a negative calls count in OnCallBegin and get
 		//   here. The first one to get the lock would got the channel to exit idle.
+<<<<<<< HEAD
+		//
+		// Either way, nothing to do here.
+=======
 <<<<<<< HEAD
 <<<<<<< HEAD
 =======
@@ -621,10 +697,14 @@ func (m *manager) exitIdleMode() error {
 		//
 		// Either way, nothing to do here.
 >>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 		return nil
 	}
 
 	if err := m.enforcer.ExitIdleMode(); err != nil {
+<<<<<<< HEAD
+		return fmt.Errorf("channel failed to exit idle mode: %v", err)
+=======
 <<<<<<< HEAD
 <<<<<<< HEAD
 		return fmt.Errorf("failed to exit idle mode: %w", err)
@@ -642,6 +722,7 @@ func (m *manager) exitIdleMode() error {
 =======
 		return fmt.Errorf("channel failed to exit idle mode: %v", err)
 >>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 	}
 
 	// Undo the idle entry process. This also respects any new RPC attempts.
@@ -650,6 +731,9 @@ func (m *manager) exitIdleMode() error {
 
 	// Start a new timer to fire after the configured idle timeout.
 <<<<<<< HEAD
+	m.timer = timeAfterFunc(time.Duration(m.timeout), m.handleIdleTimeout)
+=======
+<<<<<<< HEAD
 <<<<<<< HEAD
 	m.resetIdleTimerLocked(m.timeout)
 =======
@@ -666,11 +750,15 @@ func (m *manager) exitIdleMode() error {
 =======
 	m.timer = timeAfterFunc(time.Duration(m.timeout), m.handleIdleTimeout)
 >>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 	return nil
 }
 
 // OnCallEnd is invoked at the end of every RPC.
 <<<<<<< HEAD
+func (m *manager) OnCallEnd() {
+=======
+<<<<<<< HEAD
 <<<<<<< HEAD
 func (m *Manager) OnCallEnd() {
 =======
@@ -687,6 +775,7 @@ func (m *manager) OnCallEnd() {
 =======
 func (m *manager) OnCallEnd() {
 >>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 	if m.isClosed() {
 		return
 	}
@@ -701,6 +790,8 @@ func (m *manager) OnCallEnd() {
 	atomic.AddInt32(&m.activeCallsCount, -1)
 }
 
+<<<<<<< HEAD
+=======
 <<<<<<< HEAD
 <<<<<<< HEAD
 =======
@@ -726,6 +817,7 @@ func (m *Manager) Close() {
 >>>>>>> master
 =======
 >>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 func (m *manager) isClosed() bool {
 	return atomic.LoadInt32(&m.closed) == 1
 }
@@ -737,6 +829,8 @@ func (m *manager) Close() {
 	m.timer.Stop()
 	m.timer = nil
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
 <<<<<<< HEAD
 =======
 >>>>>>> master
@@ -744,5 +838,6 @@ func (m *manager) Close() {
 >>>>>>> master
 =======
 >>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 	m.idleMu.Unlock()
 }

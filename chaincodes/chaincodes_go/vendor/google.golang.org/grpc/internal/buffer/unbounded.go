@@ -19,6 +19,9 @@
 package buffer
 
 <<<<<<< HEAD
+import "sync"
+=======
+<<<<<<< HEAD
 <<<<<<< HEAD
 =======
 <<<<<<< HEAD
@@ -40,6 +43,7 @@ import "sync"
 =======
 import "sync"
 >>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 
 // Unbounded is an implementation of an unbounded buffer which does not use
 // extra goroutines. This is typically used for passing updates from one entity
@@ -58,6 +62,8 @@ type Unbounded struct {
 	c       chan any
 	closed  bool
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
 <<<<<<< HEAD
 	closing bool
 =======
@@ -71,6 +77,7 @@ type Unbounded struct {
 >>>>>>> master
 =======
 >>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 	mu      sync.Mutex
 	backlog []any
 }
@@ -80,6 +87,8 @@ func NewUnbounded() *Unbounded {
 	return &Unbounded{c: make(chan any, 1)}
 }
 
+<<<<<<< HEAD
+=======
 <<<<<<< HEAD
 <<<<<<< HEAD
 =======
@@ -101,6 +110,7 @@ func (b *Unbounded) Put(t any) error {
 >>>>>>> master
 =======
 >>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 // Put adds t to the unbounded buffer.
 func (b *Unbounded) Put(t any) {
 	b.mu.Lock()
@@ -108,6 +118,8 @@ func (b *Unbounded) Put(t any) {
 	if b.closed {
 		return
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
 <<<<<<< HEAD
 =======
 >>>>>>> master
@@ -115,11 +127,15 @@ func (b *Unbounded) Put(t any) {
 >>>>>>> master
 =======
 >>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 	}
 	if len(b.backlog) == 0 {
 		select {
 		case b.c <- t:
 <<<<<<< HEAD
+			return
+=======
+<<<<<<< HEAD
 <<<<<<< HEAD
 			return nil
 =======
@@ -136,10 +152,13 @@ func (b *Unbounded) Put(t any) {
 =======
 			return
 >>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 		default:
 		}
 	}
 	b.backlog = append(b.backlog, t)
+<<<<<<< HEAD
+=======
 <<<<<<< HEAD
 <<<<<<< HEAD
 =======
@@ -158,11 +177,14 @@ func (b *Unbounded) Put(t any) {
 >>>>>>> master
 =======
 >>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 }
 
 // Load sends the earliest buffered data, if any, onto the read channel
 // returned by Get(). Users are expected to call this every time they read a
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
 <<<<<<< HEAD
 =======
 >>>>>>> master
@@ -170,11 +192,17 @@ func (b *Unbounded) Put(t any) {
 >>>>>>> master
 =======
 >>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 // value from the read channel.
 func (b *Unbounded) Load() {
 	b.mu.Lock()
 	defer b.mu.Unlock()
 <<<<<<< HEAD
+	if b.closed {
+		return
+	}
+=======
+<<<<<<< HEAD
 <<<<<<< HEAD
 =======
 <<<<<<< HEAD
@@ -195,6 +223,7 @@ func (b *Unbounded) Load() {
 		return
 	}
 >>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 	if len(b.backlog) > 0 {
 		select {
 		case b.c <- b.backlog[0]:
@@ -203,6 +232,8 @@ func (b *Unbounded) Load() {
 		default:
 		}
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
 <<<<<<< HEAD
 	} else if b.closing && !b.closed {
 		close(b.c)
@@ -218,6 +249,7 @@ func (b *Unbounded) Load() {
 >>>>>>> master
 =======
 >>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 	}
 }
 
@@ -229,6 +261,9 @@ func (b *Unbounded) Load() {
 //
 // If the unbounded buffer is closed, the read channel returned by this method
 <<<<<<< HEAD
+// is closed.
+=======
+<<<<<<< HEAD
 <<<<<<< HEAD
 // is closed after all data is drained.
 =======
@@ -245,10 +280,13 @@ func (b *Unbounded) Load() {
 =======
 // is closed.
 >>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 func (b *Unbounded) Get() <-chan any {
 	return b.c
 }
 
+<<<<<<< HEAD
+=======
 <<<<<<< HEAD
 <<<<<<< HEAD
 =======
@@ -276,6 +314,7 @@ func (b *Unbounded) Close() {
 >>>>>>> master
 =======
 >>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 // Close closes the unbounded buffer.
 func (b *Unbounded) Close() {
 	b.mu.Lock()
@@ -286,6 +325,8 @@ func (b *Unbounded) Close() {
 	b.closed = true
 	close(b.c)
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
 <<<<<<< HEAD
 =======
 >>>>>>> master
@@ -293,4 +334,5 @@ func (b *Unbounded) Close() {
 >>>>>>> master
 =======
 >>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 }

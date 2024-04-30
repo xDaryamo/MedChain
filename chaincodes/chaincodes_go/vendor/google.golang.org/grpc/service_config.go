@@ -26,6 +26,10 @@ import (
 	"time"
 
 <<<<<<< HEAD
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/internal"
+=======
+<<<<<<< HEAD
 <<<<<<< HEAD
 =======
 <<<<<<< HEAD
@@ -50,6 +54,7 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/internal"
 >>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 	internalserviceconfig "google.golang.org/grpc/internal/serviceconfig"
 	"google.golang.org/grpc/serviceconfig"
 )
@@ -65,6 +70,8 @@ const maxInt = int(^uint(0) >> 1)
 type MethodConfig = internalserviceconfig.MethodConfig
 
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
 <<<<<<< HEAD
 =======
 <<<<<<< HEAD
@@ -74,12 +81,15 @@ type MethodConfig = internalserviceconfig.MethodConfig
 >>>>>>> master
 =======
 >>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 type lbConfig struct {
 	name string
 	cfg  serviceconfig.LoadBalancingConfig
 }
 
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
 <<<<<<< HEAD
 =======
 >>>>>>> master
@@ -87,6 +97,7 @@ type lbConfig struct {
 >>>>>>> master
 =======
 >>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 // ServiceConfig is provided by the service provider and contains parameters for how
 // clients that connect to the service should behave.
 //
@@ -97,6 +108,8 @@ type ServiceConfig struct {
 	serviceconfig.Config
 
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
 <<<<<<< HEAD
 	// lbConfig is the service config's load balancing configuration.  If
 	// lbConfig and LB are both present, lbConfig will be used.
@@ -112,6 +125,7 @@ type ServiceConfig struct {
 >>>>>>> master
 =======
 >>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 	// LB is the load balancer the service providers recommends.  This is
 	// deprecated; lbConfigs is preferred.  If lbConfig and LB are both present,
 	// lbConfig will be used.
@@ -121,6 +135,8 @@ type ServiceConfig struct {
 	// lbConfig and LB are both present, lbConfig will be used.
 	lbConfig *lbConfig
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
 <<<<<<< HEAD
 =======
 >>>>>>> master
@@ -128,6 +144,7 @@ type ServiceConfig struct {
 >>>>>>> master
 =======
 >>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 
 	// Methods contains a map for the methods in this service.  If there is an
 	// exact match for a method (i.e. /service/method) in the map, use the
@@ -230,6 +247,9 @@ type jsonMC struct {
 type jsonSC struct {
 	LoadBalancingPolicy *string
 <<<<<<< HEAD
+	LoadBalancingConfig *internalserviceconfig.BalancerConfig
+=======
+<<<<<<< HEAD
 <<<<<<< HEAD
 	LoadBalancingConfig *json.RawMessage
 =======
@@ -246,6 +266,7 @@ type jsonSC struct {
 =======
 	LoadBalancingConfig *internalserviceconfig.BalancerConfig
 >>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 	MethodConfig        *[]jsonMC
 	RetryThrottling     *retryThrottlingPolicy
 	HealthCheckConfig   *healthCheckConfig
@@ -266,6 +287,9 @@ func parseServiceConfig(js string) *serviceconfig.ParseResult {
 	}
 	sc := ServiceConfig{
 <<<<<<< HEAD
+		LB:                rsc.LoadBalancingPolicy,
+=======
+<<<<<<< HEAD
 <<<<<<< HEAD
 =======
 <<<<<<< HEAD
@@ -280,11 +304,14 @@ func parseServiceConfig(js string) *serviceconfig.ParseResult {
 =======
 		LB:                rsc.LoadBalancingPolicy,
 >>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 		Methods:           make(map[string]MethodConfig),
 		retryThrottling:   rsc.RetryThrottling,
 		healthCheckConfig: rsc.HealthCheckConfig,
 		rawJSONString:     js,
 	}
+<<<<<<< HEAD
+=======
 <<<<<<< HEAD
 <<<<<<< HEAD
 =======
@@ -320,12 +347,15 @@ func parseServiceConfig(js string) *serviceconfig.ParseResult {
 >>>>>>> master
 =======
 >>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 	if c := rsc.LoadBalancingConfig; c != nil {
 		sc.lbConfig = &lbConfig{
 			name: c.Name,
 			cfg:  c.Config,
 		}
 	}
+<<<<<<< HEAD
+=======
 <<<<<<< HEAD
 <<<<<<< HEAD
 =======
@@ -334,6 +364,7 @@ func parseServiceConfig(js string) *serviceconfig.ParseResult {
 >>>>>>> master
 =======
 >>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 
 	if rsc.MethodConfig == nil {
 		return &serviceconfig.ParseResult{Config: &sc}

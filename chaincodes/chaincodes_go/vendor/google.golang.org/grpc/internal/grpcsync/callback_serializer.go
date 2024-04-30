@@ -21,6 +21,9 @@ package grpcsync
 import (
 	"context"
 <<<<<<< HEAD
+	"sync"
+=======
+<<<<<<< HEAD
 <<<<<<< HEAD
 =======
 <<<<<<< HEAD
@@ -35,6 +38,7 @@ import (
 =======
 	"sync"
 >>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 
 	"google.golang.org/grpc/internal/buffer"
 )
@@ -53,6 +57,10 @@ type CallbackSerializer struct {
 
 	callbacks *buffer.Unbounded
 <<<<<<< HEAD
+	closedMu  sync.Mutex
+	closed    bool
+=======
+<<<<<<< HEAD
 <<<<<<< HEAD
 =======
 <<<<<<< HEAD
@@ -70,6 +78,7 @@ type CallbackSerializer struct {
 	closedMu  sync.Mutex
 	closed    bool
 >>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 }
 
 // NewCallbackSerializer returns a new CallbackSerializer instance. The provided
@@ -96,6 +105,8 @@ func NewCallbackSerializer(ctx context.Context) *CallbackSerializer {
 // callbacks once the context passed to NewCallbackSerializer is cancelled.
 func (cs *CallbackSerializer) Schedule(f func(ctx context.Context)) bool {
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
 <<<<<<< HEAD
 =======
 <<<<<<< HEAD
@@ -118,6 +129,7 @@ func (cs *CallbackSerializer) run(ctx context.Context) {
 >>>>>>> master
 =======
 >>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 	cs.closedMu.Lock()
 	defer cs.closedMu.Unlock()
 
@@ -133,6 +145,8 @@ func (cs *CallbackSerializer) run(ctx context.Context) {
 
 	defer close(cs.done)
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
 <<<<<<< HEAD
 =======
 >>>>>>> master
@@ -140,11 +154,14 @@ func (cs *CallbackSerializer) run(ctx context.Context) {
 >>>>>>> master
 =======
 >>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 	for ctx.Err() == nil {
 		select {
 		case <-ctx.Done():
 			// Do nothing here. Next iteration of the for loop will not happen,
 			// since ctx.Err() would be non-nil.
+<<<<<<< HEAD
+=======
 <<<<<<< HEAD
 <<<<<<< HEAD
 =======
@@ -171,6 +188,7 @@ func (cs *CallbackSerializer) run(ctx context.Context) {
 >>>>>>> master
 =======
 >>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 		case callback, ok := <-cs.callbacks.Get():
 			if !ok {
 				return
@@ -203,6 +221,8 @@ func (cs *CallbackSerializer) fetchPendingCallbacks() []func(context.Context) {
 			return backlog
 		}
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
 <<<<<<< HEAD
 =======
 >>>>>>> master
@@ -210,6 +230,7 @@ func (cs *CallbackSerializer) fetchPendingCallbacks() []func(context.Context) {
 >>>>>>> master
 =======
 >>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 	}
 }
 

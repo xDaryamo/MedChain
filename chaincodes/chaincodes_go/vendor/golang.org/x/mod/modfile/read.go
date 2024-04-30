@@ -226,6 +226,9 @@ func (x *FileSyntax) Cleanup() {
 				continue
 			}
 <<<<<<< HEAD
+			if ww == 1 {
+=======
+<<<<<<< HEAD
 <<<<<<< HEAD
 			if ww == 1 && len(stmt.RParen.Comments.Before) == 0 {
 =======
@@ -242,6 +245,7 @@ func (x *FileSyntax) Cleanup() {
 =======
 			if ww == 1 {
 >>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 				// Collapse block into single line.
 				line := &Line{
 					Comments: Comments{

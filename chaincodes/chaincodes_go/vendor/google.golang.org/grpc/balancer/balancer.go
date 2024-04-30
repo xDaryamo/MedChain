@@ -55,6 +55,9 @@ var (
 // registered with the same name, the one registered last will take effect.
 func Register(b Builder) {
 <<<<<<< HEAD
+	if strings.ToLower(b.Name()) != b.Name() {
+=======
+<<<<<<< HEAD
 <<<<<<< HEAD
 	name := strings.ToLower(b.Name())
 	if name != b.Name() {
@@ -73,12 +76,16 @@ func Register(b Builder) {
 =======
 	if strings.ToLower(b.Name()) != b.Name() {
 >>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 		// TODO: Skip the use of strings.ToLower() to index the map after v1.59
 		// is released to switch to case sensitive balancer registry. Also,
 		// remove this warning and update the docstrings for Register and Get.
 		logger.Warningf("Balancer registered with name %q. grpc-go will be switching to case sensitive balancer registries soon", b.Name())
 	}
 <<<<<<< HEAD
+	m[strings.ToLower(b.Name())] = b
+=======
+<<<<<<< HEAD
 <<<<<<< HEAD
 	m[name] = b
 =======
@@ -95,6 +102,7 @@ func Register(b Builder) {
 =======
 	m[strings.ToLower(b.Name())] = b
 >>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 }
 
 // unregisterForTesting deletes the balancer with the given name from the
@@ -267,6 +275,10 @@ type BuildOptions struct {
 	// server can ignore this field.
 	Authority string
 <<<<<<< HEAD
+	// ChannelzParentID is the parent ClientConn's channelz ID.
+	ChannelzParentID *channelz.Identifier
+=======
+<<<<<<< HEAD
 <<<<<<< HEAD
 	// ChannelzParent is the parent ClientConn's channelz channel.
 	ChannelzParent channelz.Identifier
@@ -288,6 +300,7 @@ type BuildOptions struct {
 	// ChannelzParentID is the parent ClientConn's channelz ID.
 	ChannelzParentID *channelz.Identifier
 >>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 	// CustomUserAgent is the custom user agent set on the parent ClientConn.
 	// The balancer should set the same custom user agent if it creates a
 	// ClientConn.

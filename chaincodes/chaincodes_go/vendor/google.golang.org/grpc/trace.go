@@ -27,6 +27,10 @@ import (
 	"sync"
 	"time"
 <<<<<<< HEAD
+
+	"golang.org/x/net/trace"
+=======
+<<<<<<< HEAD
 <<<<<<< HEAD
 =======
 <<<<<<< HEAD
@@ -44,6 +48,7 @@ import (
 
 	"golang.org/x/net/trace"
 >>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 )
 
 // EnableTracing controls whether to trace RPCs using the golang.org/x/net/trace package.
@@ -60,6 +65,11 @@ func methodFamily(m string) string {
 	return m
 }
 
+<<<<<<< HEAD
+// traceInfo contains tracing information for an RPC.
+type traceInfo struct {
+	tr        trace.Trace
+=======
 <<<<<<< HEAD
 <<<<<<< HEAD
 =======
@@ -109,6 +119,7 @@ type traceInfo struct {
 type traceInfo struct {
 	tr        trace.Trace
 >>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 	firstLine firstLine
 }
 

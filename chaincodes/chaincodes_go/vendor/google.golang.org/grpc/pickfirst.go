@@ -26,6 +26,9 @@ import (
 	"google.golang.org/grpc/balancer"
 	"google.golang.org/grpc/connectivity"
 <<<<<<< HEAD
+	"google.golang.org/grpc/internal/envconfig"
+=======
+<<<<<<< HEAD
 <<<<<<< HEAD
 =======
 <<<<<<< HEAD
@@ -40,6 +43,7 @@ import (
 =======
 	"google.golang.org/grpc/internal/envconfig"
 >>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 	internalgrpclog "google.golang.org/grpc/internal/grpclog"
 	"google.golang.org/grpc/internal/grpcrand"
 	"google.golang.org/grpc/internal/pretty"
@@ -54,6 +58,8 @@ const (
 )
 
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
 <<<<<<< HEAD
 type pickfirstBuilder struct{}
 
@@ -69,6 +75,7 @@ func (pickfirstBuilder) Build(cc balancer.ClientConn, opt balancer.BuildOptions)
 >>>>>>> master
 =======
 >>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 func newPickfirstBuilder() balancer.Builder {
 	return &pickfirstBuilder{}
 }
@@ -77,6 +84,8 @@ type pickfirstBuilder struct{}
 
 func (*pickfirstBuilder) Build(cc balancer.ClientConn, opt balancer.BuildOptions) balancer.Balancer {
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
 <<<<<<< HEAD
 =======
 >>>>>>> master
@@ -84,12 +93,16 @@ func (*pickfirstBuilder) Build(cc balancer.ClientConn, opt balancer.BuildOptions
 >>>>>>> master
 =======
 >>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 	b := &pickfirstBalancer{cc: cc}
 	b.logger = internalgrpclog.NewPrefixLogger(logger, fmt.Sprintf(logPrefix, b))
 	return b
 }
 
 <<<<<<< HEAD
+func (*pickfirstBuilder) Name() string {
+=======
+<<<<<<< HEAD
 <<<<<<< HEAD
 func (pickfirstBuilder) Name() string {
 =======
@@ -106,6 +119,7 @@ func (*pickfirstBuilder) Name() string {
 =======
 func (*pickfirstBuilder) Name() string {
 >>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 	return PickFirstBalancerName
 }
 
@@ -119,6 +133,8 @@ type pfConfig struct {
 }
 
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
 <<<<<<< HEAD
 func (pickfirstBuilder) ParseConfig(js json.RawMessage) (serviceconfig.LoadBalancingConfig, error) {
 =======
@@ -130,6 +146,7 @@ func (pickfirstBuilder) ParseConfig(js json.RawMessage) (serviceconfig.LoadBalan
 >>>>>>> master
 =======
 >>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 func (*pickfirstBuilder) ParseConfig(js json.RawMessage) (serviceconfig.LoadBalancingConfig, error) {
 	if !envconfig.PickFirstLBConfig {
 		// Prior to supporting loadbalancing configuration, the pick_first LB
@@ -145,6 +162,8 @@ func (*pickfirstBuilder) ParseConfig(js json.RawMessage) (serviceconfig.LoadBala
 	}
 
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
 <<<<<<< HEAD
 =======
 >>>>>>> master
@@ -152,6 +171,7 @@ func (*pickfirstBuilder) ParseConfig(js json.RawMessage) (serviceconfig.LoadBala
 >>>>>>> master
 =======
 >>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 	var cfg pfConfig
 	if err := json.Unmarshal(js, &cfg); err != nil {
 		return nil, fmt.Errorf("pickfirst: unable to unmarshal LB policy config: %s, error: %v", string(js), err)
@@ -332,6 +352,8 @@ func (i *idlePicker) Pick(balancer.PickInfo) (balancer.PickResult, error) {
 	return balancer.PickResult{}, balancer.ErrNoSubConnAvailable
 }
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
 <<<<<<< HEAD
 =======
 <<<<<<< HEAD
@@ -341,11 +363,14 @@ func (i *idlePicker) Pick(balancer.PickInfo) (balancer.PickResult, error) {
 >>>>>>> master
 =======
 >>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 
 func init() {
 	balancer.Register(newPickfirstBuilder())
 }
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
 <<<<<<< HEAD
 =======
 >>>>>>> master
@@ -353,3 +378,4 @@ func init() {
 >>>>>>> master
 =======
 >>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master

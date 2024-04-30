@@ -372,6 +372,8 @@ const (
 	SYS_FCHMODAT2               = 452
 	SYS_MAP_SHADOW_STACK        = 453
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
 <<<<<<< HEAD
 	SYS_FUTEX_WAKE              = 454
 	SYS_FUTEX_WAIT              = 455
@@ -389,4 +391,5 @@ const (
 >>>>>>> master
 =======
 >>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 )

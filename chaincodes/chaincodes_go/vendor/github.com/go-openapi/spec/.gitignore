@@ -1,4 +1,8 @@
 <<<<<<< HEAD
+secrets.yml
+coverage.out
+=======
+<<<<<<< HEAD
 <<<<<<< HEAD
 *.out
 =======
@@ -18,3 +22,4 @@ coverage.out
 secrets.yml
 coverage.out
 >>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master

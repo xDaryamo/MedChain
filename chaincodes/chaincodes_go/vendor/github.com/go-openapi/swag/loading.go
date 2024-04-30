@@ -22,6 +22,8 @@ import (
 	"net/url"
 	"os"
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
 <<<<<<< HEAD
 	"path"
 =======
@@ -35,6 +37,7 @@ import (
 >>>>>>> master
 =======
 >>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 	"path/filepath"
 	"runtime"
 	"strings"
@@ -55,6 +58,10 @@ var LoadHTTPCustomHeaders = map[string]string{}
 
 // LoadFromFileOrHTTP loads the bytes from a file or a remote http server based on the path passed in
 <<<<<<< HEAD
+func LoadFromFileOrHTTP(path string) ([]byte, error) {
+	return LoadStrategy(path, os.ReadFile, loadHTTPBytes(LoadHTTPTimeout))(path)
+=======
+<<<<<<< HEAD
 <<<<<<< HEAD
 func LoadFromFileOrHTTP(pth string) ([]byte, error) {
 	return LoadStrategy(pth, os.ReadFile, loadHTTPBytes(LoadHTTPTimeout))(pth)
@@ -76,10 +83,13 @@ func LoadFromFileOrHTTP(path string) ([]byte, error) {
 func LoadFromFileOrHTTP(path string) ([]byte, error) {
 	return LoadStrategy(path, os.ReadFile, loadHTTPBytes(LoadHTTPTimeout))(path)
 >>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 }
 
 // LoadFromFileOrHTTPWithTimeout loads the bytes from a file or a remote http server based on the path passed in
 // timeout arg allows for per request overriding of the request timeout
+<<<<<<< HEAD
+=======
 <<<<<<< HEAD
 <<<<<<< HEAD
 =======
@@ -134,6 +144,7 @@ func LoadStrategy(pth string, local, remote func(string) ([]byte, error)) func(s
 >>>>>>> master
 =======
 >>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 func LoadFromFileOrHTTPWithTimeout(path string, timeout time.Duration) ([]byte, error) {
 	return LoadStrategy(path, os.ReadFile, loadHTTPBytes(timeout))(path)
 }
@@ -146,6 +157,8 @@ func LoadStrategy(path string, local, remote func(string) ([]byte, error)) func(
 	return func(pth string) ([]byte, error) {
 		upth, err := pathUnescape(pth)
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
 <<<<<<< HEAD
 =======
 >>>>>>> master
@@ -153,10 +166,13 @@ func LoadStrategy(path string, local, remote func(string) ([]byte, error)) func(
 >>>>>>> master
 =======
 >>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 		if err != nil {
 			return nil, err
 		}
 
+<<<<<<< HEAD
+=======
 <<<<<<< HEAD
 <<<<<<< HEAD
 =======
@@ -210,6 +226,7 @@ func LoadStrategy(path string, local, remote func(string) ([]byte, error)) func(
 >>>>>>> master
 =======
 >>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 		if strings.HasPrefix(pth, `file://`) {
 			if runtime.GOOS == "windows" {
 				// support for canonical file URIs on windows.
@@ -227,6 +244,8 @@ func LoadStrategy(path string, local, remote func(string) ([]byte, error)) func(
 			} else {
 				upth = strings.TrimPrefix(upth, `file://`)
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
 <<<<<<< HEAD
 =======
 >>>>>>> master
@@ -234,6 +253,7 @@ func LoadStrategy(path string, local, remote func(string) ([]byte, error)) func(
 >>>>>>> master
 =======
 >>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 			}
 		}
 
