@@ -27,7 +27,10 @@ import (
 // all relative $ref's will be resolved from there.
 //
 // PathLoader injects a document loading method. By default, this resolves to the function provided by the SpecLoader package variable.
+<<<<<<< HEAD
+=======
 //
+>>>>>>> master
 type ExpandOptions struct {
 	RelativeBase        string                                // the path to the root document to expand. This is a file, not a directory
 	SkipSchemas         bool                                  // do not expand schemas, just paths, parameters and responses
@@ -58,7 +61,11 @@ func ExpandSpec(spec *Swagger, options *ExpandOptions) error {
 	if !options.SkipSchemas {
 		for key, definition := range spec.Definitions {
 			parentRefs := make([]string, 0, 10)
+<<<<<<< HEAD
+			parentRefs = append(parentRefs, "#/definitions/"+key)
+=======
 			parentRefs = append(parentRefs, fmt.Sprintf("#/definitions/%s", key))
+>>>>>>> master
 
 			def, err := expandSchema(definition, parentRefs, resolver, specBasePath)
 			if resolver.shouldStopOnError(err) {
@@ -103,6 +110,23 @@ const rootBase = ".root"
 
 // baseForRoot loads in the cache the root document and produces a fake ".root" base path entry
 // for further $ref resolution
+<<<<<<< HEAD
+func baseForRoot(root interface{}, cache ResolutionCache) string {
+	// cache the root document to resolve $ref's
+	normalizedBase := normalizeBase(rootBase)
+
+	if root == nil {
+		// ensure that we never leave a nil root: always cache the root base pseudo-document
+		cachedRoot, found := cache.Get(normalizedBase)
+		if found && cachedRoot != nil {
+			// the cache is already preloaded with a root
+			return normalizedBase
+		}
+
+		root = map[string]interface{}{}
+	}
+
+=======
 //
 // Setting the cache is optional and this parameter may safely be left to nil.
 func baseForRoot(root interface{}, cache ResolutionCache) string {
@@ -112,6 +136,7 @@ func baseForRoot(root interface{}, cache ResolutionCache) string {
 
 	// cache the root document to resolve $ref's
 	normalizedBase := normalizeBase(rootBase)
+>>>>>>> master
 	cache.Set(normalizedBase, root)
 
 	return normalizedBase
@@ -208,7 +233,23 @@ func expandSchema(target Schema, parentRefs []string, resolver *schemaLoader, ba
 	}
 
 	if target.Ref.String() != "" {
+<<<<<<< HEAD
+		if !resolver.options.SkipSchemas {
+			return expandSchemaRef(target, parentRefs, resolver, basePath)
+		}
+
+		// when "expand" with SkipSchema, we just rebase the existing $ref without replacing
+		// the full schema.
+		rebasedRef, err := NewRef(normalizeURI(target.Ref.String(), basePath))
+		if err != nil {
+			return nil, err
+		}
+		target.Ref = denormalizeRef(&rebasedRef, resolver.context.basePath, resolver.context.rootID)
+
+		return &target, nil
+=======
 		return expandSchemaRef(target, parentRefs, resolver, basePath)
+>>>>>>> master
 	}
 
 	for k := range target.Definitions {
@@ -520,21 +561,41 @@ func getRefAndSchema(input interface{}) (*Ref, *Schema, error) {
 }
 
 func expandParameterOrResponse(input interface{}, resolver *schemaLoader, basePath string) error {
+<<<<<<< HEAD
+	ref, sch, err := getRefAndSchema(input)
+=======
 	ref, _, err := getRefAndSchema(input)
+>>>>>>> master
 	if err != nil {
 		return err
 	}
 
+<<<<<<< HEAD
+	if ref == nil && sch == nil { // nothing to do
+=======
 	if ref == nil {
+>>>>>>> master
 		return nil
 	}
 
 	parentRefs := make([]string, 0, 10)
+<<<<<<< HEAD
+	if ref != nil {
+		// dereference this $ref
+		if err = resolver.deref(input, parentRefs, basePath); resolver.shouldStopOnError(err) {
+			return err
+		}
+
+		ref, sch, _ = getRefAndSchema(input)
+	}
+
+=======
 	if err = resolver.deref(input, parentRefs, basePath); resolver.shouldStopOnError(err) {
 		return err
 	}
 
 	ref, sch, _ := getRefAndSchema(input)
+>>>>>>> master
 	if ref.String() != "" {
 		transitiveResolver := resolver.transitiveResolver(basePath, *ref)
 		basePath = resolver.updateBasePath(transitiveResolver, basePath)
@@ -546,6 +607,10 @@ func expandParameterOrResponse(input interface{}, resolver *schemaLoader, basePa
 		if ref != nil {
 			*ref = Ref{}
 		}
+<<<<<<< HEAD
+
+=======
+>>>>>>> master
 		return nil
 	}
 
@@ -555,14 +620,24 @@ func expandParameterOrResponse(input interface{}, resolver *schemaLoader, basePa
 			return ern
 		}
 
+<<<<<<< HEAD
+		if resolver.isCircular(&rebasedRef, basePath, parentRefs...) {
+=======
 		switch {
 		case resolver.isCircular(&rebasedRef, basePath, parentRefs...):
+>>>>>>> master
 			// this is a circular $ref: stop expansion
 			if !resolver.options.AbsoluteCircularRef {
 				sch.Ref = denormalizeRef(&rebasedRef, resolver.context.basePath, resolver.context.rootID)
 			} else {
 				sch.Ref = rebasedRef
 			}
+<<<<<<< HEAD
+		}
+	}
+
+	// $ref expansion or rebasing is performed by expandSchema below
+=======
 		case !resolver.options.SkipSchemas:
 			// schema expanded to a $ref in another root
 			sch.Ref = rebasedRef
@@ -573,11 +648,21 @@ func expandParameterOrResponse(input interface{}, resolver *schemaLoader, basePa
 		}
 	}
 
+>>>>>>> master
 	if ref != nil {
 		*ref = Ref{}
 	}
 
 	// expand schema
+<<<<<<< HEAD
+	// yes, we do it even if options.SkipSchema is true: we have to go down that rabbit hole and rebase nested $ref)
+	s, err := expandSchema(*sch, parentRefs, resolver, basePath)
+	if resolver.shouldStopOnError(err) {
+		return err
+	}
+
+	if s != nil { // guard for when continuing on error
+=======
 	if !resolver.options.SkipSchemas {
 		s, err := expandSchema(*sch, parentRefs, resolver, basePath)
 		if resolver.shouldStopOnError(err) {
@@ -587,6 +672,7 @@ func expandParameterOrResponse(input interface{}, resolver *schemaLoader, basePa
 			// guard for when continuing on error
 			return nil
 		}
+>>>>>>> master
 		*sch = *s
 	}
 

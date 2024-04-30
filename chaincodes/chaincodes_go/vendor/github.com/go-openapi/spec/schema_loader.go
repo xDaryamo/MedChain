@@ -168,6 +168,9 @@ func (r *schemaLoader) load(refURL *url.URL) (interface{}, url.URL, bool, error)
 	normalized := normalizeBase(pth)
 	debugLog("loading doc from: %s", normalized)
 
+<<<<<<< HEAD
+	data, fromCache := r.cache.Get(normalized)
+=======
 	unescaped, err := url.PathUnescape(normalized)
 	if err != nil {
 		return nil, url.URL{}, false, err
@@ -176,6 +179,7 @@ func (r *schemaLoader) load(refURL *url.URL) (interface{}, url.URL, bool, error)
 	u := url.URL{Path: unescaped}
 
 	data, fromCache := r.cache.Get(u.RequestURI())
+>>>>>>> master
 	if fromCache {
 		return data, toFetch, fromCache, nil
 	}

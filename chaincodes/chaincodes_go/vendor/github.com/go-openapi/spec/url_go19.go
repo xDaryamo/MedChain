@@ -1,6 +1,9 @@
+<<<<<<< HEAD
+=======
 //go:build go1.19
 // +build go1.19
 
+>>>>>>> master
 package spec
 
 import "net/url"

@@ -25,7 +25,10 @@ import (
 
 	"google.golang.org/grpc/balancer"
 	"google.golang.org/grpc/connectivity"
+<<<<<<< HEAD
+=======
 	"google.golang.org/grpc/internal/envconfig"
+>>>>>>> master
 	internalgrpclog "google.golang.org/grpc/internal/grpclog"
 	"google.golang.org/grpc/internal/grpcrand"
 	"google.golang.org/grpc/internal/pretty"
@@ -39,6 +42,11 @@ const (
 	logPrefix             = "[pick-first-lb %p] "
 )
 
+<<<<<<< HEAD
+type pickfirstBuilder struct{}
+
+func (pickfirstBuilder) Build(cc balancer.ClientConn, opt balancer.BuildOptions) balancer.Balancer {
+=======
 func newPickfirstBuilder() balancer.Builder {
 	return &pickfirstBuilder{}
 }
@@ -46,12 +54,17 @@ func newPickfirstBuilder() balancer.Builder {
 type pickfirstBuilder struct{}
 
 func (*pickfirstBuilder) Build(cc balancer.ClientConn, opt balancer.BuildOptions) balancer.Balancer {
+>>>>>>> master
 	b := &pickfirstBalancer{cc: cc}
 	b.logger = internalgrpclog.NewPrefixLogger(logger, fmt.Sprintf(logPrefix, b))
 	return b
 }
 
+<<<<<<< HEAD
+func (pickfirstBuilder) Name() string {
+=======
 func (*pickfirstBuilder) Name() string {
+>>>>>>> master
 	return PickFirstBalancerName
 }
 
@@ -64,6 +77,9 @@ type pfConfig struct {
 	ShuffleAddressList bool `json:"shuffleAddressList"`
 }
 
+<<<<<<< HEAD
+func (pickfirstBuilder) ParseConfig(js json.RawMessage) (serviceconfig.LoadBalancingConfig, error) {
+=======
 func (*pickfirstBuilder) ParseConfig(js json.RawMessage) (serviceconfig.LoadBalancingConfig, error) {
 	if !envconfig.PickFirstLBConfig {
 		// Prior to supporting loadbalancing configuration, the pick_first LB
@@ -78,6 +94,7 @@ func (*pickfirstBuilder) ParseConfig(js json.RawMessage) (serviceconfig.LoadBala
 		return nil, nil
 	}
 
+>>>>>>> master
 	var cfg pfConfig
 	if err := json.Unmarshal(js, &cfg); err != nil {
 		return nil, fmt.Errorf("pickfirst: unable to unmarshal LB policy config: %s, error: %v", string(js), err)
@@ -257,7 +274,10 @@ func (i *idlePicker) Pick(balancer.PickInfo) (balancer.PickResult, error) {
 	i.subConn.Connect()
 	return balancer.PickResult{}, balancer.ErrNoSubConnAvailable
 }
+<<<<<<< HEAD
+=======
 
 func init() {
 	balancer.Register(newPickfirstBuilder())
 }
+>>>>>>> master

@@ -253,7 +253,11 @@ func (s SchemaOrBool) MarshalJSON() ([]byte, error) {
 // UnmarshalJSON converts this bool or schema object from a JSON structure
 func (s *SchemaOrBool) UnmarshalJSON(data []byte) error {
 	var nw SchemaOrBool
+<<<<<<< HEAD
+	if len(data) > 0 {
+=======
 	if len(data) >= 4 {
+>>>>>>> master
 		if data[0] == '{' {
 			var sch Schema
 			if err := json.Unmarshal(data, &sch); err != nil {
@@ -261,7 +265,11 @@ func (s *SchemaOrBool) UnmarshalJSON(data []byte) error {
 			}
 			nw.Schema = &sch
 		}
+<<<<<<< HEAD
+		nw.Allows = !bytes.Equal(data, []byte("false"))
+=======
 		nw.Allows = !(data[0] == 'f' && data[1] == 'a' && data[2] == 'l' && data[3] == 's' && data[4] == 'e')
+>>>>>>> master
 	}
 	*s = nw
 	return nil

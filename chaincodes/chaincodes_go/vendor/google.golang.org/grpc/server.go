@@ -33,8 +33,11 @@ import (
 	"sync/atomic"
 	"time"
 
+<<<<<<< HEAD
+=======
 	"golang.org/x/net/trace"
 
+>>>>>>> master
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/credentials"
 	"google.golang.org/grpc/encoding"
@@ -70,9 +73,16 @@ func init() {
 	internal.GetServerCredentials = func(srv *Server) credentials.TransportCredentials {
 		return srv.opts.creds
 	}
+<<<<<<< HEAD
+	internal.IsRegisteredMethod = func(srv *Server, method string) bool {
+		return srv.isRegisteredMethod(method)
+	}
+	internal.ServerFromContext = serverFromContext
+=======
 	internal.DrainServerTransports = func(srv *Server, addr string) {
 		srv.drainServerTransports(addr)
 	}
+>>>>>>> master
 	internal.AddGlobalServerOptions = func(opt ...ServerOption) {
 		globalServerOptions = append(globalServerOptions, opt...)
 	}
@@ -81,6 +91,10 @@ func init() {
 	}
 	internal.BinaryLogger = binaryLogger
 	internal.JoinServerOptions = newJoinServerOption
+<<<<<<< HEAD
+	internal.RecvBufferPool = recvBufferPool
+=======
+>>>>>>> master
 }
 
 var statusOK = status.New(codes.OK, "")
@@ -129,17 +143,31 @@ type Server struct {
 	drain    bool
 	cv       *sync.Cond              // signaled when connections close for GracefulStop
 	services map[string]*serviceInfo // service name -> service info
+<<<<<<< HEAD
+	events   traceEventLog
+=======
 	events   trace.EventLog
+>>>>>>> master
 
 	quit               *grpcsync.Event
 	done               *grpcsync.Event
 	channelzRemoveOnce sync.Once
+<<<<<<< HEAD
+	serveWG            sync.WaitGroup // counts active Serve goroutines for Stop/GracefulStop
+	handlersWG         sync.WaitGroup // counts active method handler goroutines
+
+	channelz *channelz.Server
+
+	serverWorkerChannel      chan func()
+	serverWorkerChannelClose func()
+=======
 	serveWG            sync.WaitGroup // counts active Serve goroutines for GracefulStop
 
 	channelzID *channelz.Identifier
 	czData     *channelzData
 
 	serverWorkerChannel chan func()
+>>>>>>> master
 }
 
 type serverOptions struct {
@@ -170,6 +198,10 @@ type serverOptions struct {
 	headerTableSize       *uint32
 	numServerWorkers      uint32
 	recvBufferPool        SharedBufferPool
+<<<<<<< HEAD
+	waitForHandlers       bool
+=======
+>>>>>>> master
 }
 
 var defaultServerOptions = serverOptions{
@@ -246,11 +278,17 @@ func SharedWriteBuffer(val bool) ServerOption {
 }
 
 // WriteBufferSize determines how much data can be batched before doing a write
+<<<<<<< HEAD
+// on the wire. The default value for this buffer is 32KB. Zero or negative
+// values will disable the write buffer such that each write will be on underlying
+// connection. Note: A Send call may not directly translate to a write.
+=======
 // on the wire. The corresponding memory allocation for this buffer will be
 // twice the size to keep syscalls low. The default value for this buffer is
 // 32KB. Zero or negative values will disable the write buffer such that each
 // write will be on underlying connection.
 // Note: A Send call may not directly translate to a write.
+>>>>>>> master
 func WriteBufferSize(s int) ServerOption {
 	return newFuncServerOption(func(o *serverOptions) {
 		o.writeBufferSize = s
@@ -567,6 +605,24 @@ func NumStreamWorkers(numServerWorkers uint32) ServerOption {
 	})
 }
 
+<<<<<<< HEAD
+// WaitForHandlers cause Stop to wait until all outstanding method handlers have
+// exited before returning.  If false, Stop will return as soon as all
+// connections have closed, but method handlers may still be running. By
+// default, Stop does not wait for method handlers to return.
+//
+// # Experimental
+//
+// Notice: This API is EXPERIMENTAL and may be changed or removed in a
+// later release.
+func WaitForHandlers(w bool) ServerOption {
+	return newFuncServerOption(func(o *serverOptions) {
+		o.waitForHandlers = w
+	})
+}
+
+=======
+>>>>>>> master
 // RecvBufferPool returns a ServerOption that configures the server
 // to use the provided shared buffer pool for parsing incoming messages. Depending
 // on the application's workload, this could result in reduced memory allocation.
@@ -578,11 +634,21 @@ func NumStreamWorkers(numServerWorkers uint32) ServerOption {
 // options are used: StatsHandler, EnableTracing, or binary logging. In such
 // cases, the shared buffer pool will be ignored.
 //
+<<<<<<< HEAD
+// Deprecated: use experimental.WithRecvBufferPool instead.  Will be deleted in
+// v1.60.0 or later.
+func RecvBufferPool(bufferPool SharedBufferPool) ServerOption {
+	return recvBufferPool(bufferPool)
+}
+
+func recvBufferPool(bufferPool SharedBufferPool) ServerOption {
+=======
 // # Experimental
 //
 // Notice: This API is EXPERIMENTAL and may be changed or removed in a
 // later release.
 func RecvBufferPool(bufferPool SharedBufferPool) ServerOption {
+>>>>>>> master
 	return newFuncServerOption(func(o *serverOptions) {
 		o.recvBufferPool = bufferPool
 	})
@@ -616,15 +682,24 @@ func (s *Server) serverWorker() {
 // connections to reduce the time spent overall on runtime.morestack.
 func (s *Server) initServerWorkers() {
 	s.serverWorkerChannel = make(chan func())
+<<<<<<< HEAD
+	s.serverWorkerChannelClose = grpcsync.OnceFunc(func() {
+		close(s.serverWorkerChannel)
+	})
+=======
+>>>>>>> master
 	for i := uint32(0); i < s.opts.numServerWorkers; i++ {
 		go s.serverWorker()
 	}
 }
 
+<<<<<<< HEAD
+=======
 func (s *Server) stopServerWorkers() {
 	close(s.serverWorkerChannel)
 }
 
+>>>>>>> master
 // NewServer creates a gRPC server which has no service registered and has not
 // started to accept requests yet.
 func NewServer(opt ...ServerOption) *Server {
@@ -642,22 +717,34 @@ func NewServer(opt ...ServerOption) *Server {
 		services: make(map[string]*serviceInfo),
 		quit:     grpcsync.NewEvent(),
 		done:     grpcsync.NewEvent(),
+<<<<<<< HEAD
+		channelz: channelz.RegisterServer(""),
+=======
 		czData:   new(channelzData),
+>>>>>>> master
 	}
 	chainUnaryServerInterceptors(s)
 	chainStreamServerInterceptors(s)
 	s.cv = sync.NewCond(&s.mu)
 	if EnableTracing {
 		_, file, line, _ := runtime.Caller(1)
+<<<<<<< HEAD
+		s.events = newTraceEventLog("grpc.Server", fmt.Sprintf("%s:%d", file, line))
+=======
 		s.events = trace.NewEventLog("grpc.Server", fmt.Sprintf("%s:%d", file, line))
+>>>>>>> master
 	}
 
 	if s.opts.numServerWorkers > 0 {
 		s.initServerWorkers()
 	}
 
+<<<<<<< HEAD
+	channelz.Info(logger, s.channelz, "Server created")
+=======
 	s.channelzID = channelz.RegisterServer(&channelzServer{s}, "")
 	channelz.Info(logger, s.channelzID, "Server created")
+>>>>>>> master
 	return s
 }
 
@@ -783,6 +870,9 @@ var ErrServerStopped = errors.New("grpc: the server has been stopped")
 
 type listenSocket struct {
 	net.Listener
+<<<<<<< HEAD
+	channelz *channelz.Socket
+=======
 	channelzID *channelz.Identifier
 }
 
@@ -791,12 +881,18 @@ func (l *listenSocket) ChannelzMetric() *channelz.SocketInternalMetric {
 		SocketOptions: channelz.GetSocketOption(l.Listener),
 		LocalAddr:     l.Listener.Addr(),
 	}
+>>>>>>> master
 }
 
 func (l *listenSocket) Close() error {
 	err := l.Listener.Close()
+<<<<<<< HEAD
+	channelz.RemoveEntry(l.channelz.ID)
+	channelz.Info(logger, l.channelz, "ListenSocket deleted")
+=======
 	channelz.RemoveEntry(l.channelzID)
 	channelz.Info(logger, l.channelzID, "ListenSocket deleted")
+>>>>>>> master
 	return err
 }
 
@@ -806,6 +902,21 @@ func (l *listenSocket) Close() error {
 // Serve returns when lis.Accept fails with fatal errors.  lis will be closed when
 // this method returns.
 // Serve will return a non-nil error unless Stop or GracefulStop is called.
+<<<<<<< HEAD
+//
+// Note: All supported releases of Go (as of December 2023) override the OS
+// defaults for TCP keepalive time and interval to 15s. To enable TCP keepalive
+// with OS defaults for keepalive time and interval, callers need to do the
+// following two things:
+//   - pass a net.Listener created by calling the Listen method on a
+//     net.ListenConfig with the `KeepAlive` field set to a negative value. This
+//     will result in the Go standard library not overriding OS defaults for TCP
+//     keepalive interval and time. But this will also result in the Go standard
+//     library not enabling TCP keepalives by default.
+//   - override the Accept method on the passed in net.Listener and set the
+//     SO_KEEPALIVE socket option to enable TCP keepalives, with OS defaults.
+=======
+>>>>>>> master
 func (s *Server) Serve(lis net.Listener) error {
 	s.mu.Lock()
 	s.printf("serving")
@@ -826,7 +937,20 @@ func (s *Server) Serve(lis net.Listener) error {
 		}
 	}()
 
+<<<<<<< HEAD
+	ls := &listenSocket{
+		Listener: lis,
+		channelz: channelz.RegisterSocket(&channelz.Socket{
+			SocketType:    channelz.SocketTypeListen,
+			Parent:        s.channelz,
+			RefName:       lis.Addr().String(),
+			LocalAddr:     lis.Addr(),
+			SocketOptions: channelz.GetSocketOption(lis)},
+		),
+	}
+=======
 	ls := &listenSocket{Listener: lis}
+>>>>>>> master
 	s.lis[ls] = true
 
 	defer func() {
@@ -838,6 +962,10 @@ func (s *Server) Serve(lis net.Listener) error {
 		s.mu.Unlock()
 	}()
 
+<<<<<<< HEAD
+	s.mu.Unlock()
+	channelz.Info(logger, ls.channelz, "ListenSocket created")
+=======
 	var err error
 	ls.channelzID, err = channelz.RegisterListenSocket(ls, s.channelzID, lis.Addr().String())
 	if err != nil {
@@ -846,6 +974,7 @@ func (s *Server) Serve(lis net.Listener) error {
 	}
 	s.mu.Unlock()
 	channelz.Info(logger, ls.channelzID, "ListenSocket created")
+>>>>>>> master
 
 	var tempDelay time.Duration // how long to sleep on accept failure
 	for {
@@ -913,15 +1042,30 @@ func (s *Server) handleRawConn(lisAddr string, rawConn net.Conn) {
 		return
 	}
 
+<<<<<<< HEAD
+	if cc, ok := rawConn.(interface {
+		PassServerTransport(transport.ServerTransport)
+	}); ok {
+		cc.PassServerTransport(st)
+	}
+
+=======
+>>>>>>> master
 	if !s.addConn(lisAddr, st) {
 		return
 	}
 	go func() {
+<<<<<<< HEAD
+		s.serveStreams(context.Background(), st, rawConn)
+=======
 		s.serveStreams(st)
+>>>>>>> master
 		s.removeConn(lisAddr, st)
 	}()
 }
 
+<<<<<<< HEAD
+=======
 func (s *Server) drainServerTransports(addr string) {
 	s.mu.Lock()
 	conns := s.conns[addr]
@@ -931,6 +1075,7 @@ func (s *Server) drainServerTransports(addr string) {
 	s.mu.Unlock()
 }
 
+>>>>>>> master
 // newHTTP2Transport sets up a http/2 transport (using the
 // gRPC http2 server transport in transport/http2_server.go).
 func (s *Server) newHTTP2Transport(c net.Conn) transport.ServerTransport {
@@ -947,7 +1092,11 @@ func (s *Server) newHTTP2Transport(c net.Conn) transport.ServerTransport {
 		WriteBufferSize:       s.opts.writeBufferSize,
 		ReadBufferSize:        s.opts.readBufferSize,
 		SharedWriteBuffer:     s.opts.sharedWriteBuffer,
+<<<<<<< HEAD
+		ChannelzParent:        s.channelz,
+=======
 		ChannelzParentID:      s.channelzID,
+>>>>>>> master
 		MaxHeaderListSize:     s.opts.maxHeaderListSize,
 		HeaderTableSize:       s.opts.headerTableSize,
 	}
@@ -961,7 +1110,11 @@ func (s *Server) newHTTP2Transport(c net.Conn) transport.ServerTransport {
 		if err != credentials.ErrConnDispatched {
 			// Don't log on ErrConnDispatched and io.EOF to prevent log spam.
 			if err != io.EOF {
+<<<<<<< HEAD
+				channelz.Info(logger, s.channelz, "grpc: Server.Serve failed to create ServerTransport: ", err)
+=======
 				channelz.Info(logger, s.channelzID, "grpc: Server.Serve failed to create ServerTransport: ", err)
+>>>>>>> master
 			}
 			c.Close()
 		}
@@ -971,6 +1124,33 @@ func (s *Server) newHTTP2Transport(c net.Conn) transport.ServerTransport {
 	return st
 }
 
+<<<<<<< HEAD
+func (s *Server) serveStreams(ctx context.Context, st transport.ServerTransport, rawConn net.Conn) {
+	ctx = transport.SetConnection(ctx, rawConn)
+	ctx = peer.NewContext(ctx, st.Peer())
+	for _, sh := range s.opts.statsHandlers {
+		ctx = sh.TagConn(ctx, &stats.ConnTagInfo{
+			RemoteAddr: st.Peer().Addr,
+			LocalAddr:  st.Peer().LocalAddr,
+		})
+		sh.HandleConn(ctx, &stats.ConnBegin{})
+	}
+
+	defer func() {
+		st.Close(errors.New("finished serving streams for the server transport"))
+		for _, sh := range s.opts.statsHandlers {
+			sh.HandleConn(ctx, &stats.ConnEnd{})
+		}
+	}()
+
+	streamQuota := newHandlerQuota(s.opts.maxConcurrentStreams)
+	st.HandleStreams(ctx, func(stream *transport.Stream) {
+		s.handlersWG.Add(1)
+		streamQuota.acquire()
+		f := func() {
+			defer streamQuota.release()
+			defer s.handlersWG.Done()
+=======
 func (s *Server) serveStreams(st transport.ServerTransport) {
 	defer st.Close(errors.New("finished serving streams for the server transport"))
 	var wg sync.WaitGroup
@@ -983,6 +1163,7 @@ func (s *Server) serveStreams(st transport.ServerTransport) {
 		f := func() {
 			defer streamQuota.release()
 			defer wg.Done()
+>>>>>>> master
 			s.handleStream(st, stream)
 		}
 
@@ -996,7 +1177,10 @@ func (s *Server) serveStreams(st transport.ServerTransport) {
 		}
 		go f()
 	})
+<<<<<<< HEAD
+=======
 	wg.Wait()
+>>>>>>> master
 }
 
 var _ http.Handler = (*Server)(nil)
@@ -1040,7 +1224,11 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	defer s.removeConn(listenerAddressForServeHTTP, st)
+<<<<<<< HEAD
+	s.serveStreams(r.Context(), st, nil)
+=======
 	s.serveStreams(st)
+>>>>>>> master
 }
 
 func (s *Server) addConn(addr string, st transport.ServerTransport) bool {
@@ -1081,6 +1269,19 @@ func (s *Server) removeConn(addr string, st transport.ServerTransport) {
 	}
 }
 
+<<<<<<< HEAD
+func (s *Server) incrCallsStarted() {
+	s.channelz.ServerMetrics.CallsStarted.Add(1)
+	s.channelz.ServerMetrics.LastCallStartedTimestamp.Store(time.Now().UnixNano())
+}
+
+func (s *Server) incrCallsSucceeded() {
+	s.channelz.ServerMetrics.CallsSucceeded.Add(1)
+}
+
+func (s *Server) incrCallsFailed() {
+	s.channelz.ServerMetrics.CallsFailed.Add(1)
+=======
 func (s *Server) channelzMetric() *channelz.ServerInternalMetric {
 	return &channelz.ServerInternalMetric{
 		CallsStarted:             atomic.LoadInt64(&s.czData.callsStarted),
@@ -1101,17 +1302,26 @@ func (s *Server) incrCallsSucceeded() {
 
 func (s *Server) incrCallsFailed() {
 	atomic.AddInt64(&s.czData.callsFailed, 1)
+>>>>>>> master
 }
 
 func (s *Server) sendResponse(ctx context.Context, t transport.ServerTransport, stream *transport.Stream, msg any, cp Compressor, opts *transport.Options, comp encoding.Compressor) error {
 	data, err := encode(s.getCodec(stream.ContentSubtype()), msg)
 	if err != nil {
+<<<<<<< HEAD
+		channelz.Error(logger, s.channelz, "grpc: server failed to encode response: ", err)
+=======
 		channelz.Error(logger, s.channelzID, "grpc: server failed to encode response: ", err)
+>>>>>>> master
 		return err
 	}
 	compData, err := compress(data, cp, comp)
 	if err != nil {
+<<<<<<< HEAD
+		channelz.Error(logger, s.channelz, "grpc: server failed to compress response: ", err)
+=======
 		channelz.Error(logger, s.channelzID, "grpc: server failed to compress response: ", err)
+>>>>>>> master
 		return err
 	}
 	hdr, payload := msgHeader(data, compData)
@@ -1302,10 +1512,18 @@ func (s *Server) processUnaryRPC(ctx context.Context, t transport.ServerTranspor
 	if len(shs) != 0 || len(binlogs) != 0 {
 		payInfo = &payloadInfo{}
 	}
+<<<<<<< HEAD
+
+	d, cancel, err := recvAndDecompress(&parser{r: stream, recvBufferPool: s.opts.recvBufferPool}, stream, dc, s.opts.maxReceiveMessageSize, payInfo, decomp)
+	if err != nil {
+		if e := t.WriteStatus(stream, status.Convert(err)); e != nil {
+			channelz.Warningf(logger, s.channelz, "grpc: Server.processUnaryRPC failed to write status: %v", e)
+=======
 	d, err := recvAndDecompress(&parser{r: stream, recvBufferPool: s.opts.recvBufferPool}, stream, dc, s.opts.maxReceiveMessageSize, payInfo, decomp)
 	if err != nil {
 		if e := t.WriteStatus(stream, status.Convert(err)); e != nil {
 			channelz.Warningf(logger, s.channelzID, "grpc: Server.processUnaryRPC failed to write status: %v", e)
+>>>>>>> master
 		}
 		return err
 	}
@@ -1313,6 +1531,11 @@ func (s *Server) processUnaryRPC(ctx context.Context, t transport.ServerTranspor
 		t.IncrMsgRecv()
 	}
 	df := func(v any) error {
+<<<<<<< HEAD
+		defer cancel()
+
+=======
+>>>>>>> master
 		if err := s.getCodec(stream.ContentSubtype()).Unmarshal(d, v); err != nil {
 			return status.Errorf(codes.Internal, "grpc: error unmarshalling request: %v", err)
 		}
@@ -1354,7 +1577,11 @@ func (s *Server) processUnaryRPC(ctx context.Context, t transport.ServerTranspor
 			trInfo.tr.SetError()
 		}
 		if e := t.WriteStatus(stream, appStatus); e != nil {
+<<<<<<< HEAD
+			channelz.Warningf(logger, s.channelz, "grpc: Server.processUnaryRPC failed to write status: %v", e)
+=======
 			channelz.Warningf(logger, s.channelzID, "grpc: Server.processUnaryRPC failed to write status: %v", e)
+>>>>>>> master
 		}
 		if len(binlogs) != 0 {
 			if h, _ := stream.Header(); h.Len() > 0 {
@@ -1394,7 +1621,11 @@ func (s *Server) processUnaryRPC(ctx context.Context, t transport.ServerTranspor
 		}
 		if sts, ok := status.FromError(err); ok {
 			if e := t.WriteStatus(stream, sts); e != nil {
+<<<<<<< HEAD
+				channelz.Warningf(logger, s.channelz, "grpc: Server.processUnaryRPC failed to write status: %v", e)
+=======
 				channelz.Warningf(logger, s.channelzID, "grpc: Server.processUnaryRPC failed to write status: %v", e)
+>>>>>>> master
 			}
 		} else {
 			switch st := err.(type) {
@@ -1689,15 +1920,27 @@ func (s *Server) processStreamingRPC(ctx context.Context, t transport.ServerTran
 
 func (s *Server) handleStream(t transport.ServerTransport, stream *transport.Stream) {
 	ctx := stream.Context()
+<<<<<<< HEAD
+	ctx = contextWithServer(ctx, s)
+	var ti *traceInfo
+	if EnableTracing {
+		tr := newTrace("grpc.Recv."+methodFamily(stream.Method()), stream.Method())
+		ctx = newTraceContext(ctx, tr)
+=======
 	var ti *traceInfo
 	if EnableTracing {
 		tr := trace.New("grpc.Recv."+methodFamily(stream.Method()), stream.Method())
 		ctx = trace.NewContext(ctx, tr)
+>>>>>>> master
 		ti = &traceInfo{
 			tr: tr,
 			firstLine: firstLine{
 				client:     false,
+<<<<<<< HEAD
+				remoteAddr: t.Peer().Addr,
+=======
 				remoteAddr: t.RemoteAddr(),
+>>>>>>> master
 			},
 		}
 		if dl, ok := ctx.Deadline(); ok {
@@ -1721,7 +1964,11 @@ func (s *Server) handleStream(t transport.ServerTransport, stream *transport.Str
 				ti.tr.LazyLog(&fmtStringer{"%v", []any{err}}, true)
 				ti.tr.SetError()
 			}
+<<<<<<< HEAD
+			channelz.Warningf(logger, s.channelz, "grpc: Server.handleStream failed to write status: %v", err)
+=======
 			channelz.Warningf(logger, s.channelzID, "grpc: Server.handleStream failed to write status: %v", err)
+>>>>>>> master
 		}
 		if ti != nil {
 			ti.tr.Finish()
@@ -1731,6 +1978,25 @@ func (s *Server) handleStream(t transport.ServerTransport, stream *transport.Str
 	service := sm[:pos]
 	method := sm[pos+1:]
 
+<<<<<<< HEAD
+	md, _ := metadata.FromIncomingContext(ctx)
+	for _, sh := range s.opts.statsHandlers {
+		ctx = sh.TagRPC(ctx, &stats.RPCTagInfo{FullMethodName: stream.Method()})
+		sh.HandleRPC(ctx, &stats.InHeader{
+			FullMethod:  stream.Method(),
+			RemoteAddr:  t.Peer().Addr,
+			LocalAddr:   t.Peer().LocalAddr,
+			Compression: stream.RecvCompress(),
+			WireLength:  stream.HeaderWireLength(),
+			Header:      md,
+		})
+	}
+	// To have calls in stream callouts work. Will delete once all stats handler
+	// calls come from the gRPC layer.
+	stream.SetContext(ctx)
+
+=======
+>>>>>>> master
 	srv, knownService := s.services[service]
 	if knownService {
 		if md, ok := srv.methods[method]; ok {
@@ -1762,7 +2028,11 @@ func (s *Server) handleStream(t transport.ServerTransport, stream *transport.Str
 			ti.tr.LazyLog(&fmtStringer{"%v", []any{err}}, true)
 			ti.tr.SetError()
 		}
+<<<<<<< HEAD
+		channelz.Warningf(logger, s.channelz, "grpc: Server.handleStream failed to write status: %v", err)
+=======
 		channelz.Warningf(logger, s.channelzID, "grpc: Server.handleStream failed to write status: %v", err)
+>>>>>>> master
 	}
 	if ti != nil {
 		ti.tr.Finish()
@@ -1820,6 +2090,9 @@ func ServerTransportStreamFromContext(ctx context.Context) ServerTransportStream
 // pending RPCs on the client side will get notified by connection
 // errors.
 func (s *Server) Stop() {
+<<<<<<< HEAD
+	s.stop(false)
+=======
 	s.quit.Fire()
 
 	defer func() {
@@ -1856,12 +2129,73 @@ func (s *Server) Stop() {
 		s.events = nil
 	}
 	s.mu.Unlock()
+>>>>>>> master
 }
 
 // GracefulStop stops the gRPC server gracefully. It stops the server from
 // accepting new connections and RPCs and blocks until all the pending RPCs are
 // finished.
 func (s *Server) GracefulStop() {
+<<<<<<< HEAD
+	s.stop(true)
+}
+
+func (s *Server) stop(graceful bool) {
+	s.quit.Fire()
+	defer s.done.Fire()
+
+	s.channelzRemoveOnce.Do(func() { channelz.RemoveEntry(s.channelz.ID) })
+	s.mu.Lock()
+	s.closeListenersLocked()
+	// Wait for serving threads to be ready to exit.  Only then can we be sure no
+	// new conns will be created.
+	s.mu.Unlock()
+	s.serveWG.Wait()
+
+	s.mu.Lock()
+	defer s.mu.Unlock()
+
+	if graceful {
+		s.drainAllServerTransportsLocked()
+	} else {
+		s.closeServerTransportsLocked()
+	}
+
+	for len(s.conns) != 0 {
+		s.cv.Wait()
+	}
+	s.conns = nil
+
+	if s.opts.numServerWorkers > 0 {
+		// Closing the channel (only once, via grpcsync.OnceFunc) after all the
+		// connections have been closed above ensures that there are no
+		// goroutines executing the callback passed to st.HandleStreams (where
+		// the channel is written to).
+		s.serverWorkerChannelClose()
+	}
+
+	if graceful || s.opts.waitForHandlers {
+		s.handlersWG.Wait()
+	}
+
+	if s.events != nil {
+		s.events.Finish()
+		s.events = nil
+	}
+}
+
+// s.mu must be held by the caller.
+func (s *Server) closeServerTransportsLocked() {
+	for _, conns := range s.conns {
+		for st := range conns {
+			st.Close(errors.New("Server.Stop called"))
+		}
+	}
+}
+
+// s.mu must be held by the caller.
+func (s *Server) drainAllServerTransportsLocked() {
+=======
 	s.quit.Fire()
 	defer s.done.Fire()
 
@@ -1876,6 +2210,7 @@ func (s *Server) GracefulStop() {
 		lis.Close()
 	}
 	s.lis = nil
+>>>>>>> master
 	if !s.drain {
 		for _, conns := range s.conns {
 			for st := range conns {
@@ -1884,6 +2219,16 @@ func (s *Server) GracefulStop() {
 		}
 		s.drain = true
 	}
+<<<<<<< HEAD
+}
+
+// s.mu must be held by the caller.
+func (s *Server) closeListenersLocked() {
+	for lis := range s.lis {
+		lis.Close()
+	}
+	s.lis = nil
+=======
 
 	// Wait for serving threads to be ready to exit.  Only then can we be sure no
 	// new conns will be created.
@@ -1900,6 +2245,7 @@ func (s *Server) GracefulStop() {
 		s.events = nil
 	}
 	s.mu.Unlock()
+>>>>>>> master
 }
 
 // contentSubtype must be lowercase
@@ -1913,11 +2259,56 @@ func (s *Server) getCodec(contentSubtype string) baseCodec {
 	}
 	codec := encoding.GetCodec(contentSubtype)
 	if codec == nil {
+<<<<<<< HEAD
+		logger.Warningf("Unsupported codec %q. Defaulting to %q for now. This will start to fail in future releases.", contentSubtype, proto.Name)
+=======
+>>>>>>> master
 		return encoding.GetCodec(proto.Name)
 	}
 	return codec
 }
 
+<<<<<<< HEAD
+type serverKey struct{}
+
+// serverFromContext gets the Server from the context.
+func serverFromContext(ctx context.Context) *Server {
+	s, _ := ctx.Value(serverKey{}).(*Server)
+	return s
+}
+
+// contextWithServer sets the Server in the context.
+func contextWithServer(ctx context.Context, server *Server) context.Context {
+	return context.WithValue(ctx, serverKey{}, server)
+}
+
+// isRegisteredMethod returns whether the passed in method is registered as a
+// method on the server. /service/method and service/method will match if the
+// service and method are registered on the server.
+func (s *Server) isRegisteredMethod(serviceMethod string) bool {
+	if serviceMethod != "" && serviceMethod[0] == '/' {
+		serviceMethod = serviceMethod[1:]
+	}
+	pos := strings.LastIndex(serviceMethod, "/")
+	if pos == -1 { // Invalid method name syntax.
+		return false
+	}
+	service := serviceMethod[:pos]
+	method := serviceMethod[pos+1:]
+	srv, knownService := s.services[service]
+	if knownService {
+		if _, ok := srv.methods[method]; ok {
+			return true
+		}
+		if _, ok := srv.streams[method]; ok {
+			return true
+		}
+	}
+	return false
+}
+
+=======
+>>>>>>> master
 // SetHeader sets the header metadata to be sent from the server to the client.
 // The context provided must be the context passed to the server's handler.
 //
@@ -2019,7 +2410,11 @@ func ClientSupportedCompressors(ctx context.Context) ([]string, error) {
 		return nil, fmt.Errorf("failed to fetch the stream from the given context %v", ctx)
 	}
 
+<<<<<<< HEAD
+	return stream.ClientAdvertisedCompressors(), nil
+=======
 	return strings.Split(stream.ClientAdvertisedCompressors(), ","), nil
+>>>>>>> master
 }
 
 // SetTrailer sets the trailer metadata that will be sent when an RPC returns.
@@ -2049,6 +2444,11 @@ func Method(ctx context.Context) (string, bool) {
 	return s.Method(), true
 }
 
+<<<<<<< HEAD
+// validateSendCompressor returns an error when given compressor name cannot be
+// handled by the server or the client based on the advertised compressors.
+func validateSendCompressor(name string, clientCompressors []string) error {
+=======
 type channelzServer struct {
 	s *Server
 }
@@ -2060,6 +2460,7 @@ func (c *channelzServer) ChannelzMetric() *channelz.ServerInternalMetric {
 // validateSendCompressor returns an error when given compressor name cannot be
 // handled by the server or the client based on the advertised compressors.
 func validateSendCompressor(name, clientCompressors string) error {
+>>>>>>> master
 	if name == encoding.Identity {
 		return nil
 	}
@@ -2068,7 +2469,11 @@ func validateSendCompressor(name, clientCompressors string) error {
 		return fmt.Errorf("compressor not registered %q", name)
 	}
 
+<<<<<<< HEAD
+	for _, c := range clientCompressors {
+=======
 	for _, c := range strings.Split(clientCompressors, ",") {
+>>>>>>> master
 		if c == name {
 			return nil // found match
 		}

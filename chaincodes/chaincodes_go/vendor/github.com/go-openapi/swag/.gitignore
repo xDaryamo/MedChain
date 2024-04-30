@@ -2,3 +2,7 @@ secrets.yml
 vendor
 Godeps
 .idea
+<<<<<<< HEAD
+*.out
+=======
+>>>>>>> master

@@ -418,10 +418,16 @@ func newFramer(conn net.Conn, writeBufferSize, readBufferSize int, sharedWriteBu
 	return f
 }
 
+<<<<<<< HEAD
+func getWriteBufferPool(size int) *sync.Pool {
+	writeBufferMutex.Lock()
+	defer writeBufferMutex.Unlock()
+=======
 func getWriteBufferPool(writeBufferSize int) *sync.Pool {
 	writeBufferMutex.Lock()
 	defer writeBufferMutex.Unlock()
 	size := writeBufferSize * 2
+>>>>>>> master
 	pool, ok := writeBufferPoolMap[size]
 	if ok {
 		return pool
