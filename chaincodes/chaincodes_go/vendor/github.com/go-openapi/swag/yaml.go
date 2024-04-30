@@ -17,6 +17,10 @@ package swag
 import (
 	"encoding/json"
 <<<<<<< HEAD
+	"fmt"
+	"path/filepath"
+=======
+<<<<<<< HEAD
 	"errors"
 	"fmt"
 	"path/filepath"
@@ -25,6 +29,7 @@ import (
 =======
 	"fmt"
 	"path/filepath"
+>>>>>>> master
 >>>>>>> master
 	"strconv"
 
@@ -57,9 +62,13 @@ func BytesToYAMLDoc(data []byte) (interface{}, error) {
 	}
 	if document.Kind != yaml.DocumentNode || len(document.Content) != 1 || document.Content[0].Kind != yaml.MappingNode {
 <<<<<<< HEAD
+		return nil, fmt.Errorf("only YAML documents that are objects are supported")
+=======
+<<<<<<< HEAD
 		return nil, errors.New("only YAML documents that are objects are supported")
 =======
 		return nil, fmt.Errorf("only YAML documents that are objects are supported")
+>>>>>>> master
 >>>>>>> master
 	}
 	return &document, nil
@@ -160,9 +169,13 @@ func yamlScalar(node *yaml.Node) (interface{}, error) {
 		return node.Value, nil
 	case yamlNull:
 <<<<<<< HEAD
+		return nil, nil
+=======
+<<<<<<< HEAD
 		return nil, nil //nolint:nilnil
 =======
 		return nil, nil
+>>>>>>> master
 >>>>>>> master
 	default:
 		return nil, fmt.Errorf("YAML tag %q is not supported", node.LongTag())
@@ -262,6 +275,9 @@ func (s JSONMapSlice) MarshalYAML() (interface{}, error) {
 }
 
 <<<<<<< HEAD
+func json2yaml(item interface{}) (*yaml.Node, error) {
+=======
+<<<<<<< HEAD
 func isNil(input interface{}) bool {
 	if input == nil {
 		return true
@@ -286,6 +302,7 @@ func json2yaml(item interface{}) (*yaml.Node, error) {
 =======
 func json2yaml(item interface{}) (*yaml.Node, error) {
 >>>>>>> master
+>>>>>>> master
 	switch val := item.(type) {
 	case JSONMapSlice:
 		var n yaml.Node
@@ -306,6 +323,9 @@ func json2yaml(item interface{}) (*yaml.Node, error) {
 		var n yaml.Node
 		n.Kind = yaml.MappingNode
 <<<<<<< HEAD
+		for k, v := range val {
+=======
+<<<<<<< HEAD
 		keys := make([]string, 0, len(val))
 		for k := range val {
 			keys = append(keys, k)
@@ -316,6 +336,7 @@ func json2yaml(item interface{}) (*yaml.Node, error) {
 			v := val[k]
 =======
 		for k, v := range val {
+>>>>>>> master
 >>>>>>> master
 			childNode, err := json2yaml(v)
 			if err != nil {
@@ -370,12 +391,17 @@ func json2yaml(item interface{}) (*yaml.Node, error) {
 			Value: strconv.FormatBool(val),
 		}, nil
 <<<<<<< HEAD
+	}
+	return nil, nil
+=======
+<<<<<<< HEAD
 	default:
 		return nil, fmt.Errorf("unhandled type: %T", val)
 	}
 =======
 	}
 	return nil, nil
+>>>>>>> master
 >>>>>>> master
 }
 

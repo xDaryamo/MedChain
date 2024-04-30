@@ -309,8 +309,11 @@ var laxGoVersionRE = lazyregexp.New(`^v?(([1-9][0-9]*)\.(0|[1-9][0-9]*))([^0-9].
 // Toolchains must be named beginning with `go1`,
 // like "go1.20.3" or "go1.20.3-gccgo". As a special case, "default" is also permitted.
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
 // TODO(samthanawalla): Replace regex with https://pkg.go.dev/go/version#IsValid in 1.23+
 =======
+>>>>>>> master
 >>>>>>> master
 var ToolchainRE = lazyregexp.New(`^default$|^go1($|\.)`)
 
@@ -389,9 +392,13 @@ func (f *File) add(errs *ErrorList, block *LineBlock, line *Line, verb string, a
 			return
 		} else if strict && !ToolchainRE.MatchString(args[0]) {
 <<<<<<< HEAD
+			errorf("invalid toolchain version '%s': must match format go1.23.0 or local", args[0])
+=======
+<<<<<<< HEAD
 			errorf("invalid toolchain version '%s': must match format go1.23.0 or default", args[0])
 =======
 			errorf("invalid toolchain version '%s': must match format go1.23.0 or local", args[0])
+>>>>>>> master
 >>>>>>> master
 			return
 		}
@@ -639,9 +646,13 @@ func (f *WorkFile) add(errs *ErrorList, line *Line, verb string, args []string, 
 			return
 		} else if !GoVersionRE.MatchString(args[0]) {
 <<<<<<< HEAD
+			errorf("invalid go version '%s': must match format 1.23", args[0])
+=======
+<<<<<<< HEAD
 			errorf("invalid go version '%s': must match format 1.23.0", args[0])
 =======
 			errorf("invalid go version '%s': must match format 1.23", args[0])
+>>>>>>> master
 >>>>>>> master
 			return
 		}
@@ -659,9 +670,13 @@ func (f *WorkFile) add(errs *ErrorList, line *Line, verb string, args []string, 
 			return
 		} else if !ToolchainRE.MatchString(args[0]) {
 <<<<<<< HEAD
+			errorf("invalid toolchain version '%s': must match format go1.23 or local", args[0])
+=======
+<<<<<<< HEAD
 			errorf("invalid toolchain version '%s': must match format go1.23.0 or default", args[0])
 =======
 			errorf("invalid toolchain version '%s': must match format go1.23 or local", args[0])
+>>>>>>> master
 >>>>>>> master
 			return
 		}
@@ -991,9 +1006,12 @@ func (f *File) AddGoStmt(version string) error {
 		if f.Module != nil && f.Module.Syntax != nil {
 			hint = f.Module.Syntax
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
 		} else if f.Syntax == nil {
 			f.Syntax = new(FileSyntax)
 =======
+>>>>>>> master
 >>>>>>> master
 		}
 		f.Go = &Go{

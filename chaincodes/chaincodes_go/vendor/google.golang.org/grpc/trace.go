@@ -27,9 +27,14 @@ import (
 	"sync"
 	"time"
 <<<<<<< HEAD
+
+	"golang.org/x/net/trace"
+=======
+<<<<<<< HEAD
 =======
 
 	"golang.org/x/net/trace"
+>>>>>>> master
 >>>>>>> master
 )
 
@@ -47,6 +52,11 @@ func methodFamily(m string) string {
 	return m
 }
 
+<<<<<<< HEAD
+// traceInfo contains tracing information for an RPC.
+type traceInfo struct {
+	tr        trace.Trace
+=======
 <<<<<<< HEAD
 // traceEventLog mirrors golang.org/x/net/trace.EventLog.
 //
@@ -77,6 +87,7 @@ type traceInfo struct {
 // traceInfo contains tracing information for an RPC.
 type traceInfo struct {
 	tr        trace.Trace
+>>>>>>> master
 >>>>>>> master
 	firstLine firstLine
 }

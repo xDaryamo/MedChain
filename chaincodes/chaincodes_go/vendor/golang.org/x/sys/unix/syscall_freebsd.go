@@ -14,8 +14,11 @@ package unix
 
 import (
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
 	"errors"
 =======
+>>>>>>> master
 >>>>>>> master
 	"sync"
 	"unsafe"
@@ -174,10 +177,14 @@ func Uname(uname *Utsname) error {
 	mib := []_C_int{CTL_KERN, KERN_OSTYPE}
 	n := unsafe.Sizeof(uname.Sysname)
 <<<<<<< HEAD
+	if err := sysctl(mib, &uname.Sysname[0], &n, nil, 0); err != nil {
+=======
+<<<<<<< HEAD
 	// Suppress ENOMEM errors to be compatible with the C library __xuname() implementation.
 	if err := sysctl(mib, &uname.Sysname[0], &n, nil, 0); err != nil && !errors.Is(err, ENOMEM) {
 =======
 	if err := sysctl(mib, &uname.Sysname[0], &n, nil, 0); err != nil {
+>>>>>>> master
 >>>>>>> master
 		return err
 	}
@@ -185,9 +192,13 @@ func Uname(uname *Utsname) error {
 	mib = []_C_int{CTL_KERN, KERN_HOSTNAME}
 	n = unsafe.Sizeof(uname.Nodename)
 <<<<<<< HEAD
+	if err := sysctl(mib, &uname.Nodename[0], &n, nil, 0); err != nil {
+=======
+<<<<<<< HEAD
 	if err := sysctl(mib, &uname.Nodename[0], &n, nil, 0); err != nil && !errors.Is(err, ENOMEM) {
 =======
 	if err := sysctl(mib, &uname.Nodename[0], &n, nil, 0); err != nil {
+>>>>>>> master
 >>>>>>> master
 		return err
 	}
@@ -195,9 +206,13 @@ func Uname(uname *Utsname) error {
 	mib = []_C_int{CTL_KERN, KERN_OSRELEASE}
 	n = unsafe.Sizeof(uname.Release)
 <<<<<<< HEAD
+	if err := sysctl(mib, &uname.Release[0], &n, nil, 0); err != nil {
+=======
+<<<<<<< HEAD
 	if err := sysctl(mib, &uname.Release[0], &n, nil, 0); err != nil && !errors.Is(err, ENOMEM) {
 =======
 	if err := sysctl(mib, &uname.Release[0], &n, nil, 0); err != nil {
+>>>>>>> master
 >>>>>>> master
 		return err
 	}
@@ -205,9 +220,13 @@ func Uname(uname *Utsname) error {
 	mib = []_C_int{CTL_KERN, KERN_VERSION}
 	n = unsafe.Sizeof(uname.Version)
 <<<<<<< HEAD
+	if err := sysctl(mib, &uname.Version[0], &n, nil, 0); err != nil {
+=======
+<<<<<<< HEAD
 	if err := sysctl(mib, &uname.Version[0], &n, nil, 0); err != nil && !errors.Is(err, ENOMEM) {
 =======
 	if err := sysctl(mib, &uname.Version[0], &n, nil, 0); err != nil {
+>>>>>>> master
 >>>>>>> master
 		return err
 	}
@@ -227,9 +246,13 @@ func Uname(uname *Utsname) error {
 	mib = []_C_int{CTL_HW, HW_MACHINE}
 	n = unsafe.Sizeof(uname.Machine)
 <<<<<<< HEAD
+	if err := sysctl(mib, &uname.Machine[0], &n, nil, 0); err != nil {
+=======
+<<<<<<< HEAD
 	if err := sysctl(mib, &uname.Machine[0], &n, nil, 0); err != nil && !errors.Is(err, ENOMEM) {
 =======
 	if err := sysctl(mib, &uname.Machine[0], &n, nil, 0); err != nil {
+>>>>>>> master
 >>>>>>> master
 		return err
 	}

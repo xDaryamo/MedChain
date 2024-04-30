@@ -26,6 +26,8 @@ import (
 	"time"
 
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
 	binlogpb "google.golang.org/grpc/binarylog/grpc_binarylog_v1"
 	"google.golang.org/grpc/metadata"
 	"google.golang.org/grpc/status"
@@ -33,11 +35,15 @@ import (
 	"google.golang.org/protobuf/types/known/durationpb"
 	"google.golang.org/protobuf/types/known/timestamppb"
 =======
+>>>>>>> master
 	"github.com/golang/protobuf/proto"
 	"github.com/golang/protobuf/ptypes"
 	binlogpb "google.golang.org/grpc/binarylog/grpc_binarylog_v1"
 	"google.golang.org/grpc/metadata"
 	"google.golang.org/grpc/status"
+<<<<<<< HEAD
+=======
+>>>>>>> master
 >>>>>>> master
 )
 
@@ -98,9 +104,13 @@ func NewTruncatingMethodLogger(h, m uint64) *TruncatingMethodLogger {
 func (ml *TruncatingMethodLogger) Build(c LogEntryConfig) *binlogpb.GrpcLogEntry {
 	m := c.toProto()
 <<<<<<< HEAD
+	timestamp, _ := ptypes.TimestampProto(time.Now())
+=======
+<<<<<<< HEAD
 	timestamp := timestamppb.Now()
 =======
 	timestamp, _ := ptypes.TimestampProto(time.Now())
+>>>>>>> master
 >>>>>>> master
 	m.Timestamp = timestamp
 	m.CallId = ml.callID
@@ -192,9 +202,13 @@ func (c *ClientHeader) toProto() *binlogpb.GrpcLogEntry {
 	}
 	if c.Timeout > 0 {
 <<<<<<< HEAD
+		clientHeader.Timeout = ptypes.DurationProto(c.Timeout)
+=======
+<<<<<<< HEAD
 		clientHeader.Timeout = durationpb.New(c.Timeout)
 =======
 		clientHeader.Timeout = ptypes.DurationProto(c.Timeout)
+>>>>>>> master
 >>>>>>> master
 	}
 	ret := &binlogpb.GrpcLogEntry{

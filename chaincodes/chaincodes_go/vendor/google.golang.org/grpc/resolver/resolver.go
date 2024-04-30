@@ -30,8 +30,11 @@ import (
 	"google.golang.org/grpc/attributes"
 	"google.golang.org/grpc/credentials"
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
 	"google.golang.org/grpc/internal"
 =======
+>>>>>>> master
 >>>>>>> master
 	"google.golang.org/grpc/serviceconfig"
 )
@@ -68,9 +71,13 @@ func Get(scheme string) Builder {
 
 // SetDefaultScheme sets the default scheme that will be used. The default
 <<<<<<< HEAD
+// default scheme is "passthrough".
+=======
+<<<<<<< HEAD
 // scheme is initially set to "passthrough".
 =======
 // default scheme is "passthrough".
+>>>>>>> master
 >>>>>>> master
 //
 // NOTE: this function must only be called during initialization time (i.e. in
@@ -78,6 +85,11 @@ func Get(scheme string) Builder {
 // previously set values.
 func SetDefaultScheme(scheme string) {
 	defaultScheme = scheme
+<<<<<<< HEAD
+}
+
+// GetDefaultScheme gets the default scheme that will be used.
+=======
 <<<<<<< HEAD
 	internal.UserSetDefaultScheme = true
 }
@@ -88,6 +100,7 @@ func SetDefaultScheme(scheme string) {
 }
 
 // GetDefaultScheme gets the default scheme that will be used.
+>>>>>>> master
 >>>>>>> master
 func GetDefaultScheme() string {
 	return defaultScheme
@@ -185,10 +198,13 @@ type BuildOptions struct {
 	// be ignored.
 	Dialer func(context.Context, string) (net.Conn, error)
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
 	// Authority is the effective authority of the clientconn for which the
 	// resolver is built.
 	Authority string
 =======
+>>>>>>> master
 >>>>>>> master
 }
 
@@ -264,11 +280,17 @@ type ClientConn interface {
 	NewAddress(addresses []Address)
 <<<<<<< HEAD
 =======
+<<<<<<< HEAD
+=======
+>>>>>>> master
 	// NewServiceConfig is called by resolver to notify ClientConn a new
 	// service config. The service config should be provided as a json string.
 	//
 	// Deprecated: Use UpdateState instead.
 	NewServiceConfig(serviceConfig string)
+<<<<<<< HEAD
+=======
+>>>>>>> master
 >>>>>>> master
 	// ParseServiceConfig parses the provided service config and returns an
 	// object that provides the parsed config.
@@ -312,12 +334,15 @@ func (t Target) Endpoint() string {
 }
 
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
 // String returns the canonical string representation of Target.
 func (t Target) String() string {
 	return t.URL.Scheme + "://" + t.URL.Host + "/" + t.Endpoint()
 }
 
 =======
+>>>>>>> master
 >>>>>>> master
 // Builder creates a resolver that will be used to watch name resolution updates.
 type Builder interface {
@@ -348,6 +373,8 @@ type Resolver interface {
 	Close()
 }
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
 
 // AuthorityOverrider is implemented by Builders that wish to override the
 // default authority for the ClientConn.
@@ -359,4 +386,5 @@ type AuthorityOverrider interface {
 	OverrideAuthority(Target) string
 }
 =======
+>>>>>>> master
 >>>>>>> master

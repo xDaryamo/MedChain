@@ -12,9 +12,13 @@ linters-settings:
   goconst:
     min-len: 2
 <<<<<<< HEAD
+    min-occurrences: 2
+=======
+<<<<<<< HEAD
     min-occurrences: 3
 =======
     min-occurrences: 2
+>>>>>>> master
 >>>>>>> master
 
 linters:
@@ -45,6 +49,8 @@ linters:
     - thelper
     - ifshort
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
     - exhaustruct
     - varnamelen
     - gci
@@ -65,4 +71,5 @@ linters:
     - golint
     - nosnakecase
 =======
+>>>>>>> master
 >>>>>>> master

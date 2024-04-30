@@ -58,9 +58,13 @@ var (
 	// stored in the passed in attributes. This is set by
 	// credentials/xds/xds.go.
 <<<<<<< HEAD
+	GetXDSHandshakeInfoForTesting any // func (*attributes.Attributes) *xds.HandshakeInfo
+=======
+<<<<<<< HEAD
 	GetXDSHandshakeInfoForTesting any // func (*attributes.Attributes) *unsafe.Pointer
 =======
 	GetXDSHandshakeInfoForTesting any // func (*attributes.Attributes) *xds.HandshakeInfo
+>>>>>>> master
 >>>>>>> master
 	// GetServerCredentials returns the transport credentials configured on a
 	// gRPC server. An xDS-enabled server needs to know what type of credentials
@@ -73,17 +77,23 @@ var (
 	// deleted or changed.
 	CanonicalString any // func (codes.Code) string
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
 	// IsRegisteredMethod returns whether the passed in method is registered as
 	// a method on the server.
 	IsRegisteredMethod any // func(*grpc.Server, string) bool
 	// ServerFromContext returns the server from the context.
 	ServerFromContext any // func(context.Context) *grpc.Server
 =======
+>>>>>>> master
 	// DrainServerTransports initiates a graceful close of existing connections
 	// on a gRPC server accepted on the provided listener address. An
 	// xDS-enabled server invokes this method on a grpc.Server when a particular
 	// listener moves to "not-serving" mode.
 	DrainServerTransports any // func(*grpc.Server, string)
+<<<<<<< HEAD
+=======
+>>>>>>> master
 >>>>>>> master
 	// AddGlobalServerOptions adds an array of ServerOption that will be
 	// effective globally for newly created servers. The priority will be: 1.
@@ -190,6 +200,8 @@ var (
 
 	// EnterIdleModeForTesting gets the ClientConn to enter IDLE mode.
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
 	EnterIdleModeForTesting any // func(*grpc.ClientConn)
 
 	// ExitIdleModeForTesting gets the ClientConn to exit IDLE mode.
@@ -214,10 +226,14 @@ var (
 	// UserSetDefaultScheme is set to true if the user has overridden the default resolver scheme.
 	UserSetDefaultScheme bool = false
 =======
+>>>>>>> master
 	EnterIdleModeForTesting any // func(*grpc.ClientConn) error
 
 	// ExitIdleModeForTesting gets the ClientConn to exit IDLE mode.
 	ExitIdleModeForTesting any // func(*grpc.ClientConn) error
+<<<<<<< HEAD
+=======
+>>>>>>> master
 >>>>>>> master
 )
 

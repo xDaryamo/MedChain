@@ -26,6 +26,10 @@ import (
 	"time"
 
 <<<<<<< HEAD
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/internal"
+=======
+<<<<<<< HEAD
 	"google.golang.org/grpc/balancer"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/internal"
@@ -33,6 +37,7 @@ import (
 =======
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/internal"
+>>>>>>> master
 >>>>>>> master
 	internalserviceconfig "google.golang.org/grpc/internal/serviceconfig"
 	"google.golang.org/grpc/serviceconfig"
@@ -50,11 +55,17 @@ type MethodConfig = internalserviceconfig.MethodConfig
 
 <<<<<<< HEAD
 =======
+<<<<<<< HEAD
+=======
+>>>>>>> master
 type lbConfig struct {
 	name string
 	cfg  serviceconfig.LoadBalancingConfig
 }
 
+<<<<<<< HEAD
+=======
+>>>>>>> master
 >>>>>>> master
 // ServiceConfig is provided by the service provider and contains parameters for how
 // clients that connect to the service should behave.
@@ -66,10 +77,13 @@ type ServiceConfig struct {
 	serviceconfig.Config
 
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
 	// lbConfig is the service config's load balancing configuration.  If
 	// lbConfig and LB are both present, lbConfig will be used.
 	lbConfig serviceconfig.LoadBalancingConfig
 =======
+>>>>>>> master
 	// LB is the load balancer the service providers recommends.  This is
 	// deprecated; lbConfigs is preferred.  If lbConfig and LB are both present,
 	// lbConfig will be used.
@@ -78,6 +92,9 @@ type ServiceConfig struct {
 	// lbConfig is the service config's load balancing configuration.  If
 	// lbConfig and LB are both present, lbConfig will be used.
 	lbConfig *lbConfig
+<<<<<<< HEAD
+=======
+>>>>>>> master
 >>>>>>> master
 
 	// Methods contains a map for the methods in this service.  If there is an
@@ -181,9 +198,13 @@ type jsonMC struct {
 type jsonSC struct {
 	LoadBalancingPolicy *string
 <<<<<<< HEAD
+	LoadBalancingConfig *internalserviceconfig.BalancerConfig
+=======
+<<<<<<< HEAD
 	LoadBalancingConfig *json.RawMessage
 =======
 	LoadBalancingConfig *internalserviceconfig.BalancerConfig
+>>>>>>> master
 >>>>>>> master
 	MethodConfig        *[]jsonMC
 	RetryThrottling     *retryThrottlingPolicy
@@ -205,14 +226,20 @@ func parseServiceConfig(js string) *serviceconfig.ParseResult {
 	}
 	sc := ServiceConfig{
 <<<<<<< HEAD
+		LB:                rsc.LoadBalancingPolicy,
+=======
+<<<<<<< HEAD
 =======
 		LB:                rsc.LoadBalancingPolicy,
+>>>>>>> master
 >>>>>>> master
 		Methods:           make(map[string]MethodConfig),
 		retryThrottling:   rsc.RetryThrottling,
 		healthCheckConfig: rsc.HealthCheckConfig,
 		rawJSONString:     js,
 	}
+<<<<<<< HEAD
+=======
 <<<<<<< HEAD
 	c := rsc.LoadBalancingConfig
 	if c == nil {
@@ -237,12 +264,16 @@ func parseServiceConfig(js string) *serviceconfig.ParseResult {
 	}
 	sc.lbConfig = cfg
 =======
+>>>>>>> master
 	if c := rsc.LoadBalancingConfig; c != nil {
 		sc.lbConfig = &lbConfig{
 			name: c.Name,
 			cfg:  c.Config,
 		}
 	}
+<<<<<<< HEAD
+=======
+>>>>>>> master
 >>>>>>> master
 
 	if rsc.MethodConfig == nil {

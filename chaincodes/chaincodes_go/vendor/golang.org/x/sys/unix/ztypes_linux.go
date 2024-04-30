@@ -175,10 +175,14 @@ type FscryptPolicyV2 struct {
 	Filenames_encryption_mode uint8
 	Flags                     uint8
 <<<<<<< HEAD
+	_                         [4]uint8
+=======
+<<<<<<< HEAD
 	Log2_data_unit_size       uint8
 	_                         [3]uint8
 =======
 	_                         [4]uint8
+>>>>>>> master
 >>>>>>> master
 	Master_key_identifier     [16]uint8
 }
@@ -461,6 +465,8 @@ type Ucred struct {
 
 type TCPInfo struct {
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
 	State                uint8
 	Ca_state             uint8
 	Retransmits          uint8
@@ -519,6 +525,7 @@ type TCPInfo struct {
 	Total_rto_recoveries uint16
 	Total_rto_time       uint32
 =======
+>>>>>>> master
 	State           uint8
 	Ca_state        uint8
 	Retransmits     uint8
@@ -573,6 +580,9 @@ type TCPInfo struct {
 	Snd_wnd         uint32
 	Rcv_wnd         uint32
 	Rehash          uint32
+<<<<<<< HEAD
+=======
+>>>>>>> master
 >>>>>>> master
 }
 
@@ -617,9 +627,13 @@ const (
 	SizeofICMPv6Filter      = 0x20
 	SizeofUcred             = 0xc
 <<<<<<< HEAD
+	SizeofTCPInfo           = 0xf0
+=======
+<<<<<<< HEAD
 	SizeofTCPInfo           = 0xf8
 =======
 	SizeofTCPInfo           = 0xf0
+>>>>>>> master
 >>>>>>> master
 	SizeofCanFilter         = 0x8
 	SizeofTCPRepairOpt      = 0x8
@@ -902,6 +916,8 @@ const (
 
 	FSMOUNT_CLOEXEC = 0x1
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
 
 	FSCONFIG_SET_FLAG        = 0x0
 	FSCONFIG_SET_STRING      = 0x1
@@ -912,6 +928,7 @@ const (
 	FSCONFIG_CMD_CREATE      = 0x6
 	FSCONFIG_CMD_RECONFIGURE = 0x7
 =======
+>>>>>>> master
 >>>>>>> master
 )
 
@@ -1628,8 +1645,11 @@ const (
 	IFLA_GSO_IPV4_MAX_SIZE                     = 0x3f
 	IFLA_GRO_IPV4_MAX_SIZE                     = 0x40
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
 	IFLA_DPLL_PIN                              = 0x41
 =======
+>>>>>>> master
 >>>>>>> master
 	IFLA_PROTO_DOWN_REASON_UNSPEC              = 0x0
 	IFLA_PROTO_DOWN_REASON_MASK                = 0x1
@@ -1647,8 +1667,11 @@ const (
 	IFLA_INET6_TOKEN                           = 0x7
 	IFLA_INET6_ADDR_GEN_MODE                   = 0x8
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
 	IFLA_INET6_RA_MTU                          = 0x9
 =======
+>>>>>>> master
 >>>>>>> master
 	IFLA_BR_UNSPEC                             = 0x0
 	IFLA_BR_FORWARD_DELAY                      = 0x1
@@ -1698,10 +1721,13 @@ const (
 	IFLA_BR_VLAN_STATS_PER_PORT                = 0x2d
 	IFLA_BR_MULTI_BOOLOPT                      = 0x2e
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
 	IFLA_BR_MCAST_QUERIER_STATE                = 0x2f
 	IFLA_BR_FDB_N_LEARNED                      = 0x30
 	IFLA_BR_FDB_MAX_LEARNED                    = 0x31
 =======
+>>>>>>> master
 >>>>>>> master
 	IFLA_BRPORT_UNSPEC                         = 0x0
 	IFLA_BRPORT_STATE                          = 0x1
@@ -1741,6 +1767,8 @@ const (
 	IFLA_BRPORT_MRP_RING_OPEN                  = 0x23
 	IFLA_BRPORT_MRP_IN_OPEN                    = 0x24
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
 	IFLA_BRPORT_MCAST_EHT_HOSTS_LIMIT          = 0x25
 	IFLA_BRPORT_MCAST_EHT_HOSTS_CNT            = 0x26
 	IFLA_BRPORT_LOCKED                         = 0x27
@@ -1750,6 +1778,7 @@ const (
 	IFLA_BRPORT_NEIGH_VLAN_SUPPRESS            = 0x2b
 	IFLA_BRPORT_BACKUP_NHID                    = 0x2c
 =======
+>>>>>>> master
 >>>>>>> master
 	IFLA_INFO_UNSPEC                           = 0x0
 	IFLA_INFO_KIND                             = 0x1
@@ -1773,10 +1802,13 @@ const (
 	IFLA_MACVLAN_MACADDR_DATA                  = 0x5
 	IFLA_MACVLAN_MACADDR_COUNT                 = 0x6
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
 	IFLA_MACVLAN_BC_QUEUE_LEN                  = 0x7
 	IFLA_MACVLAN_BC_QUEUE_LEN_USED             = 0x8
 	IFLA_MACVLAN_BC_CUTOFF                     = 0x9
 =======
+>>>>>>> master
 >>>>>>> master
 	IFLA_VRF_UNSPEC                            = 0x0
 	IFLA_VRF_TABLE                             = 0x1
@@ -1802,6 +1834,11 @@ const (
 	IFLA_XFRM_LINK                             = 0x1
 	IFLA_XFRM_IF_ID                            = 0x2
 <<<<<<< HEAD
+	IFLA_IPVLAN_UNSPEC                         = 0x0
+	IFLA_IPVLAN_MODE                           = 0x1
+	IFLA_IPVLAN_FLAGS                          = 0x2
+=======
+<<<<<<< HEAD
 	IFLA_XFRM_COLLECT_METADATA                 = 0x3
 	IFLA_IPVLAN_UNSPEC                         = 0x0
 	IFLA_IPVLAN_MODE                           = 0x1
@@ -1822,6 +1859,7 @@ const (
 	IFLA_IPVLAN_UNSPEC                         = 0x0
 	IFLA_IPVLAN_MODE                           = 0x1
 	IFLA_IPVLAN_FLAGS                          = 0x2
+>>>>>>> master
 >>>>>>> master
 	IFLA_VXLAN_UNSPEC                          = 0x0
 	IFLA_VXLAN_ID                              = 0x1
@@ -1854,9 +1892,12 @@ const (
 	IFLA_VXLAN_TTL_INHERIT                     = 0x1c
 	IFLA_VXLAN_DF                              = 0x1d
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
 	IFLA_VXLAN_VNIFILTER                       = 0x1e
 	IFLA_VXLAN_LOCALBYPASS                     = 0x1f
 =======
+>>>>>>> master
 >>>>>>> master
 	IFLA_GENEVE_UNSPEC                         = 0x0
 	IFLA_GENEVE_ID                             = 0x1
@@ -1873,8 +1914,11 @@ const (
 	IFLA_GENEVE_TTL_INHERIT                    = 0xc
 	IFLA_GENEVE_DF                             = 0xd
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
 	IFLA_GENEVE_INNER_PROTO_INHERIT            = 0xe
 =======
+>>>>>>> master
 >>>>>>> master
 	IFLA_BAREUDP_UNSPEC                        = 0x0
 	IFLA_BAREUDP_PORT                          = 0x1
@@ -1889,9 +1933,12 @@ const (
 	IFLA_GTP_PDP_HASHSIZE                      = 0x3
 	IFLA_GTP_ROLE                              = 0x4
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
 	IFLA_GTP_CREATE_SOCKETS                    = 0x5
 	IFLA_GTP_RESTART_COUNT                     = 0x6
 =======
+>>>>>>> master
 >>>>>>> master
 	IFLA_BOND_UNSPEC                           = 0x0
 	IFLA_BOND_MODE                             = 0x1
@@ -1923,10 +1970,13 @@ const (
 	IFLA_BOND_TLB_DYNAMIC_LB                   = 0x1b
 	IFLA_BOND_PEER_NOTIF_DELAY                 = 0x1c
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
 	IFLA_BOND_AD_LACP_ACTIVE                   = 0x1d
 	IFLA_BOND_MISSED_MAX                       = 0x1e
 	IFLA_BOND_NS_IP6_TARGET                    = 0x1f
 =======
+>>>>>>> master
 >>>>>>> master
 	IFLA_BOND_AD_INFO_UNSPEC                   = 0x0
 	IFLA_BOND_AD_INFO_AGGREGATOR               = 0x1
@@ -1944,8 +1994,11 @@ const (
 	IFLA_BOND_SLAVE_AD_ACTOR_OPER_PORT_STATE   = 0x7
 	IFLA_BOND_SLAVE_AD_PARTNER_OPER_PORT_STATE = 0x8
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
 	IFLA_BOND_SLAVE_PRIO                       = 0x9
 =======
+>>>>>>> master
 >>>>>>> master
 	IFLA_VF_INFO_UNSPEC                        = 0x0
 	IFLA_VF_INFO                               = 0x1
@@ -2006,6 +2059,10 @@ const (
 	IFLA_STATS_LINK_OFFLOAD_XSTATS             = 0x4
 	IFLA_STATS_AF_SPEC                         = 0x5
 <<<<<<< HEAD
+	IFLA_OFFLOAD_XSTATS_UNSPEC                 = 0x0
+	IFLA_OFFLOAD_XSTATS_CPU_HIT                = 0x1
+=======
+<<<<<<< HEAD
 	IFLA_STATS_GETSET_UNSPEC                   = 0x0
 	IFLA_STATS_GET_FILTERS                     = 0x1
 	IFLA_STATS_SET_OFFLOAD_XSTATS_L3_STATS     = 0x2
@@ -2019,6 +2076,7 @@ const (
 =======
 	IFLA_OFFLOAD_XSTATS_UNSPEC                 = 0x0
 	IFLA_OFFLOAD_XSTATS_CPU_HIT                = 0x1
+>>>>>>> master
 >>>>>>> master
 	IFLA_XDP_UNSPEC                            = 0x0
 	IFLA_XDP_FD                                = 0x1
@@ -2050,12 +2108,15 @@ const (
 	IFLA_RMNET_MUX_ID                          = 0x1
 	IFLA_RMNET_FLAGS                           = 0x2
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
 	IFLA_MCTP_UNSPEC                           = 0x0
 	IFLA_MCTP_NET                              = 0x1
 	IFLA_DSA_UNSPEC                            = 0x0
 	IFLA_DSA_CONDUIT                           = 0x1
 	IFLA_DSA_MASTER                            = 0x1
 =======
+>>>>>>> master
 >>>>>>> master
 )
 
@@ -3576,9 +3637,13 @@ const (
 	DEVLINK_PORT_FN_ATTR_OPSTATE                       = 0x3
 	DEVLINK_PORT_FN_ATTR_CAPS                          = 0x4
 <<<<<<< HEAD
+	DEVLINK_PORT_FUNCTION_ATTR_MAX                     = 0x4
+=======
+<<<<<<< HEAD
 	DEVLINK_PORT_FUNCTION_ATTR_MAX                     = 0x5
 =======
 	DEVLINK_PORT_FUNCTION_ATTR_MAX                     = 0x4
+>>>>>>> master
 >>>>>>> master
 )
 
@@ -4364,10 +4429,14 @@ const (
 
 type LandlockRulesetAttr struct {
 <<<<<<< HEAD
+	Access_fs uint64
+=======
+<<<<<<< HEAD
 	Access_fs  uint64
 	Access_net uint64
 =======
 	Access_fs uint64
+>>>>>>> master
 >>>>>>> master
 }
 
@@ -5320,9 +5389,13 @@ const (
 	NL80211_FREQUENCY_ATTR_INDOOR_ONLY                      = 0xe
 	NL80211_FREQUENCY_ATTR_IR_CONCURRENT                    = 0xf
 <<<<<<< HEAD
+	NL80211_FREQUENCY_ATTR_MAX                              = 0x1b
+=======
+<<<<<<< HEAD
 	NL80211_FREQUENCY_ATTR_MAX                              = 0x1c
 =======
 	NL80211_FREQUENCY_ATTR_MAX                              = 0x1b
+>>>>>>> master
 >>>>>>> master
 	NL80211_FREQUENCY_ATTR_MAX_TX_POWER                     = 0x6
 	NL80211_FREQUENCY_ATTR_NO_10MHZ                         = 0x11
@@ -5737,9 +5810,13 @@ const (
 	NL80211_REGDOM_TYPE_INTERSECTION                        = 0x3
 	NL80211_REGDOM_TYPE_WORLD                               = 0x1
 <<<<<<< HEAD
+	NL80211_REG_RULE_ATTR_MAX                               = 0x7
+=======
+<<<<<<< HEAD
 	NL80211_REG_RULE_ATTR_MAX                               = 0x8
 =======
 	NL80211_REG_RULE_ATTR_MAX                               = 0x7
+>>>>>>> master
 >>>>>>> master
 	NL80211_REKEY_DATA_AKM                                  = 0x4
 	NL80211_REKEY_DATA_KCK                                  = 0x2

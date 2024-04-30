@@ -2,6 +2,8 @@ linters-settings:
   govet:
     check-shadowing: true
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
   golint:
     min-confidence: 0
   gocyclo:
@@ -15,6 +17,7 @@ linters-settings:
     min-occurrences: 3
 
 =======
+>>>>>>> master
   gocyclo:
     min-complexity: 30
   maligned:
@@ -26,11 +29,18 @@ linters-settings:
     min-occurrences: 4
   paralleltest:
     ignore-missing: true
+<<<<<<< HEAD
+=======
+>>>>>>> master
 >>>>>>> master
 linters:
   enable-all: true
   disable:
     - maligned
+<<<<<<< HEAD
+    - lll
+    - gochecknoglobals
+=======
 <<<<<<< HEAD
     - unparam
     - lll
@@ -41,10 +51,13 @@ linters:
     - lll
     - gochecknoglobals
 >>>>>>> master
+>>>>>>> master
     - godox
     - gocognit
     - whitespace
     - wsl
+<<<<<<< HEAD
+=======
 <<<<<<< HEAD
     - wrapcheck
     - testpackage
@@ -80,6 +93,7 @@ linters:
     - golint
     - nosnakecase
 =======
+>>>>>>> master
     - funlen
     - gochecknoglobals
     - gochecknoinits
@@ -106,4 +120,7 @@ linters:
     - nosnakecase
     - varnamelen
     - exhaustruct
+<<<<<<< HEAD
+=======
+>>>>>>> master
 >>>>>>> master

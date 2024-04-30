@@ -16,6 +16,8 @@ package swag
 
 import (
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
 	"bytes"
 	"sync"
 	"unicode"
@@ -140,6 +142,7 @@ func split(str string) []string {
 	poolOfLexems.RedeemLexems(lexems)
 	poolOfSplitters.RedeemSplitter(s)
 =======
+>>>>>>> master
 	"unicode"
 )
 
@@ -170,12 +173,17 @@ func split(str string) []string {
 	for _, lexem := range lexems {
 		result = append(result, lexem.GetOriginal())
 	}
+<<<<<<< HEAD
+=======
+>>>>>>> master
 >>>>>>> master
 
 	return result
 
 }
 
+<<<<<<< HEAD
+=======
 <<<<<<< HEAD
 func newSplitter(options ...splitterOption) splitter {
 	s := splitter{
@@ -313,6 +321,7 @@ func (s splitter) gatherInitialismMatches(nameRunes []rune) *initialismMatches {
 			if initialismRunes[0] == currentRune {
 				*newMatches = append(*newMatches, initialismMatch{
 =======
+>>>>>>> master
 func (s *splitter) split(str string) []nameLexem {
 	return s.toNameLexems(str)
 }
@@ -396,6 +405,9 @@ func (s *splitter) gatherInitialismMatches(nameRunes []rune) initialismMatches {
 			initialismRunes := []rune(initialism)
 			if s.initialismRuneEqual(initialismRunes[0], currentRune) {
 				newMatches = append(newMatches, &initialismMatch{
+<<<<<<< HEAD
+=======
+>>>>>>> master
 >>>>>>> master
 					start:    currentRunePosition,
 					body:     initialismRunes,
@@ -404,6 +416,8 @@ func (s *splitter) gatherInitialismMatches(nameRunes []rune) initialismMatches {
 			}
 		}
 
+<<<<<<< HEAD
+=======
 <<<<<<< HEAD
 		if matches != nil {
 			poolOfMatches.RedeemMatches(matches)
@@ -421,6 +435,7 @@ func (s splitter) mapMatchesToNameLexems(nameRunes []rune, matches *initialismMa
 	var lastAcceptedMatch initialismMatch
 	for _, match := range *matches {
 =======
+>>>>>>> master
 		matches = newMatches
 	}
 
@@ -432,11 +447,19 @@ func (s *splitter) mapMatchesToNameLexems(nameRunes []rune, matches initialismMa
 
 	var lastAcceptedMatch *initialismMatch
 	for _, match := range matches {
+<<<<<<< HEAD
+=======
+>>>>>>> master
 >>>>>>> master
 		if !match.complete {
 			continue
 		}
 
+<<<<<<< HEAD
+		if firstMatch := lastAcceptedMatch == nil; firstMatch {
+			nameLexems = append(nameLexems, s.breakCasualString(nameRunes[:match.start])...)
+			nameLexems = append(nameLexems, s.breakInitialism(string(match.body)))
+=======
 <<<<<<< HEAD
 		if firstMatch := lastAcceptedMatch.isZero(); firstMatch {
 			s.appendBrokenDownCasualString(nameLexems, nameRunes[:match.start])
@@ -445,6 +468,7 @@ func (s *splitter) mapMatchesToNameLexems(nameRunes []rune, matches initialismMa
 		if firstMatch := lastAcceptedMatch == nil; firstMatch {
 			nameLexems = append(nameLexems, s.breakCasualString(nameRunes[:match.start])...)
 			nameLexems = append(nameLexems, s.breakInitialism(string(match.body)))
+>>>>>>> master
 >>>>>>> master
 
 			lastAcceptedMatch = match
@@ -458,17 +482,24 @@ func (s *splitter) mapMatchesToNameLexems(nameRunes []rune, matches initialismMa
 
 		middle := nameRunes[lastAcceptedMatch.end+1 : match.start]
 <<<<<<< HEAD
+		nameLexems = append(nameLexems, s.breakCasualString(middle)...)
+		nameLexems = append(nameLexems, s.breakInitialism(string(match.body)))
+=======
+<<<<<<< HEAD
 		s.appendBrokenDownCasualString(nameLexems, middle)
 		*nameLexems = append(*nameLexems, s.breakInitialism(string(match.body)))
 =======
 		nameLexems = append(nameLexems, s.breakCasualString(middle)...)
 		nameLexems = append(nameLexems, s.breakInitialism(string(match.body)))
 >>>>>>> master
+>>>>>>> master
 
 		lastAcceptedMatch = match
 	}
 
 	// we have not found any accepted matches
+<<<<<<< HEAD
+=======
 <<<<<<< HEAD
 	if lastAcceptedMatch.isZero() {
 		*nameLexems = (*nameLexems)[:0]
@@ -480,6 +511,7 @@ func (s *splitter) mapMatchesToNameLexems(nameRunes []rune, matches initialismMa
 
 	poolOfMatches.RedeemMatches(matches)
 =======
+>>>>>>> master
 	if lastAcceptedMatch == nil {
 		return s.breakCasualString(nameRunes)
 	}
@@ -488,11 +520,16 @@ func (s *splitter) mapMatchesToNameLexems(nameRunes []rune, matches initialismMa
 		rest := nameRunes[lastAcceptedMatch.end+1:]
 		nameLexems = append(nameLexems, s.breakCasualString(rest)...)
 	}
+<<<<<<< HEAD
+=======
+>>>>>>> master
 >>>>>>> master
 
 	return nameLexems
 }
 
+<<<<<<< HEAD
+=======
 <<<<<<< HEAD
 func (s splitter) breakInitialism(original string) nameLexem {
 	return newInitialismNameLexem(original, original)
@@ -535,6 +572,7 @@ func (s splitter) appendBrokenDownCasualString(segments *[]nameLexem, str []rune
 				addNameLexem(currentSegment.String())
 				currentSegment.Reset()
 =======
+>>>>>>> master
 func (s *splitter) initialismRuneEqual(a, b rune) bool {
 	return a == b
 }
@@ -573,6 +611,9 @@ func (s *splitter) breakCasualString(str []rune) []nameLexem {
 			if currentSegment != "" {
 				addNameLexem(currentSegment)
 				currentSegment = ""
+<<<<<<< HEAD
+=======
+>>>>>>> master
 >>>>>>> master
 			}
 
@@ -585,6 +626,11 @@ func (s *splitter) breakCasualString(str []rune) []nameLexem {
 
 		if !unicode.In(rn, unicode.L, unicode.M, unicode.N, unicode.Pc) {
 <<<<<<< HEAD
+			if currentSegment != "" {
+				addNameLexem(currentSegment)
+				currentSegment = ""
+=======
+<<<<<<< HEAD
 			if currentSegment.Len() > 0 {
 				addNameLexem(currentSegment.String())
 				currentSegment.Reset()
@@ -593,12 +639,15 @@ func (s *splitter) breakCasualString(str []rune) []nameLexem {
 				addNameLexem(currentSegment)
 				currentSegment = ""
 >>>>>>> master
+>>>>>>> master
 			}
 
 			continue
 		}
 
 		if unicode.IsUpper(rn) {
+<<<<<<< HEAD
+=======
 <<<<<<< HEAD
 			if currentSegment.Len() > 0 {
 				addNameLexem(currentSegment.String())
@@ -709,6 +758,7 @@ func isEqualFoldIgnoreSpace(base []rune, str string) bool {
 
 	return true
 =======
+>>>>>>> master
 			if currentSegment != "" {
 				addNameLexem(currentSegment)
 			}
@@ -723,5 +773,8 @@ func isEqualFoldIgnoreSpace(base []rune, str string) bool {
 	}
 
 	return segments
+<<<<<<< HEAD
+=======
+>>>>>>> master
 >>>>>>> master
 }

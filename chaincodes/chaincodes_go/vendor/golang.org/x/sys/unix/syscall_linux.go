@@ -1850,6 +1850,8 @@ func Dup2(oldfd, newfd int) error {
 //sys	Fsopen(fsName string, flags int) (fd int, err error)
 //sys	Fspick(dirfd int, pathName string, flags int) (fd int, err error)
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
 
 //sys	fsconfig(fd int, cmd uint, key *byte, value *byte, aux int) (err error)
 
@@ -1950,6 +1952,7 @@ func FsconfigReconfigure(fd int) (err error) {
 }
 
 =======
+>>>>>>> master
 >>>>>>> master
 //sys	Getdents(fd int, buf []byte) (n int, err error) = SYS_GETDENTS64
 //sysnb	Getpgid(pid int) (pgid int, err error)

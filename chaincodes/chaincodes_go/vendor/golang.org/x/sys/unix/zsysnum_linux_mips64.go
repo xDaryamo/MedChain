@@ -363,10 +363,13 @@ const (
 	SYS_CACHESTAT               = 5451
 	SYS_FCHMODAT2               = 5452
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
 	SYS_MAP_SHADOW_STACK        = 5453
 	SYS_FUTEX_WAKE              = 5454
 	SYS_FUTEX_WAIT              = 5455
 	SYS_FUTEX_REQUEUE           = 5456
 =======
+>>>>>>> master
 >>>>>>> master
 )

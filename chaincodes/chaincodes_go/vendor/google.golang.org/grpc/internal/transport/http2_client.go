@@ -37,8 +37,11 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/credentials"
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
 	"google.golang.org/grpc/internal"
 =======
+>>>>>>> master
 >>>>>>> master
 	"google.golang.org/grpc/internal/channelz"
 	icredentials "google.golang.org/grpc/internal/credentials"
@@ -48,9 +51,13 @@ import (
 	imetadata "google.golang.org/grpc/internal/metadata"
 	istatus "google.golang.org/grpc/internal/status"
 <<<<<<< HEAD
+	"google.golang.org/grpc/internal/syscall"
+=======
+<<<<<<< HEAD
 	isyscall "google.golang.org/grpc/internal/syscall"
 =======
 	"google.golang.org/grpc/internal/syscall"
+>>>>>>> master
 >>>>>>> master
 	"google.golang.org/grpc/internal/transport/networktype"
 	"google.golang.org/grpc/keepalive"
@@ -67,9 +74,12 @@ import (
 var clientConnectionCounter uint64
 
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
 var metadataFromOutgoingContextRaw = internal.FromOutgoingContextRaw.(func(context.Context) (metadata.MD, [][]string, bool))
 
 =======
+>>>>>>> master
 >>>>>>> master
 // http2Client implements the ClientTransport interface with HTTP2.
 type http2Client struct {
@@ -151,11 +161,17 @@ type http2Client struct {
 	kpDormant bool
 
 <<<<<<< HEAD
+	// Fields below are for channelz metric collection.
+	channelzID *channelz.Identifier
+	czData     *channelzData
+=======
+<<<<<<< HEAD
 	channelz *channelz.Socket
 =======
 	// Fields below are for channelz metric collection.
 	channelzID *channelz.Identifier
 	czData     *channelzData
+>>>>>>> master
 >>>>>>> master
 
 	onClose func(GoAwayReason)
@@ -194,9 +210,13 @@ func dial(ctx context.Context, fn func(context.Context, string) (net.Conn, error
 		return proxyDial(ctx, address, grpcUA)
 	}
 <<<<<<< HEAD
+	return (&net.Dialer{}).DialContext(ctx, networkType, address)
+=======
+<<<<<<< HEAD
 	return internal.NetDialerWithTCPKeepalive().DialContext(ctx, networkType, address)
 =======
 	return (&net.Dialer{}).DialContext(ctx, networkType, address)
+>>>>>>> master
 >>>>>>> master
 }
 
@@ -284,9 +304,13 @@ func newHTTP2Client(connectCtx, ctx context.Context, addr resolver.Address, opts
 	keepaliveEnabled := false
 	if kp.Time != infinity {
 <<<<<<< HEAD
+		if err = syscall.SetTCPUserTimeout(conn, kp.Timeout); err != nil {
+=======
+<<<<<<< HEAD
 		if err = isyscall.SetTCPUserTimeout(conn, kp.Timeout); err != nil {
 =======
 		if err = syscall.SetTCPUserTimeout(conn, kp.Timeout); err != nil {
+>>>>>>> master
 >>>>>>> master
 			return nil, connectionErrorf(false, err, "transport: failed to set TCP_USER_TIMEOUT: %v", err)
 		}
@@ -342,8 +366,11 @@ func newHTTP2Client(connectCtx, ctx context.Context, addr resolver.Address, opts
 		maxHeaderListSize = *opts.MaxHeaderListSize
 	}
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
 
 =======
+>>>>>>> master
 >>>>>>> master
 	t := &http2Client{
 		ctx:                   ctx,
@@ -373,13 +400,19 @@ func newHTTP2Client(connectCtx, ctx context.Context, addr resolver.Address, opts
 		streamQuota:           defaultMaxStreamsClient,
 		streamsQuotaAvailable: make(chan struct{}, 1),
 <<<<<<< HEAD
+		czData:                new(channelzData),
+=======
+<<<<<<< HEAD
 =======
 		czData:                new(channelzData),
+>>>>>>> master
 >>>>>>> master
 		keepaliveEnabled:      keepaliveEnabled,
 		bufferPool:            newBufferPool(),
 		onClose:               onClose,
 	}
+<<<<<<< HEAD
+=======
 <<<<<<< HEAD
 	var czSecurity credentials.ChannelzSecurityValue
 	if au, ok := authInfo.(credentials.ChannelzSecurityInfo); ok {
@@ -397,6 +430,7 @@ func newHTTP2Client(connectCtx, ctx context.Context, addr resolver.Address, opts
 			Security:         czSecurity,
 		})
 =======
+>>>>>>> master
 >>>>>>> master
 	t.logger = prefixLoggerForClientTransport(t)
 	// Add peer information to the http2client context.
@@ -430,10 +464,16 @@ func newHTTP2Client(connectCtx, ctx context.Context, addr resolver.Address, opts
 	}
 <<<<<<< HEAD
 =======
+<<<<<<< HEAD
+=======
+>>>>>>> master
 	t.channelzID, err = channelz.RegisterNormalSocket(t, opts.ChannelzParentID, fmt.Sprintf("%s -> %s", t.localAddr, t.remoteAddr))
 	if err != nil {
 		return nil, err
 	}
+<<<<<<< HEAD
+=======
+>>>>>>> master
 >>>>>>> master
 	if t.keepaliveEnabled {
 		t.kpDormancyCond = sync.NewCond(&t.mu)
@@ -502,6 +542,9 @@ func newHTTP2Client(connectCtx, ctx context.Context, addr resolver.Address, opts
 	go func() {
 		t.loopy = newLoopyWriter(clientSide, t.framer, t.controlBuf, t.bdpEst, t.conn, t.logger)
 <<<<<<< HEAD
+		t.loopy.run()
+=======
+<<<<<<< HEAD
 		if err := t.loopy.run(); !isIOError(err) {
 			// Immediately close the connection, as the loopy writer returns
 			// when there are no more active streams and we were draining (the
@@ -511,6 +554,7 @@ func newHTTP2Client(connectCtx, ctx context.Context, addr resolver.Address, opts
 		}
 =======
 		t.loopy.run()
+>>>>>>> master
 >>>>>>> master
 		close(t.writerDone)
 	}()
@@ -557,12 +601,17 @@ func (t *http2Client) newStream(ctx context.Context, callHdr *CallHdr) *Stream {
 func (t *http2Client) getPeer() *peer.Peer {
 	return &peer.Peer{
 <<<<<<< HEAD
+		Addr:     t.remoteAddr,
+		AuthInfo: t.authInfo, // Can be nil
+=======
+<<<<<<< HEAD
 		Addr:      t.remoteAddr,
 		AuthInfo:  t.authInfo, // Can be nil
 		LocalAddr: t.localAddr,
 =======
 		Addr:     t.remoteAddr,
 		AuthInfo: t.authInfo, // Can be nil
+>>>>>>> master
 >>>>>>> master
 	}
 }
@@ -636,9 +685,13 @@ func (t *http2Client) createHeaderFields(ctx context.Context, callHdr *CallHdr) 
 	}
 
 <<<<<<< HEAD
+	if md, added, ok := metadata.FromOutgoingContextRaw(ctx); ok {
+=======
+<<<<<<< HEAD
 	if md, added, ok := metadataFromOutgoingContextRaw(ctx); ok {
 =======
 	if md, added, ok := metadata.FromOutgoingContextRaw(ctx); ok {
+>>>>>>> master
 >>>>>>> master
 		var k string
 		for k, vv := range md {
@@ -820,11 +873,16 @@ func (t *http2Client) NewStream(ctx context.Context, callHdr *CallHdr) (*Stream,
 			}
 			if channelz.IsOn() {
 <<<<<<< HEAD
+				atomic.AddInt64(&t.czData.streamsStarted, 1)
+				atomic.StoreInt64(&t.czData.lastStreamCreatedTime, time.Now().UnixNano())
+=======
+<<<<<<< HEAD
 				t.channelz.SocketMetrics.StreamsStarted.Add(1)
 				t.channelz.SocketMetrics.LastLocalStreamCreatedTimestamp.Store(time.Now().UnixNano())
 =======
 				atomic.AddInt64(&t.czData.streamsStarted, 1)
 				atomic.StoreInt64(&t.czData.lastStreamCreatedTime, time.Now().UnixNano())
+>>>>>>> master
 >>>>>>> master
 			}
 			// If the keepalive goroutine has gone dormant, wake it up.
@@ -997,6 +1055,11 @@ func (t *http2Client) closeStream(s *Stream, err error, rst bool, rstCode http2.
 			if channelz.IsOn() {
 				if eosReceived {
 <<<<<<< HEAD
+					atomic.AddInt64(&t.czData.streamsSucceeded, 1)
+				} else {
+					atomic.AddInt64(&t.czData.streamsFailed, 1)
+=======
+<<<<<<< HEAD
 					t.channelz.SocketMetrics.StreamsSucceeded.Add(1)
 				} else {
 					t.channelz.SocketMetrics.StreamsFailed.Add(1)
@@ -1004,6 +1067,7 @@ func (t *http2Client) closeStream(s *Stream, err error, rst bool, rstCode http2.
 					atomic.AddInt64(&t.czData.streamsSucceeded, 1)
 				} else {
 					atomic.AddInt64(&t.czData.streamsFailed, 1)
+>>>>>>> master
 >>>>>>> master
 				}
 			}
@@ -1060,9 +1124,13 @@ func (t *http2Client) Close(err error) {
 	t.cancel()
 	t.conn.Close()
 <<<<<<< HEAD
+	channelz.RemoveEntry(t.channelzID)
+=======
+<<<<<<< HEAD
 	channelz.RemoveEntry(t.channelz.ID)
 =======
 	channelz.RemoveEntry(t.channelzID)
+>>>>>>> master
 >>>>>>> master
 	// Append info about previous goaways if there were any, since this may be important
 	// for understanding the root cause for this connection to be closed.
@@ -1410,13 +1478,19 @@ func (t *http2Client) handleGoAway(f *http2.GoAwayFrame) {
 		if streamID > id && streamID <= upperLimit {
 			// The stream was unprocessed by the server.
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
 			atomic.StoreUint32(&stream.unprocessed, 1)
 			streamsToClose = append(streamsToClose, stream)
 =======
+>>>>>>> master
 			if streamID > id && streamID <= upperLimit {
 				atomic.StoreUint32(&stream.unprocessed, 1)
 				streamsToClose = append(streamsToClose, stream)
 			}
+<<<<<<< HEAD
+=======
+>>>>>>> master
 >>>>>>> master
 		}
 	}
@@ -1794,9 +1868,13 @@ func (t *http2Client) keepalive() {
 			if !outstandingPing {
 				if channelz.IsOn() {
 <<<<<<< HEAD
+					atomic.AddInt64(&t.czData.kpCount, 1)
+=======
+<<<<<<< HEAD
 					t.channelz.SocketMetrics.KeepAlivesSent.Add(1)
 =======
 					atomic.AddInt64(&t.czData.kpCount, 1)
+>>>>>>> master
 >>>>>>> master
 				}
 				t.controlBuf.put(p)
@@ -1828,12 +1906,15 @@ func (t *http2Client) GoAway() <-chan struct{} {
 }
 
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
 func (t *http2Client) socketMetrics() *channelz.EphemeralSocketMetrics {
 	return &channelz.EphemeralSocketMetrics{
 		LocalFlowControlWindow:  int64(t.fc.getSize()),
 		RemoteFlowControlWindow: t.getOutFlowWindow(),
 	}
 =======
+>>>>>>> master
 func (t *http2Client) ChannelzMetric() *channelz.SocketInternalMetric {
 	s := channelz.SocketInternalMetric{
 		StreamsStarted:                  atomic.LoadInt64(&t.czData.streamsStarted),
@@ -1856,12 +1937,17 @@ func (t *http2Client) ChannelzMetric() *channelz.SocketInternalMetric {
 	}
 	s.RemoteFlowControlWindow = t.getOutFlowWindow()
 	return &s
+<<<<<<< HEAD
+=======
+>>>>>>> master
 >>>>>>> master
 }
 
 func (t *http2Client) RemoteAddr() net.Addr { return t.remoteAddr }
 
 func (t *http2Client) IncrMsgSent() {
+<<<<<<< HEAD
+=======
 <<<<<<< HEAD
 	t.channelz.SocketMetrics.MessagesSent.Add(1)
 	t.channelz.SocketMetrics.LastMessageSentTimestamp.Store(time.Now().UnixNano())
@@ -1871,6 +1957,7 @@ func (t *http2Client) IncrMsgRecv() {
 	t.channelz.SocketMetrics.MessagesReceived.Add(1)
 	t.channelz.SocketMetrics.LastMessageReceivedTimestamp.Store(time.Now().UnixNano())
 =======
+>>>>>>> master
 	atomic.AddInt64(&t.czData.msgSent, 1)
 	atomic.StoreInt64(&t.czData.lastMsgSentTime, time.Now().UnixNano())
 }
@@ -1878,6 +1965,9 @@ func (t *http2Client) IncrMsgRecv() {
 func (t *http2Client) IncrMsgRecv() {
 	atomic.AddInt64(&t.czData.msgRecv, 1)
 	atomic.StoreInt64(&t.czData.lastMsgRecvTime, time.Now().UnixNano())
+<<<<<<< HEAD
+=======
+>>>>>>> master
 >>>>>>> master
 }
 

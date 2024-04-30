@@ -36,8 +36,12 @@ import (
 	"time"
 
 <<<<<<< HEAD
+	"github.com/golang/protobuf/proto"
+=======
+<<<<<<< HEAD
 =======
 	"github.com/golang/protobuf/proto"
+>>>>>>> master
 >>>>>>> master
 	"golang.org/x/net/http2"
 	"google.golang.org/grpc/codes"
@@ -49,8 +53,11 @@ import (
 	"google.golang.org/grpc/stats"
 	"google.golang.org/grpc/status"
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
 	"google.golang.org/protobuf/proto"
 =======
+>>>>>>> master
 >>>>>>> master
 )
 
@@ -59,11 +66,14 @@ import (
 // It requires that the http Server supports HTTP/2.
 func NewServerHandlerTransport(w http.ResponseWriter, r *http.Request, stats []stats.Handler) (ServerTransport, error) {
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
 	if r.Method != http.MethodPost {
 		w.Header().Set("Allow", http.MethodPost)
 		msg := fmt.Sprintf("invalid gRPC request method %q", r.Method)
 		http.Error(w, msg, http.StatusMethodNotAllowed)
 =======
+>>>>>>> master
 	if r.ProtoMajor != 2 {
 		msg := "gRPC requires HTTP/2"
 		http.Error(w, msg, http.StatusBadRequest)
@@ -72,6 +82,9 @@ func NewServerHandlerTransport(w http.ResponseWriter, r *http.Request, stats []s
 	if r.Method != "POST" {
 		msg := fmt.Sprintf("invalid gRPC request method %q", r.Method)
 		http.Error(w, msg, http.StatusBadRequest)
+<<<<<<< HEAD
+=======
+>>>>>>> master
 >>>>>>> master
 		return nil, errors.New(msg)
 	}
@@ -84,6 +97,8 @@ func NewServerHandlerTransport(w http.ResponseWriter, r *http.Request, stats []s
 		return nil, errors.New(msg)
 	}
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
 	if r.ProtoMajor != 2 {
 		msg := "gRPC requires HTTP/2"
 		http.Error(w, msg, http.StatusHTTPVersionNotSupported)
@@ -91,12 +106,15 @@ func NewServerHandlerTransport(w http.ResponseWriter, r *http.Request, stats []s
 	}
 =======
 >>>>>>> master
+>>>>>>> master
 	if _, ok := w.(http.Flusher); !ok {
 		msg := "gRPC requires a ResponseWriter supporting http.Flusher"
 		http.Error(w, msg, http.StatusInternalServerError)
 		return nil, errors.New(msg)
 	}
 
+<<<<<<< HEAD
+=======
 <<<<<<< HEAD
 	var localAddr net.Addr
 	if la := r.Context().Value(http.LocalAddrContextKey); la != nil {
@@ -113,14 +131,18 @@ func NewServerHandlerTransport(w http.ResponseWriter, r *http.Request, stats []s
 	}
 =======
 >>>>>>> master
+>>>>>>> master
 	st := &serverHandlerTransport{
 		rw:             w,
 		req:            r,
 		closedCh:       make(chan struct{}),
 		writes:         make(chan func()),
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
 		peer:           p,
 =======
+>>>>>>> master
 >>>>>>> master
 		contentType:    contentType,
 		contentSubtype: contentSubtype,
@@ -177,9 +199,12 @@ type serverHandlerTransport struct {
 	headerMD metadata.MD
 
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
 	peer peer.Peer
 
 =======
+>>>>>>> master
 >>>>>>> master
 	closeOnce sync.Once
 	closedCh  chan struct{} // closed on Close
@@ -213,6 +238,9 @@ func (ht *serverHandlerTransport) Close(err error) {
 }
 
 <<<<<<< HEAD
+func (ht *serverHandlerTransport) RemoteAddr() net.Addr { return strAddr(ht.req.RemoteAddr) }
+=======
+<<<<<<< HEAD
 func (ht *serverHandlerTransport) Peer() *peer.Peer {
 	return &peer.Peer{
 		Addr:      ht.peer.Addr,
@@ -222,6 +250,7 @@ func (ht *serverHandlerTransport) Peer() *peer.Peer {
 }
 =======
 func (ht *serverHandlerTransport) RemoteAddr() net.Addr { return strAddr(ht.req.RemoteAddr) }
+>>>>>>> master
 >>>>>>> master
 
 // strAddr is a net.Addr backed by either a TCP "ip:port" string, or
@@ -405,13 +434,19 @@ func (ht *serverHandlerTransport) WriteHeader(s *Stream, md metadata.MD) error {
 }
 
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
 func (ht *serverHandlerTransport) HandleStreams(ctx context.Context, startStream func(*Stream)) {
 	// With this transport type there will be exactly 1 stream: this HTTP request.
 =======
+>>>>>>> master
 func (ht *serverHandlerTransport) HandleStreams(startStream func(*Stream)) {
 	// With this transport type there will be exactly 1 stream: this HTTP request.
 
 	ctx := ht.req.Context()
+<<<<<<< HEAD
+=======
+>>>>>>> master
 >>>>>>> master
 	var cancel context.CancelFunc
 	if ht.timeoutSet {
@@ -433,6 +468,8 @@ func (ht *serverHandlerTransport) HandleStreams(startStream func(*Stream)) {
 	}()
 
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
 	ctx = metadata.NewIncomingContext(ctx, ht.headerMD)
 	req := ht.req
 	s := &Stream{
@@ -447,6 +484,7 @@ func (ht *serverHandlerTransport) HandleStreams(startStream func(*Stream)) {
 		contentSubtype:   ht.contentSubtype,
 		headerWireLength: 0, // won't have access to header wire length until golang/go#18997.
 =======
+>>>>>>> master
 	req := ht.req
 
 	s := &Stream{
@@ -475,6 +513,9 @@ func (ht *serverHandlerTransport) HandleStreams(startStream func(*Stream)) {
 			Compression: s.recvCompress,
 		}
 		sh.HandleRPC(s.ctx, inHeader)
+<<<<<<< HEAD
+=======
+>>>>>>> master
 >>>>>>> master
 	}
 	s.trReader = &transportReader{

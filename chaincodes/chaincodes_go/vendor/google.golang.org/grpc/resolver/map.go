@@ -137,6 +137,8 @@ func (a *AddressMap) Values() []any {
 	return ret
 }
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
 
 type endpointNode struct {
 	addrs map[string]struct{}
@@ -251,4 +253,5 @@ func (em *EndpointMap) Delete(e Endpoint) {
 	}
 }
 =======
+>>>>>>> master
 >>>>>>> master

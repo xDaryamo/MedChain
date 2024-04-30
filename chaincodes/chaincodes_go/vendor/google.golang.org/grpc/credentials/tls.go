@@ -45,6 +45,8 @@ func (t TLSInfo) AuthType() string {
 }
 
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
 // cipherSuiteLookup returns the string version of a TLS cipher suite ID.
 func cipherSuiteLookup(cipherSuiteID uint16) string {
 	for _, s := range tls.CipherSuites() {
@@ -65,10 +67,14 @@ func (t TLSInfo) GetSecurityValue() ChannelzSecurityValue {
 	v := &TLSChannelzSecurityValue{
 		StandardName: cipherSuiteLookup(t.State.CipherSuite),
 =======
+>>>>>>> master
 // GetSecurityValue returns security info requested by channelz.
 func (t TLSInfo) GetSecurityValue() ChannelzSecurityValue {
 	v := &TLSChannelzSecurityValue{
 		StandardName: cipherSuiteLookup[t.State.CipherSuite],
+<<<<<<< HEAD
+=======
+>>>>>>> master
 >>>>>>> master
 	}
 	// Currently there's no way to get LocalCertificate info from tls package.
@@ -161,6 +167,8 @@ func (c *tlsCreds) OverrideServerName(serverNameOverride string) error {
 }
 
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
 // The following cipher suites are forbidden for use with HTTP/2 by
 // https://datatracker.ietf.org/doc/html/rfc7540#appendix-A
 var tls12ForbiddenCipherSuites = map[uint16]struct{}{
@@ -176,10 +184,13 @@ var tls12ForbiddenCipherSuites = map[uint16]struct{}{
 
 =======
 >>>>>>> master
+>>>>>>> master
 // NewTLS uses c to construct a TransportCredentials based on TLS.
 func NewTLS(c *tls.Config) TransportCredentials {
 	tc := &tlsCreds{credinternal.CloneTLSConfig(c)}
 	tc.config.NextProtos = credinternal.AppendH2ToNextProtos(tc.config.NextProtos)
+<<<<<<< HEAD
+=======
 <<<<<<< HEAD
 	// If the user did not configure a MinVersion and did not configure a
 	// MaxVersion < 1.2, use MinVersion=1.2, which is required by
@@ -198,6 +209,7 @@ func NewTLS(c *tls.Config) TransportCredentials {
 		}
 	}
 =======
+>>>>>>> master
 >>>>>>> master
 	return tc
 }
@@ -264,6 +276,9 @@ type TLSChannelzSecurityValue struct {
 }
 <<<<<<< HEAD
 =======
+<<<<<<< HEAD
+=======
+>>>>>>> master
 
 var cipherSuiteLookup = map[uint16]string{
 	tls.TLS_RSA_WITH_RC4_128_SHA:                "TLS_RSA_WITH_RC4_128_SHA",
@@ -293,4 +308,7 @@ var cipherSuiteLookup = map[uint16]string{
 	tls.TLS_AES_256_GCM_SHA384:                  "TLS_AES_256_GCM_SHA384",
 	tls.TLS_CHACHA20_POLY1305_SHA256:            "TLS_CHACHA20_POLY1305_SHA256",
 }
+<<<<<<< HEAD
+=======
+>>>>>>> master
 >>>>>>> master

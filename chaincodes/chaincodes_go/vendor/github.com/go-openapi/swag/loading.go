@@ -22,8 +22,11 @@ import (
 	"net/url"
 	"os"
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
 	"path"
 =======
+>>>>>>> master
 >>>>>>> master
 	"path/filepath"
 	"runtime"
@@ -45,16 +48,23 @@ var LoadHTTPCustomHeaders = map[string]string{}
 
 // LoadFromFileOrHTTP loads the bytes from a file or a remote http server based on the path passed in
 <<<<<<< HEAD
+func LoadFromFileOrHTTP(path string) ([]byte, error) {
+	return LoadStrategy(path, os.ReadFile, loadHTTPBytes(LoadHTTPTimeout))(path)
+=======
+<<<<<<< HEAD
 func LoadFromFileOrHTTP(pth string) ([]byte, error) {
 	return LoadStrategy(pth, os.ReadFile, loadHTTPBytes(LoadHTTPTimeout))(pth)
 =======
 func LoadFromFileOrHTTP(path string) ([]byte, error) {
 	return LoadStrategy(path, os.ReadFile, loadHTTPBytes(LoadHTTPTimeout))(path)
 >>>>>>> master
+>>>>>>> master
 }
 
 // LoadFromFileOrHTTPWithTimeout loads the bytes from a file or a remote http server based on the path passed in
 // timeout arg allows for per request overriding of the request timeout
+<<<<<<< HEAD
+=======
 <<<<<<< HEAD
 func LoadFromFileOrHTTPWithTimeout(pth string, timeout time.Duration) ([]byte, error) {
 	return LoadStrategy(pth, os.ReadFile, loadHTTPBytes(timeout))(pth)
@@ -98,6 +108,7 @@ func LoadStrategy(pth string, local, remote func(string) ([]byte, error)) func(s
 	return func(p string) ([]byte, error) {
 		upth, err := url.PathUnescape(p)
 =======
+>>>>>>> master
 func LoadFromFileOrHTTPWithTimeout(path string, timeout time.Duration) ([]byte, error) {
 	return LoadStrategy(path, os.ReadFile, loadHTTPBytes(timeout))(path)
 }
@@ -109,11 +120,16 @@ func LoadStrategy(path string, local, remote func(string) ([]byte, error)) func(
 	}
 	return func(pth string) ([]byte, error) {
 		upth, err := pathUnescape(pth)
+<<<<<<< HEAD
+=======
+>>>>>>> master
 >>>>>>> master
 		if err != nil {
 			return nil, err
 		}
 
+<<<<<<< HEAD
+=======
 <<<<<<< HEAD
 		if !strings.HasPrefix(p, `file://`) {
 			// regular file path provided: just normalize slashes
@@ -156,6 +172,7 @@ func LoadStrategy(path string, local, remote func(string) ([]byte, error)) func(
 				// file:///c:/folder/... ==> strip the leading slash
 				upth = strings.TrimPrefix(upth, `/`)
 =======
+>>>>>>> master
 		if strings.HasPrefix(pth, `file://`) {
 			if runtime.GOOS == "windows" {
 				// support for canonical file URIs on windows.
@@ -172,6 +189,9 @@ func LoadStrategy(path string, local, remote func(string) ([]byte, error)) func(
 				}
 			} else {
 				upth = strings.TrimPrefix(upth, `file://`)
+<<<<<<< HEAD
+=======
+>>>>>>> master
 >>>>>>> master
 			}
 		}

@@ -1511,6 +1511,8 @@ func (mh *MetaHeadersFrame) checkPseudos() error {
 
 func (fr *Framer) maxHeaderStringLen() int {
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
 	v := int(fr.maxHeaderListSize())
 	if v < 0 {
 		// If maxHeaderListSize overflows an int, use no limit (0).
@@ -1518,6 +1520,7 @@ func (fr *Framer) maxHeaderStringLen() int {
 	}
 	return v
 =======
+>>>>>>> master
 	v := fr.maxHeaderListSize()
 	if uint32(int(v)) == v {
 		return int(v)
@@ -1525,6 +1528,9 @@ func (fr *Framer) maxHeaderStringLen() int {
 	// They had a crazy big number for MaxHeaderBytes anyway,
 	// so give them unlimited header lengths:
 	return 0
+<<<<<<< HEAD
+=======
+>>>>>>> master
 >>>>>>> master
 }
 
@@ -1575,8 +1581,11 @@ func (fr *Framer) readMetaFrame(hf *HeadersFrame) (*MetaHeadersFrame, error) {
 			hdec.SetEmitEnabled(false)
 			mh.Truncated = true
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
 			remainSize = 0
 =======
+>>>>>>> master
 >>>>>>> master
 			return
 		}
@@ -1590,6 +1599,8 @@ func (fr *Framer) readMetaFrame(hf *HeadersFrame) (*MetaHeadersFrame, error) {
 	var hc headersOrContinuation = hf
 	for {
 		frag := hc.HeaderBlockFragment()
+<<<<<<< HEAD
+=======
 <<<<<<< HEAD
 
 		// Avoid parsing large amounts of headers that we will then discard.
@@ -1622,6 +1633,7 @@ func (fr *Framer) readMetaFrame(hf *HeadersFrame) (*MetaHeadersFrame, error) {
 		}
 
 =======
+>>>>>>> master
 >>>>>>> master
 		if _, err := hdec.Write(frag); err != nil {
 			return nil, ConnectionError(ErrCodeCompression)

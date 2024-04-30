@@ -24,8 +24,12 @@ import (
 	"context"
 	"encoding/json"
 <<<<<<< HEAD
+	"errors"
+=======
+<<<<<<< HEAD
 =======
 	"errors"
+>>>>>>> master
 >>>>>>> master
 	"fmt"
 	"net"
@@ -41,8 +45,11 @@ import (
 	"google.golang.org/grpc/internal/envconfig"
 	"google.golang.org/grpc/internal/grpcrand"
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
 	"google.golang.org/grpc/internal/resolver/dns/internal"
 =======
+>>>>>>> master
 >>>>>>> master
 	"google.golang.org/grpc/resolver"
 	"google.golang.org/grpc/serviceconfig"
@@ -52,6 +59,8 @@ import (
 // addresses from SRV records.  Must not be changed after init time.
 var EnableSRVLookups = false
 
+<<<<<<< HEAD
+=======
 <<<<<<< HEAD
 // ResolvingTimeout specifies the maximum duration for a DNS resolution request.
 // If the timeout expires before a response is received, the request will be canceled.
@@ -68,6 +77,7 @@ func init() {
 	internal.NewNetResolver = newNetResolver
 	internal.AddressDialer = addressDialer
 =======
+>>>>>>> master
 var logger = grpclog.Component("dns")
 
 // Globals to stub out in tests. TODO: Perhaps these two can be combined into a
@@ -79,6 +89,9 @@ var (
 
 func init() {
 	resolver.Register(NewBuilder())
+<<<<<<< HEAD
+=======
+>>>>>>> master
 >>>>>>> master
 }
 
@@ -96,6 +109,9 @@ const (
 
 <<<<<<< HEAD
 =======
+<<<<<<< HEAD
+=======
+>>>>>>> master
 var (
 	errMissingAddr = errors.New("dns resolver: missing address")
 
@@ -113,6 +129,9 @@ var (
 	minDNSResRate = 30 * time.Second
 )
 
+<<<<<<< HEAD
+=======
+>>>>>>> master
 >>>>>>> master
 var addressDialer = func(address string) func(context.Context, string, string) (net.Conn, error) {
 	return func(ctx context.Context, network, _ string) (net.Conn, error) {
@@ -122,6 +141,9 @@ var addressDialer = func(address string) func(context.Context, string, string) (
 }
 
 <<<<<<< HEAD
+var newNetResolver = func(authority string) (netResolver, error) {
+=======
+<<<<<<< HEAD
 var newNetResolver = func(authority string) (internal.NetResolver, error) {
 	if authority == "" {
 		return net.DefaultResolver, nil
@@ -129,6 +151,7 @@ var newNetResolver = func(authority string) (internal.NetResolver, error) {
 
 =======
 var newNetResolver = func(authority string) (netResolver, error) {
+>>>>>>> master
 >>>>>>> master
 	host, port, err := parseTarget(authority, defaultDNSSvrPort)
 	if err != nil {
@@ -140,9 +163,13 @@ var newNetResolver = func(authority string) (netResolver, error) {
 	return &net.Resolver{
 		PreferGo: true,
 <<<<<<< HEAD
+		Dial:     addressDialer(authorityWithPort),
+=======
+<<<<<<< HEAD
 		Dial:     internal.AddressDialer(authorityWithPort),
 =======
 		Dial:     addressDialer(authorityWithPort),
+>>>>>>> master
 >>>>>>> master
 	}, nil
 }
@@ -182,10 +209,13 @@ func (b *dnsBuilder) Build(target resolver.Target, cc resolver.ClientConn, opts 
 	}
 
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
 	d.resolver, err = internal.NewNetResolver(target.URL.Host)
 	if err != nil {
 		return nil, err
 =======
+>>>>>>> master
 	if target.URL.Host == "" {
 		d.resolver = defaultResolver
 	} else {
@@ -193,6 +223,9 @@ func (b *dnsBuilder) Build(target resolver.Target, cc resolver.ClientConn, opts 
 		if err != nil {
 			return nil, err
 		}
+<<<<<<< HEAD
+=======
+>>>>>>> master
 >>>>>>> master
 	}
 
@@ -208,12 +241,18 @@ func (b *dnsBuilder) Scheme() string {
 
 <<<<<<< HEAD
 =======
+<<<<<<< HEAD
+=======
+>>>>>>> master
 type netResolver interface {
 	LookupHost(ctx context.Context, host string) (addrs []string, err error)
 	LookupSRV(ctx context.Context, service, proto, name string) (cname string, addrs []*net.SRV, err error)
 	LookupTXT(ctx context.Context, name string) (txts []string, err error)
 }
 
+<<<<<<< HEAD
+=======
+>>>>>>> master
 >>>>>>> master
 // deadResolver is a resolver that does nothing.
 type deadResolver struct{}
@@ -227,9 +266,13 @@ type dnsResolver struct {
 	host     string
 	port     string
 <<<<<<< HEAD
+	resolver netResolver
+=======
+<<<<<<< HEAD
 	resolver internal.NetResolver
 =======
 	resolver netResolver
+>>>>>>> master
 >>>>>>> master
 	ctx      context.Context
 	cancel   context.CancelFunc
@@ -276,23 +319,33 @@ func (d *dnsResolver) watcher() {
 		}
 
 <<<<<<< HEAD
+		var timer *time.Timer
+=======
+<<<<<<< HEAD
 		var waitTime time.Duration
 =======
 		var timer *time.Timer
+>>>>>>> master
 >>>>>>> master
 		if err == nil {
 			// Success resolving, wait for the next ResolveNow. However, also wait 30
 			// seconds at the very least to prevent constantly re-resolving.
 			backoffIndex = 1
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
 			waitTime = internal.MinResolutionRate
 			select {
 			case <-d.ctx.Done():
 =======
+>>>>>>> master
 			timer = newTimerDNSResRate(minDNSResRate)
 			select {
 			case <-d.ctx.Done():
 				timer.Stop()
+<<<<<<< HEAD
+=======
+>>>>>>> master
 >>>>>>> master
 				return
 			case <-d.rn:
@@ -301,14 +354,23 @@ func (d *dnsResolver) watcher() {
 			// Poll on an error found in DNS Resolver or an error received from
 			// ClientConn.
 <<<<<<< HEAD
+			timer = newTimer(backoff.DefaultExponential.Backoff(backoffIndex))
+=======
+<<<<<<< HEAD
 			waitTime = backoff.DefaultExponential.Backoff(backoffIndex)
 =======
 			timer = newTimer(backoff.DefaultExponential.Backoff(backoffIndex))
+>>>>>>> master
 >>>>>>> master
 			backoffIndex++
 		}
 		select {
 		case <-d.ctx.Done():
+<<<<<<< HEAD
+			timer.Stop()
+			return
+		case <-timer.C:
+=======
 <<<<<<< HEAD
 			return
 		case <-internal.TimeAfterFunc(waitTime):
@@ -317,23 +379,32 @@ func (d *dnsResolver) watcher() {
 			return
 		case <-timer.C:
 >>>>>>> master
+>>>>>>> master
 		}
 	}
 }
 
 <<<<<<< HEAD
+func (d *dnsResolver) lookupSRV() ([]resolver.Address, error) {
+=======
+<<<<<<< HEAD
 func (d *dnsResolver) lookupSRV(ctx context.Context) ([]resolver.Address, error) {
 =======
 func (d *dnsResolver) lookupSRV() ([]resolver.Address, error) {
+>>>>>>> master
 >>>>>>> master
 	if !EnableSRVLookups {
 		return nil, nil
 	}
 	var newAddrs []resolver.Address
 <<<<<<< HEAD
+	_, srvs, err := d.resolver.LookupSRV(d.ctx, "grpclb", "tcp", d.host)
+=======
+<<<<<<< HEAD
 	_, srvs, err := d.resolver.LookupSRV(ctx, "grpclb", "tcp", d.host)
 =======
 	_, srvs, err := d.resolver.LookupSRV(d.ctx, "grpclb", "tcp", d.host)
+>>>>>>> master
 >>>>>>> master
 	if err != nil {
 		err = handleDNSError(err, "SRV") // may become nil
@@ -341,9 +412,13 @@ func (d *dnsResolver) lookupSRV() ([]resolver.Address, error) {
 	}
 	for _, s := range srvs {
 <<<<<<< HEAD
+		lbAddrs, err := d.resolver.LookupHost(d.ctx, s.Target)
+=======
+<<<<<<< HEAD
 		lbAddrs, err := d.resolver.LookupHost(ctx, s.Target)
 =======
 		lbAddrs, err := d.resolver.LookupHost(d.ctx, s.Target)
+>>>>>>> master
 >>>>>>> master
 		if err != nil {
 			err = handleDNSError(err, "A") // may become nil
@@ -382,11 +457,16 @@ func handleDNSError(err error, lookupType string) error {
 }
 
 <<<<<<< HEAD
+func (d *dnsResolver) lookupTXT() *serviceconfig.ParseResult {
+	ss, err := d.resolver.LookupTXT(d.ctx, txtPrefix+d.host)
+=======
+<<<<<<< HEAD
 func (d *dnsResolver) lookupTXT(ctx context.Context) *serviceconfig.ParseResult {
 	ss, err := d.resolver.LookupTXT(ctx, txtPrefix+d.host)
 =======
 func (d *dnsResolver) lookupTXT() *serviceconfig.ParseResult {
 	ss, err := d.resolver.LookupTXT(d.ctx, txtPrefix+d.host)
+>>>>>>> master
 >>>>>>> master
 	if err != nil {
 		if envconfig.TXTErrIgnore {
@@ -415,11 +495,16 @@ func (d *dnsResolver) lookupTXT() *serviceconfig.ParseResult {
 }
 
 <<<<<<< HEAD
+func (d *dnsResolver) lookupHost() ([]resolver.Address, error) {
+	addrs, err := d.resolver.LookupHost(d.ctx, d.host)
+=======
+<<<<<<< HEAD
 func (d *dnsResolver) lookupHost(ctx context.Context) ([]resolver.Address, error) {
 	addrs, err := d.resolver.LookupHost(ctx, d.host)
 =======
 func (d *dnsResolver) lookupHost() ([]resolver.Address, error) {
 	addrs, err := d.resolver.LookupHost(d.ctx, d.host)
+>>>>>>> master
 >>>>>>> master
 	if err != nil {
 		err = handleDNSError(err, "A")
@@ -439,6 +524,10 @@ func (d *dnsResolver) lookupHost() ([]resolver.Address, error) {
 
 func (d *dnsResolver) lookup() (*resolver.State, error) {
 <<<<<<< HEAD
+	srv, srvErr := d.lookupSRV()
+	addrs, hostErr := d.lookupHost()
+=======
+<<<<<<< HEAD
 	ctx, cancel := context.WithTimeout(d.ctx, ResolvingTimeout)
 	defer cancel()
 	srv, srvErr := d.lookupSRV(ctx)
@@ -446,6 +535,7 @@ func (d *dnsResolver) lookup() (*resolver.State, error) {
 =======
 	srv, srvErr := d.lookupSRV()
 	addrs, hostErr := d.lookupHost()
+>>>>>>> master
 >>>>>>> master
 	if hostErr != nil && (srvErr != nil || len(srv) == 0) {
 		return nil, hostErr
@@ -457,9 +547,13 @@ func (d *dnsResolver) lookup() (*resolver.State, error) {
 	}
 	if !d.disableServiceConfig {
 <<<<<<< HEAD
+		state.ServiceConfig = d.lookupTXT()
+=======
+<<<<<<< HEAD
 		state.ServiceConfig = d.lookupTXT(ctx)
 =======
 		state.ServiceConfig = d.lookupTXT()
+>>>>>>> master
 >>>>>>> master
 	}
 	return &state, nil
@@ -492,9 +586,13 @@ func formatIP(addr string) (addrIP string, ok bool) {
 func parseTarget(target, defaultPort string) (host, port string, err error) {
 	if target == "" {
 <<<<<<< HEAD
+		return "", "", errMissingAddr
+=======
+<<<<<<< HEAD
 		return "", "", internal.ErrMissingAddr
 =======
 		return "", "", errMissingAddr
+>>>>>>> master
 >>>>>>> master
 	}
 	if ip := net.ParseIP(target); ip != nil {
@@ -506,9 +604,13 @@ func parseTarget(target, defaultPort string) (host, port string, err error) {
 			// If the port field is empty (target ends with colon), e.g. "[::1]:",
 			// this is an error.
 <<<<<<< HEAD
+			return "", "", errEndsWithColon
+=======
+<<<<<<< HEAD
 			return "", "", internal.ErrEndsWithColon
 =======
 			return "", "", errEndsWithColon
+>>>>>>> master
 >>>>>>> master
 		}
 		// target has port, i.e ipv4-host:port, [ipv6-host]:port, host-name:port

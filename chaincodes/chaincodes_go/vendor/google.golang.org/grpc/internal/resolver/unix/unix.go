@@ -62,11 +62,14 @@ func (b *builder) Scheme() string {
 }
 
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
 func (b *builder) OverrideAuthority(resolver.Target) string {
 	return "localhost"
 }
 
 =======
+>>>>>>> master
 >>>>>>> master
 type nopResolver struct {
 }

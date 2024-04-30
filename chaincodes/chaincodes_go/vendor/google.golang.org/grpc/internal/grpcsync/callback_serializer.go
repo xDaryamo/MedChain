@@ -21,8 +21,12 @@ package grpcsync
 import (
 	"context"
 <<<<<<< HEAD
+	"sync"
+=======
+<<<<<<< HEAD
 =======
 	"sync"
+>>>>>>> master
 >>>>>>> master
 
 	"google.golang.org/grpc/internal/buffer"
@@ -42,9 +46,14 @@ type CallbackSerializer struct {
 
 	callbacks *buffer.Unbounded
 <<<<<<< HEAD
+	closedMu  sync.Mutex
+	closed    bool
+=======
+<<<<<<< HEAD
 =======
 	closedMu  sync.Mutex
 	closed    bool
+>>>>>>> master
 >>>>>>> master
 }
 
@@ -72,6 +81,8 @@ func NewCallbackSerializer(ctx context.Context) *CallbackSerializer {
 // callbacks once the context passed to NewCallbackSerializer is cancelled.
 func (cs *CallbackSerializer) Schedule(f func(ctx context.Context)) bool {
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
 	return cs.callbacks.Put(f) == nil
 }
 
@@ -83,6 +94,7 @@ func (cs *CallbackSerializer) run(ctx context.Context) {
 	//
 	// context.AfterFunc(ctx, cs.callbacks.Close)
 =======
+>>>>>>> master
 	cs.closedMu.Lock()
 	defer cs.closedMu.Unlock()
 
@@ -97,12 +109,17 @@ func (cs *CallbackSerializer) run(ctx context.Context) {
 	var backlog []func(context.Context)
 
 	defer close(cs.done)
+<<<<<<< HEAD
+=======
+>>>>>>> master
 >>>>>>> master
 	for ctx.Err() == nil {
 		select {
 		case <-ctx.Done():
 			// Do nothing here. Next iteration of the for loop will not happen,
 			// since ctx.Err() would be non-nil.
+<<<<<<< HEAD
+=======
 <<<<<<< HEAD
 		case cb := <-cs.callbacks.Get():
 			cs.callbacks.Load()
@@ -118,6 +135,7 @@ func (cs *CallbackSerializer) run(ctx context.Context) {
 		cs.callbacks.Load()
 		cb.(func(context.Context))(ctx)
 =======
+>>>>>>> master
 		case callback, ok := <-cs.callbacks.Get():
 			if !ok {
 				return
@@ -149,6 +167,9 @@ func (cs *CallbackSerializer) fetchPendingCallbacks() []func(context.Context) {
 		default:
 			return backlog
 		}
+<<<<<<< HEAD
+=======
+>>>>>>> master
 >>>>>>> master
 	}
 }

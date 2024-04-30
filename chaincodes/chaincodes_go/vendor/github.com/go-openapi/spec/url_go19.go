@@ -1,8 +1,14 @@
 <<<<<<< HEAD
+//go:build go1.19
+// +build go1.19
+
+=======
+<<<<<<< HEAD
 =======
 //go:build go1.19
 // +build go1.19
 
+>>>>>>> master
 >>>>>>> master
 package spec
 

@@ -282,10 +282,13 @@ const (
 	SCM_TXTIME                       = 0x3d
 	SCM_WIFI_STATUS                  = 0x29
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
 	SECCOMP_IOCTL_NOTIF_ADDFD        = 0x80182103
 	SECCOMP_IOCTL_NOTIF_ID_VALID     = 0x80082102
 	SECCOMP_IOCTL_NOTIF_SET_FLAGS    = 0x80082104
 =======
+>>>>>>> master
 >>>>>>> master
 	SFD_CLOEXEC                      = 0x80000
 	SFD_NONBLOCK                     = 0x80

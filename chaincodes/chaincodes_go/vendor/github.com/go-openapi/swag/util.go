@@ -19,6 +19,8 @@ import (
 	"strings"
 	"unicode"
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
 	"unicode/utf8"
 )
 
@@ -28,6 +30,7 @@ import (
 // The prefix function is assumed to return a string that starts with an upper case letter.
 //
 =======
+>>>>>>> master
 )
 
 // commonInitialisms are common acronyms that are kept as whole uppercased words.
@@ -41,12 +44,17 @@ var isInitialism func(string) bool
 // GoNamePrefixFunc sets an optional rule to prefix go names
 // which do not start with a letter.
 //
+<<<<<<< HEAD
+=======
+>>>>>>> master
 >>>>>>> master
 // e.g. to help convert "123" into "{prefix}123"
 //
 // The default is to prefix with "X"
 var GoNamePrefixFunc func(string) string
 
+<<<<<<< HEAD
+=======
 <<<<<<< HEAD
 func prefixFunc(name, in string) string {
 	if GoNamePrefixFunc == nil {
@@ -55,6 +63,7 @@ func prefixFunc(name, in string) string {
 
 	return GoNamePrefixFunc(name) + in
 =======
+>>>>>>> master
 func init() {
 	// Taken from https://github.com/golang/lint/blob/3390df4df2787994aea98de825b964ac7944b817/lint.go#L732-L769
 	var configuredInitialisms = map[string]bool{
@@ -107,6 +116,9 @@ func init() {
 
 	// a test function
 	isInitialism = commonInitialisms.isInitialism
+<<<<<<< HEAD
+=======
+>>>>>>> master
 >>>>>>> master
 }
 
@@ -177,10 +189,13 @@ func SplitByFormat(data, format string) []string {
 }
 
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
 // Removes leading whitespaces
 func trim(str string) string {
 	return strings.TrimSpace(str)
 =======
+>>>>>>> master
 type byInitialism []string
 
 func (s byInitialism) Len() int {
@@ -200,6 +215,9 @@ func (s byInitialism) Less(i, j int) bool {
 // Removes leading whitespaces
 func trim(str string) string {
 	return strings.Trim(str, " ")
+<<<<<<< HEAD
+=======
+>>>>>>> master
 >>>>>>> master
 }
 
@@ -214,6 +232,8 @@ func lower(str string) string {
 }
 
 // Camelize an uppercased word
+<<<<<<< HEAD
+=======
 <<<<<<< HEAD
 func Camelize(word string) string {
 	camelized := poolOfBuffers.BorrowBuffer(len(word))
@@ -230,6 +250,7 @@ func Camelize(word string) string {
 	}
 	return camelized.String()
 =======
+>>>>>>> master
 func Camelize(word string) (camelized string) {
 	for pos, ru := range []rune(word) {
 		if pos > 0 {
@@ -239,6 +260,9 @@ func Camelize(word string) (camelized string) {
 		}
 	}
 	return
+<<<<<<< HEAD
+=======
+>>>>>>> master
 >>>>>>> master
 }
 
@@ -268,6 +292,8 @@ func ToCommandName(name string) string {
 // ToHumanNameLower represents a code name as a human series of words
 func ToHumanNameLower(name string) string {
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
 	s := poolOfSplitters.BorrowSplitter(withPostSplitInitialismCheck)
 	in := s.split(name)
 	poolOfSplitters.RedeemSplitter(s)
@@ -282,6 +308,7 @@ func ToHumanNameLower(name string) string {
 	}
 	poolOfLexems.RedeemLexems(in)
 =======
+>>>>>>> master
 	in := newSplitter(withPostSplitInitialismCheck).split(name)
 	out := make([]string, 0, len(in))
 
@@ -292,6 +319,9 @@ func ToHumanNameLower(name string) string {
 			out = append(out, w.GetOriginal())
 		}
 	}
+<<<<<<< HEAD
+=======
+>>>>>>> master
 >>>>>>> master
 
 	return strings.Join(out, " ")
@@ -299,6 +329,8 @@ func ToHumanNameLower(name string) string {
 
 // ToHumanNameTitle represents a code name as a human series of words with the first letters titleized
 func ToHumanNameTitle(name string) string {
+<<<<<<< HEAD
+=======
 <<<<<<< HEAD
 	s := poolOfSplitters.BorrowSplitter(withPostSplitInitialismCheck)
 	in := s.split(name)
@@ -308,11 +340,15 @@ func ToHumanNameTitle(name string) string {
 	for _, w := range *in {
 		original := trim(w.GetOriginal())
 =======
+>>>>>>> master
 	in := newSplitter(withPostSplitInitialismCheck).split(name)
 
 	out := make([]string, 0, len(in))
 	for _, w := range in {
 		original := w.GetOriginal()
+<<<<<<< HEAD
+=======
+>>>>>>> master
 >>>>>>> master
 		if !w.IsInitialism() {
 			out = append(out, Camelize(original))
@@ -321,9 +357,12 @@ func ToHumanNameTitle(name string) string {
 		}
 	}
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
 	poolOfLexems.RedeemLexems(in)
 
 =======
+>>>>>>> master
 >>>>>>> master
 	return strings.Join(out, " ")
 }
@@ -339,9 +378,13 @@ func ToJSONName(name string) string {
 			continue
 		}
 <<<<<<< HEAD
+		out = append(out, Camelize(w))
+=======
+<<<<<<< HEAD
 		out = append(out, Camelize(trim(w)))
 =======
 		out = append(out, Camelize(w))
+>>>>>>> master
 >>>>>>> master
 	}
 	return strings.Join(out, "")
@@ -361,6 +404,8 @@ func ToVarName(name string) string {
 
 // ToGoName translates a swagger name which can be underscored or camel cased to a name that golint likes
 func ToGoName(name string) string {
+<<<<<<< HEAD
+=======
 <<<<<<< HEAD
 	s := poolOfSplitters.BorrowSplitter(withPostSplitInitialismCheck)
 	lexems := s.split(name)
@@ -417,10 +462,14 @@ func ToGoName(name string) string {
 
 	for _, lexem := range lexemes[1:] {
 =======
+>>>>>>> master
 	lexems := newSplitter(withPostSplitInitialismCheck).split(name)
 
 	result := ""
 	for _, lexem := range lexems {
+<<<<<<< HEAD
+=======
+>>>>>>> master
 >>>>>>> master
 		goName := lexem.GetUnsafeGoName()
 
@@ -429,11 +478,14 @@ func ToGoName(name string) string {
 			goName = upper(goName)
 		}
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
 		result.WriteString(goName)
 	}
 
 	return result.String()
 =======
+>>>>>>> master
 		result += goName
 	}
 
@@ -453,6 +505,9 @@ func ToGoName(name string) string {
 	}
 
 	return result
+<<<<<<< HEAD
+=======
+>>>>>>> master
 >>>>>>> master
 }
 
@@ -486,9 +541,13 @@ func IsZero(data interface{}) bool {
 	v := reflect.ValueOf(data)
 	// check for nil data
 <<<<<<< HEAD
+	switch v.Kind() {
+=======
+<<<<<<< HEAD
 	switch v.Kind() { //nolint:exhaustive
 =======
 	switch v.Kind() {
+>>>>>>> master
 >>>>>>> master
 	case reflect.Interface, reflect.Map, reflect.Ptr, reflect.Slice:
 		if v.IsNil() {
@@ -503,9 +562,13 @@ func IsZero(data interface{}) bool {
 
 	// continue with slightly more complex reflection
 <<<<<<< HEAD
+	switch v.Kind() {
+=======
+<<<<<<< HEAD
 	switch v.Kind() { //nolint:exhaustive
 =======
 	switch v.Kind() {
+>>>>>>> master
 >>>>>>> master
 	case reflect.String:
 		return v.Len() == 0
@@ -528,6 +591,9 @@ func IsZero(data interface{}) bool {
 
 <<<<<<< HEAD
 =======
+<<<<<<< HEAD
+=======
+>>>>>>> master
 // AddInitialisms add additional initialisms
 func AddInitialisms(words ...string) {
 	for _, word := range words {
@@ -538,6 +604,9 @@ func AddInitialisms(words ...string) {
 	initialisms = commonInitialisms.sorted()
 }
 
+<<<<<<< HEAD
+=======
+>>>>>>> master
 >>>>>>> master
 // CommandLineOptionsGroup represents a group of user-defined command line options
 type CommandLineOptionsGroup struct {

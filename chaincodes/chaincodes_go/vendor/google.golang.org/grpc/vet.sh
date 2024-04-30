@@ -36,8 +36,12 @@ if [[ "$1" = "-install" ]]; then
   pushd ./test/tools
   go install \
 <<<<<<< HEAD
+    golang.org/x/lint/golint \
+=======
+<<<<<<< HEAD
 =======
     golang.org/x/lint/golint \
+>>>>>>> master
 >>>>>>> master
     golang.org/x/tools/cmd/goimports \
     honnef.co/go/tools/cmd/staticcheck \
@@ -46,9 +50,13 @@ if [[ "$1" = "-install" ]]; then
   if [[ -z "${VET_SKIP_PROTO}" ]]; then
     if [[ "${GITHUB_ACTIONS}" = "true" ]]; then
 <<<<<<< HEAD
+      PROTOBUF_VERSION=22.0 # a.k.a v4.22.0 in pb.go files.
+=======
+<<<<<<< HEAD
       PROTOBUF_VERSION=25.2 # a.k.a. v4.22.0 in pb.go files.
 =======
       PROTOBUF_VERSION=22.0 # a.k.a v4.22.0 in pb.go files.
+>>>>>>> master
 >>>>>>> master
       PROTOC_FILENAME=protoc-${PROTOBUF_VERSION}-linux-x86_64.zip
       pushd /home/runner/go
@@ -85,6 +93,8 @@ not grep 'func Test[^(]' *_test.go
 not grep 'func Test[^(]' test/*.go
 
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
 # - Check for typos in test function names
 git grep 'func (s) ' -- "*_test.go" | not grep -v 'func (s) Test'
 git grep 'func [A-Z]' -- "*_test.go" | not grep -v 'func Test\|Benchmark\|Example'
@@ -103,6 +113,7 @@ git grep -l '"math/rand"' -- "*.go" 2>&1 | not grep -v '^examples\|^interop/stre
 # - Do not use "interface{}"; use "any" instead.
 git grep -l 'interface{}' -- "*.go" 2>&1 | not grep -v '\.pb\.go\|protoc-gen-go-grpc\|grpc_testing_not_regenerate'
 =======
+>>>>>>> master
 # - Do not import x/net/context.
 not git grep -l 'x/net/context' -- "*.go"
 
@@ -112,6 +123,9 @@ git grep -l '"math/rand"' -- "*.go" 2>&1 | not grep -v '^examples\|^stress\|grpc
 
 # - Do not use "interface{}"; use "any" instead.
 git grep -l 'interface{}' -- "*.go" 2>&1 | not grep -v '\.pb\.go\|protoc-gen-go-grpc'
+<<<<<<< HEAD
+=======
+>>>>>>> master
 >>>>>>> master
 
 # - Do not call grpclog directly. Use grpclog.Component instead.
@@ -122,9 +136,13 @@ not git grep "\(import \|^\s*\)\"github.com/golang/protobuf/ptypes/" -- "*.go"
 
 # - Ensure all usages of grpc_testing package are renamed when importing.
 <<<<<<< HEAD
+not git grep "\(import \|^\s*\)\"google.golang.org/grpc/interop/grpc_testing" -- "*.go" 
+=======
+<<<<<<< HEAD
 not git grep "\(import \|^\s*\)\"google.golang.org/grpc/interop/grpc_testing" -- "*.go"
 =======
 not git grep "\(import \|^\s*\)\"google.golang.org/grpc/interop/grpc_testing" -- "*.go" 
+>>>>>>> master
 >>>>>>> master
 
 # - Ensure all xds proto imports are renamed to *pb or *grpc.
@@ -133,10 +151,15 @@ git grep '"github.com/envoyproxy/go-control-plane/envoy' -- '*.go' ':(exclude)*.
 misspell -error .
 
 <<<<<<< HEAD
+# - gofmt, goimports, golint (with exceptions for generated code), go vet,
+# go mod tidy.
+=======
+<<<<<<< HEAD
 # - gofmt, goimports, go vet, go mod tidy.
 =======
 # - gofmt, goimports, golint (with exceptions for generated code), go vet,
 # go mod tidy.
+>>>>>>> master
 >>>>>>> master
 # Perform these checks on each module inside gRPC.
 for MOD_FILE in $(find . -name 'go.mod'); do
@@ -146,8 +169,12 @@ for MOD_FILE in $(find . -name 'go.mod'); do
   gofmt -s -d -l . 2>&1 | fail_on_output
   goimports -l . 2>&1 | not grep -vE "\.pb\.go"
 <<<<<<< HEAD
+  golint ./... 2>&1 | not grep -vE "/grpc_testing_not_regenerate/.*\.pb\.go:"
+=======
+<<<<<<< HEAD
 =======
   golint ./... 2>&1 | not grep -vE "/grpc_testing_not_regenerate/.*\.pb\.go:"
+>>>>>>> master
 >>>>>>> master
 
   go mod tidy -compat=1.19
@@ -157,6 +184,8 @@ for MOD_FILE in $(find . -name 'go.mod'); do
 done
 
 # - Collection of static analysis checks
+<<<<<<< HEAD
+=======
 <<<<<<< HEAD
 SC_OUT="$(mktemp)"
 staticcheck -go 1.19 -checks 'all' ./... > "${SC_OUT}" || true
@@ -226,6 +255,7 @@ GetTlsCertificateCertificateProviderInstance
 GetValidationContextCertificateProviderInstance
 XXXXX PleaseIgnoreUnused'
 =======
+>>>>>>> master
 #
 # TODO(dfawley): don't use deprecated functions in examples or first-party
 # plugins.
@@ -315,6 +345,9 @@ lint_package_comment() {
   return $count
 }
 lint_package_comment
+<<<<<<< HEAD
+=======
+>>>>>>> master
 >>>>>>> master
 
 echo SUCCESS
