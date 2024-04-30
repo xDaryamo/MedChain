@@ -1,0 +1,85 @@
+linters-settings:
+  govet:
+    check-shadowing: true
+  golint:
+    min-confidence: 0
+  gocyclo:
+    min-complexity: 45
+  maligned:
+    suggest-new: true
+  dupl:
+    threshold: 200
+  goconst:
+    min-len: 2
+<<<<<<< HEAD
+    min-occurrences: 3
+=======
+<<<<<<< HEAD
+    min-occurrences: 2
+=======
+<<<<<<< HEAD
+    min-occurrences: 3
+=======
+    min-occurrences: 2
+>>>>>>> master
+>>>>>>> master
+>>>>>>> master
+
+linters:
+  enable-all: true
+  disable:
+    - maligned
+    - unparam
+    - lll
+    - gochecknoinits
+    - gochecknoglobals
+    - funlen
+    - godox
+    - gocognit
+    - whitespace
+    - wsl
+    - wrapcheck
+    - testpackage
+    - nlreturn
+    - gomnd
+    - exhaustivestruct
+    - goerr113
+    - errorlint
+    - nestif
+    - godot
+    - gofumpt
+    - paralleltest
+    - tparallel
+    - thelper
+    - ifshort
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> master
+    - exhaustruct
+    - varnamelen
+    - gci
+    - depguard
+    - errchkjson
+    - inamedparam
+    - nonamedreturns
+    - musttag
+    - ireturn
+    - forcetypeassert
+    - cyclop
+    # deprecated linters
+    - deadcode
+    - interfacer
+    - scopelint
+    - varcheck
+    - structcheck
+    - golint
+    - nosnakecase
+<<<<<<< HEAD
+=======
+=======
+>>>>>>> master
+>>>>>>> master
+>>>>>>> master
