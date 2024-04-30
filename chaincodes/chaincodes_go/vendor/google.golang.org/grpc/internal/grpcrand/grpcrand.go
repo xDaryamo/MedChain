@@ -1,8 +1,11 @@
+<<<<<<< HEAD
 //go:build !go1.21
 
 // TODO: when this file is deleted (after Go 1.20 support is dropped), delete
 // all of grpcrand and call the rand package directly.
 
+=======
+>>>>>>> master
 /*
  *
  * Copyright 2018 gRPC authors.

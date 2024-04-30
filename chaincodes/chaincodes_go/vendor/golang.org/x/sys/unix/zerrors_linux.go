@@ -1785,8 +1785,11 @@ const (
 	LANDLOCK_ACCESS_FS_REMOVE_FILE              = 0x20
 	LANDLOCK_ACCESS_FS_TRUNCATE                 = 0x4000
 	LANDLOCK_ACCESS_FS_WRITE_FILE               = 0x2
+<<<<<<< HEAD
 	LANDLOCK_ACCESS_NET_BIND_TCP                = 0x1
 	LANDLOCK_ACCESS_NET_CONNECT_TCP             = 0x2
+=======
+>>>>>>> master
 	LANDLOCK_CREATE_RULESET_VERSION             = 0x1
 	LINUX_REBOOT_CMD_CAD_OFF                    = 0x0
 	LINUX_REBOOT_CMD_CAD_ON                     = 0x89abcdef
@@ -2467,7 +2470,10 @@ const (
 	PR_MCE_KILL_GET                             = 0x22
 	PR_MCE_KILL_LATE                            = 0x0
 	PR_MCE_KILL_SET                             = 0x1
+<<<<<<< HEAD
 	PR_MDWE_NO_INHERIT                          = 0x2
+=======
+>>>>>>> master
 	PR_MDWE_REFUSE_EXEC_GAIN                    = 0x1
 	PR_MPX_DISABLE_MANAGEMENT                   = 0x2c
 	PR_MPX_ENABLE_MANAGEMENT                    = 0x2b
@@ -2672,9 +2678,14 @@ const (
 	RTAX_FEATURES                               = 0xc
 	RTAX_FEATURE_ALLFRAG                        = 0x8
 	RTAX_FEATURE_ECN                            = 0x1
+<<<<<<< HEAD
 	RTAX_FEATURE_MASK                           = 0x1f
 	RTAX_FEATURE_SACK                           = 0x2
 	RTAX_FEATURE_TCP_USEC_TS                    = 0x10
+=======
+	RTAX_FEATURE_MASK                           = 0xf
+	RTAX_FEATURE_SACK                           = 0x2
+>>>>>>> master
 	RTAX_FEATURE_TIMESTAMP                      = 0x4
 	RTAX_HOPLIMIT                               = 0xa
 	RTAX_INITCWND                               = 0xb
@@ -2917,6 +2928,7 @@ const (
 	SCM_RIGHTS                                  = 0x1
 	SCM_TIMESTAMP                               = 0x1d
 	SC_LOG_FLUSH                                = 0x100000
+<<<<<<< HEAD
 	SECCOMP_ADDFD_FLAG_SEND                     = 0x2
 	SECCOMP_ADDFD_FLAG_SETFD                    = 0x1
 	SECCOMP_FILTER_FLAG_LOG                     = 0x2
@@ -2949,6 +2961,11 @@ const (
 	SECCOMP_SET_MODE_STRICT                     = 0x0
 	SECCOMP_USER_NOTIF_FD_SYNC_WAKE_UP          = 0x1
 	SECCOMP_USER_NOTIF_FLAG_CONTINUE            = 0x1
+=======
+	SECCOMP_MODE_DISABLED                       = 0x0
+	SECCOMP_MODE_FILTER                         = 0x2
+	SECCOMP_MODE_STRICT                         = 0x1
+>>>>>>> master
 	SECRETMEM_MAGIC                             = 0x5345434d
 	SECURITYFS_MAGIC                            = 0x73636673
 	SEEK_CUR                                    = 0x1
@@ -3108,7 +3125,10 @@ const (
 	SOL_TIPC                                    = 0x10f
 	SOL_TLS                                     = 0x11a
 	SOL_UDP                                     = 0x11
+<<<<<<< HEAD
 	SOL_VSOCK                                   = 0x11f
+=======
+>>>>>>> master
 	SOL_X25                                     = 0x106
 	SOL_XDP                                     = 0x11b
 	SOMAXCONN                                   = 0x1000

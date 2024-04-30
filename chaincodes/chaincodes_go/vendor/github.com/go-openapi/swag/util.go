@@ -18,6 +18,7 @@ import (
 	"reflect"
 	"strings"
 	"unicode"
+<<<<<<< HEAD
 	"unicode/utf8"
 )
 
@@ -26,17 +27,87 @@ import (
 //
 // The prefix function is assumed to return a string that starts with an upper case letter.
 //
+=======
+)
+
+// commonInitialisms are common acronyms that are kept as whole uppercased words.
+var commonInitialisms *indexOfInitialisms
+
+// initialisms is a slice of sorted initialisms
+var initialisms []string
+
+var isInitialism func(string) bool
+
+// GoNamePrefixFunc sets an optional rule to prefix go names
+// which do not start with a letter.
+//
+>>>>>>> master
 // e.g. to help convert "123" into "{prefix}123"
 //
 // The default is to prefix with "X"
 var GoNamePrefixFunc func(string) string
 
+<<<<<<< HEAD
 func prefixFunc(name, in string) string {
 	if GoNamePrefixFunc == nil {
 		return "X" + in
 	}
 
 	return GoNamePrefixFunc(name) + in
+=======
+func init() {
+	// Taken from https://github.com/golang/lint/blob/3390df4df2787994aea98de825b964ac7944b817/lint.go#L732-L769
+	var configuredInitialisms = map[string]bool{
+		"ACL":   true,
+		"API":   true,
+		"ASCII": true,
+		"CPU":   true,
+		"CSS":   true,
+		"DNS":   true,
+		"EOF":   true,
+		"GUID":  true,
+		"HTML":  true,
+		"HTTPS": true,
+		"HTTP":  true,
+		"ID":    true,
+		"IP":    true,
+		"IPv4":  true,
+		"IPv6":  true,
+		"JSON":  true,
+		"LHS":   true,
+		"OAI":   true,
+		"QPS":   true,
+		"RAM":   true,
+		"RHS":   true,
+		"RPC":   true,
+		"SLA":   true,
+		"SMTP":  true,
+		"SQL":   true,
+		"SSH":   true,
+		"TCP":   true,
+		"TLS":   true,
+		"TTL":   true,
+		"UDP":   true,
+		"UI":    true,
+		"UID":   true,
+		"UUID":  true,
+		"URI":   true,
+		"URL":   true,
+		"UTF8":  true,
+		"VM":    true,
+		"XML":   true,
+		"XMPP":  true,
+		"XSRF":  true,
+		"XSS":   true,
+	}
+
+	// a thread-safe index of initialisms
+	commonInitialisms = newIndexOfInitialisms().load(configuredInitialisms)
+	initialisms = commonInitialisms.sorted()
+
+	// a test function
+	isInitialism = commonInitialisms.isInitialism
+>>>>>>> master
 }
 
 const (
@@ -105,9 +176,31 @@ func SplitByFormat(data, format string) []string {
 	return result
 }
 
+<<<<<<< HEAD
 // Removes leading whitespaces
 func trim(str string) string {
 	return strings.TrimSpace(str)
+=======
+type byInitialism []string
+
+func (s byInitialism) Len() int {
+	return len(s)
+}
+func (s byInitialism) Swap(i, j int) {
+	s[i], s[j] = s[j], s[i]
+}
+func (s byInitialism) Less(i, j int) bool {
+	if len(s[i]) != len(s[j]) {
+		return len(s[i]) < len(s[j])
+	}
+
+	return strings.Compare(s[i], s[j]) > 0
+}
+
+// Removes leading whitespaces
+func trim(str string) string {
+	return strings.Trim(str, " ")
+>>>>>>> master
 }
 
 // Shortcut to strings.ToUpper()
@@ -121,6 +214,7 @@ func lower(str string) string {
 }
 
 // Camelize an uppercased word
+<<<<<<< HEAD
 func Camelize(word string) string {
 	camelized := poolOfBuffers.BorrowBuffer(len(word))
 	defer func() {
@@ -135,6 +229,17 @@ func Camelize(word string) string {
 		}
 	}
 	return camelized.String()
+=======
+func Camelize(word string) (camelized string) {
+	for pos, ru := range []rune(word) {
+		if pos > 0 {
+			camelized += string(unicode.ToLower(ru))
+		} else {
+			camelized += string(unicode.ToUpper(ru))
+		}
+	}
+	return
+>>>>>>> master
 }
 
 // ToFileName lowercases and underscores a go type name
@@ -162,6 +267,7 @@ func ToCommandName(name string) string {
 
 // ToHumanNameLower represents a code name as a human series of words
 func ToHumanNameLower(name string) string {
+<<<<<<< HEAD
 	s := poolOfSplitters.BorrowSplitter(withPostSplitInitialismCheck)
 	in := s.split(name)
 	poolOfSplitters.RedeemSplitter(s)
@@ -175,12 +281,25 @@ func ToHumanNameLower(name string) string {
 		}
 	}
 	poolOfLexems.RedeemLexems(in)
+=======
+	in := newSplitter(withPostSplitInitialismCheck).split(name)
+	out := make([]string, 0, len(in))
+
+	for _, w := range in {
+		if !w.IsInitialism() {
+			out = append(out, lower(w.GetOriginal()))
+		} else {
+			out = append(out, w.GetOriginal())
+		}
+	}
+>>>>>>> master
 
 	return strings.Join(out, " ")
 }
 
 // ToHumanNameTitle represents a code name as a human series of words with the first letters titleized
 func ToHumanNameTitle(name string) string {
+<<<<<<< HEAD
 	s := poolOfSplitters.BorrowSplitter(withPostSplitInitialismCheck)
 	in := s.split(name)
 	poolOfSplitters.RedeemSplitter(s)
@@ -188,14 +307,24 @@ func ToHumanNameTitle(name string) string {
 	out := make([]string, 0, len(*in))
 	for _, w := range *in {
 		original := trim(w.GetOriginal())
+=======
+	in := newSplitter(withPostSplitInitialismCheck).split(name)
+
+	out := make([]string, 0, len(in))
+	for _, w := range in {
+		original := w.GetOriginal()
+>>>>>>> master
 		if !w.IsInitialism() {
 			out = append(out, Camelize(original))
 		} else {
 			out = append(out, original)
 		}
 	}
+<<<<<<< HEAD
 	poolOfLexems.RedeemLexems(in)
 
+=======
+>>>>>>> master
 	return strings.Join(out, " ")
 }
 
@@ -209,7 +338,11 @@ func ToJSONName(name string) string {
 			out = append(out, lower(w))
 			continue
 		}
+<<<<<<< HEAD
 		out = append(out, Camelize(trim(w)))
+=======
+		out = append(out, Camelize(w))
+>>>>>>> master
 	}
 	return strings.Join(out, "")
 }
@@ -228,6 +361,7 @@ func ToVarName(name string) string {
 
 // ToGoName translates a swagger name which can be underscored or camel cased to a name that golint likes
 func ToGoName(name string) string {
+<<<<<<< HEAD
 	s := poolOfSplitters.BorrowSplitter(withPostSplitInitialismCheck)
 	lexems := s.split(name)
 	poolOfSplitters.RedeemSplitter(s)
@@ -282,16 +416,44 @@ func ToGoName(name string) string {
 	}
 
 	for _, lexem := range lexemes[1:] {
+=======
+	lexems := newSplitter(withPostSplitInitialismCheck).split(name)
+
+	result := ""
+	for _, lexem := range lexems {
+>>>>>>> master
 		goName := lexem.GetUnsafeGoName()
 
 		// to support old behavior
 		if lexem.IsInitialism() {
 			goName = upper(goName)
 		}
+<<<<<<< HEAD
 		result.WriteString(goName)
 	}
 
 	return result.String()
+=======
+		result += goName
+	}
+
+	if len(result) > 0 {
+		// Only prefix with X when the first character isn't an ascii letter
+		first := []rune(result)[0]
+		if !unicode.IsLetter(first) || (first > unicode.MaxASCII && !unicode.IsUpper(first)) {
+			if GoNamePrefixFunc == nil {
+				return "X" + result
+			}
+			result = GoNamePrefixFunc(name) + result
+		}
+		first = []rune(result)[0]
+		if unicode.IsLetter(first) && !unicode.IsUpper(first) {
+			result = string(append([]rune{unicode.ToUpper(first)}, []rune(result)[1:]...))
+		}
+	}
+
+	return result
+>>>>>>> master
 }
 
 // ContainsStrings searches a slice of strings for a case-sensitive match
@@ -323,7 +485,11 @@ type zeroable interface {
 func IsZero(data interface{}) bool {
 	v := reflect.ValueOf(data)
 	// check for nil data
+<<<<<<< HEAD
 	switch v.Kind() { //nolint:exhaustive
+=======
+	switch v.Kind() {
+>>>>>>> master
 	case reflect.Interface, reflect.Map, reflect.Ptr, reflect.Slice:
 		if v.IsNil() {
 			return true
@@ -336,7 +502,11 @@ func IsZero(data interface{}) bool {
 	}
 
 	// continue with slightly more complex reflection
+<<<<<<< HEAD
 	switch v.Kind() { //nolint:exhaustive
+=======
+	switch v.Kind() {
+>>>>>>> master
 	case reflect.String:
 		return v.Len() == 0
 	case reflect.Bool:
@@ -356,6 +526,19 @@ func IsZero(data interface{}) bool {
 	}
 }
 
+<<<<<<< HEAD
+=======
+// AddInitialisms add additional initialisms
+func AddInitialisms(words ...string) {
+	for _, word := range words {
+		// commonInitialisms[upper(word)] = true
+		commonInitialisms.add(upper(word))
+	}
+	// sort again
+	initialisms = commonInitialisms.sorted()
+}
+
+>>>>>>> master
 // CommandLineOptionsGroup represents a group of user-defined command line options
 type CommandLineOptionsGroup struct {
 	ShortDescription string

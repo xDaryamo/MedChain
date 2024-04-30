@@ -44,6 +44,7 @@ func (t TLSInfo) AuthType() string {
 	return "tls"
 }
 
+<<<<<<< HEAD
 // cipherSuiteLookup returns the string version of a TLS cipher suite ID.
 func cipherSuiteLookup(cipherSuiteID uint16) string {
 	for _, s := range tls.CipherSuites() {
@@ -63,6 +64,12 @@ func cipherSuiteLookup(cipherSuiteID uint16) string {
 func (t TLSInfo) GetSecurityValue() ChannelzSecurityValue {
 	v := &TLSChannelzSecurityValue{
 		StandardName: cipherSuiteLookup(t.State.CipherSuite),
+=======
+// GetSecurityValue returns security info requested by channelz.
+func (t TLSInfo) GetSecurityValue() ChannelzSecurityValue {
+	v := &TLSChannelzSecurityValue{
+		StandardName: cipherSuiteLookup[t.State.CipherSuite],
+>>>>>>> master
 	}
 	// Currently there's no way to get LocalCertificate info from tls package.
 	if len(t.State.PeerCertificates) > 0 {
@@ -153,6 +160,7 @@ func (c *tlsCreds) OverrideServerName(serverNameOverride string) error {
 	return nil
 }
 
+<<<<<<< HEAD
 // The following cipher suites are forbidden for use with HTTP/2 by
 // https://datatracker.ietf.org/doc/html/rfc7540#appendix-A
 var tls12ForbiddenCipherSuites = map[uint16]struct{}{
@@ -166,10 +174,13 @@ var tls12ForbiddenCipherSuites = map[uint16]struct{}{
 	tls.TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA:   {},
 }
 
+=======
+>>>>>>> master
 // NewTLS uses c to construct a TransportCredentials based on TLS.
 func NewTLS(c *tls.Config) TransportCredentials {
 	tc := &tlsCreds{credinternal.CloneTLSConfig(c)}
 	tc.config.NextProtos = credinternal.AppendH2ToNextProtos(tc.config.NextProtos)
+<<<<<<< HEAD
 	// If the user did not configure a MinVersion and did not configure a
 	// MaxVersion < 1.2, use MinVersion=1.2, which is required by
 	// https://datatracker.ietf.org/doc/html/rfc7540#section-9.2
@@ -186,6 +197,8 @@ func NewTLS(c *tls.Config) TransportCredentials {
 			}
 		}
 	}
+=======
+>>>>>>> master
 	return tc
 }
 
@@ -249,3 +262,35 @@ type TLSChannelzSecurityValue struct {
 	LocalCertificate  []byte
 	RemoteCertificate []byte
 }
+<<<<<<< HEAD
+=======
+
+var cipherSuiteLookup = map[uint16]string{
+	tls.TLS_RSA_WITH_RC4_128_SHA:                "TLS_RSA_WITH_RC4_128_SHA",
+	tls.TLS_RSA_WITH_3DES_EDE_CBC_SHA:           "TLS_RSA_WITH_3DES_EDE_CBC_SHA",
+	tls.TLS_RSA_WITH_AES_128_CBC_SHA:            "TLS_RSA_WITH_AES_128_CBC_SHA",
+	tls.TLS_RSA_WITH_AES_256_CBC_SHA:            "TLS_RSA_WITH_AES_256_CBC_SHA",
+	tls.TLS_RSA_WITH_AES_128_GCM_SHA256:         "TLS_RSA_WITH_AES_128_GCM_SHA256",
+	tls.TLS_RSA_WITH_AES_256_GCM_SHA384:         "TLS_RSA_WITH_AES_256_GCM_SHA384",
+	tls.TLS_ECDHE_ECDSA_WITH_RC4_128_SHA:        "TLS_ECDHE_ECDSA_WITH_RC4_128_SHA",
+	tls.TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA:    "TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA",
+	tls.TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA:    "TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA",
+	tls.TLS_ECDHE_RSA_WITH_RC4_128_SHA:          "TLS_ECDHE_RSA_WITH_RC4_128_SHA",
+	tls.TLS_ECDHE_RSA_WITH_3DES_EDE_CBC_SHA:     "TLS_ECDHE_RSA_WITH_3DES_EDE_CBC_SHA",
+	tls.TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA:      "TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA",
+	tls.TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA:      "TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA",
+	tls.TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256:   "TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256",
+	tls.TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256: "TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256",
+	tls.TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384:   "TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384",
+	tls.TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384: "TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384",
+	tls.TLS_FALLBACK_SCSV:                       "TLS_FALLBACK_SCSV",
+	tls.TLS_RSA_WITH_AES_128_CBC_SHA256:         "TLS_RSA_WITH_AES_128_CBC_SHA256",
+	tls.TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256: "TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256",
+	tls.TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256:   "TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256",
+	tls.TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305:    "TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305",
+	tls.TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305:  "TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305",
+	tls.TLS_AES_128_GCM_SHA256:                  "TLS_AES_128_GCM_SHA256",
+	tls.TLS_AES_256_GCM_SHA384:                  "TLS_AES_256_GCM_SHA384",
+	tls.TLS_CHACHA20_POLY1305_SHA256:            "TLS_CHACHA20_POLY1305_SHA256",
+}
+>>>>>>> master

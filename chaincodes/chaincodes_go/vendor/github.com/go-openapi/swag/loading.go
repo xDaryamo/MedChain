@@ -21,7 +21,10 @@ import (
 	"net/http"
 	"net/url"
 	"os"
+<<<<<<< HEAD
 	"path"
+=======
+>>>>>>> master
 	"path/filepath"
 	"runtime"
 	"strings"
@@ -41,12 +44,18 @@ var LoadHTTPBasicAuthPassword = ""
 var LoadHTTPCustomHeaders = map[string]string{}
 
 // LoadFromFileOrHTTP loads the bytes from a file or a remote http server based on the path passed in
+<<<<<<< HEAD
 func LoadFromFileOrHTTP(pth string) ([]byte, error) {
 	return LoadStrategy(pth, os.ReadFile, loadHTTPBytes(LoadHTTPTimeout))(pth)
+=======
+func LoadFromFileOrHTTP(path string) ([]byte, error) {
+	return LoadStrategy(path, os.ReadFile, loadHTTPBytes(LoadHTTPTimeout))(path)
+>>>>>>> master
 }
 
 // LoadFromFileOrHTTPWithTimeout loads the bytes from a file or a remote http server based on the path passed in
 // timeout arg allows for per request overriding of the request timeout
+<<<<<<< HEAD
 func LoadFromFileOrHTTPWithTimeout(pth string, timeout time.Duration) ([]byte, error) {
 	return LoadStrategy(pth, os.ReadFile, loadHTTPBytes(timeout))(pth)
 }
@@ -88,10 +97,24 @@ func LoadStrategy(pth string, local, remote func(string) ([]byte, error)) func(s
 
 	return func(p string) ([]byte, error) {
 		upth, err := url.PathUnescape(p)
+=======
+func LoadFromFileOrHTTPWithTimeout(path string, timeout time.Duration) ([]byte, error) {
+	return LoadStrategy(path, os.ReadFile, loadHTTPBytes(timeout))(path)
+}
+
+// LoadStrategy returns a loader function for a given path or uri
+func LoadStrategy(path string, local, remote func(string) ([]byte, error)) func(string) ([]byte, error) {
+	if strings.HasPrefix(path, "http") {
+		return remote
+	}
+	return func(pth string) ([]byte, error) {
+		upth, err := pathUnescape(pth)
+>>>>>>> master
 		if err != nil {
 			return nil, err
 		}
 
+<<<<<<< HEAD
 		if !strings.HasPrefix(p, `file://`) {
 			// regular file path provided: just normalize slashes
 			return local(filepath.FromSlash(upth))
@@ -132,6 +155,24 @@ func LoadStrategy(pth string, local, remote func(string) ([]byte, error)) func(s
 				// drive letter in the first segment:
 				// file:///c:/folder/... ==> strip the leading slash
 				upth = strings.TrimPrefix(upth, `/`)
+=======
+		if strings.HasPrefix(pth, `file://`) {
+			if runtime.GOOS == "windows" {
+				// support for canonical file URIs on windows.
+				// Zero tolerance here for dodgy URIs.
+				u, _ := url.Parse(upth)
+				if u.Host != "" {
+					// assume UNC name (volume share)
+					// file://host/share/folder\... ==> \\host\share\path\folder
+					// NOTE: UNC port not yet supported
+					upth = strings.Join([]string{`\`, u.Host, u.Path}, `\`)
+				} else {
+					// file:///c:/folder/... ==> just remove the leading slash
+					upth = strings.TrimPrefix(upth, `file:///`)
+				}
+			} else {
+				upth = strings.TrimPrefix(upth, `file://`)
+>>>>>>> master
 			}
 		}
 

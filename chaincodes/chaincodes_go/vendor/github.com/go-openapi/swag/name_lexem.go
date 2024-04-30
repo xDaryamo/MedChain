@@ -14,6 +14,7 @@
 
 package swag
 
+<<<<<<< HEAD
 import (
 	"unicode"
 	"unicode/utf8"
@@ -37,18 +38,47 @@ const (
 func newInitialismNameLexem(original, matchedInitialism string) nameLexem {
 	return nameLexem{
 		kind:              lexemKindInitialismName,
+=======
+import "unicode"
+
+type (
+	nameLexem interface {
+		GetUnsafeGoName() string
+		GetOriginal() string
+		IsInitialism() bool
+	}
+
+	initialismNameLexem struct {
+		original          string
+		matchedInitialism string
+	}
+
+	casualNameLexem struct {
+		original string
+	}
+)
+
+func newInitialismNameLexem(original, matchedInitialism string) *initialismNameLexem {
+	return &initialismNameLexem{
+>>>>>>> master
 		original:          original,
 		matchedInitialism: matchedInitialism,
 	}
 }
 
+<<<<<<< HEAD
 func newCasualNameLexem(original string) nameLexem {
 	return nameLexem{
 		kind:     lexemKindCasualName,
+=======
+func newCasualNameLexem(original string) *casualNameLexem {
+	return &casualNameLexem{
+>>>>>>> master
 		original: original,
 	}
 }
 
+<<<<<<< HEAD
 func (l nameLexem) GetUnsafeGoName() string {
 	if l.kind == lexemKindInitialismName {
 		return l.matchedInitialism
@@ -59,17 +89,30 @@ func (l nameLexem) GetUnsafeGoName() string {
 		rest  string
 	)
 
+=======
+func (l *initialismNameLexem) GetUnsafeGoName() string {
+	return l.matchedInitialism
+}
+
+func (l *casualNameLexem) GetUnsafeGoName() string {
+	var first rune
+	var rest string
+>>>>>>> master
 	for i, orig := range l.original {
 		if i == 0 {
 			first = orig
 			continue
 		}
+<<<<<<< HEAD
 
+=======
+>>>>>>> master
 		if i > 0 {
 			rest = l.original[i:]
 			break
 		}
 	}
+<<<<<<< HEAD
 
 	if len(l.original) > 1 {
 		b := poolOfBuffers.BorrowBuffer(utf8.UTFMax + len(rest))
@@ -79,15 +122,36 @@ func (l nameLexem) GetUnsafeGoName() string {
 		b.WriteRune(unicode.ToUpper(first))
 		b.WriteString(lower(rest))
 		return b.String()
+=======
+	if len(l.original) > 1 {
+		return string(unicode.ToUpper(first)) + lower(rest)
+>>>>>>> master
 	}
 
 	return l.original
 }
 
+<<<<<<< HEAD
 func (l nameLexem) GetOriginal() string {
 	return l.original
 }
 
 func (l nameLexem) IsInitialism() bool {
 	return l.kind == lexemKindInitialismName
+=======
+func (l *initialismNameLexem) GetOriginal() string {
+	return l.original
+}
+
+func (l *casualNameLexem) GetOriginal() string {
+	return l.original
+}
+
+func (l *initialismNameLexem) IsInitialism() bool {
+	return true
+}
+
+func (l *casualNameLexem) IsInitialism() bool {
+	return false
+>>>>>>> master
 }

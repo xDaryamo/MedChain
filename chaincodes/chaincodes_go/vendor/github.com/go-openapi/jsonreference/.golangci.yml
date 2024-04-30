@@ -1,6 +1,7 @@
 linters-settings:
   govet:
     check-shadowing: true
+<<<<<<< HEAD
   golint:
     min-confidence: 0
   gocyclo:
@@ -13,19 +14,38 @@ linters-settings:
     min-len: 2
     min-occurrences: 3
 
+=======
+  gocyclo:
+    min-complexity: 30
+  maligned:
+    suggest-new: true
+  dupl:
+    threshold: 100
+  goconst:
+    min-len: 2
+    min-occurrences: 4
+  paralleltest:
+    ignore-missing: true
+>>>>>>> master
 linters:
   enable-all: true
   disable:
     - maligned
+<<<<<<< HEAD
     - unparam
     - lll
     - gochecknoinits
     - gochecknoglobals
     - funlen
+=======
+    - lll
+    - gochecknoglobals
+>>>>>>> master
     - godox
     - gocognit
     - whitespace
     - wsl
+<<<<<<< HEAD
     - wrapcheck
     - testpackage
     - nlreturn
@@ -59,3 +79,31 @@ linters:
     - structcheck
     - golint
     - nosnakecase
+=======
+    - funlen
+    - gochecknoglobals
+    - gochecknoinits
+    - scopelint
+    - wrapcheck
+    - exhaustivestruct
+    - exhaustive
+    - nlreturn
+    - testpackage
+    - gci
+    - gofumpt
+    - goerr113
+    - gomnd
+    - tparallel
+    - nestif
+    - godot
+    - errorlint
+    - varcheck
+    - interfacer
+    - deadcode
+    - golint
+    - ifshort
+    - structcheck
+    - nosnakecase
+    - varnamelen
+    - exhaustruct
+>>>>>>> master
