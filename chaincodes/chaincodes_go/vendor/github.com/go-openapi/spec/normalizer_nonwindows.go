@@ -40,5 +40,25 @@ func repairURI(in string) (*url.URL, string) {
 	return u, ""
 }
 
+<<<<<<< HEAD
 func fixWindowsURI(u *url.URL, in string) {
+=======
+<<<<<<< HEAD
+<<<<<<< HEAD
+func fixWindowsURI(_ *url.URL, _ string) {
+=======
+<<<<<<< HEAD
+func fixWindowsURI(u *url.URL, in string) {
+=======
+<<<<<<< HEAD
+func fixWindowsURI(_ *url.URL, _ string) {
+=======
+func fixWindowsURI(u *url.URL, in string) {
+>>>>>>> master
+>>>>>>> master
+>>>>>>> master
+=======
+func fixWindowsURI(u *url.URL, in string) {
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 }

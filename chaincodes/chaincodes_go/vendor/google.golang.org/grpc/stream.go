@@ -27,7 +27,25 @@ import (
 	"sync"
 	"time"
 
+<<<<<<< HEAD
 	"golang.org/x/net/trace"
+=======
+<<<<<<< HEAD
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+	"golang.org/x/net/trace"
+=======
+<<<<<<< HEAD
+=======
+	"golang.org/x/net/trace"
+>>>>>>> master
+>>>>>>> master
+>>>>>>> master
+=======
+	"golang.org/x/net/trace"
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 	"google.golang.org/grpc/balancer"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/encoding"
@@ -48,6 +66,25 @@ import (
 	"google.golang.org/grpc/status"
 )
 
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+<<<<<<< HEAD
+var metadataFromOutgoingContextRaw = internal.FromOutgoingContextRaw.(func(context.Context) (metadata.MD, [][]string, bool))
+
+=======
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+var metadataFromOutgoingContextRaw = internal.FromOutgoingContextRaw.(func(context.Context) (metadata.MD, [][]string, bool))
+
+=======
+>>>>>>> master
+>>>>>>> master
+>>>>>>> master
+=======
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 // StreamHandler defines the handler called by gRPC server to complete the
 // execution of a streaming RPC.
 //
@@ -184,7 +221,27 @@ func newClientStream(ctx context.Context, desc *StreamDesc, cc *ClientConn, meth
 	// when the RPC completes.
 	opts = append([]CallOption{OnFinish(func(error) { cc.idlenessMgr.OnCallEnd() })}, opts...)
 
+<<<<<<< HEAD
 	if md, added, ok := metadata.FromOutgoingContextRaw(ctx); ok {
+=======
+<<<<<<< HEAD
+<<<<<<< HEAD
+	if md, added, ok := metadataFromOutgoingContextRaw(ctx); ok {
+=======
+<<<<<<< HEAD
+	if md, added, ok := metadata.FromOutgoingContextRaw(ctx); ok {
+=======
+<<<<<<< HEAD
+	if md, added, ok := metadataFromOutgoingContextRaw(ctx); ok {
+=======
+	if md, added, ok := metadata.FromOutgoingContextRaw(ctx); ok {
+>>>>>>> master
+>>>>>>> master
+>>>>>>> master
+=======
+	if md, added, ok := metadata.FromOutgoingContextRaw(ctx); ok {
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 		// validate md
 		if err := imetadata.Validate(md); err != nil {
 			return nil, status.Error(codes.Internal, err.Error())
@@ -429,7 +486,27 @@ func (cs *clientStream) newAttemptLocked(isTransparent bool) (*csAttempt, error)
 	var trInfo *traceInfo
 	if EnableTracing {
 		trInfo = &traceInfo{
+<<<<<<< HEAD
 			tr: trace.New("grpc.Sent."+methodFamily(method), method),
+=======
+<<<<<<< HEAD
+<<<<<<< HEAD
+			tr: newTrace("grpc.Sent."+methodFamily(method), method),
+=======
+<<<<<<< HEAD
+			tr: trace.New("grpc.Sent."+methodFamily(method), method),
+=======
+<<<<<<< HEAD
+			tr: newTrace("grpc.Sent."+methodFamily(method), method),
+=======
+			tr: trace.New("grpc.Sent."+methodFamily(method), method),
+>>>>>>> master
+>>>>>>> master
+>>>>>>> master
+=======
+			tr: trace.New("grpc.Sent."+methodFamily(method), method),
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 			firstLine: firstLine{
 				client: true,
 			},
@@ -438,7 +515,27 @@ func (cs *clientStream) newAttemptLocked(isTransparent bool) (*csAttempt, error)
 			trInfo.firstLine.deadline = time.Until(deadline)
 		}
 		trInfo.tr.LazyLog(&trInfo.firstLine, false)
+<<<<<<< HEAD
 		ctx = trace.NewContext(ctx, trInfo.tr)
+=======
+<<<<<<< HEAD
+<<<<<<< HEAD
+		ctx = newTraceContext(ctx, trInfo.tr)
+=======
+<<<<<<< HEAD
+		ctx = trace.NewContext(ctx, trInfo.tr)
+=======
+<<<<<<< HEAD
+		ctx = newTraceContext(ctx, trInfo.tr)
+=======
+		ctx = trace.NewContext(ctx, trInfo.tr)
+>>>>>>> master
+>>>>>>> master
+>>>>>>> master
+=======
+		ctx = trace.NewContext(ctx, trInfo.tr)
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 	}
 
 	if cs.cc.parsedTarget.URL.Scheme == internal.GRPCResolverSchemeExtraMetadata {
@@ -654,13 +751,53 @@ func (a *csAttempt) shouldRetry(err error) (bool, error) {
 		if len(sps) == 1 {
 			var e error
 			if pushback, e = strconv.Atoi(sps[0]); e != nil || pushback < 0 {
+<<<<<<< HEAD
 				channelz.Infof(logger, cs.cc.channelzID, "Server retry pushback specified to abort (%q).", sps[0])
+=======
+<<<<<<< HEAD
+<<<<<<< HEAD
+				channelz.Infof(logger, cs.cc.channelz, "Server retry pushback specified to abort (%q).", sps[0])
+=======
+<<<<<<< HEAD
+				channelz.Infof(logger, cs.cc.channelzID, "Server retry pushback specified to abort (%q).", sps[0])
+=======
+<<<<<<< HEAD
+				channelz.Infof(logger, cs.cc.channelz, "Server retry pushback specified to abort (%q).", sps[0])
+=======
+				channelz.Infof(logger, cs.cc.channelzID, "Server retry pushback specified to abort (%q).", sps[0])
+>>>>>>> master
+>>>>>>> master
+>>>>>>> master
+=======
+				channelz.Infof(logger, cs.cc.channelzID, "Server retry pushback specified to abort (%q).", sps[0])
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 				cs.retryThrottler.throttle() // This counts as a failure for throttling.
 				return false, err
 			}
 			hasPushback = true
 		} else if len(sps) > 1 {
+<<<<<<< HEAD
 			channelz.Warningf(logger, cs.cc.channelzID, "Server retry pushback specified multiple values (%q); not retrying.", sps)
+=======
+<<<<<<< HEAD
+<<<<<<< HEAD
+			channelz.Warningf(logger, cs.cc.channelz, "Server retry pushback specified multiple values (%q); not retrying.", sps)
+=======
+<<<<<<< HEAD
+			channelz.Warningf(logger, cs.cc.channelzID, "Server retry pushback specified multiple values (%q); not retrying.", sps)
+=======
+<<<<<<< HEAD
+			channelz.Warningf(logger, cs.cc.channelz, "Server retry pushback specified multiple values (%q); not retrying.", sps)
+=======
+			channelz.Warningf(logger, cs.cc.channelzID, "Server retry pushback specified multiple values (%q); not retrying.", sps)
+>>>>>>> master
+>>>>>>> master
+>>>>>>> master
+=======
+			channelz.Warningf(logger, cs.cc.channelzID, "Server retry pushback specified multiple values (%q); not retrying.", sps)
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 			cs.retryThrottler.throttle() // This counts as a failure for throttling.
 			return false, err
 		}

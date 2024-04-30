@@ -35,7 +35,25 @@ import (
 	"sync"
 	"time"
 
+<<<<<<< HEAD
 	"github.com/golang/protobuf/proto"
+=======
+<<<<<<< HEAD
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+	"github.com/golang/protobuf/proto"
+=======
+<<<<<<< HEAD
+=======
+	"github.com/golang/protobuf/proto"
+>>>>>>> master
+>>>>>>> master
+>>>>>>> master
+=======
+	"github.com/golang/protobuf/proto"
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 	"golang.org/x/net/http2"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/credentials"
@@ -45,12 +63,49 @@ import (
 	"google.golang.org/grpc/peer"
 	"google.golang.org/grpc/stats"
 	"google.golang.org/grpc/status"
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+<<<<<<< HEAD
+	"google.golang.org/protobuf/proto"
+=======
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+	"google.golang.org/protobuf/proto"
+=======
+>>>>>>> master
+>>>>>>> master
+>>>>>>> master
+=======
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 )
 
 // NewServerHandlerTransport returns a ServerTransport handling gRPC from
 // inside an http.Handler, or writes an HTTP error to w and returns an error.
 // It requires that the http Server supports HTTP/2.
 func NewServerHandlerTransport(w http.ResponseWriter, r *http.Request, stats []stats.Handler) (ServerTransport, error) {
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> master
+	if r.Method != http.MethodPost {
+		w.Header().Set("Allow", http.MethodPost)
+		msg := fmt.Sprintf("invalid gRPC request method %q", r.Method)
+		http.Error(w, msg, http.StatusMethodNotAllowed)
+<<<<<<< HEAD
+=======
+=======
+>>>>>>> master
+=======
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 	if r.ProtoMajor != 2 {
 		msg := "gRPC requires HTTP/2"
 		http.Error(w, msg, http.StatusBadRequest)
@@ -59,6 +114,17 @@ func NewServerHandlerTransport(w http.ResponseWriter, r *http.Request, stats []s
 	if r.Method != "POST" {
 		msg := fmt.Sprintf("invalid gRPC request method %q", r.Method)
 		http.Error(w, msg, http.StatusBadRequest)
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> master
+>>>>>>> master
+>>>>>>> master
+=======
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 		return nil, errors.New(msg)
 	}
 	contentType := r.Header.Get("Content-Type")
@@ -69,17 +135,88 @@ func NewServerHandlerTransport(w http.ResponseWriter, r *http.Request, stats []s
 		http.Error(w, msg, http.StatusUnsupportedMediaType)
 		return nil, errors.New(msg)
 	}
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> master
+	if r.ProtoMajor != 2 {
+		msg := "gRPC requires HTTP/2"
+		http.Error(w, msg, http.StatusHTTPVersionNotSupported)
+		return nil, errors.New(msg)
+	}
+<<<<<<< HEAD
+=======
+=======
+>>>>>>> master
+>>>>>>> master
+>>>>>>> master
+=======
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 	if _, ok := w.(http.Flusher); !ok {
 		msg := "gRPC requires a ResponseWriter supporting http.Flusher"
 		http.Error(w, msg, http.StatusInternalServerError)
 		return nil, errors.New(msg)
 	}
 
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> master
+	var localAddr net.Addr
+	if la := r.Context().Value(http.LocalAddrContextKey); la != nil {
+		localAddr, _ = la.(net.Addr)
+	}
+	var authInfo credentials.AuthInfo
+	if r.TLS != nil {
+		authInfo = credentials.TLSInfo{State: *r.TLS, CommonAuthInfo: credentials.CommonAuthInfo{SecurityLevel: credentials.PrivacyAndIntegrity}}
+	}
+	p := peer.Peer{
+		Addr:      strAddr(r.RemoteAddr),
+		LocalAddr: localAddr,
+		AuthInfo:  authInfo,
+	}
+<<<<<<< HEAD
+=======
+=======
+>>>>>>> master
+>>>>>>> master
+>>>>>>> master
+=======
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 	st := &serverHandlerTransport{
 		rw:             w,
 		req:            r,
 		closedCh:       make(chan struct{}),
 		writes:         make(chan func()),
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+<<<<<<< HEAD
+		peer:           p,
+=======
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+		peer:           p,
+=======
+>>>>>>> master
+>>>>>>> master
+>>>>>>> master
+=======
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 		contentType:    contentType,
 		contentSubtype: contentSubtype,
 		stats:          stats,
@@ -134,6 +271,25 @@ type serverHandlerTransport struct {
 
 	headerMD metadata.MD
 
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+<<<<<<< HEAD
+	peer peer.Peer
+
+=======
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+	peer peer.Peer
+
+=======
+>>>>>>> master
+>>>>>>> master
+>>>>>>> master
+=======
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 	closeOnce sync.Once
 	closedCh  chan struct{} // closed on Close
 
@@ -165,7 +321,35 @@ func (ht *serverHandlerTransport) Close(err error) {
 	})
 }
 
+<<<<<<< HEAD
 func (ht *serverHandlerTransport) RemoteAddr() net.Addr { return strAddr(ht.req.RemoteAddr) }
+=======
+<<<<<<< HEAD
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+func (ht *serverHandlerTransport) RemoteAddr() net.Addr { return strAddr(ht.req.RemoteAddr) }
+=======
+<<<<<<< HEAD
+>>>>>>> master
+func (ht *serverHandlerTransport) Peer() *peer.Peer {
+	return &peer.Peer{
+		Addr:      ht.peer.Addr,
+		LocalAddr: ht.peer.LocalAddr,
+		AuthInfo:  ht.peer.AuthInfo,
+	}
+}
+<<<<<<< HEAD
+=======
+=======
+func (ht *serverHandlerTransport) RemoteAddr() net.Addr { return strAddr(ht.req.RemoteAddr) }
+>>>>>>> master
+>>>>>>> master
+>>>>>>> master
+=======
+func (ht *serverHandlerTransport) RemoteAddr() net.Addr { return strAddr(ht.req.RemoteAddr) }
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 
 // strAddr is a net.Addr backed by either a TCP "ip:port" string, or
 // the empty string if unknown.
@@ -347,10 +531,38 @@ func (ht *serverHandlerTransport) WriteHeader(s *Stream, md metadata.MD) error {
 	return err
 }
 
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+<<<<<<< HEAD
+func (ht *serverHandlerTransport) HandleStreams(ctx context.Context, startStream func(*Stream)) {
+	// With this transport type there will be exactly 1 stream: this HTTP request.
+=======
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+func (ht *serverHandlerTransport) HandleStreams(ctx context.Context, startStream func(*Stream)) {
+	// With this transport type there will be exactly 1 stream: this HTTP request.
+=======
+>>>>>>> master
+=======
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 func (ht *serverHandlerTransport) HandleStreams(startStream func(*Stream)) {
 	// With this transport type there will be exactly 1 stream: this HTTP request.
 
 	ctx := ht.req.Context()
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> master
+>>>>>>> master
+>>>>>>> master
+=======
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 	var cancel context.CancelFunc
 	if ht.timeoutSet {
 		ctx, cancel = context.WithTimeout(ctx, ht.timeout)
@@ -370,6 +582,35 @@ func (ht *serverHandlerTransport) HandleStreams(startStream func(*Stream)) {
 		ht.Close(errors.New("request is done processing"))
 	}()
 
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> master
+	ctx = metadata.NewIncomingContext(ctx, ht.headerMD)
+	req := ht.req
+	s := &Stream{
+		id:               0, // irrelevant
+		ctx:              ctx,
+		requestRead:      func(int) {},
+		cancel:           cancel,
+		buf:              newRecvBuffer(),
+		st:               ht,
+		method:           req.URL.Path,
+		recvCompress:     req.Header.Get("grpc-encoding"),
+		contentSubtype:   ht.contentSubtype,
+		headerWireLength: 0, // won't have access to header wire length until golang/go#18997.
+<<<<<<< HEAD
+=======
+=======
+>>>>>>> master
+=======
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 	req := ht.req
 
 	s := &Stream{
@@ -398,6 +639,17 @@ func (ht *serverHandlerTransport) HandleStreams(startStream func(*Stream)) {
 			Compression: s.recvCompress,
 		}
 		sh.HandleRPC(s.ctx, inHeader)
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> master
+>>>>>>> master
+>>>>>>> master
+=======
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 	}
 	s.trReader = &transportReader{
 		reader:        &recvBufferReader{ctx: s.ctx, ctxDone: s.ctx.Done(), recv: s.buf, freeBuffer: func(*bytes.Buffer) {}},

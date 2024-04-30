@@ -25,7 +25,35 @@ import (
 	"strconv"
 )
 
+<<<<<<< HEAD
 // A Code is an unsigned 32-bit error code as defined in the gRPC spec.
+=======
+<<<<<<< HEAD
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+// A Code is an unsigned 32-bit error code as defined in the gRPC spec.
+=======
+<<<<<<< HEAD
+>>>>>>> master
+// A Code is a status code defined according to the [gRPC documentation].
+//
+// Only the codes defined as consts in this package are valid codes. Do not use
+// other code values.  Behavior of other codes is implementation-specific and
+// interoperability between implementations is not guaranteed.
+//
+// [gRPC documentation]: https://github.com/grpc/grpc/blob/master/doc/statuscodes.md
+<<<<<<< HEAD
+=======
+=======
+// A Code is an unsigned 32-bit error code as defined in the gRPC spec.
+>>>>>>> master
+>>>>>>> master
+>>>>>>> master
+=======
+// A Code is an unsigned 32-bit error code as defined in the gRPC spec.
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 type Code uint32
 
 const (

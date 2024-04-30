@@ -57,7 +57,27 @@ var (
 	// GetXDSHandshakeInfoForTesting returns a pointer to the xds.HandshakeInfo
 	// stored in the passed in attributes. This is set by
 	// credentials/xds/xds.go.
+<<<<<<< HEAD
 	GetXDSHandshakeInfoForTesting any // func (*attributes.Attributes) *xds.HandshakeInfo
+=======
+<<<<<<< HEAD
+<<<<<<< HEAD
+	GetXDSHandshakeInfoForTesting any // func (*attributes.Attributes) *unsafe.Pointer
+=======
+<<<<<<< HEAD
+	GetXDSHandshakeInfoForTesting any // func (*attributes.Attributes) *xds.HandshakeInfo
+=======
+<<<<<<< HEAD
+	GetXDSHandshakeInfoForTesting any // func (*attributes.Attributes) *unsafe.Pointer
+=======
+	GetXDSHandshakeInfoForTesting any // func (*attributes.Attributes) *xds.HandshakeInfo
+>>>>>>> master
+>>>>>>> master
+>>>>>>> master
+=======
+	GetXDSHandshakeInfoForTesting any // func (*attributes.Attributes) *xds.HandshakeInfo
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 	// GetServerCredentials returns the transport credentials configured on a
 	// gRPC server. An xDS-enabled server needs to know what type of credentials
 	// is configured on the underlying gRPC server. This is set by server.go.
@@ -68,11 +88,43 @@ var (
 	// This is used in the 1.0 release of gcp/observability, and thus must not be
 	// deleted or changed.
 	CanonicalString any // func (codes.Code) string
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> master
+	// IsRegisteredMethod returns whether the passed in method is registered as
+	// a method on the server.
+	IsRegisteredMethod any // func(*grpc.Server, string) bool
+	// ServerFromContext returns the server from the context.
+	ServerFromContext any // func(context.Context) *grpc.Server
+<<<<<<< HEAD
+=======
+=======
+>>>>>>> master
+=======
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 	// DrainServerTransports initiates a graceful close of existing connections
 	// on a gRPC server accepted on the provided listener address. An
 	// xDS-enabled server invokes this method on a grpc.Server when a particular
 	// listener moves to "not-serving" mode.
 	DrainServerTransports any // func(*grpc.Server, string)
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> master
+>>>>>>> master
+>>>>>>> master
+=======
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 	// AddGlobalServerOptions adds an array of ServerOption that will be
 	// effective globally for newly created servers. The priority will be: 1.
 	// user-provided; 2. this method; 3. default values.
@@ -177,10 +229,60 @@ var (
 	GRPCResolverSchemeExtraMetadata string = "xds"
 
 	// EnterIdleModeForTesting gets the ClientConn to enter IDLE mode.
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> master
+	EnterIdleModeForTesting any // func(*grpc.ClientConn)
+
+	// ExitIdleModeForTesting gets the ClientConn to exit IDLE mode.
+	ExitIdleModeForTesting any // func(*grpc.ClientConn) error
+
+	ChannelzTurnOffForTesting func()
+
+	// TriggerXDSResourceNameNotFoundForTesting triggers the resource-not-found
+	// error for a given resource type and name. This is usually triggered when
+	// the associated watch timer fires. For testing purposes, having this
+	// function makes events more predictable than relying on timer events.
+	TriggerXDSResourceNameNotFoundForTesting any // func(func(xdsresource.Type, string), string, string) error
+
+	// TriggerXDSResourceNameNotFoundClient invokes the testing xDS Client
+	// singleton to invoke resource not found for a resource type name and
+	// resource name.
+	TriggerXDSResourceNameNotFoundClient any // func(string, string) error
+
+	// FromOutgoingContextRaw returns the un-merged, intermediary contents of metadata.rawMD.
+	FromOutgoingContextRaw any // func(context.Context) (metadata.MD, [][]string, bool)
+
+	// UserSetDefaultScheme is set to true if the user has overridden the default resolver scheme.
+	UserSetDefaultScheme bool = false
+<<<<<<< HEAD
+=======
+=======
+>>>>>>> master
+=======
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 	EnterIdleModeForTesting any // func(*grpc.ClientConn) error
 
 	// ExitIdleModeForTesting gets the ClientConn to exit IDLE mode.
 	ExitIdleModeForTesting any // func(*grpc.ClientConn) error
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> master
+>>>>>>> master
+>>>>>>> master
+=======
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 )
 
 // HealthChecker defines the signature of the client-side LB channel health checking function.

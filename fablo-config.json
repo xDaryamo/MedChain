@@ -2,6 +2,10 @@
   "$schema": "https://github.com/hyperledger-labs/fablo/releases/download/1.2.0/schema.json",
   "global": {
     "fabricVersion": "2.2.13",
+<<<<<<< HEAD
+=======
+    "fabricVersion": "2.2.13",
+>>>>>>> master
     "tls": true,
     "engine": "docker",
     "peerDevMode": false
@@ -245,10 +249,10 @@
   ,
   "chaincodes": [
     {
-      "name": "health-data-management",
+      "name": "labresults",
       "version": "1.0",
       "lang": "golang",
-      "channel": "public-health-channel",
+      "channel": "lab-results-channel",
       "directory": "./chaincodes/chaincodes_go"
     }
   ]

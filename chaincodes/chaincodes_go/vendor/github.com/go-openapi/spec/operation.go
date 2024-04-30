@@ -217,9 +217,42 @@ func (o *Operation) AddParam(param *Parameter) *Operation {
 
 	for i, p := range o.Parameters {
 		if p.Name == param.Name && p.In == param.In {
+<<<<<<< HEAD
 			params := append(o.Parameters[:i], *param)
 			params = append(params, o.Parameters[i+1:]...)
 			o.Parameters = params
+=======
+<<<<<<< HEAD
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+			params := append(o.Parameters[:i], *param)
+			params = append(params, o.Parameters[i+1:]...)
+			o.Parameters = params
+=======
+<<<<<<< HEAD
+>>>>>>> master
+			params := make([]Parameter, 0, len(o.Parameters)+1)
+			params = append(params, o.Parameters[:i]...)
+			params = append(params, *param)
+			params = append(params, o.Parameters[i+1:]...)
+			o.Parameters = params
+
+<<<<<<< HEAD
+=======
+=======
+			params := append(o.Parameters[:i], *param)
+			params = append(params, o.Parameters[i+1:]...)
+			o.Parameters = params
+>>>>>>> master
+>>>>>>> master
+>>>>>>> master
+=======
+			params := append(o.Parameters[:i], *param)
+			params = append(params, o.Parameters[i+1:]...)
+			o.Parameters = params
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 			return o
 		}
 	}

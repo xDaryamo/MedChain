@@ -26,8 +26,29 @@ import (
 	"strings"
 	"sync"
 	"time"
+<<<<<<< HEAD
 
 	"golang.org/x/net/trace"
+=======
+<<<<<<< HEAD
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+
+	"golang.org/x/net/trace"
+=======
+<<<<<<< HEAD
+=======
+
+	"golang.org/x/net/trace"
+>>>>>>> master
+>>>>>>> master
+>>>>>>> master
+=======
+
+	"golang.org/x/net/trace"
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 )
 
 // EnableTracing controls whether to trace RPCs using the golang.org/x/net/trace package.
@@ -44,9 +65,61 @@ func methodFamily(m string) string {
 	return m
 }
 
+<<<<<<< HEAD
 // traceInfo contains tracing information for an RPC.
 type traceInfo struct {
 	tr        trace.Trace
+=======
+<<<<<<< HEAD
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+// traceInfo contains tracing information for an RPC.
+type traceInfo struct {
+	tr        trace.Trace
+=======
+<<<<<<< HEAD
+>>>>>>> master
+// traceEventLog mirrors golang.org/x/net/trace.EventLog.
+//
+// It exists in order to avoid importing x/net/trace on grpcnotrace builds.
+type traceEventLog interface {
+	Printf(format string, a ...any)
+	Errorf(format string, a ...any)
+	Finish()
+}
+
+// traceLog mirrors golang.org/x/net/trace.Trace.
+//
+// It exists in order to avoid importing x/net/trace on grpcnotrace builds.
+type traceLog interface {
+	LazyLog(x fmt.Stringer, sensitive bool)
+	LazyPrintf(format string, a ...any)
+	SetError()
+	SetRecycler(f func(any))
+	SetTraceInfo(traceID, spanID uint64)
+	SetMaxEvents(m int)
+	Finish()
+}
+
+// traceInfo contains tracing information for an RPC.
+type traceInfo struct {
+	tr        traceLog
+<<<<<<< HEAD
+=======
+=======
+// traceInfo contains tracing information for an RPC.
+type traceInfo struct {
+	tr        trace.Trace
+>>>>>>> master
+>>>>>>> master
+>>>>>>> master
+=======
+// traceInfo contains tracing information for an RPC.
+type traceInfo struct {
+	tr        trace.Trace
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 	firstLine firstLine
 }
 

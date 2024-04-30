@@ -2,7 +2,27 @@
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
+<<<<<<< HEAD
 //go:build darwin && go1.12
+=======
+<<<<<<< HEAD
+<<<<<<< HEAD
+//go:build darwin
+=======
+<<<<<<< HEAD
+//go:build darwin && go1.12
+=======
+<<<<<<< HEAD
+//go:build darwin
+=======
+//go:build darwin && go1.12
+>>>>>>> master
+>>>>>>> master
+>>>>>>> master
+=======
+//go:build darwin && go1.12
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 
 package unix
 

@@ -23,8 +23,35 @@ package proto
 import (
 	"fmt"
 
+<<<<<<< HEAD
 	"github.com/golang/protobuf/proto"
 	"google.golang.org/grpc/encoding"
+=======
+<<<<<<< HEAD
+<<<<<<< HEAD
+	"google.golang.org/grpc/encoding"
+	"google.golang.org/protobuf/proto"
+	"google.golang.org/protobuf/protoadapt"
+=======
+<<<<<<< HEAD
+	"github.com/golang/protobuf/proto"
+	"google.golang.org/grpc/encoding"
+=======
+<<<<<<< HEAD
+	"google.golang.org/grpc/encoding"
+	"google.golang.org/protobuf/proto"
+	"google.golang.org/protobuf/protoadapt"
+=======
+	"github.com/golang/protobuf/proto"
+	"google.golang.org/grpc/encoding"
+>>>>>>> master
+>>>>>>> master
+>>>>>>> master
+=======
+	"github.com/golang/protobuf/proto"
+	"google.golang.org/grpc/encoding"
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 )
 
 // Name is the name registered for the proto compressor.
@@ -38,14 +65,81 @@ func init() {
 type codec struct{}
 
 func (codec) Marshal(v any) ([]byte, error) {
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> master
+	vv := messageV2Of(v)
+	if vv == nil {
+		return nil, fmt.Errorf("failed to marshal, message is %T, want proto.Message", v)
+	}
+
+<<<<<<< HEAD
+=======
+=======
+>>>>>>> master
+=======
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 	vv, ok := v.(proto.Message)
 	if !ok {
 		return nil, fmt.Errorf("failed to marshal, message is %T, want proto.Message", v)
 	}
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> master
+>>>>>>> master
+>>>>>>> master
+=======
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 	return proto.Marshal(vv)
 }
 
 func (codec) Unmarshal(data []byte, v any) error {
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> master
+	vv := messageV2Of(v)
+	if vv == nil {
+		return fmt.Errorf("failed to unmarshal, message is %T, want proto.Message", v)
+	}
+
+	return proto.Unmarshal(data, vv)
+}
+
+func messageV2Of(v any) proto.Message {
+	switch v := v.(type) {
+	case protoadapt.MessageV1:
+		return protoadapt.MessageV2Of(v)
+	case protoadapt.MessageV2:
+		return v
+	}
+
+	return nil
+}
+
+<<<<<<< HEAD
+=======
+=======
+>>>>>>> master
+=======
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 	vv, ok := v.(proto.Message)
 	if !ok {
 		return fmt.Errorf("failed to unmarshal, message is %T, want proto.Message", v)
@@ -53,6 +147,17 @@ func (codec) Unmarshal(data []byte, v any) error {
 	return proto.Unmarshal(data, vv)
 }
 
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> master
+>>>>>>> master
+>>>>>>> master
+=======
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 func (codec) Name() string {
 	return Name
 }

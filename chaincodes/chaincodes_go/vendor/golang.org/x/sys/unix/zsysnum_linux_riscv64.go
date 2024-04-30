@@ -316,4 +316,26 @@ const (
 	SYS_SET_MEMPOLICY_HOME_NODE = 450
 	SYS_CACHESTAT               = 451
 	SYS_FCHMODAT2               = 452
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> master
+	SYS_MAP_SHADOW_STACK        = 453
+	SYS_FUTEX_WAKE              = 454
+	SYS_FUTEX_WAIT              = 455
+	SYS_FUTEX_REQUEUE           = 456
+<<<<<<< HEAD
+=======
+=======
+>>>>>>> master
+>>>>>>> master
+>>>>>>> master
+=======
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 )

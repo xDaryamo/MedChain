@@ -18,6 +18,30 @@ import (
 	"reflect"
 	"strings"
 	"unicode"
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> master
+	"unicode/utf8"
+)
+
+// GoNamePrefixFunc sets an optional rule to prefix go names
+// which do not start with a letter.
+//
+// The prefix function is assumed to return a string that starts with an upper case letter.
+//
+<<<<<<< HEAD
+=======
+=======
+>>>>>>> master
+=======
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 )
 
 // commonInitialisms are common acronyms that are kept as whole uppercased words.
@@ -31,11 +55,44 @@ var isInitialism func(string) bool
 // GoNamePrefixFunc sets an optional rule to prefix go names
 // which do not start with a letter.
 //
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> master
+>>>>>>> master
+>>>>>>> master
+=======
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 // e.g. to help convert "123" into "{prefix}123"
 //
 // The default is to prefix with "X"
 var GoNamePrefixFunc func(string) string
 
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> master
+func prefixFunc(name, in string) string {
+	if GoNamePrefixFunc == nil {
+		return "X" + in
+	}
+
+	return GoNamePrefixFunc(name) + in
+<<<<<<< HEAD
+=======
+=======
+>>>>>>> master
+=======
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 func init() {
 	// Taken from https://github.com/golang/lint/blob/3390df4df2787994aea98de825b964ac7944b817/lint.go#L732-L769
 	var configuredInitialisms = map[string]bool{
@@ -88,6 +145,17 @@ func init() {
 
 	// a test function
 	isInitialism = commonInitialisms.isInitialism
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> master
+>>>>>>> master
+>>>>>>> master
+=======
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 }
 
 const (
@@ -156,6 +224,25 @@ func SplitByFormat(data, format string) []string {
 	return result
 }
 
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+<<<<<<< HEAD
+// Removes leading whitespaces
+func trim(str string) string {
+	return strings.TrimSpace(str)
+=======
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+// Removes leading whitespaces
+func trim(str string) string {
+	return strings.TrimSpace(str)
+=======
+>>>>>>> master
+=======
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 type byInitialism []string
 
 func (s byInitialism) Len() int {
@@ -175,6 +262,17 @@ func (s byInitialism) Less(i, j int) bool {
 // Removes leading whitespaces
 func trim(str string) string {
 	return strings.Trim(str, " ")
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> master
+>>>>>>> master
+>>>>>>> master
+=======
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 }
 
 // Shortcut to strings.ToUpper()
@@ -188,6 +286,36 @@ func lower(str string) string {
 }
 
 // Camelize an uppercased word
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> master
+func Camelize(word string) string {
+	camelized := poolOfBuffers.BorrowBuffer(len(word))
+	defer func() {
+		poolOfBuffers.RedeemBuffer(camelized)
+	}()
+
+	for pos, ru := range []rune(word) {
+		if pos > 0 {
+			camelized.WriteRune(unicode.ToLower(ru))
+		} else {
+			camelized.WriteRune(unicode.ToUpper(ru))
+		}
+	}
+	return camelized.String()
+<<<<<<< HEAD
+=======
+=======
+>>>>>>> master
+=======
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 func Camelize(word string) (camelized string) {
 	for pos, ru := range []rune(word) {
 		if pos > 0 {
@@ -197,6 +325,17 @@ func Camelize(word string) (camelized string) {
 		}
 	}
 	return
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> master
+>>>>>>> master
+>>>>>>> master
+=======
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 }
 
 // ToFileName lowercases and underscores a go type name
@@ -224,6 +363,35 @@ func ToCommandName(name string) string {
 
 // ToHumanNameLower represents a code name as a human series of words
 func ToHumanNameLower(name string) string {
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> master
+	s := poolOfSplitters.BorrowSplitter(withPostSplitInitialismCheck)
+	in := s.split(name)
+	poolOfSplitters.RedeemSplitter(s)
+	out := make([]string, 0, len(*in))
+
+	for _, w := range *in {
+		if !w.IsInitialism() {
+			out = append(out, lower(w.GetOriginal()))
+		} else {
+			out = append(out, trim(w.GetOriginal()))
+		}
+	}
+	poolOfLexems.RedeemLexems(in)
+<<<<<<< HEAD
+=======
+=======
+>>>>>>> master
+=======
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 	in := newSplitter(withPostSplitInitialismCheck).split(name)
 	out := make([]string, 0, len(in))
 
@@ -234,23 +402,87 @@ func ToHumanNameLower(name string) string {
 			out = append(out, w.GetOriginal())
 		}
 	}
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> master
+>>>>>>> master
+>>>>>>> master
+=======
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 
 	return strings.Join(out, " ")
 }
 
 // ToHumanNameTitle represents a code name as a human series of words with the first letters titleized
 func ToHumanNameTitle(name string) string {
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> master
+	s := poolOfSplitters.BorrowSplitter(withPostSplitInitialismCheck)
+	in := s.split(name)
+	poolOfSplitters.RedeemSplitter(s)
+
+	out := make([]string, 0, len(*in))
+	for _, w := range *in {
+		original := trim(w.GetOriginal())
+<<<<<<< HEAD
+=======
+=======
+>>>>>>> master
+=======
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 	in := newSplitter(withPostSplitInitialismCheck).split(name)
 
 	out := make([]string, 0, len(in))
 	for _, w := range in {
 		original := w.GetOriginal()
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> master
+>>>>>>> master
+>>>>>>> master
+=======
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 		if !w.IsInitialism() {
 			out = append(out, Camelize(original))
 		} else {
 			out = append(out, original)
 		}
 	}
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+<<<<<<< HEAD
+	poolOfLexems.RedeemLexems(in)
+
+=======
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+	poolOfLexems.RedeemLexems(in)
+
+=======
+>>>>>>> master
+>>>>>>> master
+>>>>>>> master
+=======
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 	return strings.Join(out, " ")
 }
 
@@ -264,7 +496,27 @@ func ToJSONName(name string) string {
 			out = append(out, lower(w))
 			continue
 		}
+<<<<<<< HEAD
 		out = append(out, Camelize(w))
+=======
+<<<<<<< HEAD
+<<<<<<< HEAD
+		out = append(out, Camelize(trim(w)))
+=======
+<<<<<<< HEAD
+		out = append(out, Camelize(w))
+=======
+<<<<<<< HEAD
+		out = append(out, Camelize(trim(w)))
+=======
+		out = append(out, Camelize(w))
+>>>>>>> master
+>>>>>>> master
+>>>>>>> master
+=======
+		out = append(out, Camelize(w))
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 	}
 	return strings.Join(out, "")
 }
@@ -283,16 +535,117 @@ func ToVarName(name string) string {
 
 // ToGoName translates a swagger name which can be underscored or camel cased to a name that golint likes
 func ToGoName(name string) string {
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> master
+	s := poolOfSplitters.BorrowSplitter(withPostSplitInitialismCheck)
+	lexems := s.split(name)
+	poolOfSplitters.RedeemSplitter(s)
+	defer func() {
+		poolOfLexems.RedeemLexems(lexems)
+	}()
+	lexemes := *lexems
+
+	if len(lexemes) == 0 {
+		return ""
+	}
+
+	result := poolOfBuffers.BorrowBuffer(len(name))
+	defer func() {
+		poolOfBuffers.RedeemBuffer(result)
+	}()
+
+	// check if not starting with a letter, upper case
+	firstPart := lexemes[0].GetUnsafeGoName()
+	if lexemes[0].IsInitialism() {
+		firstPart = upper(firstPart)
+	}
+
+	if c := firstPart[0]; c < utf8.RuneSelf {
+		// ASCII
+		switch {
+		case 'A' <= c && c <= 'Z':
+			result.WriteString(firstPart)
+		case 'a' <= c && c <= 'z':
+			result.WriteByte(c - 'a' + 'A')
+			result.WriteString(firstPart[1:])
+		default:
+			result.WriteString(prefixFunc(name, firstPart))
+			// NOTE: no longer check if prefixFunc returns a string that starts with uppercase:
+			// assume this is always the case
+		}
+	} else {
+		// unicode
+		firstRune, _ := utf8.DecodeRuneInString(firstPart)
+		switch {
+		case !unicode.IsLetter(firstRune):
+			result.WriteString(prefixFunc(name, firstPart))
+		case !unicode.IsUpper(firstRune):
+			result.WriteString(prefixFunc(name, firstPart))
+			/*
+				result.WriteRune(unicode.ToUpper(firstRune))
+				result.WriteString(firstPart[offset:])
+			*/
+		default:
+			result.WriteString(firstPart)
+		}
+	}
+
+	for _, lexem := range lexemes[1:] {
+<<<<<<< HEAD
+=======
+=======
+>>>>>>> master
+=======
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 	lexems := newSplitter(withPostSplitInitialismCheck).split(name)
 
 	result := ""
 	for _, lexem := range lexems {
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> master
+>>>>>>> master
+>>>>>>> master
+=======
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 		goName := lexem.GetUnsafeGoName()
 
 		// to support old behavior
 		if lexem.IsInitialism() {
 			goName = upper(goName)
 		}
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> master
+		result.WriteString(goName)
+	}
+
+	return result.String()
+<<<<<<< HEAD
+=======
+=======
+>>>>>>> master
+=======
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 		result += goName
 	}
 
@@ -312,6 +665,17 @@ func ToGoName(name string) string {
 	}
 
 	return result
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> master
+>>>>>>> master
+>>>>>>> master
+=======
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 }
 
 // ContainsStrings searches a slice of strings for a case-sensitive match
@@ -343,7 +707,27 @@ type zeroable interface {
 func IsZero(data interface{}) bool {
 	v := reflect.ValueOf(data)
 	// check for nil data
+<<<<<<< HEAD
 	switch v.Kind() {
+=======
+<<<<<<< HEAD
+<<<<<<< HEAD
+	switch v.Kind() { //nolint:exhaustive
+=======
+<<<<<<< HEAD
+	switch v.Kind() {
+=======
+<<<<<<< HEAD
+	switch v.Kind() { //nolint:exhaustive
+=======
+	switch v.Kind() {
+>>>>>>> master
+>>>>>>> master
+>>>>>>> master
+=======
+	switch v.Kind() {
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 	case reflect.Interface, reflect.Map, reflect.Ptr, reflect.Slice:
 		if v.IsNil() {
 			return true
@@ -356,7 +740,27 @@ func IsZero(data interface{}) bool {
 	}
 
 	// continue with slightly more complex reflection
+<<<<<<< HEAD
 	switch v.Kind() {
+=======
+<<<<<<< HEAD
+<<<<<<< HEAD
+	switch v.Kind() { //nolint:exhaustive
+=======
+<<<<<<< HEAD
+	switch v.Kind() {
+=======
+<<<<<<< HEAD
+	switch v.Kind() { //nolint:exhaustive
+=======
+	switch v.Kind() {
+>>>>>>> master
+>>>>>>> master
+>>>>>>> master
+=======
+	switch v.Kind() {
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 	case reflect.String:
 		return v.Len() == 0
 	case reflect.Bool:
@@ -376,6 +780,19 @@ func IsZero(data interface{}) bool {
 	}
 }
 
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+=======
+>>>>>>> master
+=======
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 // AddInitialisms add additional initialisms
 func AddInitialisms(words ...string) {
 	for _, word := range words {
@@ -386,6 +803,17 @@ func AddInitialisms(words ...string) {
 	initialisms = commonInitialisms.sorted()
 }
 
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> master
+>>>>>>> master
+>>>>>>> master
+=======
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 // CommandLineOptionsGroup represents a group of user-defined command line options
 type CommandLineOptionsGroup struct {
 	ShortDescription string

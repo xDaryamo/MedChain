@@ -308,6 +308,23 @@ var laxGoVersionRE = lazyregexp.New(`^v?(([1-9][0-9]*)\.(0|[1-9][0-9]*))([^0-9].
 
 // Toolchains must be named beginning with `go1`,
 // like "go1.20.3" or "go1.20.3-gccgo". As a special case, "default" is also permitted.
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+<<<<<<< HEAD
+// TODO(samthanawalla): Replace regex with https://pkg.go.dev/go/version#IsValid in 1.23+
+=======
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+// TODO(samthanawalla): Replace regex with https://pkg.go.dev/go/version#IsValid in 1.23+
+=======
+>>>>>>> master
+>>>>>>> master
+>>>>>>> master
+=======
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 var ToolchainRE = lazyregexp.New(`^default$|^go1($|\.)`)
 
 func (f *File) add(errs *ErrorList, block *LineBlock, line *Line, verb string, args []string, fix VersionFixer, strict bool) {
@@ -384,7 +401,27 @@ func (f *File) add(errs *ErrorList, block *LineBlock, line *Line, verb string, a
 			errorf("toolchain directive expects exactly one argument")
 			return
 		} else if strict && !ToolchainRE.MatchString(args[0]) {
+<<<<<<< HEAD
 			errorf("invalid toolchain version '%s': must match format go1.23.0 or local", args[0])
+=======
+<<<<<<< HEAD
+<<<<<<< HEAD
+			errorf("invalid toolchain version '%s': must match format go1.23.0 or default", args[0])
+=======
+<<<<<<< HEAD
+			errorf("invalid toolchain version '%s': must match format go1.23.0 or local", args[0])
+=======
+<<<<<<< HEAD
+			errorf("invalid toolchain version '%s': must match format go1.23.0 or default", args[0])
+=======
+			errorf("invalid toolchain version '%s': must match format go1.23.0 or local", args[0])
+>>>>>>> master
+>>>>>>> master
+>>>>>>> master
+=======
+			errorf("invalid toolchain version '%s': must match format go1.23.0 or local", args[0])
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 			return
 		}
 		f.Toolchain = &Toolchain{Syntax: line}
@@ -630,7 +667,27 @@ func (f *WorkFile) add(errs *ErrorList, line *Line, verb string, args []string, 
 			errorf("go directive expects exactly one argument")
 			return
 		} else if !GoVersionRE.MatchString(args[0]) {
+<<<<<<< HEAD
 			errorf("invalid go version '%s': must match format 1.23", args[0])
+=======
+<<<<<<< HEAD
+<<<<<<< HEAD
+			errorf("invalid go version '%s': must match format 1.23.0", args[0])
+=======
+<<<<<<< HEAD
+			errorf("invalid go version '%s': must match format 1.23", args[0])
+=======
+<<<<<<< HEAD
+			errorf("invalid go version '%s': must match format 1.23.0", args[0])
+=======
+			errorf("invalid go version '%s': must match format 1.23", args[0])
+>>>>>>> master
+>>>>>>> master
+>>>>>>> master
+=======
+			errorf("invalid go version '%s': must match format 1.23", args[0])
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 			return
 		}
 
@@ -646,7 +703,27 @@ func (f *WorkFile) add(errs *ErrorList, line *Line, verb string, args []string, 
 			errorf("toolchain directive expects exactly one argument")
 			return
 		} else if !ToolchainRE.MatchString(args[0]) {
+<<<<<<< HEAD
 			errorf("invalid toolchain version '%s': must match format go1.23 or local", args[0])
+=======
+<<<<<<< HEAD
+<<<<<<< HEAD
+			errorf("invalid toolchain version '%s': must match format go1.23.0 or default", args[0])
+=======
+<<<<<<< HEAD
+			errorf("invalid toolchain version '%s': must match format go1.23 or local", args[0])
+=======
+<<<<<<< HEAD
+			errorf("invalid toolchain version '%s': must match format go1.23.0 or default", args[0])
+=======
+			errorf("invalid toolchain version '%s': must match format go1.23 or local", args[0])
+>>>>>>> master
+>>>>>>> master
+>>>>>>> master
+=======
+			errorf("invalid toolchain version '%s': must match format go1.23 or local", args[0])
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 			return
 		}
 
@@ -974,6 +1051,25 @@ func (f *File) AddGoStmt(version string) error {
 		var hint Expr
 		if f.Module != nil && f.Module.Syntax != nil {
 			hint = f.Module.Syntax
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+<<<<<<< HEAD
+		} else if f.Syntax == nil {
+			f.Syntax = new(FileSyntax)
+=======
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+		} else if f.Syntax == nil {
+			f.Syntax = new(FileSyntax)
+=======
+>>>>>>> master
+>>>>>>> master
+>>>>>>> master
+=======
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 		}
 		f.Go = &Go{
 			Version: version,

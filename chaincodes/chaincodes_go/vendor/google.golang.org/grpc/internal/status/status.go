@@ -31,10 +31,42 @@ import (
 	"errors"
 	"fmt"
 
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> master
+	spb "google.golang.org/genproto/googleapis/rpc/status"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/protobuf/proto"
+	"google.golang.org/protobuf/protoadapt"
+	"google.golang.org/protobuf/types/known/anypb"
+<<<<<<< HEAD
+=======
+=======
+>>>>>>> master
+=======
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 	"github.com/golang/protobuf/proto"
 	"github.com/golang/protobuf/ptypes"
 	spb "google.golang.org/genproto/googleapis/rpc/status"
 	"google.golang.org/grpc/codes"
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> master
+>>>>>>> master
+>>>>>>> master
+=======
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 )
 
 // Status represents an RPC status code, message, and details.  It is immutable
@@ -130,14 +162,54 @@ func (s *Status) Err() error {
 
 // WithDetails returns a new status with the provided details messages appended to the status.
 // If any errors are encountered, it returns nil and the first error encountered.
+<<<<<<< HEAD
 func (s *Status) WithDetails(details ...proto.Message) (*Status, error) {
+=======
+<<<<<<< HEAD
+<<<<<<< HEAD
+func (s *Status) WithDetails(details ...protoadapt.MessageV1) (*Status, error) {
+=======
+<<<<<<< HEAD
+func (s *Status) WithDetails(details ...proto.Message) (*Status, error) {
+=======
+<<<<<<< HEAD
+func (s *Status) WithDetails(details ...protoadapt.MessageV1) (*Status, error) {
+=======
+func (s *Status) WithDetails(details ...proto.Message) (*Status, error) {
+>>>>>>> master
+>>>>>>> master
+>>>>>>> master
+=======
+func (s *Status) WithDetails(details ...proto.Message) (*Status, error) {
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 	if s.Code() == codes.OK {
 		return nil, errors.New("no error details for status with code OK")
 	}
 	// s.Code() != OK implies that s.Proto() != nil.
 	p := s.Proto()
 	for _, detail := range details {
+<<<<<<< HEAD
 		any, err := ptypes.MarshalAny(detail)
+=======
+<<<<<<< HEAD
+<<<<<<< HEAD
+		any, err := anypb.New(protoadapt.MessageV2Of(detail))
+=======
+<<<<<<< HEAD
+		any, err := ptypes.MarshalAny(detail)
+=======
+<<<<<<< HEAD
+		any, err := anypb.New(protoadapt.MessageV2Of(detail))
+=======
+		any, err := ptypes.MarshalAny(detail)
+>>>>>>> master
+>>>>>>> master
+>>>>>>> master
+=======
+		any, err := ptypes.MarshalAny(detail)
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 		if err != nil {
 			return nil, err
 		}
@@ -154,12 +226,45 @@ func (s *Status) Details() []any {
 	}
 	details := make([]any, 0, len(s.s.Details))
 	for _, any := range s.s.Details {
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> master
+		detail, err := any.UnmarshalNew()
+		if err != nil {
+			details = append(details, err)
+			continue
+		}
+		details = append(details, detail)
+<<<<<<< HEAD
+=======
+=======
+>>>>>>> master
+=======
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 		detail := &ptypes.DynamicAny{}
 		if err := ptypes.UnmarshalAny(any, detail); err != nil {
 			details = append(details, err)
 			continue
 		}
 		details = append(details, detail.Message)
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> master
+>>>>>>> master
+>>>>>>> master
+=======
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 	}
 	return details
 }

@@ -35,14 +35,52 @@ if [[ "$1" = "-install" ]]; then
   # Install the pinned versions as defined in module tools.
   pushd ./test/tools
   go install \
+<<<<<<< HEAD
     golang.org/x/lint/golint \
+=======
+<<<<<<< HEAD
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+    golang.org/x/lint/golint \
+=======
+<<<<<<< HEAD
+=======
+    golang.org/x/lint/golint \
+>>>>>>> master
+>>>>>>> master
+>>>>>>> master
+=======
+    golang.org/x/lint/golint \
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
     golang.org/x/tools/cmd/goimports \
     honnef.co/go/tools/cmd/staticcheck \
     github.com/client9/misspell/cmd/misspell
   popd
   if [[ -z "${VET_SKIP_PROTO}" ]]; then
     if [[ "${GITHUB_ACTIONS}" = "true" ]]; then
+<<<<<<< HEAD
       PROTOBUF_VERSION=22.0 # a.k.a v4.22.0 in pb.go files.
+=======
+<<<<<<< HEAD
+<<<<<<< HEAD
+      PROTOBUF_VERSION=25.2 # a.k.a. v4.22.0 in pb.go files.
+=======
+<<<<<<< HEAD
+      PROTOBUF_VERSION=22.0 # a.k.a v4.22.0 in pb.go files.
+=======
+<<<<<<< HEAD
+      PROTOBUF_VERSION=25.2 # a.k.a. v4.22.0 in pb.go files.
+=======
+      PROTOBUF_VERSION=22.0 # a.k.a v4.22.0 in pb.go files.
+>>>>>>> master
+>>>>>>> master
+>>>>>>> master
+=======
+      PROTOBUF_VERSION=22.0 # a.k.a v4.22.0 in pb.go files.
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
       PROTOC_FILENAME=protoc-${PROTOBUF_VERSION}-linux-x86_64.zip
       pushd /home/runner/go
       wget https://github.com/google/protobuf/releases/download/v${PROTOBUF_VERSION}/${PROTOC_FILENAME}
@@ -77,6 +115,39 @@ fi
 not grep 'func Test[^(]' *_test.go
 not grep 'func Test[^(]' test/*.go
 
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> master
+# - Check for typos in test function names
+git grep 'func (s) ' -- "*_test.go" | not grep -v 'func (s) Test'
+git grep 'func [A-Z]' -- "*_test.go" | not grep -v 'func Test\|Benchmark\|Example'
+
+# - Do not import x/net/context.
+not git grep -l 'x/net/context' -- "*.go"
+
+# - Do not use time.After except in tests.  It has the potential to leak the
+#   timer since there is no way to stop it early.
+git grep -l 'time.After(' -- "*.go" | not grep -v '_test.go\|test_utils\|testutils'
+
+# - Do not import math/rand for real library code.  Use internal/grpcrand for
+#   thread safety.
+git grep -l '"math/rand"' -- "*.go" 2>&1 | not grep -v '^examples\|^interop/stress\|grpcrand\|^benchmark\|wrr_test'
+
+# - Do not use "interface{}"; use "any" instead.
+git grep -l 'interface{}' -- "*.go" 2>&1 | not grep -v '\.pb\.go\|protoc-gen-go-grpc\|grpc_testing_not_regenerate'
+<<<<<<< HEAD
+=======
+=======
+>>>>>>> master
+=======
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 # - Do not import x/net/context.
 not git grep -l 'x/net/context' -- "*.go"
 
@@ -86,6 +157,17 @@ git grep -l '"math/rand"' -- "*.go" 2>&1 | not grep -v '^examples\|^stress\|grpc
 
 # - Do not use "interface{}"; use "any" instead.
 git grep -l 'interface{}' -- "*.go" 2>&1 | not grep -v '\.pb\.go\|protoc-gen-go-grpc'
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> master
+>>>>>>> master
+>>>>>>> master
+=======
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 
 # - Do not call grpclog directly. Use grpclog.Component instead.
 git grep -l -e 'grpclog.I' --or -e 'grpclog.W' --or -e 'grpclog.E' --or -e 'grpclog.F' --or -e 'grpclog.V' -- "*.go" | not grep -v '^grpclog/component.go\|^internal/grpctest/tlogger_test.go'
@@ -94,15 +176,58 @@ git grep -l -e 'grpclog.I' --or -e 'grpclog.W' --or -e 'grpclog.E' --or -e 'grpc
 not git grep "\(import \|^\s*\)\"github.com/golang/protobuf/ptypes/" -- "*.go"
 
 # - Ensure all usages of grpc_testing package are renamed when importing.
+<<<<<<< HEAD
 not git grep "\(import \|^\s*\)\"google.golang.org/grpc/interop/grpc_testing" -- "*.go" 
+=======
+<<<<<<< HEAD
+<<<<<<< HEAD
+not git grep "\(import \|^\s*\)\"google.golang.org/grpc/interop/grpc_testing" -- "*.go"
+=======
+<<<<<<< HEAD
+not git grep "\(import \|^\s*\)\"google.golang.org/grpc/interop/grpc_testing" -- "*.go" 
+=======
+<<<<<<< HEAD
+not git grep "\(import \|^\s*\)\"google.golang.org/grpc/interop/grpc_testing" -- "*.go"
+=======
+not git grep "\(import \|^\s*\)\"google.golang.org/grpc/interop/grpc_testing" -- "*.go" 
+>>>>>>> master
+>>>>>>> master
+>>>>>>> master
+=======
+not git grep "\(import \|^\s*\)\"google.golang.org/grpc/interop/grpc_testing" -- "*.go" 
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 
 # - Ensure all xds proto imports are renamed to *pb or *grpc.
 git grep '"github.com/envoyproxy/go-control-plane/envoy' -- '*.go' ':(exclude)*.pb.go' | not grep -v 'pb "\|grpc "'
 
 misspell -error .
 
+<<<<<<< HEAD
 # - gofmt, goimports, golint (with exceptions for generated code), go vet,
 # go mod tidy.
+=======
+<<<<<<< HEAD
+<<<<<<< HEAD
+# - gofmt, goimports, go vet, go mod tidy.
+=======
+<<<<<<< HEAD
+# - gofmt, goimports, golint (with exceptions for generated code), go vet,
+# go mod tidy.
+=======
+<<<<<<< HEAD
+# - gofmt, goimports, go vet, go mod tidy.
+=======
+# - gofmt, goimports, golint (with exceptions for generated code), go vet,
+# go mod tidy.
+>>>>>>> master
+>>>>>>> master
+>>>>>>> master
+=======
+# - gofmt, goimports, golint (with exceptions for generated code), go vet,
+# go mod tidy.
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 # Perform these checks on each module inside gRPC.
 for MOD_FILE in $(find . -name 'go.mod'); do
   MOD_DIR=$(dirname ${MOD_FILE})
@@ -110,7 +235,25 @@ for MOD_FILE in $(find . -name 'go.mod'); do
   go vet -all ./... | fail_on_output
   gofmt -s -d -l . 2>&1 | fail_on_output
   goimports -l . 2>&1 | not grep -vE "\.pb\.go"
+<<<<<<< HEAD
   golint ./... 2>&1 | not grep -vE "/grpc_testing_not_regenerate/.*\.pb\.go:"
+=======
+<<<<<<< HEAD
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+  golint ./... 2>&1 | not grep -vE "/grpc_testing_not_regenerate/.*\.pb\.go:"
+=======
+<<<<<<< HEAD
+=======
+  golint ./... 2>&1 | not grep -vE "/grpc_testing_not_regenerate/.*\.pb\.go:"
+>>>>>>> master
+>>>>>>> master
+>>>>>>> master
+=======
+  golint ./... 2>&1 | not grep -vE "/grpc_testing_not_regenerate/.*\.pb\.go:"
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 
   go mod tidy -compat=1.19
   git status --porcelain 2>&1 | fail_on_output || \
@@ -119,6 +262,89 @@ for MOD_FILE in $(find . -name 'go.mod'); do
 done
 
 # - Collection of static analysis checks
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> master
+SC_OUT="$(mktemp)"
+staticcheck -go 1.19 -checks 'all' ./... > "${SC_OUT}" || true
+
+# Error for anything other than checks that need exclusions.
+grep -v "(ST1000)" "${SC_OUT}" | grep -v "(SA1019)" | grep -v "(ST1003)" | not grep -v "(ST1019)\|\(other import of\)"
+
+# Exclude underscore checks for generated code.
+grep "(ST1003)" "${SC_OUT}" | not grep -v '\(.pb.go:\)\|\(code_string_test.go:\)\|\(grpc_testing_not_regenerate\)'
+
+# Error for duplicate imports not including grpc protos.
+grep "(ST1019)\|\(other import of\)" "${SC_OUT}" | not grep -Fv 'XXXXX PleaseIgnoreUnused
+channelz/grpc_channelz_v1"
+go-control-plane/envoy
+grpclb/grpc_lb_v1"
+health/grpc_health_v1"
+interop/grpc_testing"
+orca/v3"
+proto/grpc_gcp"
+proto/grpc_lookup_v1"
+reflection/grpc_reflection_v1"
+reflection/grpc_reflection_v1alpha"
+XXXXX PleaseIgnoreUnused'
+
+# Error for any package comments not in generated code.
+grep "(ST1000)" "${SC_OUT}" | not grep -v "\.pb\.go:"
+
+# Only ignore the following deprecated types/fields/functions and exclude
+# generated code.
+grep "(SA1019)" "${SC_OUT}" | not grep -Fv 'XXXXX PleaseIgnoreUnused
+XXXXX Protobuf related deprecation errors:
+"github.com/golang/protobuf
+.pb.go:
+grpc_testing_not_regenerate
+: ptypes.
+proto.RegisterType
+XXXXX gRPC internal usage deprecation errors:
+"google.golang.org/grpc
+: grpc.
+: v1alpha.
+: v1alphareflectionpb.
+BalancerAttributes is deprecated:
+CredsBundle is deprecated:
+Metadata is deprecated: use Attributes instead.
+NewSubConn is deprecated:
+OverrideServerName is deprecated:
+RemoveSubConn is deprecated:
+SecurityVersion is deprecated:
+Target is deprecated: Use the Target field in the BuildOptions instead.
+UpdateAddresses is deprecated:
+UpdateSubConnState is deprecated:
+balancer.ErrTransientFailure is deprecated:
+grpc/reflection/v1alpha/reflection.proto
+SwitchTo is deprecated:
+XXXXX xDS deprecated fields we support
+.ExactMatch
+.PrefixMatch
+.SafeRegexMatch
+.SuffixMatch
+GetContainsMatch
+GetExactMatch
+GetMatchSubjectAltNames
+GetPrefixMatch
+GetSafeRegexMatch
+GetSuffixMatch
+GetTlsCertificateCertificateProviderInstance
+GetValidationContextCertificateProviderInstance
+XXXXX PleaseIgnoreUnused'
+<<<<<<< HEAD
+=======
+=======
+>>>>>>> master
+=======
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 #
 # TODO(dfawley): don't use deprecated functions in examples or first-party
 # plugins.
@@ -208,5 +434,16 @@ lint_package_comment() {
   return $count
 }
 lint_package_comment
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> master
+>>>>>>> master
+>>>>>>> master
+=======
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 
 echo SUCCESS

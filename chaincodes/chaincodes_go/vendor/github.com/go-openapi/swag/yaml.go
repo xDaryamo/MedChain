@@ -16,8 +16,37 @@ package swag
 
 import (
 	"encoding/json"
+<<<<<<< HEAD
 	"fmt"
 	"path/filepath"
+=======
+<<<<<<< HEAD
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+	"fmt"
+	"path/filepath"
+=======
+<<<<<<< HEAD
+>>>>>>> master
+	"errors"
+	"fmt"
+	"path/filepath"
+	"reflect"
+	"sort"
+<<<<<<< HEAD
+=======
+=======
+	"fmt"
+	"path/filepath"
+>>>>>>> master
+>>>>>>> master
+>>>>>>> master
+=======
+	"fmt"
+	"path/filepath"
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 	"strconv"
 
 	"github.com/mailru/easyjson/jlexer"
@@ -48,7 +77,27 @@ func BytesToYAMLDoc(data []byte) (interface{}, error) {
 		return nil, err
 	}
 	if document.Kind != yaml.DocumentNode || len(document.Content) != 1 || document.Content[0].Kind != yaml.MappingNode {
+<<<<<<< HEAD
 		return nil, fmt.Errorf("only YAML documents that are objects are supported")
+=======
+<<<<<<< HEAD
+<<<<<<< HEAD
+		return nil, errors.New("only YAML documents that are objects are supported")
+=======
+<<<<<<< HEAD
+		return nil, fmt.Errorf("only YAML documents that are objects are supported")
+=======
+<<<<<<< HEAD
+		return nil, errors.New("only YAML documents that are objects are supported")
+=======
+		return nil, fmt.Errorf("only YAML documents that are objects are supported")
+>>>>>>> master
+>>>>>>> master
+>>>>>>> master
+=======
+		return nil, fmt.Errorf("only YAML documents that are objects are supported")
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 	}
 	return &document, nil
 }
@@ -147,7 +196,27 @@ func yamlScalar(node *yaml.Node) (interface{}, error) {
 	case yamlTimestamp:
 		return node.Value, nil
 	case yamlNull:
+<<<<<<< HEAD
 		return nil, nil
+=======
+<<<<<<< HEAD
+<<<<<<< HEAD
+		return nil, nil //nolint:nilnil
+=======
+<<<<<<< HEAD
+		return nil, nil
+=======
+<<<<<<< HEAD
+		return nil, nil //nolint:nilnil
+=======
+		return nil, nil
+>>>>>>> master
+>>>>>>> master
+>>>>>>> master
+=======
+		return nil, nil
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 	default:
 		return nil, fmt.Errorf("YAML tag %q is not supported", node.LongTag())
 	}
@@ -245,7 +314,49 @@ func (s JSONMapSlice) MarshalYAML() (interface{}, error) {
 	return yaml.Marshal(&n)
 }
 
+<<<<<<< HEAD
 func json2yaml(item interface{}) (*yaml.Node, error) {
+=======
+<<<<<<< HEAD
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+func json2yaml(item interface{}) (*yaml.Node, error) {
+=======
+<<<<<<< HEAD
+>>>>>>> master
+func isNil(input interface{}) bool {
+	if input == nil {
+		return true
+	}
+	kind := reflect.TypeOf(input).Kind()
+	switch kind { //nolint:exhaustive
+	case reflect.Ptr, reflect.Map, reflect.Slice, reflect.Chan:
+		return reflect.ValueOf(input).IsNil()
+	default:
+		return false
+	}
+}
+
+func json2yaml(item interface{}) (*yaml.Node, error) {
+	if isNil(item) {
+		return &yaml.Node{
+			Kind:  yaml.ScalarNode,
+			Value: "null",
+		}, nil
+	}
+
+<<<<<<< HEAD
+=======
+=======
+func json2yaml(item interface{}) (*yaml.Node, error) {
+>>>>>>> master
+>>>>>>> master
+>>>>>>> master
+=======
+func json2yaml(item interface{}) (*yaml.Node, error) {
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 	switch val := item.(type) {
 	case JSONMapSlice:
 		var n yaml.Node
@@ -265,7 +376,36 @@ func json2yaml(item interface{}) (*yaml.Node, error) {
 	case map[string]interface{}:
 		var n yaml.Node
 		n.Kind = yaml.MappingNode
+<<<<<<< HEAD
 		for k, v := range val {
+=======
+<<<<<<< HEAD
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+		for k, v := range val {
+=======
+<<<<<<< HEAD
+>>>>>>> master
+		keys := make([]string, 0, len(val))
+		for k := range val {
+			keys = append(keys, k)
+		}
+		sort.Strings(keys)
+
+		for _, k := range keys {
+			v := val[k]
+<<<<<<< HEAD
+=======
+=======
+		for k, v := range val {
+>>>>>>> master
+>>>>>>> master
+>>>>>>> master
+=======
+		for k, v := range val {
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 			childNode, err := json2yaml(v)
 			if err != nil {
 				return nil, err
@@ -318,8 +458,35 @@ func json2yaml(item interface{}) (*yaml.Node, error) {
 			Tag:   yamlBoolScalar,
 			Value: strconv.FormatBool(val),
 		}, nil
+<<<<<<< HEAD
 	}
 	return nil, nil
+=======
+<<<<<<< HEAD
+<<<<<<< HEAD
+	default:
+		return nil, fmt.Errorf("unhandled type: %T", val)
+	}
+=======
+<<<<<<< HEAD
+	}
+	return nil, nil
+=======
+<<<<<<< HEAD
+	default:
+		return nil, fmt.Errorf("unhandled type: %T", val)
+	}
+=======
+	}
+	return nil, nil
+>>>>>>> master
+>>>>>>> master
+>>>>>>> master
+=======
+	}
+	return nil, nil
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
+>>>>>>> master
 }
 
 // JSONMapItem represents the value of a key in a JSON object held by JSONMapSlice
