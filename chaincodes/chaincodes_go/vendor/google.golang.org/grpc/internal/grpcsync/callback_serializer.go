@@ -21,6 +21,7 @@ package grpcsync
 import (
 	"context"
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 <<<<<<< HEAD
 	"sync"
@@ -31,6 +32,9 @@ import (
 >>>>>>> master
 >>>>>>> master
 >>>>>>> master
+=======
+	"sync"
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
 
 	"google.golang.org/grpc/internal/buffer"
 )
@@ -49,6 +53,7 @@ type CallbackSerializer struct {
 
 	callbacks *buffer.Unbounded
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 <<<<<<< HEAD
 	closedMu  sync.Mutex
@@ -61,6 +66,10 @@ type CallbackSerializer struct {
 >>>>>>> master
 >>>>>>> master
 >>>>>>> master
+=======
+	closedMu  sync.Mutex
+	closed    bool
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
 }
 
 // NewCallbackSerializer returns a new CallbackSerializer instance. The provided
@@ -87,6 +96,7 @@ func NewCallbackSerializer(ctx context.Context) *CallbackSerializer {
 // callbacks once the context passed to NewCallbackSerializer is cancelled.
 func (cs *CallbackSerializer) Schedule(f func(ctx context.Context)) bool {
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 <<<<<<< HEAD
 =======
@@ -106,6 +116,8 @@ func (cs *CallbackSerializer) run(ctx context.Context) {
 =======
 =======
 >>>>>>> master
+=======
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
 	cs.closedMu.Lock()
 	defer cs.closedMu.Unlock()
 
@@ -121,15 +133,19 @@ func (cs *CallbackSerializer) run(ctx context.Context) {
 
 	defer close(cs.done)
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> master
 >>>>>>> master
 >>>>>>> master
+=======
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
 	for ctx.Err() == nil {
 		select {
 		case <-ctx.Done():
 			// Do nothing here. Next iteration of the for loop will not happen,
 			// since ctx.Err() would be non-nil.
+<<<<<<< HEAD
 <<<<<<< HEAD
 =======
 <<<<<<< HEAD
@@ -153,6 +169,8 @@ func (cs *CallbackSerializer) run(ctx context.Context) {
 =======
 =======
 >>>>>>> master
+=======
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
 		case callback, ok := <-cs.callbacks.Get():
 			if !ok {
 				return
@@ -185,10 +203,13 @@ func (cs *CallbackSerializer) fetchPendingCallbacks() []func(context.Context) {
 			return backlog
 		}
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> master
 >>>>>>> master
 >>>>>>> master
+=======
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
 	}
 }
 

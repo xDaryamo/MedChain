@@ -3,6 +3,7 @@
 // license that can be found in the LICENSE file.
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 //go:build darwin
 =======
 <<<<<<< HEAD
@@ -15,6 +16,9 @@
 >>>>>>> master
 >>>>>>> master
 >>>>>>> master
+=======
+//go:build darwin && go1.12
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
 
 package unix
 

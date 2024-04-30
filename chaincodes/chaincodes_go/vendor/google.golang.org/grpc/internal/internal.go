@@ -58,6 +58,7 @@ var (
 	// stored in the passed in attributes. This is set by
 	// credentials/xds/xds.go.
 <<<<<<< HEAD
+<<<<<<< HEAD
 	GetXDSHandshakeInfoForTesting any // func (*attributes.Attributes) *unsafe.Pointer
 =======
 <<<<<<< HEAD
@@ -70,6 +71,9 @@ var (
 >>>>>>> master
 >>>>>>> master
 >>>>>>> master
+=======
+	GetXDSHandshakeInfoForTesting any // func (*attributes.Attributes) *xds.HandshakeInfo
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
 	// GetServerCredentials returns the transport credentials configured on a
 	// gRPC server. An xDS-enabled server needs to know what type of credentials
 	// is configured on the underlying gRPC server. This is set by server.go.
@@ -80,6 +84,7 @@ var (
 	// This is used in the 1.0 release of gcp/observability, and thus must not be
 	// deleted or changed.
 	CanonicalString any // func (codes.Code) string
+<<<<<<< HEAD
 <<<<<<< HEAD
 =======
 <<<<<<< HEAD
@@ -95,16 +100,21 @@ var (
 =======
 =======
 >>>>>>> master
+=======
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
 	// DrainServerTransports initiates a graceful close of existing connections
 	// on a gRPC server accepted on the provided listener address. An
 	// xDS-enabled server invokes this method on a grpc.Server when a particular
 	// listener moves to "not-serving" mode.
 	DrainServerTransports any // func(*grpc.Server, string)
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> master
 >>>>>>> master
 >>>>>>> master
+=======
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
 	// AddGlobalServerOptions adds an array of ServerOption that will be
 	// effective globally for newly created servers. The priority will be: 1.
 	// user-provided; 2. this method; 3. default values.
@@ -210,6 +220,7 @@ var (
 
 	// EnterIdleModeForTesting gets the ClientConn to enter IDLE mode.
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 <<<<<<< HEAD
 =======
@@ -242,15 +253,20 @@ var (
 =======
 =======
 >>>>>>> master
+=======
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
 	EnterIdleModeForTesting any // func(*grpc.ClientConn) error
 
 	// ExitIdleModeForTesting gets the ClientConn to exit IDLE mode.
 	ExitIdleModeForTesting any // func(*grpc.ClientConn) error
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> master
 >>>>>>> master
 >>>>>>> master
+=======
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
 )
 
 // HealthChecker defines the signature of the client-side LB channel health checking function.

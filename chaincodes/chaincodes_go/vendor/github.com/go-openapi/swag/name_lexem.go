@@ -15,6 +15,7 @@
 package swag
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 <<<<<<< HEAD
 =======
@@ -47,6 +48,8 @@ func newInitialismNameLexem(original, matchedInitialism string) nameLexem {
 =======
 =======
 >>>>>>> master
+=======
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
 import "unicode"
 
 type (
@@ -69,16 +72,20 @@ type (
 func newInitialismNameLexem(original, matchedInitialism string) *initialismNameLexem {
 	return &initialismNameLexem{
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> master
 >>>>>>> master
 >>>>>>> master
+=======
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
 		original:          original,
 		matchedInitialism: matchedInitialism,
 	}
 }
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 func newCasualNameLexem(original string) nameLexem {
 	return nameLexem{
 		kind:     lexemKindCasualName,
@@ -97,10 +104,15 @@ func newCasualNameLexem(original string) *casualNameLexem {
 >>>>>>> master
 >>>>>>> master
 >>>>>>> master
+=======
+func newCasualNameLexem(original string) *casualNameLexem {
+	return &casualNameLexem{
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
 		original: original,
 	}
 }
 
+<<<<<<< HEAD
 <<<<<<< HEAD
 =======
 <<<<<<< HEAD
@@ -121,6 +133,8 @@ func (l nameLexem) GetUnsafeGoName() string {
 =======
 =======
 >>>>>>> master
+=======
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
 func (l *initialismNameLexem) GetUnsafeGoName() string {
 	return l.matchedInitialism
 }
@@ -129,16 +143,20 @@ func (l *casualNameLexem) GetUnsafeGoName() string {
 	var first rune
 	var rest string
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> master
 >>>>>>> master
 >>>>>>> master
+=======
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
 	for i, orig := range l.original {
 		if i == 0 {
 			first = orig
 			continue
 		}
 <<<<<<< HEAD
+<<<<<<< HEAD
 
 =======
 <<<<<<< HEAD
@@ -149,11 +167,14 @@ func (l *casualNameLexem) GetUnsafeGoName() string {
 >>>>>>> master
 >>>>>>> master
 >>>>>>> master
+=======
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
 		if i > 0 {
 			rest = l.original[i:]
 			break
 		}
 	}
+<<<<<<< HEAD
 <<<<<<< HEAD
 =======
 <<<<<<< HEAD
@@ -179,11 +200,16 @@ func (l *casualNameLexem) GetUnsafeGoName() string {
 >>>>>>> master
 >>>>>>> master
 >>>>>>> master
+=======
+	if len(l.original) > 1 {
+		return string(unicode.ToUpper(first)) + lower(rest)
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
 	}
 
 	return l.original
 }
 
+<<<<<<< HEAD
 <<<<<<< HEAD
 =======
 <<<<<<< HEAD
@@ -200,6 +226,8 @@ func (l nameLexem) IsInitialism() bool {
 =======
 =======
 >>>>>>> master
+=======
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
 func (l *initialismNameLexem) GetOriginal() string {
 	return l.original
 }
@@ -215,8 +243,11 @@ func (l *initialismNameLexem) IsInitialism() bool {
 func (l *casualNameLexem) IsInitialism() bool {
 	return false
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> master
 >>>>>>> master
 >>>>>>> master
+=======
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
 }

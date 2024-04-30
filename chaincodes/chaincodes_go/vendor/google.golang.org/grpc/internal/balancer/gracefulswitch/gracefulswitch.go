@@ -95,6 +95,7 @@ func (gsb *Balancer) balancerCurrentOrPending(bw *balancerWrapper) bool {
 // synchronously alongside the rest of the balancer.Balancer methods this
 // Graceful Switch Balancer implements.
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 <<<<<<< HEAD
 =======
@@ -121,6 +122,8 @@ func (gsb *Balancer) switchTo(builder balancer.Builder) (*balancerWrapper, error
 =======
 =======
 >>>>>>> master
+=======
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
 func (gsb *Balancer) SwitchTo(builder balancer.Builder) error {
 	gsb.mu.Lock()
 	if gsb.closed {
@@ -130,10 +133,13 @@ func (gsb *Balancer) SwitchTo(builder balancer.Builder) error {
 	bw := &balancerWrapper{
 		gsb: gsb,
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> master
 >>>>>>> master
 >>>>>>> master
+=======
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
 		lastState: balancer.State{
 			ConnectivityState: connectivity.Connecting,
 			Picker:            base.NewErrPicker(balancer.ErrNoSubConnAvailable),
@@ -162,6 +168,7 @@ func (gsb *Balancer) SwitchTo(builder balancer.Builder) error {
 		}
 		gsb.mu.Unlock()
 <<<<<<< HEAD
+<<<<<<< HEAD
 		return nil, balancer.ErrBadResolverState
 =======
 <<<<<<< HEAD
@@ -174,6 +181,9 @@ func (gsb *Balancer) SwitchTo(builder balancer.Builder) error {
 >>>>>>> master
 >>>>>>> master
 >>>>>>> master
+=======
+		return balancer.ErrBadResolverState
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
 	}
 
 	// This write doesn't need to take gsb.mu because this field never gets read
@@ -183,6 +193,7 @@ func (gsb *Balancer) SwitchTo(builder balancer.Builder) error {
 	// function returns.
 	bw.Balancer = newBalancer
 <<<<<<< HEAD
+<<<<<<< HEAD
 	return bw, nil
 =======
 <<<<<<< HEAD
@@ -195,6 +206,9 @@ func (gsb *Balancer) SwitchTo(builder balancer.Builder) error {
 >>>>>>> master
 >>>>>>> master
 >>>>>>> master
+=======
+	return nil
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
 }
 
 // Returns nil if the graceful switch balancer is closed.
@@ -208,6 +222,7 @@ func (gsb *Balancer) latestBalancer() *balancerWrapper {
 }
 
 // UpdateClientConnState forwards the update to the latest balancer created.
+<<<<<<< HEAD
 <<<<<<< HEAD
 =======
 <<<<<<< HEAD
@@ -245,6 +260,8 @@ func (gsb *Balancer) UpdateClientConnState(state balancer.ClientConnState) error
 =======
 =======
 >>>>>>> master
+=======
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
 func (gsb *Balancer) UpdateClientConnState(state balancer.ClientConnState) error {
 	// The resolver data is only relevant to the most recent LB Policy.
 	balToUpdate := gsb.latestBalancer()
@@ -252,10 +269,13 @@ func (gsb *Balancer) UpdateClientConnState(state balancer.ClientConnState) error
 		return errBalancerClosed
 	}
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> master
 >>>>>>> master
 >>>>>>> master
+=======
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
 	// Perform this call without gsb.mu to prevent deadlocks if the child calls
 	// back into the channel. The latest balancer can never be closed during a
 	// call from the channel, even without gsb.mu held.
@@ -267,6 +287,7 @@ func (gsb *Balancer) ResolverError(err error) {
 	// The resolver data is only relevant to the most recent LB Policy.
 	balToUpdate := gsb.latestBalancer()
 	if balToUpdate == nil {
+<<<<<<< HEAD
 <<<<<<< HEAD
 =======
 <<<<<<< HEAD
@@ -283,6 +304,8 @@ func (gsb *Balancer) ResolverError(err error) {
 >>>>>>> master
 >>>>>>> master
 >>>>>>> master
+=======
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
 		return
 	}
 	// Perform this call without gsb.mu to prevent deadlocks if the child calls
@@ -376,6 +399,7 @@ func (gsb *Balancer) Close() {
 type balancerWrapper struct {
 	balancer.Balancer
 <<<<<<< HEAD
+<<<<<<< HEAD
 	gsb     *Balancer
 	builder balancer.Builder
 =======
@@ -390,6 +414,9 @@ type balancerWrapper struct {
 >>>>>>> master
 >>>>>>> master
 >>>>>>> master
+=======
+	gsb *Balancer
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
 
 	lastState balancer.State
 	subconns  map[balancer.SubConn]bool // subconns created by this balancer

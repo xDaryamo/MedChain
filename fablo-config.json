@@ -249,17 +249,10 @@
   ,
   "chaincodes": [
     {
-<<<<<<< HEAD
-      "name": "prescription",
-      "version": "1.0",
-      "lang": "golang",
-      "channel": "prescriptions-channel",
-=======
       "name": "labresults",
       "version": "1.0",
       "lang": "golang",
       "channel": "lab-results-channel",
->>>>>>> master
       "directory": "./chaincodes/chaincodes_go"
     }
   ]

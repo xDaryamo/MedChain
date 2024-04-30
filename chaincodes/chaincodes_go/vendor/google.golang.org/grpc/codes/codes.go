@@ -26,6 +26,7 @@ import (
 )
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 <<<<<<< HEAD
 // A Code is an unsigned 32-bit error code as defined in the gRPC spec.
@@ -46,6 +47,9 @@ import (
 >>>>>>> master
 >>>>>>> master
 >>>>>>> master
+=======
+// A Code is an unsigned 32-bit error code as defined in the gRPC spec.
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
 type Code uint32
 
 const (

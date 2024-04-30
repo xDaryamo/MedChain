@@ -2,6 +2,7 @@ module github.com/xDaryamo/MedChain
 
 go 1.20
 <<<<<<< HEAD
+<<<<<<< HEAD
 
 replace github.com/xDaryamo/Medchain/fhir => ./fhir
 
@@ -9,6 +10,11 @@ replace github.com/xDaryamo/Medchain/chaincodes => ./chaincodes
 =======
 >>>>>>> master
 
+=======
+
+replace github.com/xDaryamo/Medchain/fhir => ./fhir
+
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
 require (
 	github.com/golang/protobuf v1.5.4
 	github.com/hyperledger/fabric-chaincode-go v0.0.0-20240124143825-7dec3c7e7d45
@@ -27,11 +33,14 @@ require (
 	github.com/gobuffalo/packd v1.0.2 // indirect
 	github.com/gobuffalo/packr v1.30.1 // indirect
 <<<<<<< HEAD
+<<<<<<< HEAD
 	github.com/golang/protobuf v1.5.4 // indirect
 	github.com/hyperledger/fabric-chaincode-go v0.0.0-20240124143825-7dec3c7e7d45 // indirect
 	github.com/hyperledger/fabric-protos-go v0.3.3 // indirect
 =======
 >>>>>>> master
+=======
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
 	github.com/joho/godotenv v1.5.1 // indirect
 	github.com/josharian/intern v1.0.0 // indirect
 	github.com/mailru/easyjson v0.7.7 // indirect

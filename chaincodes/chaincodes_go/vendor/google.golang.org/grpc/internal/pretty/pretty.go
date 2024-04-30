@@ -25,6 +25,7 @@ import (
 	"fmt"
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 	"google.golang.org/protobuf/encoding/protojson"
 	"google.golang.org/protobuf/protoadapt"
 =======
@@ -35,15 +36,20 @@ import (
 	"google.golang.org/protobuf/protoadapt"
 =======
 >>>>>>> master
+=======
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
 	"github.com/golang/protobuf/jsonpb"
 	protov1 "github.com/golang/protobuf/proto"
 	"google.golang.org/protobuf/encoding/protojson"
 	protov2 "google.golang.org/protobuf/proto"
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> master
 >>>>>>> master
 >>>>>>> master
+=======
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
 )
 
 const jsonIndent = "  "
@@ -52,6 +58,7 @@ const jsonIndent = "  "
 //
 // If marshal fails, it falls back to fmt.Sprintf("%+v").
 func ToJSON(e any) string {
+<<<<<<< HEAD
 <<<<<<< HEAD
 =======
 <<<<<<< HEAD
@@ -70,6 +77,8 @@ func ToJSON(e any) string {
 =======
 =======
 >>>>>>> master
+=======
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
 	switch ee := e.(type) {
 	case protov1.Message:
 		mm := jsonpb.Marshaler{Indent: jsonIndent}
@@ -86,10 +95,13 @@ func ToJSON(e any) string {
 			Multiline: true,
 			Indent:    jsonIndent,
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> master
 >>>>>>> master
 >>>>>>> master
+=======
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
 		}
 		ret, err := mm.Marshal(ee)
 		if err != nil {
@@ -99,6 +111,7 @@ func ToJSON(e any) string {
 			return fmt.Sprintf("%+v", ee)
 		}
 		return string(ret)
+<<<<<<< HEAD
 <<<<<<< HEAD
 =======
 <<<<<<< HEAD
@@ -116,6 +129,8 @@ func ToJSON(e any) string {
 =======
 =======
 >>>>>>> master
+=======
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
 	default:
 		ret, err := json.MarshalIndent(ee, "", jsonIndent)
 		if err != nil {
@@ -124,10 +139,13 @@ func ToJSON(e any) string {
 		return string(ret)
 	}
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> master
 >>>>>>> master
 >>>>>>> master
+=======
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
 }
 
 // FormatJSON formats the input json bytes with indentation.
