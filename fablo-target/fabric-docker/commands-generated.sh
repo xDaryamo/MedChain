@@ -158,6 +158,7 @@ installChannels() {
 installChaincodes() {
   if [ -n "$(ls "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go")" ]; then
     local version="1.0"
+<<<<<<< HEAD
     printHeadline "Packaging chaincode 'prescription'" "U1F60E"
     chaincodeBuild "prescription" "golang" "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go" "12"
     chaincodePackage "cli.medicina-generale.napoli.medchain.com" "peer0.medicina-generale.napoli.medchain.com:7101" "prescription" "$version" "golang" printHeadline "Installing 'prescription' for MedicinaGeneraleNapoli" "U1F60E"
@@ -178,6 +179,73 @@ installChaincodes() {
     chaincodeCommit "cli.medicina-generale.napoli.medchain.com" "peer0.medicina-generale.napoli.medchain.com:7101" "prescriptions-channel" "prescription" "$version" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem" "peer0.medicina-generale.napoli.medchain.com:7101,peer0.neurologia.napoli.medchain.com:7121,peer0.farmacia-petrone.napoli.medchain.com:7141,peer0.farmacia-carbone.napoli.medchain.com:7161" "crypto-peer/peer0.medicina-generale.napoli.medchain.com/tls/ca.crt,crypto-peer/peer0.neurologia.napoli.medchain.com/tls/ca.crt,crypto-peer/peer0.farmacia-petrone.napoli.medchain.com/tls/ca.crt,crypto-peer/peer0.farmacia-carbone.napoli.medchain.com/tls/ca.crt" ""
   else
     echo "Warning! Skipping chaincode 'prescription' installation. Chaincode directory is empty."
+=======
+<<<<<<< HEAD
+    printHeadline "Packaging chaincode 'labresults'" "U1F60E"
+    chaincodeBuild "labresults" "golang" "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go" "12"
+    chaincodePackage "cli.ospedale-maresca.aslnapoli3.medchain.com" "peer0.ospedale-maresca.aslnapoli3.medchain.com:7041" "labresults" "$version" "golang" printHeadline "Installing 'labresults' for OspedaleMaresca" "U1F60E"
+    chaincodeInstall "cli.ospedale-maresca.aslnapoli3.medchain.com" "peer0.ospedale-maresca.aslnapoli3.medchain.com:7041" "labresults" "$version" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem"
+    chaincodeInstall "cli.ospedale-maresca.aslnapoli3.medchain.com" "peer1.ospedale-maresca.aslnapoli3.medchain.com:7042" "labresults" "$version" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem"
+    chaincodeApprove "cli.ospedale-maresca.aslnapoli3.medchain.com" "peer0.ospedale-maresca.aslnapoli3.medchain.com:7041" "lab-results-channel" "labresults" "$version" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem" ""
+    printHeadline "Installing 'labresults' for MedicinaGeneraleNapoli" "U1F60E"
+    chaincodeInstall "cli.medicina-generale.napoli.medchain.com" "peer0.medicina-generale.napoli.medchain.com:7101" "labresults" "$version" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem"
+    chaincodeInstall "cli.medicina-generale.napoli.medchain.com" "peer1.medicina-generale.napoli.medchain.com:7102" "labresults" "$version" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem"
+    chaincodeApprove "cli.medicina-generale.napoli.medchain.com" "peer0.medicina-generale.napoli.medchain.com:7101" "lab-results-channel" "labresults" "$version" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem" ""
+    printHeadline "Installing 'labresults' for NeurologiaNapoli" "U1F60E"
+    chaincodeInstall "cli.neurologia.napoli.medchain.com" "peer0.neurologia.napoli.medchain.com:7121" "labresults" "$version" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem"
+    chaincodeInstall "cli.neurologia.napoli.medchain.com" "peer1.neurologia.napoli.medchain.com:7122" "labresults" "$version" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem"
+    chaincodeApprove "cli.neurologia.napoli.medchain.com" "peer0.neurologia.napoli.medchain.com:7121" "lab-results-channel" "labresults" "$version" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem" ""
+    printHeadline "Installing 'labresults' for LaboratorioAnalisiCMO" "U1F60E"
+    chaincodeInstall "cli.laboratorio-analisi-cmo.medchain.com" "peer0.laboratorio-analisi-cmo.medchain.com:7181" "labresults" "$version" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem"
+    chaincodeApprove "cli.laboratorio-analisi-cmo.medchain.com" "peer0.laboratorio-analisi-cmo.medchain.com:7181" "lab-results-channel" "labresults" "$version" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem" ""
+    printHeadline "Installing 'labresults' for LaboratorioAnalisiSDN" "U1F60E"
+    chaincodeInstall "cli.laboratorio-analisi-sdn.medchain.com" "peer0.laboratorio-analisi-sdn.medchain.com:7201" "labresults" "$version" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem"
+    chaincodeApprove "cli.laboratorio-analisi-sdn.medchain.com" "peer0.laboratorio-analisi-sdn.medchain.com:7201" "lab-results-channel" "labresults" "$version" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem" ""
+    printItalics "Committing chaincode 'labresults' on channel 'lab-results-channel' as 'OspedaleMaresca'" "U1F618"
+    chaincodeCommit "cli.ospedale-maresca.aslnapoli3.medchain.com" "peer0.ospedale-maresca.aslnapoli3.medchain.com:7041" "lab-results-channel" "labresults" "$version" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem" "peer0.ospedale-maresca.aslnapoli3.medchain.com:7041,peer0.medicina-generale.napoli.medchain.com:7101,peer0.neurologia.napoli.medchain.com:7121,peer0.laboratorio-analisi-cmo.medchain.com:7181,peer0.laboratorio-analisi-sdn.medchain.com:7201" "crypto-peer/peer0.ospedale-maresca.aslnapoli3.medchain.com/tls/ca.crt,crypto-peer/peer0.medicina-generale.napoli.medchain.com/tls/ca.crt,crypto-peer/peer0.neurologia.napoli.medchain.com/tls/ca.crt,crypto-peer/peer0.laboratorio-analisi-cmo.medchain.com/tls/ca.crt,crypto-peer/peer0.laboratorio-analisi-sdn.medchain.com/tls/ca.crt" ""
+  else
+    echo "Warning! Skipping chaincode 'labresults' installation. Chaincode directory is empty."
+=======
+    printHeadline "Packaging chaincode 'health-data-management'" "U1F60E"
+    chaincodeBuild "health-data-management" "golang" "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go" "12"
+    chaincodePackage "cli.ospedale-maresca.aslnapoli3.medchain.com" "peer0.ospedale-maresca.aslnapoli3.medchain.com:7041" "health-data-management" "$version" "golang" printHeadline "Installing 'health-data-management' for OspedaleMaresca" "U1F60E"
+    chaincodeInstall "cli.ospedale-maresca.aslnapoli3.medchain.com" "peer0.ospedale-maresca.aslnapoli3.medchain.com:7041" "health-data-management" "$version" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem"
+    chaincodeInstall "cli.ospedale-maresca.aslnapoli3.medchain.com" "peer1.ospedale-maresca.aslnapoli3.medchain.com:7042" "health-data-management" "$version" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem"
+    chaincodeApprove "cli.ospedale-maresca.aslnapoli3.medchain.com" "peer0.ospedale-maresca.aslnapoli3.medchain.com:7041" "public-health-channel" "health-data-management" "$version" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem" ""
+    printHeadline "Installing 'health-data-management' for OspedaleDelMare" "U1F60E"
+    chaincodeInstall "cli.ospedale-del-mare.aslnapoli1.medchain.com" "peer0.ospedale-del-mare.aslnapoli1.medchain.com:7061" "health-data-management" "$version" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem"
+    chaincodeInstall "cli.ospedale-del-mare.aslnapoli1.medchain.com" "peer1.ospedale-del-mare.aslnapoli1.medchain.com:7062" "health-data-management" "$version" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem"
+    chaincodeApprove "cli.ospedale-del-mare.aslnapoli1.medchain.com" "peer0.ospedale-del-mare.aslnapoli1.medchain.com:7061" "public-health-channel" "health-data-management" "$version" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem" ""
+    printHeadline "Installing 'health-data-management' for OspedaleSGiuliano" "U1F60E"
+    chaincodeInstall "cli.ospedale-sgiuliano.aslnapoli2.medchain.com" "peer0.ospedale-sgiuliano.aslnapoli2.medchain.com:7081" "health-data-management" "$version" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem"
+    chaincodeInstall "cli.ospedale-sgiuliano.aslnapoli2.medchain.com" "peer1.ospedale-sgiuliano.aslnapoli2.medchain.com:7082" "health-data-management" "$version" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem"
+    chaincodeApprove "cli.ospedale-sgiuliano.aslnapoli2.medchain.com" "peer0.ospedale-sgiuliano.aslnapoli2.medchain.com:7081" "public-health-channel" "health-data-management" "$version" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem" ""
+    printHeadline "Installing 'health-data-management' for MedicinaGeneraleNapoli" "U1F60E"
+    chaincodeInstall "cli.medicina-generale.napoli.medchain.com" "peer0.medicina-generale.napoli.medchain.com:7101" "health-data-management" "$version" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem"
+    chaincodeInstall "cli.medicina-generale.napoli.medchain.com" "peer1.medicina-generale.napoli.medchain.com:7102" "health-data-management" "$version" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem"
+    chaincodeApprove "cli.medicina-generale.napoli.medchain.com" "peer0.medicina-generale.napoli.medchain.com:7101" "public-health-channel" "health-data-management" "$version" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem" ""
+    printHeadline "Installing 'health-data-management' for NeurologiaNapoli" "U1F60E"
+    chaincodeInstall "cli.neurologia.napoli.medchain.com" "peer0.neurologia.napoli.medchain.com:7121" "health-data-management" "$version" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem"
+    chaincodeInstall "cli.neurologia.napoli.medchain.com" "peer1.neurologia.napoli.medchain.com:7122" "health-data-management" "$version" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem"
+    chaincodeApprove "cli.neurologia.napoli.medchain.com" "peer0.neurologia.napoli.medchain.com:7121" "public-health-channel" "health-data-management" "$version" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem" ""
+    printHeadline "Installing 'health-data-management' for FarmaciaPetrone" "U1F60E"
+    chaincodeInstall "cli.farmacia-petrone.napoli.medchain.com" "peer0.farmacia-petrone.napoli.medchain.com:7141" "health-data-management" "$version" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem"
+    chaincodeApprove "cli.farmacia-petrone.napoli.medchain.com" "peer0.farmacia-petrone.napoli.medchain.com:7141" "public-health-channel" "health-data-management" "$version" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem" ""
+    printHeadline "Installing 'health-data-management' for FarmaciaCarbone" "U1F60E"
+    chaincodeInstall "cli.farmacia-carbone.napoli.medchain.com" "peer0.farmacia-carbone.napoli.medchain.com:7161" "health-data-management" "$version" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem"
+    chaincodeApprove "cli.farmacia-carbone.napoli.medchain.com" "peer0.farmacia-carbone.napoli.medchain.com:7161" "public-health-channel" "health-data-management" "$version" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem" ""
+    printHeadline "Installing 'health-data-management' for LaboratorioAnalisiCMO" "U1F60E"
+    chaincodeInstall "cli.laboratorio-analisi-cmo.medchain.com" "peer0.laboratorio-analisi-cmo.medchain.com:7181" "health-data-management" "$version" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem"
+    chaincodeApprove "cli.laboratorio-analisi-cmo.medchain.com" "peer0.laboratorio-analisi-cmo.medchain.com:7181" "public-health-channel" "health-data-management" "$version" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem" ""
+    printHeadline "Installing 'health-data-management' for LaboratorioAnalisiSDN" "U1F60E"
+    chaincodeInstall "cli.laboratorio-analisi-sdn.medchain.com" "peer0.laboratorio-analisi-sdn.medchain.com:7201" "health-data-management" "$version" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem"
+    chaincodeApprove "cli.laboratorio-analisi-sdn.medchain.com" "peer0.laboratorio-analisi-sdn.medchain.com:7201" "public-health-channel" "health-data-management" "$version" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem" ""
+    printItalics "Committing chaincode 'health-data-management' on channel 'public-health-channel' as 'OspedaleMaresca'" "U1F618"
+    chaincodeCommit "cli.ospedale-maresca.aslnapoli3.medchain.com" "peer0.ospedale-maresca.aslnapoli3.medchain.com:7041" "public-health-channel" "health-data-management" "$version" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem" "peer0.ospedale-maresca.aslnapoli3.medchain.com:7041,peer0.ospedale-del-mare.aslnapoli1.medchain.com:7061,peer0.ospedale-sgiuliano.aslnapoli2.medchain.com:7081,peer0.medicina-generale.napoli.medchain.com:7101,peer0.neurologia.napoli.medchain.com:7121,peer0.farmacia-petrone.napoli.medchain.com:7141,peer0.farmacia-carbone.napoli.medchain.com:7161,peer0.laboratorio-analisi-cmo.medchain.com:7181,peer0.laboratorio-analisi-sdn.medchain.com:7201" "crypto-peer/peer0.ospedale-maresca.aslnapoli3.medchain.com/tls/ca.crt,crypto-peer/peer0.ospedale-del-mare.aslnapoli1.medchain.com/tls/ca.crt,crypto-peer/peer0.ospedale-sgiuliano.aslnapoli2.medchain.com/tls/ca.crt,crypto-peer/peer0.medicina-generale.napoli.medchain.com/tls/ca.crt,crypto-peer/peer0.neurologia.napoli.medchain.com/tls/ca.crt,crypto-peer/peer0.farmacia-petrone.napoli.medchain.com/tls/ca.crt,crypto-peer/peer0.farmacia-carbone.napoli.medchain.com/tls/ca.crt,crypto-peer/peer0.laboratorio-analisi-cmo.medchain.com/tls/ca.crt,crypto-peer/peer0.laboratorio-analisi-sdn.medchain.com/tls/ca.crt" ""
+  else
+    echo "Warning! Skipping chaincode 'health-data-management' installation. Chaincode directory is empty."
+>>>>>>> master
+>>>>>>> master
     echo "Looked in dir: '$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go'"
   fi
 
@@ -196,6 +264,7 @@ installChaincode() {
     exit 1
   fi
 
+<<<<<<< HEAD
   if [ "$chaincodeName" = "prescription" ]; then
     if [ -n "$(ls "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go")" ]; then
       printHeadline "Packaging chaincode 'prescription'" "U1F60E"
@@ -219,6 +288,79 @@ installChaincode() {
 
     else
       echo "Warning! Skipping chaincode 'prescription' install. Chaincode directory is empty."
+=======
+<<<<<<< HEAD
+  if [ "$chaincodeName" = "labresults" ]; then
+    if [ -n "$(ls "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go")" ]; then
+      printHeadline "Packaging chaincode 'labresults'" "U1F60E"
+      chaincodeBuild "labresults" "golang" "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go" "12"
+      chaincodePackage "cli.ospedale-maresca.aslnapoli3.medchain.com" "peer0.ospedale-maresca.aslnapoli3.medchain.com:7041" "labresults" "$version" "golang" printHeadline "Installing 'labresults' for OspedaleMaresca" "U1F60E"
+      chaincodeInstall "cli.ospedale-maresca.aslnapoli3.medchain.com" "peer0.ospedale-maresca.aslnapoli3.medchain.com:7041" "labresults" "$version" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem"
+      chaincodeInstall "cli.ospedale-maresca.aslnapoli3.medchain.com" "peer1.ospedale-maresca.aslnapoli3.medchain.com:7042" "labresults" "$version" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem"
+      chaincodeApprove "cli.ospedale-maresca.aslnapoli3.medchain.com" "peer0.ospedale-maresca.aslnapoli3.medchain.com:7041" "lab-results-channel" "labresults" "$version" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem" ""
+      printHeadline "Installing 'labresults' for MedicinaGeneraleNapoli" "U1F60E"
+      chaincodeInstall "cli.medicina-generale.napoli.medchain.com" "peer0.medicina-generale.napoli.medchain.com:7101" "labresults" "$version" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem"
+      chaincodeInstall "cli.medicina-generale.napoli.medchain.com" "peer1.medicina-generale.napoli.medchain.com:7102" "labresults" "$version" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem"
+      chaincodeApprove "cli.medicina-generale.napoli.medchain.com" "peer0.medicina-generale.napoli.medchain.com:7101" "lab-results-channel" "labresults" "$version" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem" ""
+      printHeadline "Installing 'labresults' for NeurologiaNapoli" "U1F60E"
+      chaincodeInstall "cli.neurologia.napoli.medchain.com" "peer0.neurologia.napoli.medchain.com:7121" "labresults" "$version" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem"
+      chaincodeInstall "cli.neurologia.napoli.medchain.com" "peer1.neurologia.napoli.medchain.com:7122" "labresults" "$version" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem"
+      chaincodeApprove "cli.neurologia.napoli.medchain.com" "peer0.neurologia.napoli.medchain.com:7121" "lab-results-channel" "labresults" "$version" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem" ""
+      printHeadline "Installing 'labresults' for LaboratorioAnalisiCMO" "U1F60E"
+      chaincodeInstall "cli.laboratorio-analisi-cmo.medchain.com" "peer0.laboratorio-analisi-cmo.medchain.com:7181" "labresults" "$version" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem"
+      chaincodeApprove "cli.laboratorio-analisi-cmo.medchain.com" "peer0.laboratorio-analisi-cmo.medchain.com:7181" "lab-results-channel" "labresults" "$version" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem" ""
+      printHeadline "Installing 'labresults' for LaboratorioAnalisiSDN" "U1F60E"
+      chaincodeInstall "cli.laboratorio-analisi-sdn.medchain.com" "peer0.laboratorio-analisi-sdn.medchain.com:7201" "labresults" "$version" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem"
+      chaincodeApprove "cli.laboratorio-analisi-sdn.medchain.com" "peer0.laboratorio-analisi-sdn.medchain.com:7201" "lab-results-channel" "labresults" "$version" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem" ""
+      printItalics "Committing chaincode 'labresults' on channel 'lab-results-channel' as 'OspedaleMaresca'" "U1F618"
+      chaincodeCommit "cli.ospedale-maresca.aslnapoli3.medchain.com" "peer0.ospedale-maresca.aslnapoli3.medchain.com:7041" "lab-results-channel" "labresults" "$version" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem" "peer0.ospedale-maresca.aslnapoli3.medchain.com:7041,peer0.medicina-generale.napoli.medchain.com:7101,peer0.neurologia.napoli.medchain.com:7121,peer0.laboratorio-analisi-cmo.medchain.com:7181,peer0.laboratorio-analisi-sdn.medchain.com:7201" "crypto-peer/peer0.ospedale-maresca.aslnapoli3.medchain.com/tls/ca.crt,crypto-peer/peer0.medicina-generale.napoli.medchain.com/tls/ca.crt,crypto-peer/peer0.neurologia.napoli.medchain.com/tls/ca.crt,crypto-peer/peer0.laboratorio-analisi-cmo.medchain.com/tls/ca.crt,crypto-peer/peer0.laboratorio-analisi-sdn.medchain.com/tls/ca.crt" ""
+
+    else
+      echo "Warning! Skipping chaincode 'labresults' install. Chaincode directory is empty."
+=======
+  if [ "$chaincodeName" = "health-data-management" ]; then
+    if [ -n "$(ls "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go")" ]; then
+      printHeadline "Packaging chaincode 'health-data-management'" "U1F60E"
+      chaincodeBuild "health-data-management" "golang" "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go" "12"
+      chaincodePackage "cli.ospedale-maresca.aslnapoli3.medchain.com" "peer0.ospedale-maresca.aslnapoli3.medchain.com:7041" "health-data-management" "$version" "golang" printHeadline "Installing 'health-data-management' for OspedaleMaresca" "U1F60E"
+      chaincodeInstall "cli.ospedale-maresca.aslnapoli3.medchain.com" "peer0.ospedale-maresca.aslnapoli3.medchain.com:7041" "health-data-management" "$version" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem"
+      chaincodeInstall "cli.ospedale-maresca.aslnapoli3.medchain.com" "peer1.ospedale-maresca.aslnapoli3.medchain.com:7042" "health-data-management" "$version" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem"
+      chaincodeApprove "cli.ospedale-maresca.aslnapoli3.medchain.com" "peer0.ospedale-maresca.aslnapoli3.medchain.com:7041" "public-health-channel" "health-data-management" "$version" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem" ""
+      printHeadline "Installing 'health-data-management' for OspedaleDelMare" "U1F60E"
+      chaincodeInstall "cli.ospedale-del-mare.aslnapoli1.medchain.com" "peer0.ospedale-del-mare.aslnapoli1.medchain.com:7061" "health-data-management" "$version" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem"
+      chaincodeInstall "cli.ospedale-del-mare.aslnapoli1.medchain.com" "peer1.ospedale-del-mare.aslnapoli1.medchain.com:7062" "health-data-management" "$version" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem"
+      chaincodeApprove "cli.ospedale-del-mare.aslnapoli1.medchain.com" "peer0.ospedale-del-mare.aslnapoli1.medchain.com:7061" "public-health-channel" "health-data-management" "$version" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem" ""
+      printHeadline "Installing 'health-data-management' for OspedaleSGiuliano" "U1F60E"
+      chaincodeInstall "cli.ospedale-sgiuliano.aslnapoli2.medchain.com" "peer0.ospedale-sgiuliano.aslnapoli2.medchain.com:7081" "health-data-management" "$version" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem"
+      chaincodeInstall "cli.ospedale-sgiuliano.aslnapoli2.medchain.com" "peer1.ospedale-sgiuliano.aslnapoli2.medchain.com:7082" "health-data-management" "$version" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem"
+      chaincodeApprove "cli.ospedale-sgiuliano.aslnapoli2.medchain.com" "peer0.ospedale-sgiuliano.aslnapoli2.medchain.com:7081" "public-health-channel" "health-data-management" "$version" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem" ""
+      printHeadline "Installing 'health-data-management' for MedicinaGeneraleNapoli" "U1F60E"
+      chaincodeInstall "cli.medicina-generale.napoli.medchain.com" "peer0.medicina-generale.napoli.medchain.com:7101" "health-data-management" "$version" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem"
+      chaincodeInstall "cli.medicina-generale.napoli.medchain.com" "peer1.medicina-generale.napoli.medchain.com:7102" "health-data-management" "$version" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem"
+      chaincodeApprove "cli.medicina-generale.napoli.medchain.com" "peer0.medicina-generale.napoli.medchain.com:7101" "public-health-channel" "health-data-management" "$version" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem" ""
+      printHeadline "Installing 'health-data-management' for NeurologiaNapoli" "U1F60E"
+      chaincodeInstall "cli.neurologia.napoli.medchain.com" "peer0.neurologia.napoli.medchain.com:7121" "health-data-management" "$version" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem"
+      chaincodeInstall "cli.neurologia.napoli.medchain.com" "peer1.neurologia.napoli.medchain.com:7122" "health-data-management" "$version" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem"
+      chaincodeApprove "cli.neurologia.napoli.medchain.com" "peer0.neurologia.napoli.medchain.com:7121" "public-health-channel" "health-data-management" "$version" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem" ""
+      printHeadline "Installing 'health-data-management' for FarmaciaPetrone" "U1F60E"
+      chaincodeInstall "cli.farmacia-petrone.napoli.medchain.com" "peer0.farmacia-petrone.napoli.medchain.com:7141" "health-data-management" "$version" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem"
+      chaincodeApprove "cli.farmacia-petrone.napoli.medchain.com" "peer0.farmacia-petrone.napoli.medchain.com:7141" "public-health-channel" "health-data-management" "$version" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem" ""
+      printHeadline "Installing 'health-data-management' for FarmaciaCarbone" "U1F60E"
+      chaincodeInstall "cli.farmacia-carbone.napoli.medchain.com" "peer0.farmacia-carbone.napoli.medchain.com:7161" "health-data-management" "$version" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem"
+      chaincodeApprove "cli.farmacia-carbone.napoli.medchain.com" "peer0.farmacia-carbone.napoli.medchain.com:7161" "public-health-channel" "health-data-management" "$version" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem" ""
+      printHeadline "Installing 'health-data-management' for LaboratorioAnalisiCMO" "U1F60E"
+      chaincodeInstall "cli.laboratorio-analisi-cmo.medchain.com" "peer0.laboratorio-analisi-cmo.medchain.com:7181" "health-data-management" "$version" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem"
+      chaincodeApprove "cli.laboratorio-analisi-cmo.medchain.com" "peer0.laboratorio-analisi-cmo.medchain.com:7181" "public-health-channel" "health-data-management" "$version" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem" ""
+      printHeadline "Installing 'health-data-management' for LaboratorioAnalisiSDN" "U1F60E"
+      chaincodeInstall "cli.laboratorio-analisi-sdn.medchain.com" "peer0.laboratorio-analisi-sdn.medchain.com:7201" "health-data-management" "$version" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem"
+      chaincodeApprove "cli.laboratorio-analisi-sdn.medchain.com" "peer0.laboratorio-analisi-sdn.medchain.com:7201" "public-health-channel" "health-data-management" "$version" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem" ""
+      printItalics "Committing chaincode 'health-data-management' on channel 'public-health-channel' as 'OspedaleMaresca'" "U1F618"
+      chaincodeCommit "cli.ospedale-maresca.aslnapoli3.medchain.com" "peer0.ospedale-maresca.aslnapoli3.medchain.com:7041" "public-health-channel" "health-data-management" "$version" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem" "peer0.ospedale-maresca.aslnapoli3.medchain.com:7041,peer0.ospedale-del-mare.aslnapoli1.medchain.com:7061,peer0.ospedale-sgiuliano.aslnapoli2.medchain.com:7081,peer0.medicina-generale.napoli.medchain.com:7101,peer0.neurologia.napoli.medchain.com:7121,peer0.farmacia-petrone.napoli.medchain.com:7141,peer0.farmacia-carbone.napoli.medchain.com:7161,peer0.laboratorio-analisi-cmo.medchain.com:7181,peer0.laboratorio-analisi-sdn.medchain.com:7201" "crypto-peer/peer0.ospedale-maresca.aslnapoli3.medchain.com/tls/ca.crt,crypto-peer/peer0.ospedale-del-mare.aslnapoli1.medchain.com/tls/ca.crt,crypto-peer/peer0.ospedale-sgiuliano.aslnapoli2.medchain.com/tls/ca.crt,crypto-peer/peer0.medicina-generale.napoli.medchain.com/tls/ca.crt,crypto-peer/peer0.neurologia.napoli.medchain.com/tls/ca.crt,crypto-peer/peer0.farmacia-petrone.napoli.medchain.com/tls/ca.crt,crypto-peer/peer0.farmacia-carbone.napoli.medchain.com/tls/ca.crt,crypto-peer/peer0.laboratorio-analisi-cmo.medchain.com/tls/ca.crt,crypto-peer/peer0.laboratorio-analisi-sdn.medchain.com/tls/ca.crt" ""
+
+    else
+      echo "Warning! Skipping chaincode 'health-data-management' install. Chaincode directory is empty."
+>>>>>>> master
+>>>>>>> master
       echo "Looked in dir: '$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go'"
     fi
   fi
@@ -231,6 +373,7 @@ runDevModeChaincode() {
     exit 1
   fi
 
+<<<<<<< HEAD
   if [ "$chaincodeName" = "prescription" ]; then
     local version="1.0"
     printHeadline "Approving 'prescription' for MedicinaGeneraleNapoli (dev mode)" "U1F60E"
@@ -243,6 +386,22 @@ runDevModeChaincode() {
     chaincodeApprove "cli.farmacia-carbone.napoli.medchain.com" "peer0.farmacia-carbone.napoli.medchain.com:7161" "prescriptions-channel" "prescription" "1.0" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "" ""
     printItalics "Committing chaincode 'prescription' on channel 'prescriptions-channel' as 'MedicinaGeneraleNapoli' (dev mode)" "U1F618"
     chaincodeCommit "cli.medicina-generale.napoli.medchain.com" "peer0.medicina-generale.napoli.medchain.com:7101" "prescriptions-channel" "prescription" "1.0" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "" "peer0.medicina-generale.napoli.medchain.com:7101,peer0.neurologia.napoli.medchain.com:7121,peer0.farmacia-petrone.napoli.medchain.com:7141,peer0.farmacia-carbone.napoli.medchain.com:7161" "" ""
+=======
+  if [ "$chaincodeName" = "labresults" ]; then
+    local version="1.0"
+    printHeadline "Approving 'labresults' for OspedaleMaresca (dev mode)" "U1F60E"
+    chaincodeApprove "cli.ospedale-maresca.aslnapoli3.medchain.com" "peer0.ospedale-maresca.aslnapoli3.medchain.com:7041" "lab-results-channel" "labresults" "1.0" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "" ""
+    printHeadline "Approving 'labresults' for MedicinaGeneraleNapoli (dev mode)" "U1F60E"
+    chaincodeApprove "cli.medicina-generale.napoli.medchain.com" "peer0.medicina-generale.napoli.medchain.com:7101" "lab-results-channel" "labresults" "1.0" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "" ""
+    printHeadline "Approving 'labresults' for NeurologiaNapoli (dev mode)" "U1F60E"
+    chaincodeApprove "cli.neurologia.napoli.medchain.com" "peer0.neurologia.napoli.medchain.com:7121" "lab-results-channel" "labresults" "1.0" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "" ""
+    printHeadline "Approving 'labresults' for LaboratorioAnalisiCMO (dev mode)" "U1F60E"
+    chaincodeApprove "cli.laboratorio-analisi-cmo.medchain.com" "peer0.laboratorio-analisi-cmo.medchain.com:7181" "lab-results-channel" "labresults" "1.0" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "" ""
+    printHeadline "Approving 'labresults' for LaboratorioAnalisiSDN (dev mode)" "U1F60E"
+    chaincodeApprove "cli.laboratorio-analisi-sdn.medchain.com" "peer0.laboratorio-analisi-sdn.medchain.com:7201" "lab-results-channel" "labresults" "1.0" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "" ""
+    printItalics "Committing chaincode 'labresults' on channel 'lab-results-channel' as 'OspedaleMaresca' (dev mode)" "U1F618"
+    chaincodeCommit "cli.ospedale-maresca.aslnapoli3.medchain.com" "peer0.ospedale-maresca.aslnapoli3.medchain.com:7041" "lab-results-channel" "labresults" "1.0" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "" "peer0.ospedale-maresca.aslnapoli3.medchain.com:7041,peer0.medicina-generale.napoli.medchain.com:7101,peer0.neurologia.napoli.medchain.com:7121,peer0.laboratorio-analisi-cmo.medchain.com:7181,peer0.laboratorio-analisi-sdn.medchain.com:7201" "" ""
+>>>>>>> master
 
   fi
 }
@@ -260,6 +419,7 @@ upgradeChaincode() {
     exit 1
   fi
 
+<<<<<<< HEAD
   if [ "$chaincodeName" = "prescription" ]; then
     if [ -n "$(ls "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go")" ]; then
       printHeadline "Packaging chaincode 'prescription'" "U1F60E"
@@ -283,6 +443,79 @@ upgradeChaincode() {
 
     else
       echo "Warning! Skipping chaincode 'prescription' upgrade. Chaincode directory is empty."
+=======
+<<<<<<< HEAD
+  if [ "$chaincodeName" = "labresults" ]; then
+    if [ -n "$(ls "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go")" ]; then
+      printHeadline "Packaging chaincode 'labresults'" "U1F60E"
+      chaincodeBuild "labresults" "golang" "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go" "12"
+      chaincodePackage "cli.ospedale-maresca.aslnapoli3.medchain.com" "peer0.ospedale-maresca.aslnapoli3.medchain.com:7041" "labresults" "$version" "golang" printHeadline "Installing 'labresults' for OspedaleMaresca" "U1F60E"
+      chaincodeInstall "cli.ospedale-maresca.aslnapoli3.medchain.com" "peer0.ospedale-maresca.aslnapoli3.medchain.com:7041" "labresults" "$version" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem"
+      chaincodeInstall "cli.ospedale-maresca.aslnapoli3.medchain.com" "peer1.ospedale-maresca.aslnapoli3.medchain.com:7042" "labresults" "$version" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem"
+      chaincodeApprove "cli.ospedale-maresca.aslnapoli3.medchain.com" "peer0.ospedale-maresca.aslnapoli3.medchain.com:7041" "lab-results-channel" "labresults" "$version" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem" ""
+      printHeadline "Installing 'labresults' for MedicinaGeneraleNapoli" "U1F60E"
+      chaincodeInstall "cli.medicina-generale.napoli.medchain.com" "peer0.medicina-generale.napoli.medchain.com:7101" "labresults" "$version" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem"
+      chaincodeInstall "cli.medicina-generale.napoli.medchain.com" "peer1.medicina-generale.napoli.medchain.com:7102" "labresults" "$version" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem"
+      chaincodeApprove "cli.medicina-generale.napoli.medchain.com" "peer0.medicina-generale.napoli.medchain.com:7101" "lab-results-channel" "labresults" "$version" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem" ""
+      printHeadline "Installing 'labresults' for NeurologiaNapoli" "U1F60E"
+      chaincodeInstall "cli.neurologia.napoli.medchain.com" "peer0.neurologia.napoli.medchain.com:7121" "labresults" "$version" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem"
+      chaincodeInstall "cli.neurologia.napoli.medchain.com" "peer1.neurologia.napoli.medchain.com:7122" "labresults" "$version" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem"
+      chaincodeApprove "cli.neurologia.napoli.medchain.com" "peer0.neurologia.napoli.medchain.com:7121" "lab-results-channel" "labresults" "$version" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem" ""
+      printHeadline "Installing 'labresults' for LaboratorioAnalisiCMO" "U1F60E"
+      chaincodeInstall "cli.laboratorio-analisi-cmo.medchain.com" "peer0.laboratorio-analisi-cmo.medchain.com:7181" "labresults" "$version" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem"
+      chaincodeApprove "cli.laboratorio-analisi-cmo.medchain.com" "peer0.laboratorio-analisi-cmo.medchain.com:7181" "lab-results-channel" "labresults" "$version" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem" ""
+      printHeadline "Installing 'labresults' for LaboratorioAnalisiSDN" "U1F60E"
+      chaincodeInstall "cli.laboratorio-analisi-sdn.medchain.com" "peer0.laboratorio-analisi-sdn.medchain.com:7201" "labresults" "$version" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem"
+      chaincodeApprove "cli.laboratorio-analisi-sdn.medchain.com" "peer0.laboratorio-analisi-sdn.medchain.com:7201" "lab-results-channel" "labresults" "$version" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem" ""
+      printItalics "Committing chaincode 'labresults' on channel 'lab-results-channel' as 'OspedaleMaresca'" "U1F618"
+      chaincodeCommit "cli.ospedale-maresca.aslnapoli3.medchain.com" "peer0.ospedale-maresca.aslnapoli3.medchain.com:7041" "lab-results-channel" "labresults" "$version" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem" "peer0.ospedale-maresca.aslnapoli3.medchain.com:7041,peer0.medicina-generale.napoli.medchain.com:7101,peer0.neurologia.napoli.medchain.com:7121,peer0.laboratorio-analisi-cmo.medchain.com:7181,peer0.laboratorio-analisi-sdn.medchain.com:7201" "crypto-peer/peer0.ospedale-maresca.aslnapoli3.medchain.com/tls/ca.crt,crypto-peer/peer0.medicina-generale.napoli.medchain.com/tls/ca.crt,crypto-peer/peer0.neurologia.napoli.medchain.com/tls/ca.crt,crypto-peer/peer0.laboratorio-analisi-cmo.medchain.com/tls/ca.crt,crypto-peer/peer0.laboratorio-analisi-sdn.medchain.com/tls/ca.crt" ""
+
+    else
+      echo "Warning! Skipping chaincode 'labresults' upgrade. Chaincode directory is empty."
+=======
+  if [ "$chaincodeName" = "health-data-management" ]; then
+    if [ -n "$(ls "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go")" ]; then
+      printHeadline "Packaging chaincode 'health-data-management'" "U1F60E"
+      chaincodeBuild "health-data-management" "golang" "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go" "12"
+      chaincodePackage "cli.ospedale-maresca.aslnapoli3.medchain.com" "peer0.ospedale-maresca.aslnapoli3.medchain.com:7041" "health-data-management" "$version" "golang" printHeadline "Installing 'health-data-management' for OspedaleMaresca" "U1F60E"
+      chaincodeInstall "cli.ospedale-maresca.aslnapoli3.medchain.com" "peer0.ospedale-maresca.aslnapoli3.medchain.com:7041" "health-data-management" "$version" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem"
+      chaincodeInstall "cli.ospedale-maresca.aslnapoli3.medchain.com" "peer1.ospedale-maresca.aslnapoli3.medchain.com:7042" "health-data-management" "$version" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem"
+      chaincodeApprove "cli.ospedale-maresca.aslnapoli3.medchain.com" "peer0.ospedale-maresca.aslnapoli3.medchain.com:7041" "public-health-channel" "health-data-management" "$version" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem" ""
+      printHeadline "Installing 'health-data-management' for OspedaleDelMare" "U1F60E"
+      chaincodeInstall "cli.ospedale-del-mare.aslnapoli1.medchain.com" "peer0.ospedale-del-mare.aslnapoli1.medchain.com:7061" "health-data-management" "$version" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem"
+      chaincodeInstall "cli.ospedale-del-mare.aslnapoli1.medchain.com" "peer1.ospedale-del-mare.aslnapoli1.medchain.com:7062" "health-data-management" "$version" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem"
+      chaincodeApprove "cli.ospedale-del-mare.aslnapoli1.medchain.com" "peer0.ospedale-del-mare.aslnapoli1.medchain.com:7061" "public-health-channel" "health-data-management" "$version" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem" ""
+      printHeadline "Installing 'health-data-management' for OspedaleSGiuliano" "U1F60E"
+      chaincodeInstall "cli.ospedale-sgiuliano.aslnapoli2.medchain.com" "peer0.ospedale-sgiuliano.aslnapoli2.medchain.com:7081" "health-data-management" "$version" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem"
+      chaincodeInstall "cli.ospedale-sgiuliano.aslnapoli2.medchain.com" "peer1.ospedale-sgiuliano.aslnapoli2.medchain.com:7082" "health-data-management" "$version" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem"
+      chaincodeApprove "cli.ospedale-sgiuliano.aslnapoli2.medchain.com" "peer0.ospedale-sgiuliano.aslnapoli2.medchain.com:7081" "public-health-channel" "health-data-management" "$version" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem" ""
+      printHeadline "Installing 'health-data-management' for MedicinaGeneraleNapoli" "U1F60E"
+      chaincodeInstall "cli.medicina-generale.napoli.medchain.com" "peer0.medicina-generale.napoli.medchain.com:7101" "health-data-management" "$version" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem"
+      chaincodeInstall "cli.medicina-generale.napoli.medchain.com" "peer1.medicina-generale.napoli.medchain.com:7102" "health-data-management" "$version" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem"
+      chaincodeApprove "cli.medicina-generale.napoli.medchain.com" "peer0.medicina-generale.napoli.medchain.com:7101" "public-health-channel" "health-data-management" "$version" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem" ""
+      printHeadline "Installing 'health-data-management' for NeurologiaNapoli" "U1F60E"
+      chaincodeInstall "cli.neurologia.napoli.medchain.com" "peer0.neurologia.napoli.medchain.com:7121" "health-data-management" "$version" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem"
+      chaincodeInstall "cli.neurologia.napoli.medchain.com" "peer1.neurologia.napoli.medchain.com:7122" "health-data-management" "$version" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem"
+      chaincodeApprove "cli.neurologia.napoli.medchain.com" "peer0.neurologia.napoli.medchain.com:7121" "public-health-channel" "health-data-management" "$version" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem" ""
+      printHeadline "Installing 'health-data-management' for FarmaciaPetrone" "U1F60E"
+      chaincodeInstall "cli.farmacia-petrone.napoli.medchain.com" "peer0.farmacia-petrone.napoli.medchain.com:7141" "health-data-management" "$version" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem"
+      chaincodeApprove "cli.farmacia-petrone.napoli.medchain.com" "peer0.farmacia-petrone.napoli.medchain.com:7141" "public-health-channel" "health-data-management" "$version" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem" ""
+      printHeadline "Installing 'health-data-management' for FarmaciaCarbone" "U1F60E"
+      chaincodeInstall "cli.farmacia-carbone.napoli.medchain.com" "peer0.farmacia-carbone.napoli.medchain.com:7161" "health-data-management" "$version" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem"
+      chaincodeApprove "cli.farmacia-carbone.napoli.medchain.com" "peer0.farmacia-carbone.napoli.medchain.com:7161" "public-health-channel" "health-data-management" "$version" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem" ""
+      printHeadline "Installing 'health-data-management' for LaboratorioAnalisiCMO" "U1F60E"
+      chaincodeInstall "cli.laboratorio-analisi-cmo.medchain.com" "peer0.laboratorio-analisi-cmo.medchain.com:7181" "health-data-management" "$version" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem"
+      chaincodeApprove "cli.laboratorio-analisi-cmo.medchain.com" "peer0.laboratorio-analisi-cmo.medchain.com:7181" "public-health-channel" "health-data-management" "$version" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem" ""
+      printHeadline "Installing 'health-data-management' for LaboratorioAnalisiSDN" "U1F60E"
+      chaincodeInstall "cli.laboratorio-analisi-sdn.medchain.com" "peer0.laboratorio-analisi-sdn.medchain.com:7201" "health-data-management" "$version" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem"
+      chaincodeApprove "cli.laboratorio-analisi-sdn.medchain.com" "peer0.laboratorio-analisi-sdn.medchain.com:7201" "public-health-channel" "health-data-management" "$version" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem" ""
+      printItalics "Committing chaincode 'health-data-management' on channel 'public-health-channel' as 'OspedaleMaresca'" "U1F618"
+      chaincodeCommit "cli.ospedale-maresca.aslnapoli3.medchain.com" "peer0.ospedale-maresca.aslnapoli3.medchain.com:7041" "public-health-channel" "health-data-management" "$version" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem" "peer0.ospedale-maresca.aslnapoli3.medchain.com:7041,peer0.ospedale-del-mare.aslnapoli1.medchain.com:7061,peer0.ospedale-sgiuliano.aslnapoli2.medchain.com:7081,peer0.medicina-generale.napoli.medchain.com:7101,peer0.neurologia.napoli.medchain.com:7121,peer0.farmacia-petrone.napoli.medchain.com:7141,peer0.farmacia-carbone.napoli.medchain.com:7161,peer0.laboratorio-analisi-cmo.medchain.com:7181,peer0.laboratorio-analisi-sdn.medchain.com:7201" "crypto-peer/peer0.ospedale-maresca.aslnapoli3.medchain.com/tls/ca.crt,crypto-peer/peer0.ospedale-del-mare.aslnapoli1.medchain.com/tls/ca.crt,crypto-peer/peer0.ospedale-sgiuliano.aslnapoli2.medchain.com/tls/ca.crt,crypto-peer/peer0.medicina-generale.napoli.medchain.com/tls/ca.crt,crypto-peer/peer0.neurologia.napoli.medchain.com/tls/ca.crt,crypto-peer/peer0.farmacia-petrone.napoli.medchain.com/tls/ca.crt,crypto-peer/peer0.farmacia-carbone.napoli.medchain.com/tls/ca.crt,crypto-peer/peer0.laboratorio-analisi-cmo.medchain.com/tls/ca.crt,crypto-peer/peer0.laboratorio-analisi-sdn.medchain.com/tls/ca.crt" ""
+
+    else
+      echo "Warning! Skipping chaincode 'health-data-management' upgrade. Chaincode directory is empty."
+>>>>>>> master
+>>>>>>> master
       echo "Looked in dir: '$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go'"
     fi
   fi
@@ -389,6 +622,7 @@ networkDown() {
   (cd "$FABLO_NETWORK_ROOT"/fabric-docker && docker-compose down)
 
   printf "Removing chaincode containers & images... \U1F5D1 \n"
+<<<<<<< HEAD
   for container in $(docker ps -a | grep "dev-peer0.medicina-generale.napoli.medchain.com-prescription" | awk '{print $1}'); do
     echo "Removing container $container..."
     docker rm -f "$container" || echo "docker rm of $container failed. Check if all fabric dockers properly was deleted"
@@ -434,6 +668,69 @@ networkDown() {
     docker rm -f "$container" || echo "docker rm of $container failed. Check if all fabric dockers properly was deleted"
   done
   for image in $(docker images "dev-peer0.farmacia-carbone.napoli.medchain.com-prescription*" -q); do
+=======
+  for container in $(docker ps -a | grep "dev-peer0.ospedale-maresca.aslnapoli3.medchain.com-labresults" | awk '{print $1}'); do
+    echo "Removing container $container..."
+    docker rm -f "$container" || echo "docker rm of $container failed. Check if all fabric dockers properly was deleted"
+  done
+  for image in $(docker images "dev-peer0.ospedale-maresca.aslnapoli3.medchain.com-labresults*" -q); do
+    echo "Removing image $image..."
+    docker rmi "$image" || echo "docker rmi of $image failed. Check if all fabric dockers properly was deleted"
+  done
+  for container in $(docker ps -a | grep "dev-peer1.ospedale-maresca.aslnapoli3.medchain.com-labresults" | awk '{print $1}'); do
+    echo "Removing container $container..."
+    docker rm -f "$container" || echo "docker rm of $container failed. Check if all fabric dockers properly was deleted"
+  done
+  for image in $(docker images "dev-peer1.ospedale-maresca.aslnapoli3.medchain.com-labresults*" -q); do
+    echo "Removing image $image..."
+    docker rmi "$image" || echo "docker rmi of $image failed. Check if all fabric dockers properly was deleted"
+  done
+  for container in $(docker ps -a | grep "dev-peer0.medicina-generale.napoli.medchain.com-labresults" | awk '{print $1}'); do
+    echo "Removing container $container..."
+    docker rm -f "$container" || echo "docker rm of $container failed. Check if all fabric dockers properly was deleted"
+  done
+  for image in $(docker images "dev-peer0.medicina-generale.napoli.medchain.com-labresults*" -q); do
+    echo "Removing image $image..."
+    docker rmi "$image" || echo "docker rmi of $image failed. Check if all fabric dockers properly was deleted"
+  done
+  for container in $(docker ps -a | grep "dev-peer1.medicina-generale.napoli.medchain.com-labresults" | awk '{print $1}'); do
+    echo "Removing container $container..."
+    docker rm -f "$container" || echo "docker rm of $container failed. Check if all fabric dockers properly was deleted"
+  done
+  for image in $(docker images "dev-peer1.medicina-generale.napoli.medchain.com-labresults*" -q); do
+    echo "Removing image $image..."
+    docker rmi "$image" || echo "docker rmi of $image failed. Check if all fabric dockers properly was deleted"
+  done
+  for container in $(docker ps -a | grep "dev-peer0.neurologia.napoli.medchain.com-labresults" | awk '{print $1}'); do
+    echo "Removing container $container..."
+    docker rm -f "$container" || echo "docker rm of $container failed. Check if all fabric dockers properly was deleted"
+  done
+  for image in $(docker images "dev-peer0.neurologia.napoli.medchain.com-labresults*" -q); do
+    echo "Removing image $image..."
+    docker rmi "$image" || echo "docker rmi of $image failed. Check if all fabric dockers properly was deleted"
+  done
+  for container in $(docker ps -a | grep "dev-peer1.neurologia.napoli.medchain.com-labresults" | awk '{print $1}'); do
+    echo "Removing container $container..."
+    docker rm -f "$container" || echo "docker rm of $container failed. Check if all fabric dockers properly was deleted"
+  done
+  for image in $(docker images "dev-peer1.neurologia.napoli.medchain.com-labresults*" -q); do
+    echo "Removing image $image..."
+    docker rmi "$image" || echo "docker rmi of $image failed. Check if all fabric dockers properly was deleted"
+  done
+  for container in $(docker ps -a | grep "dev-peer0.laboratorio-analisi-cmo.medchain.com-labresults" | awk '{print $1}'); do
+    echo "Removing container $container..."
+    docker rm -f "$container" || echo "docker rm of $container failed. Check if all fabric dockers properly was deleted"
+  done
+  for image in $(docker images "dev-peer0.laboratorio-analisi-cmo.medchain.com-labresults*" -q); do
+    echo "Removing image $image..."
+    docker rmi "$image" || echo "docker rmi of $image failed. Check if all fabric dockers properly was deleted"
+  done
+  for container in $(docker ps -a | grep "dev-peer0.laboratorio-analisi-sdn.medchain.com-labresults" | awk '{print $1}'); do
+    echo "Removing container $container..."
+    docker rm -f "$container" || echo "docker rm of $container failed. Check if all fabric dockers properly was deleted"
+  done
+  for image in $(docker images "dev-peer0.laboratorio-analisi-sdn.medchain.com-labresults*" -q); do
+>>>>>>> master
     echo "Removing image $image..."
     docker rmi "$image" || echo "docker rmi of $image failed. Check if all fabric dockers properly was deleted"
   done

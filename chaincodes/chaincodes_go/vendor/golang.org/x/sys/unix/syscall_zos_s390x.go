@@ -1520,6 +1520,12 @@ func (m *mmapper) Munmap(data []byte) (err error) {
 	return nil
 }
 
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> master
 func Mmap(fd int, offset int64, length int, prot int, flags int) (data []byte, err error) {
         return mapper.Mmap(fd, offset, length, prot, flags)
 }
@@ -1528,6 +1534,12 @@ func Munmap(b []byte) (err error) {
         return mapper.Munmap(b)
 }
 
+<<<<<<< HEAD
+=======
+=======
+>>>>>>> master
+>>>>>>> master
+>>>>>>> master
 func Read(fd int, p []byte) (n int, err error) {
 	n, err = read(fd, p)
 	if raceenabled {

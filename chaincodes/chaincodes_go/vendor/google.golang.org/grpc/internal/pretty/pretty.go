@@ -24,8 +24,26 @@ import (
 	"encoding/json"
 	"fmt"
 
+<<<<<<< HEAD
 	"google.golang.org/protobuf/encoding/protojson"
 	"google.golang.org/protobuf/protoadapt"
+=======
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+	"google.golang.org/protobuf/encoding/protojson"
+	"google.golang.org/protobuf/protoadapt"
+=======
+>>>>>>> master
+	"github.com/golang/protobuf/jsonpb"
+	protov1 "github.com/golang/protobuf/proto"
+	"google.golang.org/protobuf/encoding/protojson"
+	protov2 "google.golang.org/protobuf/proto"
+<<<<<<< HEAD
+=======
+>>>>>>> master
+>>>>>>> master
+>>>>>>> master
 )
 
 const jsonIndent = "  "
@@ -34,6 +52,12 @@ const jsonIndent = "  "
 //
 // If marshal fails, it falls back to fmt.Sprintf("%+v").
 func ToJSON(e any) string {
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> master
 	if ee, ok := e.(protoadapt.MessageV1); ok {
 		e = protoadapt.MessageV2Of(ee)
 	}
@@ -42,6 +66,30 @@ func ToJSON(e any) string {
 		mm := protojson.MarshalOptions{
 			Indent:    jsonIndent,
 			Multiline: true,
+<<<<<<< HEAD
+=======
+=======
+>>>>>>> master
+	switch ee := e.(type) {
+	case protov1.Message:
+		mm := jsonpb.Marshaler{Indent: jsonIndent}
+		ret, err := mm.MarshalToString(ee)
+		if err != nil {
+			// This may fail for proto.Anys, e.g. for xDS v2, LDS, the v2
+			// messages are not imported, and this will fail because the message
+			// is not found.
+			return fmt.Sprintf("%+v", ee)
+		}
+		return ret
+	case protov2.Message:
+		mm := protojson.MarshalOptions{
+			Multiline: true,
+			Indent:    jsonIndent,
+<<<<<<< HEAD
+=======
+>>>>>>> master
+>>>>>>> master
+>>>>>>> master
 		}
 		ret, err := mm.Marshal(ee)
 		if err != nil {
@@ -51,6 +99,12 @@ func ToJSON(e any) string {
 			return fmt.Sprintf("%+v", ee)
 		}
 		return string(ret)
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> master
 	}
 
 	ret, err := json.MarshalIndent(e, "", jsonIndent)
@@ -58,6 +112,22 @@ func ToJSON(e any) string {
 		return fmt.Sprintf("%+v", e)
 	}
 	return string(ret)
+<<<<<<< HEAD
+=======
+=======
+>>>>>>> master
+	default:
+		ret, err := json.MarshalIndent(ee, "", jsonIndent)
+		if err != nil {
+			return fmt.Sprintf("%+v", ee)
+		}
+		return string(ret)
+	}
+<<<<<<< HEAD
+=======
+>>>>>>> master
+>>>>>>> master
+>>>>>>> master
 }
 
 // FormatJSON formats the input json bytes with indentation.

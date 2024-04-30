@@ -23,9 +23,25 @@ package proto
 import (
 	"fmt"
 
+<<<<<<< HEAD
 	"google.golang.org/grpc/encoding"
 	"google.golang.org/protobuf/proto"
 	"google.golang.org/protobuf/protoadapt"
+=======
+<<<<<<< HEAD
+	"github.com/golang/protobuf/proto"
+	"google.golang.org/grpc/encoding"
+=======
+<<<<<<< HEAD
+	"google.golang.org/grpc/encoding"
+	"google.golang.org/protobuf/proto"
+	"google.golang.org/protobuf/protoadapt"
+=======
+	"github.com/golang/protobuf/proto"
+	"google.golang.org/grpc/encoding"
+>>>>>>> master
+>>>>>>> master
+>>>>>>> master
 )
 
 // Name is the name registered for the proto compressor.
@@ -39,15 +55,40 @@ func init() {
 type codec struct{}
 
 func (codec) Marshal(v any) ([]byte, error) {
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> master
 	vv := messageV2Of(v)
 	if vv == nil {
 		return nil, fmt.Errorf("failed to marshal, message is %T, want proto.Message", v)
 	}
 
+<<<<<<< HEAD
+=======
+=======
+>>>>>>> master
+	vv, ok := v.(proto.Message)
+	if !ok {
+		return nil, fmt.Errorf("failed to marshal, message is %T, want proto.Message", v)
+	}
+<<<<<<< HEAD
+=======
+>>>>>>> master
+>>>>>>> master
+>>>>>>> master
 	return proto.Marshal(vv)
 }
 
 func (codec) Unmarshal(data []byte, v any) error {
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> master
 	vv := messageV2Of(v)
 	if vv == nil {
 		return fmt.Errorf("failed to unmarshal, message is %T, want proto.Message", v)
@@ -67,6 +108,22 @@ func messageV2Of(v any) proto.Message {
 	return nil
 }
 
+<<<<<<< HEAD
+=======
+=======
+>>>>>>> master
+	vv, ok := v.(proto.Message)
+	if !ok {
+		return fmt.Errorf("failed to unmarshal, message is %T, want proto.Message", v)
+	}
+	return proto.Unmarshal(data, vv)
+}
+
+<<<<<<< HEAD
+=======
+>>>>>>> master
+>>>>>>> master
+>>>>>>> master
 func (codec) Name() string {
 	return Name
 }

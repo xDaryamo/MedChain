@@ -28,9 +28,27 @@ import (
 	"fmt"
 	"net"
 
+<<<<<<< HEAD
 	"google.golang.org/grpc/attributes"
 	icredentials "google.golang.org/grpc/internal/credentials"
 	"google.golang.org/protobuf/protoadapt"
+=======
+<<<<<<< HEAD
+	"github.com/golang/protobuf/proto"
+	"google.golang.org/grpc/attributes"
+	icredentials "google.golang.org/grpc/internal/credentials"
+=======
+<<<<<<< HEAD
+	"google.golang.org/grpc/attributes"
+	icredentials "google.golang.org/grpc/internal/credentials"
+	"google.golang.org/protobuf/protoadapt"
+=======
+	"github.com/golang/protobuf/proto"
+	"google.golang.org/grpc/attributes"
+	icredentials "google.golang.org/grpc/internal/credentials"
+>>>>>>> master
+>>>>>>> master
+>>>>>>> master
 )
 
 // PerRPCCredentials defines the common interface for the credentials which need to
@@ -287,5 +305,17 @@ type ChannelzSecurityValue interface {
 type OtherChannelzSecurityValue struct {
 	ChannelzSecurityValue
 	Name  string
+<<<<<<< HEAD
 	Value protoadapt.MessageV1
+=======
+<<<<<<< HEAD
+	Value proto.Message
+=======
+<<<<<<< HEAD
+	Value protoadapt.MessageV1
+=======
+	Value proto.Message
+>>>>>>> master
+>>>>>>> master
+>>>>>>> master
 }

@@ -4,6 +4,12 @@ linters-settings:
   golint:
     min-confidence: 0
   gocyclo:
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> master
     min-complexity: 45
   maligned:
     suggest-new: true
@@ -12,6 +18,23 @@ linters-settings:
   goconst:
     min-len: 3
     min-occurrences: 3
+<<<<<<< HEAD
+=======
+=======
+>>>>>>> master
+    min-complexity: 25
+  maligned:
+    suggest-new: true
+  dupl:
+    threshold: 100
+  goconst:
+    min-len: 3
+    min-occurrences: 2
+<<<<<<< HEAD
+=======
+>>>>>>> master
+>>>>>>> master
+>>>>>>> master
 
 linters:
   enable-all: true
@@ -20,6 +43,12 @@ linters:
     - lll
     - gochecknoinits
     - gochecknoglobals
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> master
     - funlen
     - godox
     - gocognit
@@ -57,4 +86,44 @@ linters:
     - varcheck
     - structcheck
     - golint
+<<<<<<< HEAD
+=======
+=======
+>>>>>>> master
+    - nlreturn
+    - testpackage
+    - wrapcheck
+    - gomnd
+    - exhaustive
+    - exhaustivestruct
+    - goerr113
+    - wsl
+    - whitespace
+    - gofumpt
+    - godot
+    - nestif
+    - godox
+    - funlen
+    - gci
+    - gocognit
+    - paralleltest
+    - thelper
+    - ifshort
+    - gomoddirectives
+    - cyclop
+    - forcetypeassert
+    - ireturn
+    - tagliatelle
+    - varnamelen
+    - goimports
+    - tenv
+    - golint
+    - exhaustruct
+    - nilnil
+    - nonamedreturns
+<<<<<<< HEAD
+=======
+>>>>>>> master
+>>>>>>> master
+>>>>>>> master
     - nosnakecase

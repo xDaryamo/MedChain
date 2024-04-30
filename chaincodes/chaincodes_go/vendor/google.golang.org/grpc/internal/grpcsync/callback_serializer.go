@@ -20,6 +20,17 @@ package grpcsync
 
 import (
 	"context"
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+	"sync"
+=======
+<<<<<<< HEAD
+=======
+	"sync"
+>>>>>>> master
+>>>>>>> master
+>>>>>>> master
 
 	"google.golang.org/grpc/internal/buffer"
 )
@@ -37,6 +48,19 @@ type CallbackSerializer struct {
 	done chan struct{}
 
 	callbacks *buffer.Unbounded
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+	closedMu  sync.Mutex
+	closed    bool
+=======
+<<<<<<< HEAD
+=======
+	closedMu  sync.Mutex
+	closed    bool
+>>>>>>> master
+>>>>>>> master
+>>>>>>> master
 }
 
 // NewCallbackSerializer returns a new CallbackSerializer instance. The provided
@@ -62,6 +86,12 @@ func NewCallbackSerializer(ctx context.Context) *CallbackSerializer {
 // callbacks to be executed by the serializer. It is not possible to add
 // callbacks once the context passed to NewCallbackSerializer is cancelled.
 func (cs *CallbackSerializer) Schedule(f func(ctx context.Context)) bool {
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> master
 	return cs.callbacks.Put(f) == nil
 }
 
@@ -72,11 +102,40 @@ func (cs *CallbackSerializer) run(ctx context.Context) {
 	// can be replaced with:
 	//
 	// context.AfterFunc(ctx, cs.callbacks.Close)
+<<<<<<< HEAD
+=======
+=======
+>>>>>>> master
+	cs.closedMu.Lock()
+	defer cs.closedMu.Unlock()
+
+	if cs.closed {
+		return false
+	}
+	cs.callbacks.Put(f)
+	return true
+}
+
+func (cs *CallbackSerializer) run(ctx context.Context) {
+	var backlog []func(context.Context)
+
+	defer close(cs.done)
+<<<<<<< HEAD
+=======
+>>>>>>> master
+>>>>>>> master
+>>>>>>> master
 	for ctx.Err() == nil {
 		select {
 		case <-ctx.Done():
 			// Do nothing here. Next iteration of the for loop will not happen,
 			// since ctx.Err() would be non-nil.
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> master
 		case cb := <-cs.callbacks.Get():
 			cs.callbacks.Load()
 			cb.(func(context.Context))(ctx)
@@ -90,6 +149,46 @@ func (cs *CallbackSerializer) run(ctx context.Context) {
 	for cb := range cs.callbacks.Get() {
 		cs.callbacks.Load()
 		cb.(func(context.Context))(ctx)
+<<<<<<< HEAD
+=======
+=======
+>>>>>>> master
+		case callback, ok := <-cs.callbacks.Get():
+			if !ok {
+				return
+			}
+			cs.callbacks.Load()
+			callback.(func(ctx context.Context))(ctx)
+		}
+	}
+
+	// Fetch pending callbacks if any, and execute them before returning from
+	// this method and closing cs.done.
+	cs.closedMu.Lock()
+	cs.closed = true
+	backlog = cs.fetchPendingCallbacks()
+	cs.callbacks.Close()
+	cs.closedMu.Unlock()
+	for _, b := range backlog {
+		b(ctx)
+	}
+}
+
+func (cs *CallbackSerializer) fetchPendingCallbacks() []func(context.Context) {
+	var backlog []func(context.Context)
+	for {
+		select {
+		case b := <-cs.callbacks.Get():
+			backlog = append(backlog, b.(func(context.Context)))
+			cs.callbacks.Load()
+		default:
+			return backlog
+		}
+<<<<<<< HEAD
+=======
+>>>>>>> master
+>>>>>>> master
+>>>>>>> master
 	}
 }
 

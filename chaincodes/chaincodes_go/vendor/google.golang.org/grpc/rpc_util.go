@@ -189,6 +189,12 @@ type EmptyCallOption struct{}
 func (EmptyCallOption) before(*callInfo) error      { return nil }
 func (EmptyCallOption) after(*callInfo, *csAttempt) {}
 
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> master
 // StaticMethod returns a CallOption which specifies that a call is being made
 // to a method that is static, which means the method is known at compile time
 // and doesn't change at runtime. This can be used as a signal to stats plugins
@@ -203,6 +209,12 @@ type StaticMethodCallOption struct {
 	EmptyCallOption
 }
 
+<<<<<<< HEAD
+=======
+=======
+>>>>>>> master
+>>>>>>> master
+>>>>>>> master
 // Header returns a CallOptions that retrieves the header metadata
 // for a unary RPC.
 func Header(md *metadata.MD) CallOption {
@@ -654,18 +666,46 @@ func encode(c baseCodec, msg any) ([]byte, error) {
 	return b, nil
 }
 
+<<<<<<< HEAD
 // compress returns the input bytes compressed by compressor or cp.
 // If both compressors are nil, or if the message has zero length, returns nil,
 // indicating no compression was done.
+=======
+<<<<<<< HEAD
+// compress returns the input bytes compressed by compressor or cp.  If both
+// compressors are nil, returns nil.
+=======
+<<<<<<< HEAD
+// compress returns the input bytes compressed by compressor or cp.
+// If both compressors are nil, or if the message has zero length, returns nil,
+// indicating no compression was done.
+=======
+// compress returns the input bytes compressed by compressor or cp.  If both
+// compressors are nil, returns nil.
+>>>>>>> master
+>>>>>>> master
+>>>>>>> master
 //
 // TODO(dfawley): eliminate cp parameter by wrapping Compressor in an encoding.Compressor.
 func compress(in []byte, cp Compressor, compressor encoding.Compressor) ([]byte, error) {
 	if compressor == nil && cp == nil {
 		return nil, nil
 	}
+<<<<<<< HEAD
 	if len(in) == 0 {
 		return nil, nil
 	}
+=======
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+	if len(in) == 0 {
+		return nil, nil
+	}
+=======
+>>>>>>> master
+>>>>>>> master
+>>>>>>> master
 	wrapErr := func(err error) error {
 		return status.Errorf(codes.Internal, "grpc: error while compressing: %v", err.Error())
 	}
@@ -744,6 +784,12 @@ type payloadInfo struct {
 	uncompressedBytes []byte
 }
 
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> master
 // recvAndDecompress reads a message from the stream, decompressing it if necessary.
 //
 // Cancelling the returned cancel function releases the buffer back to the pool. So the caller should cancel as soon as
@@ -757,6 +803,26 @@ func recvAndDecompress(p *parser, s *transport.Stream, dc Decompressor, maxRecei
 
 	if st := checkRecvPayload(pf, s.RecvCompress(), compressor != nil || dc != nil); st != nil {
 		return nil, nil, st.Err()
+<<<<<<< HEAD
+=======
+=======
+>>>>>>> master
+func recvAndDecompress(p *parser, s *transport.Stream, dc Decompressor, maxReceiveMessageSize int, payInfo *payloadInfo, compressor encoding.Compressor) ([]byte, error) {
+	pf, buf, err := p.recvMsg(maxReceiveMessageSize)
+	if err != nil {
+		return nil, err
+	}
+	if payInfo != nil {
+		payInfo.compressedLength = len(buf)
+	}
+
+	if st := checkRecvPayload(pf, s.RecvCompress(), compressor != nil || dc != nil); st != nil {
+		return nil, st.Err()
+<<<<<<< HEAD
+=======
+>>>>>>> master
+>>>>>>> master
+>>>>>>> master
 	}
 
 	var size int
@@ -764,6 +830,12 @@ func recvAndDecompress(p *parser, s *transport.Stream, dc Decompressor, maxRecei
 		// To match legacy behavior, if the decompressor is set by WithDecompressor or RPCDecompressor,
 		// use this decompressor as the default.
 		if dc != nil {
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> master
 			uncompressedBuf, err = dc.Do(bytes.NewReader(compressedBuf))
 			size = len(uncompressedBuf)
 		} else {
@@ -771,10 +843,32 @@ func recvAndDecompress(p *parser, s *transport.Stream, dc Decompressor, maxRecei
 		}
 		if err != nil {
 			return nil, nil, status.Errorf(codes.Internal, "grpc: failed to decompress the received message: %v", err)
+<<<<<<< HEAD
+=======
+=======
+>>>>>>> master
+			buf, err = dc.Do(bytes.NewReader(buf))
+			size = len(buf)
+		} else {
+			buf, size, err = decompress(compressor, buf, maxReceiveMessageSize)
+		}
+		if err != nil {
+			return nil, status.Errorf(codes.Internal, "grpc: failed to decompress the received message: %v", err)
+<<<<<<< HEAD
+=======
+>>>>>>> master
+>>>>>>> master
+>>>>>>> master
 		}
 		if size > maxReceiveMessageSize {
 			// TODO: Revisit the error code. Currently keep it consistent with java
 			// implementation.
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> master
 			return nil, nil, status.Errorf(codes.ResourceExhausted, "grpc: received message after decompression larger than max (%d vs. %d)", size, maxReceiveMessageSize)
 		}
 	} else {
@@ -793,6 +887,19 @@ func recvAndDecompress(p *parser, s *transport.Stream, dc Decompressor, maxRecei
 	}
 
 	return uncompressedBuf, cancel, nil
+<<<<<<< HEAD
+=======
+=======
+>>>>>>> master
+			return nil, status.Errorf(codes.ResourceExhausted, "grpc: received message after decompression larger than max (%d vs. %d)", size, maxReceiveMessageSize)
+		}
+	}
+	return buf, nil
+<<<<<<< HEAD
+=======
+>>>>>>> master
+>>>>>>> master
+>>>>>>> master
 }
 
 // Using compressor, decompress d, returning data and size.
@@ -812,9 +919,21 @@ func decompress(compressor encoding.Compressor, d []byte, maxReceiveMessageSize 
 			// size is used as an estimate to size the buffer, but we
 			// will read more data if available.
 			// +MinRead so ReadFrom will not reallocate if size is correct.
+<<<<<<< HEAD
 			//
 			// TODO: If we ensure that the buffer size is the same as the DecompressedSize,
 			// we can also utilize the recv buffer pool here.
+=======
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+			//
+			// TODO: If we ensure that the buffer size is the same as the DecompressedSize,
+			// we can also utilize the recv buffer pool here.
+=======
+>>>>>>> master
+>>>>>>> master
+>>>>>>> master
 			buf := bytes.NewBuffer(make([]byte, 0, size+bytes.MinRead))
 			bytesRead, err := buf.ReadFrom(io.LimitReader(dcReader, int64(maxReceiveMessageSize)+1))
 			return buf.Bytes(), int(bytesRead), err
@@ -830,6 +949,12 @@ func decompress(compressor encoding.Compressor, d []byte, maxReceiveMessageSize 
 // dc takes precedence over compressor.
 // TODO(dfawley): wrap the old compressor/decompressor using the new API?
 func recv(p *parser, c baseCodec, s *transport.Stream, dc Decompressor, m any, maxReceiveMessageSize int, payInfo *payloadInfo, compressor encoding.Compressor) error {
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> master
 	buf, cancel, err := recvAndDecompress(p, s, dc, maxReceiveMessageSize, payInfo, compressor)
 	if err != nil {
 		return err
@@ -839,6 +964,27 @@ func recv(p *parser, c baseCodec, s *transport.Stream, dc Decompressor, m any, m
 	if err := c.Unmarshal(buf, m); err != nil {
 		return status.Errorf(codes.Internal, "grpc: failed to unmarshal the received message: %v", err)
 	}
+<<<<<<< HEAD
+=======
+=======
+>>>>>>> master
+	buf, err := recvAndDecompress(p, s, dc, maxReceiveMessageSize, payInfo, compressor)
+	if err != nil {
+		return err
+	}
+	if err := c.Unmarshal(buf, m); err != nil {
+		return status.Errorf(codes.Internal, "grpc: failed to unmarshal the received message: %v", err)
+	}
+	if payInfo != nil {
+		payInfo.uncompressedBytes = buf
+	} else {
+		p.recvBufferPool.Put(&buf)
+	}
+<<<<<<< HEAD
+=======
+>>>>>>> master
+>>>>>>> master
+>>>>>>> master
 	return nil
 }
 
@@ -962,6 +1108,31 @@ func setCallInfoCodec(c *callInfo) error {
 	return nil
 }
 
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+=======
+>>>>>>> master
+// channelzData is used to store channelz related data for ClientConn, addrConn and Server.
+// These fields cannot be embedded in the original structs (e.g. ClientConn), since to do atomic
+// operation on int64 variable on 32-bit machine, user is responsible to enforce memory alignment.
+// Here, by grouping those int64 fields inside a struct, we are enforcing the alignment.
+type channelzData struct {
+	callsStarted   int64
+	callsFailed    int64
+	callsSucceeded int64
+	// lastCallStartedTime stores the timestamp that last call starts. It is of int64 type instead of
+	// time.Time since it's more costly to atomically update time.Time variable than int64 variable.
+	lastCallStartedTime int64
+}
+
+<<<<<<< HEAD
+=======
+>>>>>>> master
+>>>>>>> master
+>>>>>>> master
 // The SupportPackageIsVersion variables are referenced from generated protocol
 // buffer files to ensure compatibility with the gRPC version used.  The latest
 // support package version is 7.
@@ -975,7 +1146,17 @@ const (
 	SupportPackageIsVersion5 = true
 	SupportPackageIsVersion6 = true
 	SupportPackageIsVersion7 = true
+<<<<<<< HEAD
 	SupportPackageIsVersion8 = true
+=======
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+	SupportPackageIsVersion8 = true
+=======
+>>>>>>> master
+>>>>>>> master
+>>>>>>> master
 )
 
 const grpcUA = "grpc-go/" + Version

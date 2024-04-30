@@ -1,0 +1,15 @@
+{
+  "index": {
+      "fields": [
+          {
+            "subject.reference": "asc"
+          },
+          {
+            "category.text": "asc"
+          }
+      ]
+  },
+  "ddoc": "indexByPatientAndCategory",
+  "name": "indexByPatientAndCategory",
+  "type": "json"
+}

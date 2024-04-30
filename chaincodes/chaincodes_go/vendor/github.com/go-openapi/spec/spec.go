@@ -26,7 +26,19 @@ import (
 const (
 	// SwaggerSchemaURL the url for the swagger 2.0 schema to validate specs
 	SwaggerSchemaURL = "http://swagger.io/v2/schema.json#"
+<<<<<<< HEAD
 	// JSONSchemaURL the url for the json schema
+=======
+<<<<<<< HEAD
+	// JSONSchemaURL the url for the json schema schema
+=======
+<<<<<<< HEAD
+	// JSONSchemaURL the url for the json schema
+=======
+	// JSONSchemaURL the url for the json schema schema
+>>>>>>> master
+>>>>>>> master
+>>>>>>> master
 	JSONSchemaURL = "http://json-schema.org/draft-04/schema#"
 )
 
@@ -41,7 +53,19 @@ func MustLoadJSONSchemaDraft04() *Schema {
 
 // JSONSchemaDraft04 loads the json schema document for json shema draft04
 func JSONSchemaDraft04() (*Schema, error) {
+<<<<<<< HEAD
 	b, err := jsonschemaDraft04JSONBytes()
+=======
+<<<<<<< HEAD
+	b, err := Asset("jsonschema-draft-04.json")
+=======
+<<<<<<< HEAD
+	b, err := jsonschemaDraft04JSONBytes()
+=======
+	b, err := Asset("jsonschema-draft-04.json")
+>>>>>>> master
+>>>>>>> master
+>>>>>>> master
 	if err != nil {
 		return nil, err
 	}
@@ -65,7 +89,19 @@ func MustLoadSwagger20Schema() *Schema {
 // Swagger20Schema loads the swagger 2.0 schema from the embedded assets
 func Swagger20Schema() (*Schema, error) {
 
+<<<<<<< HEAD
 	b, err := v2SchemaJSONBytes()
+=======
+<<<<<<< HEAD
+	b, err := Asset("v2/schema.json")
+=======
+<<<<<<< HEAD
+	b, err := v2SchemaJSONBytes()
+=======
+	b, err := Asset("v2/schema.json")
+>>>>>>> master
+>>>>>>> master
+>>>>>>> master
 	if err != nil {
 		return nil, err
 	}
