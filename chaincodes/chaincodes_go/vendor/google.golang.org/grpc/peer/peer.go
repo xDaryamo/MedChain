@@ -32,6 +32,14 @@ import (
 type Peer struct {
 	// Addr is the peer address.
 	Addr net.Addr
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+	// LocalAddr is the local address.
+	LocalAddr net.Addr
+=======
+>>>>>>> master
+>>>>>>> master
 	// AuthInfo is the authentication information of the transport.
 	// It is nil if there is no transport security being used.
 	AuthInfo credentials.AuthInfo

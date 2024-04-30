@@ -25,8 +25,18 @@ import (
 	"sync"
 	"time"
 
+<<<<<<< HEAD
 	"github.com/golang/protobuf/proto"
 	binlogpb "google.golang.org/grpc/binarylog/grpc_binarylog_v1"
+=======
+<<<<<<< HEAD
+	binlogpb "google.golang.org/grpc/binarylog/grpc_binarylog_v1"
+	"google.golang.org/protobuf/proto"
+=======
+	"github.com/golang/protobuf/proto"
+	binlogpb "google.golang.org/grpc/binarylog/grpc_binarylog_v1"
+>>>>>>> master
+>>>>>>> master
 )
 
 var (

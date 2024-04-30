@@ -50,6 +50,14 @@ var (
 	//
 	// When both bootstrap FileName and FileContent are set, FileName is used.
 	XDSBootstrapFileContent = os.Getenv(XDSBootstrapFileContentEnv)
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+
+	// C2PResolverTestOnlyTrafficDirectorURI is the TD URI for testing.
+	C2PResolverTestOnlyTrafficDirectorURI = os.Getenv("GRPC_TEST_ONLY_GOOGLE_C2P_RESOLVER_TRAFFIC_DIRECTOR_URI")
+=======
+>>>>>>> master
 	// XDSRingHash indicates whether ring hash support is enabled, which can be
 	// disabled by setting the environment variable
 	// "GRPC_XDS_EXPERIMENTAL_ENABLE_RING_HASH" to "false".
@@ -92,4 +100,8 @@ var (
 	// can be disabled by setting the environment variable
 	// "GRPC_EXPERIMENTAL_XDS_CUSTOM_LB_CONFIG" to "false".
 	XDSCustomLBPolicy = boolFromEnv("GRPC_EXPERIMENTAL_XDS_CUSTOM_LB_CONFIG", true)
+<<<<<<< HEAD
+=======
+>>>>>>> master
+>>>>>>> master
 )

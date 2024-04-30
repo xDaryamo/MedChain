@@ -18,7 +18,18 @@
 // Package buffer provides an implementation of an unbounded buffer.
 package buffer
 
+<<<<<<< HEAD
 import "sync"
+=======
+<<<<<<< HEAD
+import (
+	"errors"
+	"sync"
+)
+=======
+import "sync"
+>>>>>>> master
+>>>>>>> master
 
 // Unbounded is an implementation of an unbounded buffer which does not use
 // extra goroutines. This is typically used for passing updates from one entity
@@ -36,6 +47,13 @@ import "sync"
 type Unbounded struct {
 	c       chan any
 	closed  bool
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+	closing bool
+=======
+>>>>>>> master
+>>>>>>> master
 	mu      sync.Mutex
 	backlog []any
 }
@@ -45,32 +63,80 @@ func NewUnbounded() *Unbounded {
 	return &Unbounded{c: make(chan any, 1)}
 }
 
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+var errBufferClosed = errors.New("Put called on closed buffer.Unbounded")
+
+// Put adds t to the unbounded buffer.
+func (b *Unbounded) Put(t any) error {
+	b.mu.Lock()
+	defer b.mu.Unlock()
+	if b.closing {
+		return errBufferClosed
+=======
+>>>>>>> master
 // Put adds t to the unbounded buffer.
 func (b *Unbounded) Put(t any) {
 	b.mu.Lock()
 	defer b.mu.Unlock()
 	if b.closed {
 		return
+<<<<<<< HEAD
+=======
+>>>>>>> master
+>>>>>>> master
 	}
 	if len(b.backlog) == 0 {
 		select {
 		case b.c <- t:
+<<<<<<< HEAD
 			return
+=======
+<<<<<<< HEAD
+			return nil
+=======
+			return
+>>>>>>> master
+>>>>>>> master
 		default:
 		}
 	}
 	b.backlog = append(b.backlog, t)
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+	return nil
+}
+
+// Load sends the earliest buffered data, if any, onto the read channel returned
+// by Get(). Users are expected to call this every time they successfully read a
+=======
+>>>>>>> master
 }
 
 // Load sends the earliest buffered data, if any, onto the read channel
 // returned by Get(). Users are expected to call this every time they read a
+<<<<<<< HEAD
+=======
+>>>>>>> master
+>>>>>>> master
 // value from the read channel.
 func (b *Unbounded) Load() {
 	b.mu.Lock()
 	defer b.mu.Unlock()
+<<<<<<< HEAD
 	if b.closed {
 		return
 	}
+=======
+<<<<<<< HEAD
+=======
+	if b.closed {
+		return
+	}
+>>>>>>> master
+>>>>>>> master
 	if len(b.backlog) > 0 {
 		select {
 		case b.c <- b.backlog[0]:
@@ -78,6 +144,14 @@ func (b *Unbounded) Load() {
 			b.backlog = b.backlog[1:]
 		default:
 		}
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+	} else if b.closing && !b.closed {
+		close(b.c)
+=======
+>>>>>>> master
+>>>>>>> master
 	}
 }
 
@@ -88,11 +162,38 @@ func (b *Unbounded) Load() {
 // send the next buffered value onto the channel if there is any.
 //
 // If the unbounded buffer is closed, the read channel returned by this method
+<<<<<<< HEAD
 // is closed.
+=======
+<<<<<<< HEAD
+// is closed after all data is drained.
+=======
+// is closed.
+>>>>>>> master
+>>>>>>> master
 func (b *Unbounded) Get() <-chan any {
 	return b.c
 }
 
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+// Close closes the unbounded buffer. No subsequent data may be Put(), and the
+// channel returned from Get() will be closed after all the data is read and
+// Load() is called for the final time.
+func (b *Unbounded) Close() {
+	b.mu.Lock()
+	defer b.mu.Unlock()
+	if b.closing {
+		return
+	}
+	b.closing = true
+	if len(b.backlog) == 0 {
+		b.closed = true
+		close(b.c)
+	}
+=======
+>>>>>>> master
 // Close closes the unbounded buffer.
 func (b *Unbounded) Close() {
 	b.mu.Lock()
@@ -102,4 +203,8 @@ func (b *Unbounded) Close() {
 	}
 	b.closed = true
 	close(b.c)
+<<<<<<< HEAD
+=======
+>>>>>>> master
+>>>>>>> master
 }

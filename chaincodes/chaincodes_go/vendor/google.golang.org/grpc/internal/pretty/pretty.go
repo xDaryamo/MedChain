@@ -24,10 +24,21 @@ import (
 	"encoding/json"
 	"fmt"
 
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+	"google.golang.org/protobuf/encoding/protojson"
+	"google.golang.org/protobuf/protoadapt"
+=======
+>>>>>>> master
 	"github.com/golang/protobuf/jsonpb"
 	protov1 "github.com/golang/protobuf/proto"
 	"google.golang.org/protobuf/encoding/protojson"
 	protov2 "google.golang.org/protobuf/proto"
+<<<<<<< HEAD
+=======
+>>>>>>> master
+>>>>>>> master
 )
 
 const jsonIndent = "  "
@@ -36,6 +47,19 @@ const jsonIndent = "  "
 //
 // If marshal fails, it falls back to fmt.Sprintf("%+v").
 func ToJSON(e any) string {
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+	if ee, ok := e.(protoadapt.MessageV1); ok {
+		e = protoadapt.MessageV2Of(ee)
+	}
+
+	if ee, ok := e.(protoadapt.MessageV2); ok {
+		mm := protojson.MarshalOptions{
+			Indent:    jsonIndent,
+			Multiline: true,
+=======
+>>>>>>> master
 	switch ee := e.(type) {
 	case protov1.Message:
 		mm := jsonpb.Marshaler{Indent: jsonIndent}
@@ -51,6 +75,10 @@ func ToJSON(e any) string {
 		mm := protojson.MarshalOptions{
 			Multiline: true,
 			Indent:    jsonIndent,
+<<<<<<< HEAD
+=======
+>>>>>>> master
+>>>>>>> master
 		}
 		ret, err := mm.Marshal(ee)
 		if err != nil {
@@ -60,6 +88,18 @@ func ToJSON(e any) string {
 			return fmt.Sprintf("%+v", ee)
 		}
 		return string(ret)
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+	}
+
+	ret, err := json.MarshalIndent(e, "", jsonIndent)
+	if err != nil {
+		return fmt.Sprintf("%+v", e)
+	}
+	return string(ret)
+=======
+>>>>>>> master
 	default:
 		ret, err := json.MarshalIndent(ee, "", jsonIndent)
 		if err != nil {
@@ -67,6 +107,10 @@ func ToJSON(e any) string {
 		}
 		return string(ret)
 	}
+<<<<<<< HEAD
+=======
+>>>>>>> master
+>>>>>>> master
 }
 
 // FormatJSON formats the input json bytes with indentation.
