@@ -585,6 +585,7 @@ ccflags="$@"
 		$2 ~ /^KEYCTL_/ ||
 		$2 ~ /^PERF_/ ||
 <<<<<<< HEAD
+<<<<<<< HEAD
 		$2 ~ /^SECCOMP_/ ||
 =======
 <<<<<<< HEAD
@@ -597,6 +598,9 @@ ccflags="$@"
 >>>>>>> master
 >>>>>>> master
 >>>>>>> master
+=======
+		$2 ~ /^SECCOMP_MODE_/ ||
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
 		$2 ~ /^SEEK_/ ||
 		$2 ~ /^SCHED_/ ||
 		$2 ~ /^SPLICE_/ ||

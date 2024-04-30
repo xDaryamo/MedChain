@@ -2,6 +2,7 @@
 ## explicit
 github.com/davecgh/go-spew/spew
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 <<<<<<< HEAD
 =======
@@ -23,6 +24,8 @@ github.com/go-openapi/spec
 =======
 =======
 >>>>>>> master
+=======
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
 # github.com/go-openapi/jsonpointer v0.20.0
 ## explicit; go 1.18
 github.com/go-openapi/jsonpointer
@@ -36,10 +39,13 @@ github.com/go-openapi/spec
 # github.com/go-openapi/swag v0.22.4
 ## explicit; go 1.18
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> master
 >>>>>>> master
 >>>>>>> master
+=======
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
 github.com/go-openapi/swag
 # github.com/gobuffalo/envy v1.10.2
 ## explicit; go 1.16
@@ -54,6 +60,7 @@ github.com/gobuffalo/packr
 # github.com/golang/protobuf v1.5.4
 ## explicit; go 1.17
 <<<<<<< HEAD
+<<<<<<< HEAD
 github.com/golang/protobuf/proto
 =======
 <<<<<<< HEAD
@@ -62,16 +69,21 @@ github.com/golang/protobuf/proto
 github.com/golang/protobuf/proto
 =======
 >>>>>>> master
+=======
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
 github.com/golang/protobuf/jsonpb
 github.com/golang/protobuf/proto
 github.com/golang/protobuf/ptypes
 github.com/golang/protobuf/ptypes/any
 github.com/golang/protobuf/ptypes/duration
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> master
 >>>>>>> master
 >>>>>>> master
+=======
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
 github.com/golang/protobuf/ptypes/timestamp
 # github.com/hyperledger/fabric-chaincode-go v0.0.0-20240124143825-7dec3c7e7d45
 ## explicit; go 1.20
@@ -110,6 +122,7 @@ github.com/mailru/easyjson/jwriter
 ## explicit
 github.com/pmezard/go-difflib/difflib
 <<<<<<< HEAD
+<<<<<<< HEAD
 # github.com/rogpeppe/go-internal v1.12.0
 ## explicit; go 1.20
 =======
@@ -126,6 +139,10 @@ github.com/pmezard/go-difflib/difflib
 >>>>>>> master
 >>>>>>> master
 >>>>>>> master
+=======
+# github.com/rogpeppe/go-internal v1.11.0
+## explicit; go 1.19
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
 github.com/rogpeppe/go-internal/modfile
 # github.com/stretchr/objx v0.5.2
 ## explicit; go 1.20
@@ -134,6 +151,7 @@ github.com/stretchr/objx
 ## explicit; go 1.17
 github.com/stretchr/testify/assert
 github.com/stretchr/testify/mock
+<<<<<<< HEAD
 <<<<<<< HEAD
 =======
 <<<<<<< HEAD
@@ -144,6 +162,8 @@ github.com/stretchr/testify/require
 >>>>>>> master
 >>>>>>> master
 >>>>>>> master
+=======
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
 # github.com/xeipuuv/gojsonpointer v0.0.0-20190905194746-02993c407bfb
 ## explicit
 github.com/xeipuuv/gojsonpointer
@@ -154,6 +174,7 @@ github.com/xeipuuv/gojsonreference
 ## explicit
 github.com/xeipuuv/gojsonschema
 <<<<<<< HEAD
+<<<<<<< HEAD
 # golang.org/x/mod v0.17.0
 =======
 <<<<<<< HEAD
@@ -166,12 +187,16 @@ github.com/xeipuuv/gojsonschema
 >>>>>>> master
 >>>>>>> master
 >>>>>>> master
+=======
+# golang.org/x/mod v0.14.0
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
 ## explicit; go 1.18
 golang.org/x/mod/internal/lazyregexp
 golang.org/x/mod/modfile
 golang.org/x/mod/module
 golang.org/x/mod/semver
 <<<<<<< HEAD
+<<<<<<< HEAD
 # golang.org/x/net v0.24.0
 =======
 <<<<<<< HEAD
@@ -184,6 +209,9 @@ golang.org/x/mod/semver
 >>>>>>> master
 >>>>>>> master
 >>>>>>> master
+=======
+# golang.org/x/net v0.20.0
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
 ## explicit; go 1.18
 golang.org/x/net/http/httpguts
 golang.org/x/net/http2
@@ -191,6 +219,7 @@ golang.org/x/net/http2/hpack
 golang.org/x/net/idna
 golang.org/x/net/internal/timeseries
 golang.org/x/net/trace
+<<<<<<< HEAD
 <<<<<<< HEAD
 =======
 <<<<<<< HEAD
@@ -213,12 +242,18 @@ golang.org/x/sys/unix
 >>>>>>> master
 >>>>>>> master
 >>>>>>> master
+=======
+# golang.org/x/sys v0.16.0
+## explicit; go 1.18
+golang.org/x/sys/unix
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
 # golang.org/x/text v0.14.0
 ## explicit; go 1.18
 golang.org/x/text/secure/bidirule
 golang.org/x/text/transform
 golang.org/x/text/unicode/bidi
 golang.org/x/text/unicode/norm
+<<<<<<< HEAD
 <<<<<<< HEAD
 # google.golang.org/genproto/googleapis/rpc v0.0.0-20240415180920-8c6c420018be
 ## explicit; go 1.19
@@ -227,11 +262,14 @@ google.golang.org/genproto/googleapis/rpc/status
 ## explicit; go 1.19
 =======
 <<<<<<< HEAD
+=======
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
 # google.golang.org/genproto/googleapis/rpc v0.0.0-20231030173426-d783a09b4405
 ## explicit; go 1.19
 google.golang.org/genproto/googleapis/rpc/status
 # google.golang.org/grpc v1.59.0
 ## explicit; go 1.19
+<<<<<<< HEAD
 =======
 <<<<<<< HEAD
 # google.golang.org/genproto/googleapis/rpc v0.0.0-20240412170617-26222e5d3d56
@@ -247,6 +285,8 @@ google.golang.org/genproto/googleapis/rpc/status
 ## explicit; go 1.19
 >>>>>>> master
 >>>>>>> master
+=======
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
 google.golang.org/grpc
 google.golang.org/grpc/attributes
 google.golang.org/grpc/backoff
@@ -282,6 +322,7 @@ google.golang.org/grpc/internal/pretty
 google.golang.org/grpc/internal/resolver
 google.golang.org/grpc/internal/resolver/dns
 <<<<<<< HEAD
+<<<<<<< HEAD
 google.golang.org/grpc/internal/resolver/dns/internal
 =======
 <<<<<<< HEAD
@@ -292,6 +333,8 @@ google.golang.org/grpc/internal/resolver/dns/internal
 >>>>>>> master
 >>>>>>> master
 >>>>>>> master
+=======
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
 google.golang.org/grpc/internal/resolver/passthrough
 google.golang.org/grpc/internal/resolver/unix
 google.golang.org/grpc/internal/serviceconfig
@@ -304,6 +347,7 @@ google.golang.org/grpc/metadata
 google.golang.org/grpc/peer
 google.golang.org/grpc/resolver
 <<<<<<< HEAD
+<<<<<<< HEAD
 google.golang.org/grpc/resolver/dns
 =======
 <<<<<<< HEAD
@@ -314,6 +358,8 @@ google.golang.org/grpc/resolver/dns
 >>>>>>> master
 >>>>>>> master
 >>>>>>> master
+=======
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
 google.golang.org/grpc/serviceconfig
 google.golang.org/grpc/stats
 google.golang.org/grpc/status
@@ -345,6 +391,7 @@ google.golang.org/protobuf/internal/strs
 google.golang.org/protobuf/internal/version
 google.golang.org/protobuf/proto
 <<<<<<< HEAD
+<<<<<<< HEAD
 google.golang.org/protobuf/protoadapt
 =======
 <<<<<<< HEAD
@@ -355,6 +402,8 @@ google.golang.org/protobuf/protoadapt
 >>>>>>> master
 >>>>>>> master
 >>>>>>> master
+=======
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
 google.golang.org/protobuf/reflect/protodesc
 google.golang.org/protobuf/reflect/protoreflect
 google.golang.org/protobuf/reflect/protoregistry
@@ -370,6 +419,7 @@ google.golang.org/protobuf/types/known/timestamppb
 ## explicit
 gopkg.in/yaml.v3
 <<<<<<< HEAD
+<<<<<<< HEAD
 # github.com/xDaryamo/Medchain/fhir => ./fhir
 =======
 <<<<<<< HEAD
@@ -381,3 +431,6 @@ gopkg.in/yaml.v3
 =======
 >>>>>>> master
 >>>>>>> master
+=======
+# github.com/xDaryamo/Medchain/fhir => ./fhir
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a

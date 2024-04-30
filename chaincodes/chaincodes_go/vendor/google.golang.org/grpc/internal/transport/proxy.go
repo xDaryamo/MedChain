@@ -29,6 +29,7 @@ import (
 	"net/http/httputil"
 	"net/url"
 <<<<<<< HEAD
+<<<<<<< HEAD
 
 	"google.golang.org/grpc/internal"
 =======
@@ -41,6 +42,8 @@ import (
 >>>>>>> master
 >>>>>>> master
 >>>>>>> master
+=======
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
 )
 
 const proxyAuthHeaderKey = "Proxy-Authorization"
@@ -126,6 +129,7 @@ func doHTTPConnectHandshake(ctx context.Context, conn net.Conn, backendAddr stri
 // is necessary, dials, does the HTTP CONNECT handshake, and returns the
 // connection.
 <<<<<<< HEAD
+<<<<<<< HEAD
 func proxyDial(ctx context.Context, addr string, grpcUA string) (net.Conn, error) {
 =======
 <<<<<<< HEAD
@@ -138,6 +142,9 @@ func proxyDial(ctx context.Context, addr string, grpcUA string) (conn net.Conn, 
 >>>>>>> master
 >>>>>>> master
 >>>>>>> master
+=======
+func proxyDial(ctx context.Context, addr string, grpcUA string) (conn net.Conn, err error) {
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
 	newAddr := addr
 	proxyURL, err := mapAddress(addr)
 	if err != nil {
@@ -147,6 +154,7 @@ func proxyDial(ctx context.Context, addr string, grpcUA string) (conn net.Conn, 
 		newAddr = proxyURL.Host
 	}
 
+<<<<<<< HEAD
 <<<<<<< HEAD
 =======
 <<<<<<< HEAD
@@ -166,6 +174,8 @@ func proxyDial(ctx context.Context, addr string, grpcUA string) (conn net.Conn, 
 =======
 =======
 >>>>>>> master
+=======
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
 	conn, err = (&net.Dialer{}).DialContext(ctx, "tcp", newAddr)
 	if err != nil {
 		return
@@ -176,10 +186,13 @@ func proxyDial(ctx context.Context, addr string, grpcUA string) (conn net.Conn, 
 	}
 	return
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> master
 >>>>>>> master
 >>>>>>> master
+=======
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
 }
 
 func sendHTTPRequest(ctx context.Context, req *http.Request, conn net.Conn) error {

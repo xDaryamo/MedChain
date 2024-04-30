@@ -47,6 +47,7 @@ func init() {
 	internal.JoinDialOptions = newJoinDialOption
 	internal.DisableGlobalDialOptions = newDisableGlobalDialOptions
 <<<<<<< HEAD
+<<<<<<< HEAD
 	internal.WithRecvBufferPool = withRecvBufferPool
 =======
 <<<<<<< HEAD
@@ -57,6 +58,8 @@ func init() {
 >>>>>>> master
 >>>>>>> master
 >>>>>>> master
+=======
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
 }
 
 // dialOptions configure a Dial call. dialOptions are set by the DialOption
@@ -75,6 +78,7 @@ type dialOptions struct {
 	returnLastError             bool
 	timeout                     time.Duration
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 <<<<<<< HEAD
 	scChan                      <-chan ServiceConfig
@@ -85,11 +89,15 @@ type dialOptions struct {
 >>>>>>> master
 >>>>>>> master
 >>>>>>> master
+=======
+	scChan                      <-chan ServiceConfig
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
 	authority                   string
 	binaryLogger                binarylog.Logger
 	copts                       transport.ConnectOptions
 	callOptions                 []CallOption
 <<<<<<< HEAD
+<<<<<<< HEAD
 	channelzParent              channelz.Identifier
 =======
 <<<<<<< HEAD
@@ -102,6 +110,9 @@ type dialOptions struct {
 >>>>>>> master
 >>>>>>> master
 >>>>>>> master
+=======
+	channelzParentID            *channelz.Identifier
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
 	disableServiceConfig        bool
 	disableRetry                bool
 	disableHealthCheck          bool
@@ -113,6 +124,7 @@ type dialOptions struct {
 	idleTimeout                 time.Duration
 	recvBufferPool              SharedBufferPool
 <<<<<<< HEAD
+<<<<<<< HEAD
 	defaultScheme               string
 =======
 <<<<<<< HEAD
@@ -123,6 +135,8 @@ type dialOptions struct {
 >>>>>>> master
 >>>>>>> master
 >>>>>>> master
+=======
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
 }
 
 // DialOption configures how we set up the connection.
@@ -199,6 +213,7 @@ func WithSharedWriteBuffer(val bool) DialOption {
 
 // WithWriteBufferSize determines how much data can be batched before doing a
 <<<<<<< HEAD
+<<<<<<< HEAD
 // write on the wire. The default value for this buffer is 32KB.
 =======
 <<<<<<< HEAD
@@ -215,6 +230,11 @@ func WithSharedWriteBuffer(val bool) DialOption {
 >>>>>>> master
 >>>>>>> master
 >>>>>>> master
+=======
+// write on the wire. The corresponding memory allocation for this buffer will
+// be twice the size to keep syscalls low. The default value for this buffer is
+// 32KB.
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
 //
 // Zero or negative values will disable the write buffer such that each write
 // will be on underlying connection. Note: A Send call may not directly
@@ -309,12 +329,15 @@ func WithDecompressor(dc Decompressor) DialOption {
 }
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 <<<<<<< HEAD
 =======
 <<<<<<< HEAD
 =======
 >>>>>>> master
+=======
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
 // WithServiceConfig returns a DialOption which has a channel to read the
 // service configuration.
 //
@@ -329,10 +352,13 @@ func WithServiceConfig(c <-chan ServiceConfig) DialOption {
 }
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> master
 >>>>>>> master
 >>>>>>> master
+=======
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
 // WithConnectParams configures the ClientConn to use the provided ConnectParams
 // for creating and maintaining connections to servers.
 //
@@ -484,6 +510,7 @@ func WithTimeout(d time.Duration) DialOption {
 // returned by f, gRPC checks the error's Temporary() method to decide if it
 // should try to reconnect to the network address.
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 <<<<<<< HEAD
 =======
@@ -506,6 +533,8 @@ func WithTimeout(d time.Duration) DialOption {
 >>>>>>> master
 >>>>>>> master
 >>>>>>> master
+=======
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
 func WithContextDialer(f func(context.Context, string) (net.Conn, error)) DialOption {
 	return newFuncDialOption(func(o *dialOptions) {
 		o.copts.Dialer = f
@@ -581,6 +610,7 @@ func FailOnNonTempDialError(f bool) DialOption {
 func WithUserAgent(s string) DialOption {
 	return newFuncDialOption(func(o *dialOptions) {
 <<<<<<< HEAD
+<<<<<<< HEAD
 		o.copts.UserAgent = s + " " + grpcUA
 =======
 <<<<<<< HEAD
@@ -593,6 +623,9 @@ func WithUserAgent(s string) DialOption {
 >>>>>>> master
 >>>>>>> master
 >>>>>>> master
+=======
+		o.copts.UserAgent = s
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
 	})
 }
 
@@ -663,6 +696,7 @@ func WithAuthority(a string) DialOption {
 // Notice: This API is EXPERIMENTAL and may be changed or removed in a
 // later release.
 <<<<<<< HEAD
+<<<<<<< HEAD
 func WithChannelzParentID(c channelz.Identifier) DialOption {
 	return newFuncDialOption(func(o *dialOptions) {
 		o.channelzParent = c
@@ -683,6 +717,11 @@ func WithChannelzParentID(id *channelz.Identifier) DialOption {
 >>>>>>> master
 >>>>>>> master
 >>>>>>> master
+=======
+func WithChannelzParentID(id *channelz.Identifier) DialOption {
+	return newFuncDialOption(func(o *dialOptions) {
+		o.channelzParentID = id
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
 	})
 }
 
@@ -761,6 +800,7 @@ func withHealthCheckFunc(f internal.HealthChecker) DialOption {
 func defaultDialOptions() dialOptions {
 	return dialOptions{
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 <<<<<<< HEAD
 =======
@@ -781,6 +821,8 @@ func defaultDialOptions() dialOptions {
 =======
 =======
 >>>>>>> master
+=======
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
 		healthCheckFunc: internal.HealthCheckFunc,
 		copts: transport.ConnectOptions{
 			WriteBufferSize: defaultWriteBufSize,
@@ -790,10 +832,13 @@ func defaultDialOptions() dialOptions {
 		recvBufferPool: nopBufferPool{},
 		idleTimeout:    30 * time.Minute,
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> master
 >>>>>>> master
 >>>>>>> master
+=======
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
 	}
 }
 
@@ -808,6 +853,7 @@ func withMinConnectDeadline(f func() time.Duration) DialOption {
 	})
 }
 
+<<<<<<< HEAD
 <<<<<<< HEAD
 =======
 <<<<<<< HEAD
@@ -828,6 +874,8 @@ func withDefaultScheme(s string) DialOption {
 >>>>>>> master
 >>>>>>> master
 >>>>>>> master
+=======
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
 // WithResolvers allows a list of resolver implementations to be registered
 // locally with the ClientConn without needing to be globally registered via
 // resolver.Register.  They will be matched against the scheme used for the
@@ -875,6 +923,7 @@ func WithIdleTimeout(d time.Duration) DialOption {
 // cases, the shared buffer pool will be ignored.
 //
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 <<<<<<< HEAD
 =======
@@ -891,16 +940,21 @@ func withRecvBufferPool(bufferPool SharedBufferPool) DialOption {
 =======
 =======
 >>>>>>> master
+=======
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
 // # Experimental
 //
 // Notice: This API is EXPERIMENTAL and may be changed or removed in a
 // later release.
 func WithRecvBufferPool(bufferPool SharedBufferPool) DialOption {
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> master
 >>>>>>> master
 >>>>>>> master
+=======
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
 	return newFuncDialOption(func(o *dialOptions) {
 		o.recvBufferPool = bufferPool
 	})

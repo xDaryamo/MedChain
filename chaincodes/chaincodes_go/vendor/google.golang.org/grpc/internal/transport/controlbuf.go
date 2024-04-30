@@ -536,6 +536,7 @@ const minBatchSize = 1000
 //
 // Upon exiting, if the error causing the exit is not an I/O error, run()
 <<<<<<< HEAD
+<<<<<<< HEAD
 // flushes the underlying connection.  The connection is always left open to
 // allow different closing behavior on the client and server.
 =======
@@ -552,6 +553,10 @@ const minBatchSize = 1000
 >>>>>>> master
 >>>>>>> master
 >>>>>>> master
+=======
+// flushes and closes the underlying connection.  Otherwise, the connection is
+// left open to allow the I/O error to be encountered by the reader instead.
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
 func (l *loopyWriter) run() (err error) {
 	defer func() {
 		if l.logger.V(logLevel) {
@@ -560,6 +565,7 @@ func (l *loopyWriter) run() (err error) {
 		if !isIOError(err) {
 			l.framer.writer.Flush()
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 <<<<<<< HEAD
 			l.conn.Close()
@@ -570,6 +576,9 @@ func (l *loopyWriter) run() (err error) {
 >>>>>>> master
 >>>>>>> master
 >>>>>>> master
+=======
+			l.conn.Close()
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
 		}
 		l.cbuf.finish()
 	}()

@@ -111,6 +111,7 @@ func SetForToken(document any, decodedToken string, value any) (any, error) {
 }
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 <<<<<<< HEAD
 =======
@@ -144,6 +145,8 @@ func getSingleImpl(node any, decodedToken string, nameProvider *swag.NameProvide
 =======
 =======
 >>>>>>> master
+=======
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
 func getSingleImpl(node any, decodedToken string, nameProvider *swag.NameProvider) (any, reflect.Kind, error) {
 	rValue := reflect.Indirect(reflect.ValueOf(node))
 	kind := rValue.Kind()
@@ -151,14 +154,18 @@ func getSingleImpl(node any, decodedToken string, nameProvider *swag.NameProvide
 	if rValue.Type().Implements(jsonPointableType) {
 		r, err := node.(JSONPointable).JSONLookup(decodedToken)
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> master
 >>>>>>> master
 >>>>>>> master
+=======
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
 		if err != nil {
 			return nil, kind, err
 		}
 		return r, kind, nil
+<<<<<<< HEAD
 <<<<<<< HEAD
 =======
 <<<<<<< HEAD
@@ -182,6 +189,11 @@ func getSingleImpl(node any, decodedToken string, nameProvider *swag.NameProvide
 >>>>>>> master
 >>>>>>> master
 >>>>>>> master
+=======
+	}
+
+	switch kind {
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
 	case reflect.Struct:
 		nm, ok := nameProvider.GetGoNameForType(rValue.Type(), decodedToken)
 		if !ok {
@@ -230,6 +242,7 @@ func setSingleImpl(node, data any, decodedToken string, nameProvider *swag.NameP
 	}
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 	switch rValue.Kind() { //nolint:exhaustive
 =======
 <<<<<<< HEAD
@@ -242,6 +255,9 @@ func setSingleImpl(node, data any, decodedToken string, nameProvider *swag.NameP
 >>>>>>> master
 >>>>>>> master
 >>>>>>> master
+=======
+	switch rValue.Kind() {
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
 	case reflect.Struct:
 		nm, ok := nameProvider.GetGoNameForType(rValue.Type(), decodedToken)
 		if !ok {
@@ -303,6 +319,7 @@ func (p *Pointer) get(node any, nameProvider *swag.NameProvider) (any, reflect.K
 			return nil, knd, err
 		}
 <<<<<<< HEAD
+<<<<<<< HEAD
 		node = r
 =======
 <<<<<<< HEAD
@@ -317,6 +334,10 @@ func (p *Pointer) get(node any, nameProvider *swag.NameProvider) (any, reflect.K
 >>>>>>> master
 >>>>>>> master
 >>>>>>> master
+=======
+		node, kind = r, knd
+
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
 	}
 
 	rValue := reflect.ValueOf(node)
@@ -330,6 +351,7 @@ func (p *Pointer) set(node, data any, nameProvider *swag.NameProvider) error {
 
 	if knd != reflect.Ptr && knd != reflect.Struct && knd != reflect.Map && knd != reflect.Slice && knd != reflect.Array {
 <<<<<<< HEAD
+<<<<<<< HEAD
 		return errors.New("only structs, pointers, maps and slices are supported for setting values")
 =======
 <<<<<<< HEAD
@@ -342,6 +364,9 @@ func (p *Pointer) set(node, data any, nameProvider *swag.NameProvider) error {
 >>>>>>> master
 >>>>>>> master
 >>>>>>> master
+=======
+		return fmt.Errorf("only structs, pointers, maps and slices are supported for setting values")
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
 	}
 
 	if nameProvider == nil {
@@ -381,6 +406,7 @@ func (p *Pointer) set(node, data any, nameProvider *swag.NameProvider) error {
 		}
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 		switch kind { //nolint:exhaustive
 =======
 <<<<<<< HEAD
@@ -393,6 +419,9 @@ func (p *Pointer) set(node, data any, nameProvider *swag.NameProvider) error {
 >>>>>>> master
 >>>>>>> master
 >>>>>>> master
+=======
+		switch kind {
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
 		case reflect.Struct:
 			nm, ok := nameProvider.GetGoNameForType(rValue.Type(), decodedToken)
 			if !ok {
@@ -514,6 +543,7 @@ func offsetSingleObject(dec *json.Decoder, decodedToken string) (int64, error) {
 			switch tk {
 			case '{':
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 <<<<<<< HEAD
 =======
@@ -528,16 +558,21 @@ func offsetSingleObject(dec *json.Decoder, decodedToken string) (int64, error) {
 =======
 =======
 >>>>>>> master
+=======
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
 				if err := drainSingle(dec); err != nil {
 					return 0, err
 				}
 			case '[':
 				if err := drainSingle(dec); err != nil {
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> master
 >>>>>>> master
 >>>>>>> master
+=======
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
 					return 0, err
 				}
 			}
@@ -564,6 +599,7 @@ func offsetSingleArray(dec *json.Decoder, decodedToken string) (int64, error) {
 			return 0, err
 		}
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 <<<<<<< HEAD
 =======
@@ -582,6 +618,8 @@ func offsetSingleArray(dec *json.Decoder, decodedToken string) (int64, error) {
 =======
 =======
 >>>>>>> master
+=======
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
 		switch tk := tk.(type) {
 		case json.Delim:
 			switch tk {
@@ -592,16 +630,20 @@ func offsetSingleArray(dec *json.Decoder, decodedToken string) (int64, error) {
 			case '[':
 				if err := drainSingle(dec); err != nil {
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> master
 >>>>>>> master
 >>>>>>> master
+=======
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
 					return 0, err
 				}
 			}
 		}
 	}
 <<<<<<< HEAD
+<<<<<<< HEAD
 
 =======
 <<<<<<< HEAD
@@ -612,6 +654,8 @@ func offsetSingleArray(dec *json.Decoder, decodedToken string) (int64, error) {
 >>>>>>> master
 >>>>>>> master
 >>>>>>> master
+=======
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
 	if !dec.More() {
 		return 0, fmt.Errorf("token reference %q not found", decodedToken)
 	}
@@ -620,6 +664,7 @@ func offsetSingleArray(dec *json.Decoder, decodedToken string) (int64, error) {
 
 // drainSingle drains a single level of object or array.
 <<<<<<< HEAD
+<<<<<<< HEAD
 // The decoder has to guarantee the beginning delim (i.e. '{' or '[') has been consumed.
 =======
 <<<<<<< HEAD
@@ -632,12 +677,16 @@ func offsetSingleArray(dec *json.Decoder, decodedToken string) (int64, error) {
 >>>>>>> master
 >>>>>>> master
 >>>>>>> master
+=======
+// The decoder has to guarantee the begining delim (i.e. '{' or '[') has been consumed.
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
 func drainSingle(dec *json.Decoder) error {
 	for dec.More() {
 		tk, err := dec.Token()
 		if err != nil {
 			return err
 		}
+<<<<<<< HEAD
 <<<<<<< HEAD
 =======
 <<<<<<< HEAD
@@ -656,6 +705,8 @@ func drainSingle(dec *json.Decoder) error {
 =======
 =======
 >>>>>>> master
+=======
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
 		switch tk := tk.(type) {
 		case json.Delim:
 			switch tk {
@@ -666,16 +717,20 @@ func drainSingle(dec *json.Decoder) error {
 			case '[':
 				if err := drainSingle(dec); err != nil {
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> master
 >>>>>>> master
 >>>>>>> master
+=======
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
 					return err
 				}
 			}
 		}
 	}
 <<<<<<< HEAD
+<<<<<<< HEAD
 
 =======
 <<<<<<< HEAD
@@ -686,6 +741,8 @@ func drainSingle(dec *json.Decoder) error {
 >>>>>>> master
 >>>>>>> master
 >>>>>>> master
+=======
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
 	// Consumes the ending delim
 	if _, err := dec.Token(); err != nil {
 		return err
@@ -708,6 +765,7 @@ const (
 // Unescape unescapes a json pointer reference token string to the original representation
 func Unescape(token string) string {
 <<<<<<< HEAD
+<<<<<<< HEAD
 	step1 := strings.ReplaceAll(token, encRefTok1, decRefTok1)
 	step2 := strings.ReplaceAll(step1, encRefTok0, decRefTok0)
 =======
@@ -724,12 +782,17 @@ func Unescape(token string) string {
 >>>>>>> master
 >>>>>>> master
 >>>>>>> master
+=======
+	step1 := strings.Replace(token, encRefTok1, decRefTok1, -1)
+	step2 := strings.Replace(step1, encRefTok0, decRefTok0, -1)
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
 	return step2
 }
 
 // Escape escapes a pointer reference token string
 func Escape(token string) string {
 <<<<<<< HEAD
+<<<<<<< HEAD
 	step1 := strings.ReplaceAll(token, decRefTok0, encRefTok0)
 	step2 := strings.ReplaceAll(step1, decRefTok1, encRefTok1)
 =======
@@ -746,5 +809,9 @@ func Escape(token string) string {
 >>>>>>> master
 >>>>>>> master
 >>>>>>> master
+=======
+	step1 := strings.Replace(token, decRefTok0, encRefTok0, -1)
+	step2 := strings.Replace(step1, decRefTok1, encRefTok1, -1)
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
 	return step2
 }

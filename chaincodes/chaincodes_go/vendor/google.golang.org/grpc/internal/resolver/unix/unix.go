@@ -62,6 +62,7 @@ func (b *builder) Scheme() string {
 }
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 <<<<<<< HEAD
 =======
@@ -77,6 +78,8 @@ func (b *builder) OverrideAuthority(resolver.Target) string {
 >>>>>>> master
 >>>>>>> master
 >>>>>>> master
+=======
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
 type nopResolver struct {
 }
 

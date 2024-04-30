@@ -78,6 +78,7 @@ func (p *pipe) Read(d []byte) (n int, err error) {
 }
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 <<<<<<< HEAD
 var errClosedPipeWrite = errors.New("write on closed buffer")
@@ -95,6 +96,9 @@ var errClosedPipeWrite = errors.New("write on closed buffer")
 >>>>>>> master
 >>>>>>> master
 >>>>>>> master
+=======
+var errClosedPipeWrite = errors.New("write on closed buffer")
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
 
 // Write copies bytes from p into the buffer and wakes a reader.
 // It is an error to write more data than the buffer can hold.
@@ -108,6 +112,7 @@ func (p *pipe) Write(d []byte) (n int, err error) {
 	if p.err != nil || p.breakErr != nil {
 		return 0, errClosedPipeWrite
 	}
+<<<<<<< HEAD
 <<<<<<< HEAD
 =======
 <<<<<<< HEAD
@@ -126,6 +131,8 @@ func (p *pipe) Write(d []byte) (n int, err error) {
 >>>>>>> master
 >>>>>>> master
 >>>>>>> master
+=======
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
 	return p.b.Write(d)
 }
 

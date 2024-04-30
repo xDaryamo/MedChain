@@ -17,6 +17,7 @@
  */
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 <<<<<<< HEAD
 =======
@@ -36,6 +37,8 @@ import (
 =======
 =======
 >>>>>>> master
+=======
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
 // Package channelz defines APIs for enabling channelz service, entry
 // registration/deletion, and accessing channelz data. It also defines channelz
 // metric struct formats.
@@ -56,10 +59,13 @@ import (
 const (
 	defaultMaxTraceEntry int32 = 30
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> master
 >>>>>>> master
 >>>>>>> master
+=======
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
 )
 
 var (
@@ -67,6 +73,7 @@ var (
 	// outside this package except by tests.
 	IDGen IDGenerator
 
+<<<<<<< HEAD
 <<<<<<< HEAD
 =======
 <<<<<<< HEAD
@@ -81,20 +88,26 @@ var (
 =======
 =======
 >>>>>>> master
+=======
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
 	db dbWrapper
 	// EntryPerPage defines the number of channelz entries to be shown on a web page.
 	EntryPerPage  = int64(50)
 	curState      int32
 	maxTraceEntry = defaultMaxTraceEntry
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> master
 >>>>>>> master
 >>>>>>> master
+=======
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
 )
 
 // TurnOn turns on channelz data collection.
 func TurnOn() {
+<<<<<<< HEAD
 <<<<<<< HEAD
 =======
 <<<<<<< HEAD
@@ -111,15 +124,20 @@ func init() {
 =======
 =======
 >>>>>>> master
+=======
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
 	if !IsOn() {
 		db.set(newChannelMap())
 		IDGen.Reset()
 		atomic.StoreInt32(&curState, 1)
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> master
 >>>>>>> master
 >>>>>>> master
+=======
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
 	}
 }
 
@@ -128,6 +146,7 @@ func IsOn() bool {
 	return atomic.LoadInt32(&curState) == 1
 }
 
+<<<<<<< HEAD
 <<<<<<< HEAD
 =======
 <<<<<<< HEAD
@@ -147,6 +166,8 @@ func GetTopChannels(id int64, maxResults int) ([]*Channel, bool) {
 =======
 =======
 >>>>>>> master
+=======
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
 // SetMaxTraceEntry sets maximum number of trace entry per entity (i.e. channel/subchannel).
 // Setting it to 0 will disable channel tracing.
 func SetMaxTraceEntry(i int32) {
@@ -191,10 +212,13 @@ func (d *dbWrapper) get() *channelMap {
 func GetTopChannels(id int64, maxResults int64) ([]*ChannelMetric, bool) {
 	return db.get().GetTopChannels(id, maxResults)
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> master
 >>>>>>> master
 >>>>>>> master
+=======
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
 }
 
 // GetServers returns a slice of server's ServerMetric, along with a
@@ -202,6 +226,7 @@ func GetTopChannels(id int64, maxResults int64) ([]*ChannelMetric, bool) {
 //
 // The arg id specifies that only server with id at or above it will be included
 // in the result. The returned slice is up to a length of the arg maxResults or
+<<<<<<< HEAD
 <<<<<<< HEAD
 =======
 <<<<<<< HEAD
@@ -219,6 +244,8 @@ func GetServers(id int64, maxResults int) ([]*Server, bool) {
 =======
 =======
 >>>>>>> master
+=======
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
 // EntryPerPage if maxResults is zero, and is sorted in ascending id order.
 func GetServers(id int64, maxResults int64) ([]*ServerMetric, bool) {
 	return db.get().GetServers(id, maxResults)
@@ -227,14 +254,18 @@ func GetServers(id int64, maxResults int64) ([]*ServerMetric, bool) {
 // GetServerSockets returns a slice of server's (identified by id) normal socket's
 // SocketMetric, along with a boolean indicating whether there's more sockets to
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> master
 >>>>>>> master
 >>>>>>> master
+=======
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
 // be queried for.
 //
 // The arg startID specifies that only sockets with id at or above it will be
 // included in the result. The returned slice is up to a length of the arg maxResults
+<<<<<<< HEAD
 <<<<<<< HEAD
 =======
 <<<<<<< HEAD
@@ -273,6 +304,8 @@ func GetServer(id int64) *Server {
 =======
 =======
 >>>>>>> master
+=======
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
 // or EntryPerPage if maxResults is zero, and is sorted in ascending id order.
 func GetServerSockets(id int64, startID int64, maxResults int64) ([]*SocketMetric, bool) {
 	return db.get().GetServerSockets(id, startID, maxResults)
@@ -302,14 +335,18 @@ func GetServer(id int64) *ServerMetric {
 // ref as its reference name, and adds it to the child list of its parent
 // (identified by pid). pid == nil means no parent.
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> master
 >>>>>>> master
 >>>>>>> master
+=======
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
 //
 // Returns a unique channelz identifier assigned to this channel.
 //
 // If channelz is not turned ON, the channelz database is not mutated.
+<<<<<<< HEAD
 <<<<<<< HEAD
 =======
 <<<<<<< HEAD
@@ -340,6 +377,8 @@ func RegisterChannel(parent *Channel, target string) *Channel {
 =======
 =======
 >>>>>>> master
+=======
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
 func RegisterChannel(c Channel, pid *Identifier, ref string) *Identifier {
 	id := IDGen.genID()
 	var parent int64
@@ -365,10 +404,13 @@ func RegisterChannel(c Channel, pid *Identifier, ref string) *Identifier {
 	db.get().addChannel(id, cn, isTopChannel, parent)
 	return newIdentifer(RefChannel, id, pid)
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> master
 >>>>>>> master
 >>>>>>> master
+=======
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
 }
 
 // RegisterSubChannel registers the given subChannel c in the channelz database
@@ -378,6 +420,7 @@ func RegisterChannel(c Channel, pid *Identifier, ref string) *Identifier {
 // Returns a unique channelz identifier assigned to this subChannel.
 //
 // If channelz is not turned ON, the channelz database is not mutated.
+<<<<<<< HEAD
 <<<<<<< HEAD
 =======
 <<<<<<< HEAD
@@ -404,6 +447,8 @@ func RegisterSubChannel(parent *Channel, ref string) *SubChannel {
 =======
 =======
 >>>>>>> master
+=======
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
 func RegisterSubChannel(c Channel, pid *Identifier, ref string) (*Identifier, error) {
 	if pid == nil {
 		return nil, errors.New("a SubChannel's parent id cannot be nil")
@@ -424,16 +469,20 @@ func RegisterSubChannel(c Channel, pid *Identifier, ref string) (*Identifier, er
 	db.get().addSubChannel(id, sc, pid.Int())
 	return newIdentifer(RefSubChannel, id, pid), nil
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> master
 >>>>>>> master
 >>>>>>> master
+=======
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
 }
 
 // RegisterServer registers the given server s in channelz database. It returns
 // the unique channelz tracking id assigned to this server.
 //
 // If channelz is not turned ON, the channelz database is not mutated.
+<<<<<<< HEAD
 <<<<<<< HEAD
 =======
 <<<<<<< HEAD
@@ -472,6 +521,8 @@ func RegisterSocket(skt *Socket) *Socket {
 =======
 =======
 >>>>>>> master
+=======
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
 func RegisterServer(s Server, ref string) *Identifier {
 	id := IDGen.genID()
 	if !IsOn() {
@@ -528,16 +579,20 @@ func RegisterNormalSocket(s Socket, pid *Identifier, ref string) (*Identifier, e
 	db.get().addNormalSocket(id, ns, pid.Int())
 	return newIdentifer(RefNormalSocket, id, pid), nil
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> master
 >>>>>>> master
 >>>>>>> master
+=======
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
 }
 
 // RemoveEntry removes an entry with unique channelz tracking id to be id from
 // channelz database.
 //
 // If channelz is not turned ON, this function is a no-op.
+<<<<<<< HEAD
 <<<<<<< HEAD
 =======
 <<<<<<< HEAD
@@ -553,6 +608,8 @@ func RemoveEntry(id int64) {
 =======
 =======
 >>>>>>> master
+=======
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
 func RemoveEntry(id *Identifier) {
 	if !IsOn() {
 		return
@@ -1017,10 +1074,13 @@ func (c *channelMap) GetServer(id int64) *ServerMetric {
 	sm.ServerData = svr.s.ChannelzMetric()
 	return sm
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> master
 >>>>>>> master
 >>>>>>> master
+=======
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
 }
 
 // IDGenerator is an incrementing atomic that tracks IDs for channelz entities.
@@ -1037,6 +1097,7 @@ func (i *IDGenerator) Reset() {
 func (i *IDGenerator) genID() int64 {
 	return atomic.AddInt64(&i.id, 1)
 }
+<<<<<<< HEAD
 <<<<<<< HEAD
 =======
 <<<<<<< HEAD
@@ -1057,3 +1118,5 @@ type Identifier interface {
 >>>>>>> master
 >>>>>>> master
 >>>>>>> master
+=======
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a

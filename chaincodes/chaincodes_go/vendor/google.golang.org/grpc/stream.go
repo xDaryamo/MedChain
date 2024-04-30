@@ -28,6 +28,7 @@ import (
 	"time"
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 <<<<<<< HEAD
 	"golang.org/x/net/trace"
@@ -38,6 +39,9 @@ import (
 >>>>>>> master
 >>>>>>> master
 >>>>>>> master
+=======
+	"golang.org/x/net/trace"
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
 	"google.golang.org/grpc/balancer"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/encoding"
@@ -59,6 +63,7 @@ import (
 )
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 var metadataFromOutgoingContextRaw = internal.FromOutgoingContextRaw.(func(context.Context) (metadata.MD, [][]string, bool))
 
 =======
@@ -71,6 +76,8 @@ var metadataFromOutgoingContextRaw = internal.FromOutgoingContextRaw.(func(conte
 >>>>>>> master
 >>>>>>> master
 >>>>>>> master
+=======
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
 // StreamHandler defines the handler called by gRPC server to complete the
 // execution of a streaming RPC.
 //
@@ -208,6 +215,7 @@ func newClientStream(ctx context.Context, desc *StreamDesc, cc *ClientConn, meth
 	opts = append([]CallOption{OnFinish(func(error) { cc.idlenessMgr.OnCallEnd() })}, opts...)
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 	if md, added, ok := metadataFromOutgoingContextRaw(ctx); ok {
 =======
 <<<<<<< HEAD
@@ -220,6 +228,9 @@ func newClientStream(ctx context.Context, desc *StreamDesc, cc *ClientConn, meth
 >>>>>>> master
 >>>>>>> master
 >>>>>>> master
+=======
+	if md, added, ok := metadata.FromOutgoingContextRaw(ctx); ok {
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
 		// validate md
 		if err := imetadata.Validate(md); err != nil {
 			return nil, status.Error(codes.Internal, err.Error())
@@ -465,6 +476,7 @@ func (cs *clientStream) newAttemptLocked(isTransparent bool) (*csAttempt, error)
 	if EnableTracing {
 		trInfo = &traceInfo{
 <<<<<<< HEAD
+<<<<<<< HEAD
 			tr: newTrace("grpc.Sent."+methodFamily(method), method),
 =======
 <<<<<<< HEAD
@@ -477,6 +489,9 @@ func (cs *clientStream) newAttemptLocked(isTransparent bool) (*csAttempt, error)
 >>>>>>> master
 >>>>>>> master
 >>>>>>> master
+=======
+			tr: trace.New("grpc.Sent."+methodFamily(method), method),
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
 			firstLine: firstLine{
 				client: true,
 			},
@@ -486,6 +501,7 @@ func (cs *clientStream) newAttemptLocked(isTransparent bool) (*csAttempt, error)
 		}
 		trInfo.tr.LazyLog(&trInfo.firstLine, false)
 <<<<<<< HEAD
+<<<<<<< HEAD
 		ctx = newTraceContext(ctx, trInfo.tr)
 =======
 <<<<<<< HEAD
@@ -498,6 +514,9 @@ func (cs *clientStream) newAttemptLocked(isTransparent bool) (*csAttempt, error)
 >>>>>>> master
 >>>>>>> master
 >>>>>>> master
+=======
+		ctx = trace.NewContext(ctx, trInfo.tr)
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
 	}
 
 	if cs.cc.parsedTarget.URL.Scheme == internal.GRPCResolverSchemeExtraMetadata {
@@ -714,6 +733,7 @@ func (a *csAttempt) shouldRetry(err error) (bool, error) {
 			var e error
 			if pushback, e = strconv.Atoi(sps[0]); e != nil || pushback < 0 {
 <<<<<<< HEAD
+<<<<<<< HEAD
 				channelz.Infof(logger, cs.cc.channelz, "Server retry pushback specified to abort (%q).", sps[0])
 =======
 <<<<<<< HEAD
@@ -726,12 +746,16 @@ func (a *csAttempt) shouldRetry(err error) (bool, error) {
 >>>>>>> master
 >>>>>>> master
 >>>>>>> master
+=======
+				channelz.Infof(logger, cs.cc.channelzID, "Server retry pushback specified to abort (%q).", sps[0])
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
 				cs.retryThrottler.throttle() // This counts as a failure for throttling.
 				return false, err
 			}
 			hasPushback = true
 		} else if len(sps) > 1 {
 <<<<<<< HEAD
+<<<<<<< HEAD
 			channelz.Warningf(logger, cs.cc.channelz, "Server retry pushback specified multiple values (%q); not retrying.", sps)
 =======
 <<<<<<< HEAD
@@ -744,6 +768,9 @@ func (a *csAttempt) shouldRetry(err error) (bool, error) {
 >>>>>>> master
 >>>>>>> master
 >>>>>>> master
+=======
+			channelz.Warningf(logger, cs.cc.channelzID, "Server retry pushback specified multiple values (%q); not retrying.", sps)
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
 			cs.retryThrottler.throttle() // This counts as a failure for throttling.
 			return false, err
 		}

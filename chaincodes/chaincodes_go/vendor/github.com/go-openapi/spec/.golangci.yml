@@ -12,6 +12,7 @@ linters-settings:
   goconst:
     min-len: 2
 <<<<<<< HEAD
+<<<<<<< HEAD
     min-occurrences: 3
 =======
 <<<<<<< HEAD
@@ -24,6 +25,9 @@ linters-settings:
 >>>>>>> master
 >>>>>>> master
 >>>>>>> master
+=======
+    min-occurrences: 2
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
 
 linters:
   enable-all: true
@@ -52,6 +56,7 @@ linters:
     - tparallel
     - thelper
     - ifshort
+<<<<<<< HEAD
 <<<<<<< HEAD
 =======
 <<<<<<< HEAD
@@ -83,3 +88,5 @@ linters:
 >>>>>>> master
 >>>>>>> master
 >>>>>>> master
+=======
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a

@@ -33,6 +33,7 @@ import (
 	"time"
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 <<<<<<< HEAD
 	"github.com/golang/protobuf/proto"
@@ -43,6 +44,9 @@ import (
 >>>>>>> master
 >>>>>>> master
 >>>>>>> master
+=======
+	"github.com/golang/protobuf/proto"
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
 	"golang.org/x/net/http2"
 	"golang.org/x/net/http2/hpack"
 	"google.golang.org/grpc/internal/grpclog"
@@ -50,6 +54,7 @@ import (
 	"google.golang.org/grpc/internal/pretty"
 	"google.golang.org/grpc/internal/syscall"
 <<<<<<< HEAD
+<<<<<<< HEAD
 	"google.golang.org/protobuf/proto"
 =======
 <<<<<<< HEAD
@@ -60,6 +65,8 @@ import (
 >>>>>>> master
 >>>>>>> master
 >>>>>>> master
+=======
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
 
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/credentials"
@@ -90,6 +97,7 @@ var serverConnectionCounter uint64
 // http2Server implements the ServerTransport interface with HTTP2.
 type http2Server struct {
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 <<<<<<< HEAD
 =======
@@ -108,6 +116,8 @@ type http2Server struct {
 =======
 =======
 >>>>>>> master
+=======
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
 	lastRead    int64 // Keep this field 64-bit aligned. Accessed atomically.
 	ctx         context.Context
 	done        chan struct{}
@@ -121,10 +131,13 @@ type http2Server struct {
 	inTapHandle tap.ServerInHandle
 	framer      *framer
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> master
 >>>>>>> master
 >>>>>>> master
+=======
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
 	// The max number of concurrent streams.
 	maxStreams uint32
 	// controlBuf delivers all the control related tasks (e.g., window
@@ -167,6 +180,7 @@ type http2Server struct {
 
 	// Fields below are for channelz metric collection.
 <<<<<<< HEAD
+<<<<<<< HEAD
 	channelz   *channelz.Socket
 =======
 <<<<<<< HEAD
@@ -181,6 +195,10 @@ type http2Server struct {
 >>>>>>> master
 >>>>>>> master
 >>>>>>> master
+=======
+	channelzID *channelz.Identifier
+	czData     *channelzData
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
 	bufferPool *bufferPool
 
 	connectionID uint64
@@ -302,6 +320,7 @@ func NewServerTransport(conn net.Conn, config *ServerConfig) (_ ServerTransport,
 
 	done := make(chan struct{})
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 <<<<<<< HEAD
 =======
@@ -323,6 +342,8 @@ func NewServerTransport(conn net.Conn, config *ServerConfig) (_ ServerTransport,
 =======
 =======
 >>>>>>> master
+=======
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
 	t := &http2Server{
 		ctx:               setConnection(context.Background(), rawConn),
 		done:              done,
@@ -334,10 +355,13 @@ func NewServerTransport(conn net.Conn, config *ServerConfig) (_ ServerTransport,
 		readerDone:        make(chan struct{}),
 		writerDone:        make(chan struct{}),
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> master
 >>>>>>> master
 >>>>>>> master
+=======
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
 		maxStreams:        config.MaxStreams,
 		inTapHandle:       config.InTapHandle,
 		fc:                &trInFlow{limit: uint32(icwz)},
@@ -348,6 +372,7 @@ func NewServerTransport(conn net.Conn, config *ServerConfig) (_ ServerTransport,
 		idle:              time.Now(),
 		kep:               kep,
 		initialWindowSize: iwz,
+<<<<<<< HEAD
 <<<<<<< HEAD
 =======
 <<<<<<< HEAD
@@ -377,6 +402,8 @@ func NewServerTransport(conn net.Conn, config *ServerConfig) (_ ServerTransport,
 =======
 =======
 >>>>>>> master
+=======
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
 		czData:            new(channelzData),
 		bufferPool:        newBufferPool(),
 	}
@@ -384,10 +411,13 @@ func NewServerTransport(conn net.Conn, config *ServerConfig) (_ ServerTransport,
 	// Add peer information to the http2server context.
 	t.ctx = peer.NewContext(t.ctx, t.getPeer())
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> master
 >>>>>>> master
 >>>>>>> master
+=======
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
 
 	t.controlBuf = newControlBuffer(t.done)
 	if dynamicWindow {
@@ -397,12 +427,15 @@ func NewServerTransport(conn net.Conn, config *ServerConfig) (_ ServerTransport,
 		}
 	}
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 <<<<<<< HEAD
 =======
 <<<<<<< HEAD
 =======
 >>>>>>> master
+=======
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
 	for _, sh := range t.stats {
 		t.ctx = sh.TagConn(t.ctx, &stats.ConnTagInfo{
 			RemoteAddr: t.remoteAddr,
@@ -416,10 +449,13 @@ func NewServerTransport(conn net.Conn, config *ServerConfig) (_ ServerTransport,
 		return nil, err
 	}
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> master
 >>>>>>> master
 >>>>>>> master
+=======
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
 
 	t.connectionID = atomic.AddUint64(&serverConnectionCounter, 1)
 	t.framer.writer.Flush()
@@ -465,6 +501,7 @@ func NewServerTransport(conn net.Conn, config *ServerConfig) (_ ServerTransport,
 		t.loopy = newLoopyWriter(serverSide, t.framer, t.controlBuf, t.bdpEst, t.conn, t.logger)
 		t.loopy.ssGoAwayHandler = t.outgoingGoAwayHandler
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 <<<<<<< HEAD
 		t.loopy.run()
@@ -500,6 +537,10 @@ func NewServerTransport(conn net.Conn, config *ServerConfig) (_ ServerTransport,
 >>>>>>> master
 >>>>>>> master
 >>>>>>> master
+=======
+		t.loopy.run()
+		close(t.writerDone)
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
 	}()
 	go t.keepalive()
 	return t, nil
@@ -508,6 +549,7 @@ func NewServerTransport(conn net.Conn, config *ServerConfig) (_ ServerTransport,
 // operateHeaders takes action on the decoded headers. Returns an error if fatal
 // error encountered and transport needs to close, otherwise returns nil.
 <<<<<<< HEAD
+<<<<<<< HEAD
 func (t *http2Server) operateHeaders(ctx context.Context, frame *http2.MetaHeadersFrame, handle func(*Stream)) error {
 =======
 <<<<<<< HEAD
@@ -520,6 +562,9 @@ func (t *http2Server) operateHeaders(frame *http2.MetaHeadersFrame, handle func(
 >>>>>>> master
 >>>>>>> master
 >>>>>>> master
+=======
+func (t *http2Server) operateHeaders(frame *http2.MetaHeadersFrame, handle func(*Stream)) error {
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
 	// Acquire max stream ID lock for entire duration
 	t.maxStreamMu.Lock()
 	defer t.maxStreamMu.Unlock()
@@ -547,6 +592,7 @@ func (t *http2Server) operateHeaders(frame *http2.MetaHeadersFrame, handle func(
 	buf := newRecvBuffer()
 	s := &Stream{
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 <<<<<<< HEAD
 =======
@@ -561,15 +607,20 @@ func (t *http2Server) operateHeaders(frame *http2.MetaHeadersFrame, handle func(
 =======
 =======
 >>>>>>> master
+=======
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
 		id:  streamID,
 		st:  t,
 		buf: buf,
 		fc:  &inFlow{limit: uint32(t.initialWindowSize)},
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> master
 >>>>>>> master
 >>>>>>> master
+=======
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
 	}
 	var (
 		// if false, content-type was missing or invalid
@@ -709,6 +760,7 @@ func (t *http2Server) operateHeaders(frame *http2.MetaHeadersFrame, handle func(
 	}
 	if timeoutSet {
 <<<<<<< HEAD
+<<<<<<< HEAD
 		s.ctx, s.cancel = context.WithTimeout(ctx, timeout)
 	} else {
 		s.ctx, s.cancel = context.WithCancel(ctx)
@@ -729,6 +781,11 @@ func (t *http2Server) operateHeaders(frame *http2.MetaHeadersFrame, handle func(
 >>>>>>> master
 >>>>>>> master
 >>>>>>> master
+=======
+		s.ctx, s.cancel = context.WithTimeout(t.ctx, timeout)
+	} else {
+		s.ctx, s.cancel = context.WithCancel(t.ctx)
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
 	}
 
 	// Attach the received metadata to the context.
@@ -802,6 +859,7 @@ func (t *http2Server) operateHeaders(frame *http2.MetaHeadersFrame, handle func(
 	t.mu.Unlock()
 	if channelz.IsOn() {
 <<<<<<< HEAD
+<<<<<<< HEAD
 		t.channelz.SocketMetrics.StreamsStarted.Add(1)
 		t.channelz.SocketMetrics.LastRemoteStreamCreatedTimestamp.Store(time.Now().UnixNano())
 =======
@@ -818,17 +876,24 @@ func (t *http2Server) operateHeaders(frame *http2.MetaHeadersFrame, handle func(
 >>>>>>> master
 >>>>>>> master
 >>>>>>> master
+=======
+		atomic.AddInt64(&t.czData.streamsStarted, 1)
+		atomic.StoreInt64(&t.czData.lastStreamCreatedTime, time.Now().UnixNano())
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
 	}
 	s.requestRead = func(n int) {
 		t.adjustWindow(s, uint32(n))
 	}
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 <<<<<<< HEAD
 =======
 <<<<<<< HEAD
 =======
 >>>>>>> master
+=======
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
 	for _, sh := range t.stats {
 		s.ctx = sh.TagRPC(s.ctx, &stats.RPCTagInfo{FullMethodName: s.method})
 		inHeader := &stats.InHeader{
@@ -842,10 +907,13 @@ func (t *http2Server) operateHeaders(frame *http2.MetaHeadersFrame, handle func(
 		sh.HandleRPC(s.ctx, inHeader)
 	}
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> master
 >>>>>>> master
 >>>>>>> master
+=======
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
 	s.ctxDone = s.ctx.Done()
 	s.wq = newWriteQuota(defaultWriteQuota, s.ctxDone)
 	s.trReader = &transportReader{
@@ -872,6 +940,7 @@ func (t *http2Server) operateHeaders(frame *http2.MetaHeadersFrame, handle func(
 // typically run in a separate goroutine.
 // traceCtx attaches trace to ctx and returns the new context.
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 <<<<<<< HEAD
 func (t *http2Server) HandleStreams(handle func(*Stream)) {
@@ -892,6 +961,10 @@ func (t *http2Server) HandleStreams(handle func(*Stream)) {
 >>>>>>> master
 >>>>>>> master
 >>>>>>> master
+=======
+func (t *http2Server) HandleStreams(handle func(*Stream)) {
+	defer close(t.readerDone)
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
 	for {
 		t.controlBuf.throttle()
 		frame, err := t.framer.fr.ReadFrame()
@@ -917,26 +990,33 @@ func (t *http2Server) HandleStreams(handle func(*Stream)) {
 				continue
 			}
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 <<<<<<< HEAD
 =======
 <<<<<<< HEAD
 =======
 >>>>>>> master
+=======
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
 			if err == io.EOF || err == io.ErrUnexpectedEOF {
 				t.Close(err)
 				return
 			}
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> master
 >>>>>>> master
 >>>>>>> master
+=======
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
 			t.Close(err)
 			return
 		}
 		switch frame := frame.(type) {
 		case *http2.MetaHeadersFrame:
+<<<<<<< HEAD
 <<<<<<< HEAD
 =======
 <<<<<<< HEAD
@@ -964,6 +1044,11 @@ func (t *http2Server) HandleStreams(handle func(*Stream)) {
 >>>>>>> master
 >>>>>>> master
 >>>>>>> master
+=======
+			if err := t.operateHeaders(frame, handle); err != nil {
+				t.Close(err)
+				break
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
 			}
 		case *http2.DataFrame:
 			t.handleData(frame)
@@ -1277,6 +1362,7 @@ func (t *http2Server) WriteHeader(s *Stream, md metadata.MD) error {
 	}
 	if err := t.writeHeaderLocked(s); err != nil {
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 <<<<<<< HEAD
 		return status.Convert(err).Err()
@@ -1296,6 +1382,9 @@ func (t *http2Server) WriteHeader(s *Stream, md metadata.MD) error {
 >>>>>>> master
 >>>>>>> master
 >>>>>>> master
+=======
+		return status.Convert(err).Err()
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
 	}
 	return nil
 }
@@ -1514,6 +1603,7 @@ func (t *http2Server) keepalive() {
 			if !outstandingPing {
 				if channelz.IsOn() {
 <<<<<<< HEAD
+<<<<<<< HEAD
 					t.channelz.SocketMetrics.KeepAlivesSent.Add(1)
 =======
 <<<<<<< HEAD
@@ -1526,6 +1616,9 @@ func (t *http2Server) keepalive() {
 >>>>>>> master
 >>>>>>> master
 >>>>>>> master
+=======
+					atomic.AddInt64(&t.czData.kpCount, 1)
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
 				}
 				t.controlBuf.put(p)
 				kpTimeoutLeft = t.kp.Timeout
@@ -1566,6 +1659,7 @@ func (t *http2Server) Close(err error) {
 		t.logger.Infof("Error closing underlying net.Conn during Close: %v", err)
 	}
 <<<<<<< HEAD
+<<<<<<< HEAD
 	channelz.RemoveEntry(t.channelz.ID)
 =======
 <<<<<<< HEAD
@@ -1578,26 +1672,35 @@ func (t *http2Server) Close(err error) {
 >>>>>>> master
 >>>>>>> master
 >>>>>>> master
+=======
+	channelz.RemoveEntry(t.channelzID)
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
 	// Cancel all active streams.
 	for _, s := range streams {
 		s.cancel()
 	}
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 <<<<<<< HEAD
 =======
 <<<<<<< HEAD
 =======
 >>>>>>> master
+=======
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
 	for _, sh := range t.stats {
 		connEnd := &stats.ConnEnd{}
 		sh.HandleConn(t.ctx, connEnd)
 	}
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> master
 >>>>>>> master
 >>>>>>> master
+=======
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
 }
 
 // deleteStream deletes the stream s from transport's active streams.
@@ -1615,6 +1718,7 @@ func (t *http2Server) deleteStream(s *Stream, eosReceived bool) {
 	if channelz.IsOn() {
 		if eosReceived {
 <<<<<<< HEAD
+<<<<<<< HEAD
 			t.channelz.SocketMetrics.StreamsSucceeded.Add(1)
 		} else {
 			t.channelz.SocketMetrics.StreamsFailed.Add(1)
@@ -1635,6 +1739,11 @@ func (t *http2Server) deleteStream(s *Stream, eosReceived bool) {
 >>>>>>> master
 >>>>>>> master
 >>>>>>> master
+=======
+			atomic.AddInt64(&t.czData.streamsSucceeded, 1)
+		} else {
+			atomic.AddInt64(&t.czData.streamsFailed, 1)
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
 		}
 	}
 }
@@ -1682,21 +1791,27 @@ func (t *http2Server) closeStream(s *Stream, rst bool, rstCode http2.ErrCode, eo
 }
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 <<<<<<< HEAD
 =======
 <<<<<<< HEAD
 =======
 >>>>>>> master
+=======
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
 func (t *http2Server) RemoteAddr() net.Addr {
 	return t.remoteAddr
 }
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> master
 >>>>>>> master
 >>>>>>> master
+=======
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
 func (t *http2Server) Drain(debugData string) {
 	t.mu.Lock()
 	defer t.mu.Unlock()
@@ -1734,6 +1849,7 @@ func (t *http2Server) outgoingGoAwayHandler(g *goAway) (bool, error) {
 			return false, err
 		}
 <<<<<<< HEAD
+<<<<<<< HEAD
 		t.framer.writer.Flush()
 =======
 <<<<<<< HEAD
@@ -1744,6 +1860,8 @@ func (t *http2Server) outgoingGoAwayHandler(g *goAway) (bool, error) {
 >>>>>>> master
 >>>>>>> master
 >>>>>>> master
+=======
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
 		if retErr != nil {
 			return false, retErr
 		}
@@ -1765,6 +1883,7 @@ func (t *http2Server) outgoingGoAwayHandler(g *goAway) (bool, error) {
 	}
 	go func() {
 <<<<<<< HEAD
+<<<<<<< HEAD
 		timer := time.NewTimer(5 * time.Second)
 =======
 <<<<<<< HEAD
@@ -1777,6 +1896,9 @@ func (t *http2Server) outgoingGoAwayHandler(g *goAway) (bool, error) {
 >>>>>>> master
 >>>>>>> master
 >>>>>>> master
+=======
+		timer := time.NewTimer(time.Minute)
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
 		defer timer.Stop()
 		select {
 		case <-t.drainEvent.Done():
@@ -1789,6 +1911,7 @@ func (t *http2Server) outgoingGoAwayHandler(g *goAway) (bool, error) {
 	return false, nil
 }
 
+<<<<<<< HEAD
 <<<<<<< HEAD
 =======
 <<<<<<< HEAD
@@ -1814,6 +1937,8 @@ func (t *http2Server) IncrMsgRecv() {
 =======
 =======
 >>>>>>> master
+=======
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
 func (t *http2Server) ChannelzMetric() *channelz.SocketInternalMetric {
 	s := channelz.SocketInternalMetric{
 		StreamsStarted:                   atomic.LoadInt64(&t.czData.streamsStarted),
@@ -1847,10 +1972,13 @@ func (t *http2Server) IncrMsgRecv() {
 	atomic.AddInt64(&t.czData.msgRecv, 1)
 	atomic.StoreInt64(&t.czData.lastMsgRecvTime, time.Now().UnixNano())
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> master
 >>>>>>> master
 >>>>>>> master
+=======
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
 }
 
 func (t *http2Server) getOutFlowWindow() int64 {
@@ -1869,6 +1997,7 @@ func (t *http2Server) getOutFlowWindow() int64 {
 }
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 <<<<<<< HEAD
 =======
@@ -1884,15 +2013,20 @@ func (t *http2Server) Peer() *peer.Peer {
 =======
 =======
 >>>>>>> master
+=======
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
 func (t *http2Server) getPeer() *peer.Peer {
 	return &peer.Peer{
 		Addr:     t.remoteAddr,
 		AuthInfo: t.authInfo, // Can be nil
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> master
 >>>>>>> master
 >>>>>>> master
+=======
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
 	}
 }
 
@@ -1918,6 +2052,7 @@ func GetConnection(ctx context.Context) net.Conn {
 // information about the destination ip and port for an incoming RPC. This also
 // allows any unary or streaming interceptors to see the connection.
 <<<<<<< HEAD
+<<<<<<< HEAD
 func SetConnection(ctx context.Context, conn net.Conn) context.Context {
 =======
 <<<<<<< HEAD
@@ -1930,5 +2065,8 @@ func setConnection(ctx context.Context, conn net.Conn) context.Context {
 >>>>>>> master
 >>>>>>> master
 >>>>>>> master
+=======
+func setConnection(ctx context.Context, conn net.Conn) context.Context {
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
 	return context.WithValue(ctx, connectionKey{}, conn)
 }

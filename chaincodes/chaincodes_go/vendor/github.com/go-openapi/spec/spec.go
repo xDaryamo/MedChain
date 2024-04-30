@@ -27,6 +27,7 @@ const (
 	// SwaggerSchemaURL the url for the swagger 2.0 schema to validate specs
 	SwaggerSchemaURL = "http://swagger.io/v2/schema.json#"
 <<<<<<< HEAD
+<<<<<<< HEAD
 	// JSONSchemaURL the url for the json schema
 =======
 <<<<<<< HEAD
@@ -39,6 +40,9 @@ const (
 >>>>>>> master
 >>>>>>> master
 >>>>>>> master
+=======
+	// JSONSchemaURL the url for the json schema schema
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
 	JSONSchemaURL = "http://json-schema.org/draft-04/schema#"
 )
 
@@ -54,6 +58,7 @@ func MustLoadJSONSchemaDraft04() *Schema {
 // JSONSchemaDraft04 loads the json schema document for json shema draft04
 func JSONSchemaDraft04() (*Schema, error) {
 <<<<<<< HEAD
+<<<<<<< HEAD
 	b, err := jsonschemaDraft04JSONBytes()
 =======
 <<<<<<< HEAD
@@ -66,6 +71,9 @@ func JSONSchemaDraft04() (*Schema, error) {
 >>>>>>> master
 >>>>>>> master
 >>>>>>> master
+=======
+	b, err := Asset("jsonschema-draft-04.json")
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
 	if err != nil {
 		return nil, err
 	}
@@ -90,6 +98,7 @@ func MustLoadSwagger20Schema() *Schema {
 func Swagger20Schema() (*Schema, error) {
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 	b, err := v2SchemaJSONBytes()
 =======
 <<<<<<< HEAD
@@ -102,6 +111,9 @@ func Swagger20Schema() (*Schema, error) {
 >>>>>>> master
 >>>>>>> master
 >>>>>>> master
+=======
+	b, err := Asset("v2/schema.json")
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
 	if err != nil {
 		return nil, err
 	}

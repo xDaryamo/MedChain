@@ -148,6 +148,7 @@ type Transport struct {
 	StrictMaxConcurrentStreams bool
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 <<<<<<< HEAD
 =======
@@ -165,6 +166,8 @@ type Transport struct {
 >>>>>>> master
 >>>>>>> master
 >>>>>>> master
+=======
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
 	// ReadIdleTimeout is the timeout after which a health check using ping
 	// frame will be carried out if no frame is received on the connection.
 	// Note that a ping response will is considered a received frame, so if
@@ -197,6 +200,7 @@ type Transport struct {
 	connPoolOnce  sync.Once
 	connPoolOrDef ClientConnPool // non-nil version of ConnPool
 <<<<<<< HEAD
+<<<<<<< HEAD
 
 	syncHooks *testSyncHooks
 =======
@@ -209,6 +213,8 @@ type Transport struct {
 >>>>>>> master
 >>>>>>> master
 >>>>>>> master
+=======
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
 }
 
 func (t *Transport) maxHeaderListSize() uint32 {
@@ -334,6 +340,7 @@ type ClientConn struct {
 
 	idleTimeout time.Duration // or 0 for never
 <<<<<<< HEAD
+<<<<<<< HEAD
 	idleTimer   timer
 =======
 <<<<<<< HEAD
@@ -346,6 +353,9 @@ type ClientConn struct {
 >>>>>>> master
 >>>>>>> master
 >>>>>>> master
+=======
+	idleTimer   *time.Timer
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
 
 	mu              sync.Mutex // guards following
 	cond            *sync.Cond // hold mu; broadcast on flow/closed changes
@@ -387,6 +397,7 @@ type ClientConn struct {
 	werr error        // first write error that has occurred
 	hbuf bytes.Buffer // HPACK encoder writes into this
 	henc *hpack.Encoder
+<<<<<<< HEAD
 <<<<<<< HEAD
 =======
 <<<<<<< HEAD
@@ -453,6 +464,8 @@ func (cc *ClientConn) contextWithTimeout(ctx context.Context, d time.Duration) (
 >>>>>>> master
 >>>>>>> master
 >>>>>>> master
+=======
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
 }
 
 // clientStream is the state for a single HTTP/2 stream. One of these
@@ -535,6 +548,7 @@ func (cs *clientStream) abortStreamLocked(err error) {
 	if cs.cc.cond != nil {
 		// Wake up writeRequestBody if it is waiting on flow control.
 <<<<<<< HEAD
+<<<<<<< HEAD
 		cs.cc.condBroadcast()
 =======
 <<<<<<< HEAD
@@ -547,6 +561,9 @@ func (cs *clientStream) abortStreamLocked(err error) {
 >>>>>>> master
 >>>>>>> master
 >>>>>>> master
+=======
+		cs.cc.cond.Broadcast()
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
 	}
 }
 
@@ -557,6 +574,7 @@ func (cs *clientStream) abortRequestBodyWrite() {
 	if cs.reqBody != nil && cs.reqBodyClosed == nil {
 		cs.closeReqBodyLocked()
 <<<<<<< HEAD
+<<<<<<< HEAD
 		cc.condBroadcast()
 =======
 <<<<<<< HEAD
@@ -569,6 +587,9 @@ func (cs *clientStream) abortRequestBodyWrite() {
 >>>>>>> master
 >>>>>>> master
 >>>>>>> master
+=======
+		cc.cond.Broadcast()
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
 	}
 }
 
@@ -578,6 +599,7 @@ func (cs *clientStream) closeReqBodyLocked() {
 	}
 	cs.reqBodyClosed = make(chan struct{})
 	reqBodyClosed := cs.reqBodyClosed
+<<<<<<< HEAD
 <<<<<<< HEAD
 =======
 <<<<<<< HEAD
@@ -592,15 +614,20 @@ func (cs *clientStream) closeReqBodyLocked() {
 =======
 =======
 >>>>>>> master
+=======
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
 	go func() {
 		cs.reqBody.Close()
 		close(reqBodyClosed)
 	}()
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> master
 >>>>>>> master
 >>>>>>> master
+=======
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
 }
 
 type stickyErrWriter struct {
@@ -690,12 +717,15 @@ func authorityAddr(scheme string, authority string) (addr string) {
 }
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 <<<<<<< HEAD
 =======
 <<<<<<< HEAD
 =======
 >>>>>>> master
+=======
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
 var retryBackoffHook func(time.Duration) *time.Timer
 
 func backoffNewTimer(d time.Duration) *time.Timer {
@@ -706,10 +736,13 @@ func backoffNewTimer(d time.Duration) *time.Timer {
 }
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> master
 >>>>>>> master
 >>>>>>> master
+=======
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
 // RoundTripOpt is like RoundTrip, but takes options.
 func (t *Transport) RoundTripOpt(req *http.Request, opt RoundTripOpt) (*http.Response, error) {
 	if !(req.URL.Scheme == "https" || (req.URL.Scheme == "http" && t.AllowHTTP)) {
@@ -737,6 +770,7 @@ func (t *Transport) RoundTripOpt(req *http.Request, opt RoundTripOpt) (*http.Res
 				backoff := float64(uint(1) << (uint(retry) - 1))
 				backoff += backoff * (0.1 * mathrand.Float64())
 				d := time.Second * time.Duration(backoff)
+<<<<<<< HEAD
 <<<<<<< HEAD
 =======
 <<<<<<< HEAD
@@ -768,6 +802,8 @@ func (t *Transport) RoundTripOpt(req *http.Request, opt RoundTripOpt) (*http.Res
 =======
 =======
 >>>>>>> master
+=======
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
 				timer := backoffNewTimer(d)
 				select {
 				case <-timer.C:
@@ -776,10 +812,13 @@ func (t *Transport) RoundTripOpt(req *http.Request, opt RoundTripOpt) (*http.Res
 				case <-req.Context().Done():
 					timer.Stop()
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> master
 >>>>>>> master
 >>>>>>> master
+=======
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
 					err = req.Context().Err()
 				}
 			}
@@ -859,6 +898,7 @@ func canRetryError(err error) bool {
 
 func (t *Transport) dialClientConn(ctx context.Context, addr string, singleUse bool) (*ClientConn, error) {
 <<<<<<< HEAD
+<<<<<<< HEAD
 	if t.syncHooks != nil {
 		return t.newClientConn(nil, singleUse, t.syncHooks)
 	}
@@ -873,6 +913,8 @@ func (t *Transport) dialClientConn(ctx context.Context, addr string, singleUse b
 >>>>>>> master
 >>>>>>> master
 >>>>>>> master
+=======
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
 	host, _, err := net.SplitHostPort(addr)
 	if err != nil {
 		return nil, err
@@ -882,6 +924,7 @@ func (t *Transport) dialClientConn(ctx context.Context, addr string, singleUse b
 		return nil, err
 	}
 <<<<<<< HEAD
+<<<<<<< HEAD
 	return t.newClientConn(tconn, singleUse, nil)
 =======
 <<<<<<< HEAD
@@ -894,6 +937,9 @@ func (t *Transport) dialClientConn(ctx context.Context, addr string, singleUse b
 >>>>>>> master
 >>>>>>> master
 >>>>>>> master
+=======
+	return t.newClientConn(tconn, singleUse)
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
 }
 
 func (t *Transport) newTLSConfig(host string) *tls.Config {
@@ -960,6 +1006,7 @@ func (t *Transport) maxEncoderHeaderTableSize() uint32 {
 
 func (t *Transport) NewClientConn(c net.Conn) (*ClientConn, error) {
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 <<<<<<< HEAD
 =======
@@ -973,15 +1020,20 @@ func (t *Transport) newClientConn(c net.Conn, singleUse bool, hooks *testSyncHoo
 =======
 =======
 >>>>>>> master
+=======
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
 	return t.newClientConn(c, t.disableKeepAlives())
 }
 
 func (t *Transport) newClientConn(c net.Conn, singleUse bool) (*ClientConn, error) {
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> master
 >>>>>>> master
 >>>>>>> master
+=======
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
 	cc := &ClientConn{
 		t:                     t,
 		tconn:                 c,
@@ -996,6 +1048,7 @@ func (t *Transport) newClientConn(c net.Conn, singleUse bool) (*ClientConn, erro
 		wantSettingsAck:       true,
 		pings:                 make(map[[8]byte]chan struct{}),
 		reqHeaderMu:           make(chan struct{}, 1),
+<<<<<<< HEAD
 <<<<<<< HEAD
 =======
 <<<<<<< HEAD
@@ -1015,15 +1068,20 @@ func (t *Transport) newClientConn(c net.Conn, singleUse bool) (*ClientConn, erro
 =======
 =======
 >>>>>>> master
+=======
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
 	}
 	if d := t.idleConnTimeout(); d != 0 {
 		cc.idleTimeout = d
 		cc.idleTimer = time.AfterFunc(d, cc.onIdleTimeout)
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> master
 >>>>>>> master
 >>>>>>> master
+=======
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
 	}
 	if VerboseLogs {
 		t.vlogf("http2: Transport creating client conn %p to %v", cc, c.RemoteAddr())
@@ -1089,6 +1147,7 @@ func (t *Transport) newClientConn(c net.Conn, singleUse bool) (*ClientConn, erro
 	}
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 	cc.goRun(cc.readLoop)
 =======
 <<<<<<< HEAD
@@ -1101,6 +1160,9 @@ func (t *Transport) newClientConn(c net.Conn, singleUse bool) (*ClientConn, erro
 >>>>>>> master
 >>>>>>> master
 >>>>>>> master
+=======
+	go cc.readLoop()
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
 	return cc, nil
 }
 
@@ -1109,6 +1171,7 @@ func (cc *ClientConn) healthCheck() {
 	// We don't need to periodically ping in the health check, because the readLoop of ClientConn will
 	// trigger the healthCheck again if there is no frame received.
 <<<<<<< HEAD
+<<<<<<< HEAD
 	ctx, cancel := cc.contextWithTimeout(context.Background(), pingTimeout)
 =======
 <<<<<<< HEAD
@@ -1121,6 +1184,9 @@ func (cc *ClientConn) healthCheck() {
 >>>>>>> master
 >>>>>>> master
 >>>>>>> master
+=======
+	ctx, cancel := context.WithTimeout(context.Background(), pingTimeout)
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
 	defer cancel()
 	cc.vlogf("http2: Transport sending health check")
 	err := cc.Ping(ctx)
@@ -1351,6 +1417,7 @@ func (cc *ClientConn) Shutdown(ctx context.Context) error {
 	done := make(chan struct{})
 	cancelled := false // guarded by cc.mu
 <<<<<<< HEAD
+<<<<<<< HEAD
 	cc.goRun(func() {
 =======
 <<<<<<< HEAD
@@ -1363,6 +1430,9 @@ func (cc *ClientConn) Shutdown(ctx context.Context) error {
 >>>>>>> master
 >>>>>>> master
 >>>>>>> master
+=======
+	go func() {
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
 		cc.mu.Lock()
 		defer cc.mu.Unlock()
 		for {
@@ -1375,6 +1445,7 @@ func (cc *ClientConn) Shutdown(ctx context.Context) error {
 				break
 			}
 <<<<<<< HEAD
+<<<<<<< HEAD
 			cc.condWait()
 		}
 	})
@@ -1395,6 +1466,11 @@ func (cc *ClientConn) Shutdown(ctx context.Context) error {
 >>>>>>> master
 >>>>>>> master
 >>>>>>> master
+=======
+			cc.cond.Wait()
+		}
+	}()
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
 	shutdownEnterWaitStateHook()
 	select {
 	case <-done:
@@ -1405,6 +1481,7 @@ func (cc *ClientConn) Shutdown(ctx context.Context) error {
 		// Free the goroutine above
 		cancelled = true
 <<<<<<< HEAD
+<<<<<<< HEAD
 		cc.condBroadcast()
 =======
 <<<<<<< HEAD
@@ -1417,6 +1494,9 @@ func (cc *ClientConn) Shutdown(ctx context.Context) error {
 >>>>>>> master
 >>>>>>> master
 >>>>>>> master
+=======
+		cc.cond.Broadcast()
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
 		cc.mu.Unlock()
 		return ctx.Err()
 	}
@@ -1455,6 +1535,7 @@ func (cc *ClientConn) closeForError(err error) {
 		cs.abortStreamLocked(err)
 	}
 <<<<<<< HEAD
+<<<<<<< HEAD
 	cc.condBroadcast()
 =======
 <<<<<<< HEAD
@@ -1467,6 +1548,9 @@ func (cc *ClientConn) closeForError(err error) {
 >>>>>>> master
 >>>>>>> master
 >>>>>>> master
+=======
+	cc.cond.Broadcast()
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
 	cc.mu.Unlock()
 	cc.closeConn()
 }
@@ -1564,6 +1648,7 @@ func (cc *ClientConn) decrStreamReservationsLocked() {
 
 func (cc *ClientConn) RoundTrip(req *http.Request) (*http.Response, error) {
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 <<<<<<< HEAD
 =======
@@ -1579,6 +1664,8 @@ func (cc *ClientConn) roundTrip(req *http.Request, streamf func(*clientStream)) 
 >>>>>>> master
 >>>>>>> master
 >>>>>>> master
+=======
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
 	ctx := req.Context()
 	cs := &clientStream{
 		cc:                   cc,
@@ -1593,6 +1680,7 @@ func (cc *ClientConn) roundTrip(req *http.Request, streamf func(*clientStream)) 
 		respHeaderRecv:       make(chan struct{}),
 		donec:                make(chan struct{}),
 	}
+<<<<<<< HEAD
 <<<<<<< HEAD
 =======
 <<<<<<< HEAD
@@ -1628,6 +1716,11 @@ func (cc *ClientConn) roundTrip(req *http.Request, streamf func(*clientStream)) 
 >>>>>>> master
 >>>>>>> master
 >>>>>>> master
+=======
+	go cs.doRequest(req)
+
+	waitDone := func() error {
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
 		select {
 		case <-cs.donec:
 			return nil
@@ -1689,6 +1782,7 @@ func (cc *ClientConn) roundTrip(req *http.Request, streamf func(*clientStream)) 
 	}
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 <<<<<<< HEAD
 	for {
@@ -1720,6 +1814,9 @@ func (cc *ClientConn) roundTrip(req *http.Request, streamf func(*clientStream)) 
 >>>>>>> master
 >>>>>>> master
 >>>>>>> master
+=======
+	for {
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
 		select {
 		case <-cs.respHeaderRecv:
 			return handleResponseHeaders()
@@ -1776,6 +1873,7 @@ func (cs *clientStream) writeRequest(req *http.Request) (err error) {
 		panic("RoundTrip on uninitialized ClientConn") // for tests
 	}
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 <<<<<<< HEAD
 =======
@@ -1802,6 +1900,8 @@ func (cs *clientStream) writeRequest(req *http.Request) (err error) {
 >>>>>>> master
 >>>>>>> master
 >>>>>>> master
+=======
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
 	select {
 	case cc.reqHeaderMu <- struct{}{}:
 	case <-cs.reqCancel:
@@ -1827,6 +1927,7 @@ func (cs *clientStream) writeRequest(req *http.Request) (err error) {
 	cc.mu.Unlock()
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 <<<<<<< HEAD
 =======
@@ -1842,6 +1943,8 @@ func (cs *clientStream) writeRequest(req *http.Request) (err error) {
 >>>>>>> master
 >>>>>>> master
 >>>>>>> master
+=======
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
 	// TODO(bradfitz): this is a copy of the logic in net/http. Unify somewhere?
 	if !cc.t.disableCompression() &&
 		req.Header.Get("Accept-Encoding") == "" &&
@@ -1923,6 +2026,7 @@ func (cs *clientStream) writeRequest(req *http.Request) (err error) {
 	var respHeaderRecv chan struct{}
 	if d := cc.responseHeaderTimeout(); d != 0 {
 <<<<<<< HEAD
+<<<<<<< HEAD
 		timer := cc.newTimer(d)
 		defer timer.Stop()
 		respHeaderTimer = timer.C()
@@ -1943,12 +2047,18 @@ func (cs *clientStream) writeRequest(req *http.Request) (err error) {
 >>>>>>> master
 >>>>>>> master
 >>>>>>> master
+=======
+		timer := time.NewTimer(d)
+		defer timer.Stop()
+		respHeaderTimer = timer.C
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
 		respHeaderRecv = cs.respHeaderRecv
 	}
 	// Wait until the peer half-closes its end of the stream,
 	// or until the request is aborted (via context, error, or otherwise),
 	// whichever comes first.
 	for {
+<<<<<<< HEAD
 <<<<<<< HEAD
 =======
 <<<<<<< HEAD
@@ -1976,6 +2086,8 @@ func (cs *clientStream) writeRequest(req *http.Request) (err error) {
 >>>>>>> master
 >>>>>>> master
 >>>>>>> master
+=======
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
 		select {
 		case <-cs.peerClosed:
 			return nil
@@ -2125,6 +2237,7 @@ func (cc *ClientConn) awaitOpenSlotForStreamLocked(cs *clientStream) error {
 		}
 		cc.pendingRequests++
 <<<<<<< HEAD
+<<<<<<< HEAD
 		cc.condWait()
 =======
 <<<<<<< HEAD
@@ -2137,6 +2250,9 @@ func (cc *ClientConn) awaitOpenSlotForStreamLocked(cs *clientStream) error {
 >>>>>>> master
 >>>>>>> master
 >>>>>>> master
+=======
+		cc.cond.Wait()
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
 		cc.pendingRequests--
 		select {
 		case <-cs.abort:
@@ -2399,6 +2515,7 @@ func (cs *clientStream) awaitFlowControl(maxBytes int) (taken int32, err error) 
 			return take, nil
 		}
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 <<<<<<< HEAD
 =======
@@ -2428,15 +2545,20 @@ func validateHeaders(hdrs http.Header) string {
 =======
 =======
 >>>>>>> master
+=======
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
 		cc.cond.Wait()
 	}
 }
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> master
 >>>>>>> master
 >>>>>>> master
+=======
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
 var errNilRequestURL = errors.New("http2: Request.URI is nil")
 
 // requires cc.wmu be held.
@@ -2475,6 +2597,7 @@ func (cc *ClientConn) encodeHeaders(req *http.Request, addGzipHeader bool, trail
 	}
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 <<<<<<< HEAD
 =======
@@ -2492,6 +2615,8 @@ func (cc *ClientConn) encodeHeaders(req *http.Request, addGzipHeader bool, trail
 =======
 =======
 >>>>>>> master
+=======
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
 	// Check for any invalid headers and return an error before we
 	// potentially pollute our hpack state. (We want to be able to
 	// continue to reuse the hpack encoder for future requests)
@@ -2506,10 +2631,13 @@ func (cc *ClientConn) encodeHeaders(req *http.Request, addGzipHeader bool, trail
 			}
 		}
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> master
 >>>>>>> master
 >>>>>>> master
+=======
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
 	}
 
 	enumerateHeaders := func(f func(name, value string)) {
@@ -2729,6 +2857,7 @@ func (cc *ClientConn) forgetStreamID(id uint32) {
 	// Wake up writeRequestBody via clientStream.awaitFlowControl and
 	// wake up RoundTrip if there is a pending request.
 <<<<<<< HEAD
+<<<<<<< HEAD
 	cc.condBroadcast()
 =======
 <<<<<<< HEAD
@@ -2741,6 +2870,9 @@ func (cc *ClientConn) forgetStreamID(id uint32) {
 >>>>>>> master
 >>>>>>> master
 >>>>>>> master
+=======
+	cc.cond.Broadcast()
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
 
 	closeOnIdle := cc.singleUse || cc.doNotReuse || cc.t.disableKeepAlives() || cc.goAway != nil
 	if closeOnIdle && cc.streamsReserved == 0 && len(cc.streams) == 0 {
@@ -2829,6 +2961,7 @@ func (rl *clientConnReadLoop) cleanup() {
 		}
 	}
 <<<<<<< HEAD
+<<<<<<< HEAD
 	cc.condBroadcast()
 =======
 <<<<<<< HEAD
@@ -2841,6 +2974,9 @@ func (rl *clientConnReadLoop) cleanup() {
 >>>>>>> master
 >>>>>>> master
 >>>>>>> master
+=======
+	cc.cond.Broadcast()
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
 	cc.mu.Unlock()
 }
 
@@ -2876,6 +3012,7 @@ func (rl *clientConnReadLoop) run() error {
 	gotSettings := false
 	readIdleTimeout := cc.t.ReadIdleTimeout
 <<<<<<< HEAD
+<<<<<<< HEAD
 	var t timer
 	if readIdleTimeout != 0 {
 		t = cc.afterFunc(readIdleTimeout, cc.healthCheck)
@@ -2888,15 +3025,20 @@ func (rl *clientConnReadLoop) run() error {
 		t = cc.afterFunc(readIdleTimeout, cc.healthCheck)
 =======
 >>>>>>> master
+=======
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
 	var t *time.Timer
 	if readIdleTimeout != 0 {
 		t = time.AfterFunc(readIdleTimeout, cc.healthCheck)
 		defer t.Stop()
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> master
 >>>>>>> master
 >>>>>>> master
+=======
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
 	}
 	for {
 		f, err := cc.fr.ReadFrame()
@@ -3312,6 +3454,7 @@ func (rl *clientConnReadLoop) processData(f *DataFrame) error {
 		return nil
 	}
 <<<<<<< HEAD
+<<<<<<< HEAD
 	if !cs.pastHeaders {
 =======
 <<<<<<< HEAD
@@ -3324,6 +3467,9 @@ func (rl *clientConnReadLoop) processData(f *DataFrame) error {
 >>>>>>> master
 >>>>>>> master
 >>>>>>> master
+=======
+	if !cs.firstByte {
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
 		cc.logf("protocol error: received DATA before a HEADERS frame")
 		rl.endStreamError(cs, StreamError{
 			StreamID: f.StreamID,
@@ -3507,6 +3653,7 @@ func (rl *clientConnReadLoop) processSettingsNoWrite(f *SettingsFrame) error {
 				cs.flow.add(delta)
 			}
 <<<<<<< HEAD
+<<<<<<< HEAD
 			cc.condBroadcast()
 =======
 <<<<<<< HEAD
@@ -3519,6 +3666,9 @@ func (rl *clientConnReadLoop) processSettingsNoWrite(f *SettingsFrame) error {
 >>>>>>> master
 >>>>>>> master
 >>>>>>> master
+=======
+			cc.cond.Broadcast()
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
 
 			cc.initialWindowSize = s.Val
 		case SettingHeaderTableSize:
@@ -3563,6 +3713,7 @@ func (rl *clientConnReadLoop) processWindowUpdate(f *WindowUpdateFrame) error {
 	}
 	if !fl.add(int32(f.Increment)) {
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 <<<<<<< HEAD
 		return ConnectionError(ErrCodeFlowControl)
@@ -3592,6 +3743,11 @@ func (rl *clientConnReadLoop) processWindowUpdate(f *WindowUpdateFrame) error {
 >>>>>>> master
 >>>>>>> master
 >>>>>>> master
+=======
+		return ConnectionError(ErrCodeFlowControl)
+	}
+	cc.cond.Broadcast()
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
 	return nil
 }
 
@@ -3634,6 +3790,7 @@ func (cc *ClientConn) Ping(ctx context.Context) error {
 		cc.mu.Unlock()
 	}
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 <<<<<<< HEAD
 =======
@@ -3675,6 +3832,8 @@ func (cc *ClientConn) Ping(ctx context.Context) error {
 =======
 =======
 >>>>>>> master
+=======
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
 	errc := make(chan error, 1)
 	go func() {
 		cc.wmu.Lock()
@@ -3694,10 +3853,13 @@ func (cc *ClientConn) Ping(ctx context.Context) error {
 	case err := <-errc:
 		return err
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> master
 >>>>>>> master
 >>>>>>> master
+=======
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
 	case <-ctx.Done():
 		return ctx.Err()
 	case <-cc.readerDone:
@@ -3867,6 +4029,7 @@ func (rt noDialH2RoundTripper) RoundTrip(req *http.Request) (*http.Response, err
 
 func (t *Transport) idleConnTimeout() time.Duration {
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 <<<<<<< HEAD
 	if t.t1 != nil {
@@ -3895,6 +4058,11 @@ func (t *Transport) idleConnTimeout() time.Duration {
 >>>>>>> master
 >>>>>>> master
 >>>>>>> master
+=======
+	if t.t1 != nil {
+		return t.t1.IdleConnTimeout
+	}
+>>>>>>> 0f30e9007966f6f247e51ad0fdb53399afca4f5a
 	return 0
 }
 
