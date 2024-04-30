@@ -34,11 +34,16 @@ import (
 <<<<<<< HEAD
 =======
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> master
 	spb "google.golang.org/genproto/googleapis/rpc/status"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/protobuf/proto"
 	"google.golang.org/protobuf/protoadapt"
 	"google.golang.org/protobuf/types/known/anypb"
+<<<<<<< HEAD
+=======
 =======
 >>>>>>> master
 	"github.com/golang/protobuf/proto"
@@ -47,6 +52,7 @@ import (
 	"google.golang.org/grpc/codes"
 <<<<<<< HEAD
 =======
+>>>>>>> master
 >>>>>>> master
 >>>>>>> master
 )
@@ -145,12 +151,16 @@ func (s *Status) Err() error {
 // WithDetails returns a new status with the provided details messages appended to the status.
 // If any errors are encountered, it returns nil and the first error encountered.
 <<<<<<< HEAD
+func (s *Status) WithDetails(details ...protoadapt.MessageV1) (*Status, error) {
+=======
+<<<<<<< HEAD
 func (s *Status) WithDetails(details ...proto.Message) (*Status, error) {
 =======
 <<<<<<< HEAD
 func (s *Status) WithDetails(details ...protoadapt.MessageV1) (*Status, error) {
 =======
 func (s *Status) WithDetails(details ...proto.Message) (*Status, error) {
+>>>>>>> master
 >>>>>>> master
 >>>>>>> master
 	if s.Code() == codes.OK {
@@ -160,12 +170,16 @@ func (s *Status) WithDetails(details ...proto.Message) (*Status, error) {
 	p := s.Proto()
 	for _, detail := range details {
 <<<<<<< HEAD
+		any, err := anypb.New(protoadapt.MessageV2Of(detail))
+=======
+<<<<<<< HEAD
 		any, err := ptypes.MarshalAny(detail)
 =======
 <<<<<<< HEAD
 		any, err := anypb.New(protoadapt.MessageV2Of(detail))
 =======
 		any, err := ptypes.MarshalAny(detail)
+>>>>>>> master
 >>>>>>> master
 >>>>>>> master
 		if err != nil {
@@ -187,12 +201,17 @@ func (s *Status) Details() []any {
 <<<<<<< HEAD
 =======
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> master
 		detail, err := any.UnmarshalNew()
 		if err != nil {
 			details = append(details, err)
 			continue
 		}
 		details = append(details, detail)
+<<<<<<< HEAD
+=======
 =======
 >>>>>>> master
 		detail := &ptypes.DynamicAny{}
@@ -203,6 +222,7 @@ func (s *Status) Details() []any {
 		details = append(details, detail.Message)
 <<<<<<< HEAD
 =======
+>>>>>>> master
 >>>>>>> master
 >>>>>>> master
 	}

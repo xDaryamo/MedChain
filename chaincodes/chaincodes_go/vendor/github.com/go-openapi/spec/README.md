@@ -1,4 +1,8 @@
 <<<<<<< HEAD
+# OpenAPI v2 object model [![Build Status](https://github.com/go-openapi/spec/actions/workflows/go-test.yml/badge.svg)](https://github.com/go-openapi/spec/actions?query=workflow%3A"go+test") [![codecov](https://codecov.io/gh/go-openapi/spec/branch/master/graph/badge.svg)](https://codecov.io/gh/go-openapi/spec)
+
+=======
+<<<<<<< HEAD
 =======
 <<<<<<< HEAD
 # OpenAPI v2 object model [![Build Status](https://github.com/go-openapi/spec/actions/workflows/go-test.yml/badge.svg)](https://github.com/go-openapi/spec/actions?query=workflow%3A"go+test") [![codecov](https://codecov.io/gh/go-openapi/spec/branch/master/graph/badge.svg)](https://codecov.io/gh/go-openapi/spec)
@@ -12,6 +16,7 @@
 [![codecov](https://codecov.io/gh/go-openapi/spec/branch/master/graph/badge.svg)](https://codecov.io/gh/go-openapi/spec)
 <<<<<<< HEAD
 =======
+>>>>>>> master
 >>>>>>> master
 >>>>>>> master
 [![Slack Status](https://slackin.goswagger.io/badge.svg)](https://slackin.goswagger.io)
@@ -46,6 +51,9 @@ The object model for OpenAPI specification documents.
 <<<<<<< HEAD
 =======
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> master
 
 * Does the unmarshaling support YAML?
 
@@ -69,6 +77,9 @@ The object model for OpenAPI specification documents.
 > This `id` does not conflict with any property named `id`.
 >
 > See also https://github.com/go-openapi/spec/issues/23
+<<<<<<< HEAD
 =======
+=======
+>>>>>>> master
 >>>>>>> master
 >>>>>>> master

@@ -24,6 +24,11 @@ import (
 	"fmt"
 
 <<<<<<< HEAD
+	"google.golang.org/grpc/encoding"
+	"google.golang.org/protobuf/proto"
+	"google.golang.org/protobuf/protoadapt"
+=======
+<<<<<<< HEAD
 	"github.com/golang/protobuf/proto"
 	"google.golang.org/grpc/encoding"
 =======
@@ -34,6 +39,7 @@ import (
 =======
 	"github.com/golang/protobuf/proto"
 	"google.golang.org/grpc/encoding"
+>>>>>>> master
 >>>>>>> master
 >>>>>>> master
 )
@@ -52,11 +58,16 @@ func (codec) Marshal(v any) ([]byte, error) {
 <<<<<<< HEAD
 =======
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> master
 	vv := messageV2Of(v)
 	if vv == nil {
 		return nil, fmt.Errorf("failed to marshal, message is %T, want proto.Message", v)
 	}
 
+<<<<<<< HEAD
+=======
 =======
 >>>>>>> master
 	vv, ok := v.(proto.Message)
@@ -67,6 +78,7 @@ func (codec) Marshal(v any) ([]byte, error) {
 =======
 >>>>>>> master
 >>>>>>> master
+>>>>>>> master
 	return proto.Marshal(vv)
 }
 
@@ -74,6 +86,9 @@ func (codec) Unmarshal(data []byte, v any) error {
 <<<<<<< HEAD
 =======
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> master
 	vv := messageV2Of(v)
 	if vv == nil {
 		return fmt.Errorf("failed to unmarshal, message is %T, want proto.Message", v)
@@ -93,6 +108,8 @@ func messageV2Of(v any) proto.Message {
 	return nil
 }
 
+<<<<<<< HEAD
+=======
 =======
 >>>>>>> master
 	vv, ok := v.(proto.Message)
@@ -104,6 +121,7 @@ func messageV2Of(v any) proto.Message {
 
 <<<<<<< HEAD
 =======
+>>>>>>> master
 >>>>>>> master
 >>>>>>> master
 func (codec) Name() string {

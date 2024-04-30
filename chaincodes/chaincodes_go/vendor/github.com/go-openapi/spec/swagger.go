@@ -254,12 +254,16 @@ func (s SchemaOrBool) MarshalJSON() ([]byte, error) {
 func (s *SchemaOrBool) UnmarshalJSON(data []byte) error {
 	var nw SchemaOrBool
 <<<<<<< HEAD
+	if len(data) > 0 {
+=======
+<<<<<<< HEAD
 	if len(data) >= 4 {
 =======
 <<<<<<< HEAD
 	if len(data) > 0 {
 =======
 	if len(data) >= 4 {
+>>>>>>> master
 >>>>>>> master
 >>>>>>> master
 		if data[0] == '{' {
@@ -270,12 +274,16 @@ func (s *SchemaOrBool) UnmarshalJSON(data []byte) error {
 			nw.Schema = &sch
 		}
 <<<<<<< HEAD
+		nw.Allows = !bytes.Equal(data, []byte("false"))
+=======
+<<<<<<< HEAD
 		nw.Allows = !(data[0] == 'f' && data[1] == 'a' && data[2] == 'l' && data[3] == 's' && data[4] == 'e')
 =======
 <<<<<<< HEAD
 		nw.Allows = !bytes.Equal(data, []byte("false"))
 =======
 		nw.Allows = !(data[0] == 'f' && data[1] == 'a' && data[2] == 'l' && data[3] == 's' && data[4] == 'e')
+>>>>>>> master
 >>>>>>> master
 >>>>>>> master
 	}

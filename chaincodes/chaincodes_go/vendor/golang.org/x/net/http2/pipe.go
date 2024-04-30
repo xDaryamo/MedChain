@@ -78,15 +78,21 @@ func (p *pipe) Read(d []byte) (n int, err error) {
 }
 
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
 var errClosedPipeWrite = errors.New("write on closed buffer")
 =======
 <<<<<<< HEAD
+>>>>>>> master
 var (
 	errClosedPipeWrite        = errors.New("write on closed buffer")
 	errUninitializedPipeWrite = errors.New("write on uninitialized buffer")
 )
+<<<<<<< HEAD
+=======
 =======
 var errClosedPipeWrite = errors.New("write on closed buffer")
+>>>>>>> master
 >>>>>>> master
 >>>>>>> master
 
@@ -105,13 +111,19 @@ func (p *pipe) Write(d []byte) (n int, err error) {
 <<<<<<< HEAD
 =======
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> master
 	// pipe.setBuffer is never invoked, leaving the buffer uninitialized.
 	// We shouldn't try to write to an uninitialized pipe,
 	// but returning an error is better than panicking.
 	if p.b == nil {
 		return 0, errUninitializedPipeWrite
 	}
+<<<<<<< HEAD
 =======
+=======
+>>>>>>> master
 >>>>>>> master
 >>>>>>> master
 	return p.b.Write(d)

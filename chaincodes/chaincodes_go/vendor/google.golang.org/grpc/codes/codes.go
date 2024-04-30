@@ -26,9 +26,12 @@ import (
 )
 
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
 // A Code is an unsigned 32-bit error code as defined in the gRPC spec.
 =======
 <<<<<<< HEAD
+>>>>>>> master
 // A Code is a status code defined according to the [gRPC documentation].
 //
 // Only the codes defined as consts in this package are valid codes. Do not use
@@ -36,8 +39,11 @@ import (
 // interoperability between implementations is not guaranteed.
 //
 // [gRPC documentation]: https://github.com/grpc/grpc/blob/master/doc/statuscodes.md
+<<<<<<< HEAD
+=======
 =======
 // A Code is an unsigned 32-bit error code as defined in the gRPC spec.
+>>>>>>> master
 >>>>>>> master
 >>>>>>> master
 type Code uint32

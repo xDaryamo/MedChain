@@ -3,9 +3,13 @@ vendor
 Godeps
 .idea
 <<<<<<< HEAD
+*.out
+=======
+<<<<<<< HEAD
 =======
 <<<<<<< HEAD
 *.out
 =======
+>>>>>>> master
 >>>>>>> master
 >>>>>>> master

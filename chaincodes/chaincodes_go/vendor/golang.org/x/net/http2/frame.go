@@ -1513,12 +1513,17 @@ func (fr *Framer) maxHeaderStringLen() int {
 <<<<<<< HEAD
 =======
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> master
 	v := int(fr.maxHeaderListSize())
 	if v < 0 {
 		// If maxHeaderListSize overflows an int, use no limit (0).
 		return 0
 	}
 	return v
+<<<<<<< HEAD
+=======
 =======
 >>>>>>> master
 	v := fr.maxHeaderListSize()
@@ -1530,6 +1535,7 @@ func (fr *Framer) maxHeaderStringLen() int {
 	return 0
 <<<<<<< HEAD
 =======
+>>>>>>> master
 >>>>>>> master
 >>>>>>> master
 }
@@ -1581,10 +1587,14 @@ func (fr *Framer) readMetaFrame(hf *HeadersFrame) (*MetaHeadersFrame, error) {
 			hdec.SetEmitEnabled(false)
 			mh.Truncated = true
 <<<<<<< HEAD
+			remainSize = 0
+=======
+<<<<<<< HEAD
 =======
 <<<<<<< HEAD
 			remainSize = 0
 =======
+>>>>>>> master
 >>>>>>> master
 >>>>>>> master
 			return
@@ -1602,6 +1612,9 @@ func (fr *Framer) readMetaFrame(hf *HeadersFrame) (*MetaHeadersFrame, error) {
 <<<<<<< HEAD
 =======
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> master
 
 		// Avoid parsing large amounts of headers that we will then discard.
 		// If the sender exceeds the max header list size by too much,
@@ -1632,7 +1645,10 @@ func (fr *Framer) readMetaFrame(hf *HeadersFrame) (*MetaHeadersFrame, error) {
 			return nil, ConnectionError(ErrCodeProtocol)
 		}
 
+<<<<<<< HEAD
 =======
+=======
+>>>>>>> master
 >>>>>>> master
 >>>>>>> master
 		if _, err := hdec.Write(frag); err != nil {

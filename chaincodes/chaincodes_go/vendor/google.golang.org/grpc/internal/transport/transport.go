@@ -29,10 +29,14 @@ import (
 	"io"
 	"net"
 <<<<<<< HEAD
+	"strings"
+=======
+<<<<<<< HEAD
 =======
 <<<<<<< HEAD
 	"strings"
 =======
+>>>>>>> master
 >>>>>>> master
 >>>>>>> master
 	"sync"
@@ -45,10 +49,14 @@ import (
 	"google.golang.org/grpc/keepalive"
 	"google.golang.org/grpc/metadata"
 <<<<<<< HEAD
+	"google.golang.org/grpc/peer"
+=======
+<<<<<<< HEAD
 =======
 <<<<<<< HEAD
 	"google.golang.org/grpc/peer"
 =======
+>>>>>>> master
 >>>>>>> master
 >>>>>>> master
 	"google.golang.org/grpc/resolver"
@@ -280,6 +288,10 @@ type Stream struct {
 	// meaningful after headerChan is closed (always call waitOnHeader() before
 	// reading its value).  Not valid on server side.
 <<<<<<< HEAD
+	headerValid      bool
+	headerWireLength int // Only set on server side.
+=======
+<<<<<<< HEAD
 	headerValid bool
 =======
 <<<<<<< HEAD
@@ -287,6 +299,7 @@ type Stream struct {
 	headerWireLength int // Only set on server side.
 =======
 	headerValid bool
+>>>>>>> master
 >>>>>>> master
 >>>>>>> master
 
@@ -384,19 +397,25 @@ func (s *Stream) SendCompress() string {
 // ClientAdvertisedCompressors returns the compressor names advertised by the
 // client via grpc-accept-encoding header.
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
 func (s *Stream) ClientAdvertisedCompressors() string {
 	return s.clientAdvertisedCompressors
 =======
 <<<<<<< HEAD
+>>>>>>> master
 func (s *Stream) ClientAdvertisedCompressors() []string {
 	values := strings.Split(s.clientAdvertisedCompressors, ",")
 	for i, v := range values {
 		values[i] = strings.TrimSpace(v)
 	}
 	return values
+<<<<<<< HEAD
+=======
 =======
 func (s *Stream) ClientAdvertisedCompressors() string {
 	return s.clientAdvertisedCompressors
+>>>>>>> master
 >>>>>>> master
 >>>>>>> master
 }
@@ -465,13 +484,19 @@ func (s *Stream) Context() context.Context {
 <<<<<<< HEAD
 =======
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> master
 // SetContext sets the context of the stream. This will be deleted once the
 // stats handler callouts all move to gRPC layer.
 func (s *Stream) SetContext(ctx context.Context) {
 	s.ctx = ctx
 }
 
+<<<<<<< HEAD
 =======
+=======
+>>>>>>> master
 >>>>>>> master
 >>>>>>> master
 // Method returns the method for the stream.
@@ -489,13 +514,19 @@ func (s *Stream) Status() *status.Status {
 <<<<<<< HEAD
 =======
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> master
 // HeaderWireLength returns the size of the headers of the stream as received
 // from the wire. Valid only on the server.
 func (s *Stream) HeaderWireLength() int {
 	return s.headerWireLength
 }
 
+<<<<<<< HEAD
 =======
+=======
+>>>>>>> master
 >>>>>>> master
 >>>>>>> master
 // SetHeader sets the header metadata. This can be called multiple times.
@@ -614,12 +645,16 @@ type ServerConfig struct {
 	ReadBufferSize        int
 	SharedWriteBuffer     bool
 <<<<<<< HEAD
+	ChannelzParent        *channelz.Server
+=======
+<<<<<<< HEAD
 	ChannelzParentID      *channelz.Identifier
 =======
 <<<<<<< HEAD
 	ChannelzParent        *channelz.Server
 =======
 	ChannelzParentID      *channelz.Identifier
+>>>>>>> master
 >>>>>>> master
 >>>>>>> master
 	MaxHeaderListSize     *uint32
@@ -657,6 +692,10 @@ type ConnectOptions struct {
 	// SharedWriteBuffer indicates whether connections should reuse write buffer
 	SharedWriteBuffer bool
 <<<<<<< HEAD
+	// ChannelzParent sets the addrConn id which initiated the creation of this client transport.
+	ChannelzParent *channelz.SubChannel
+=======
+<<<<<<< HEAD
 	// ChannelzParentID sets the addrConn id which initiate the creation of this client transport.
 	ChannelzParentID *channelz.Identifier
 =======
@@ -666,6 +705,7 @@ type ConnectOptions struct {
 =======
 	// ChannelzParentID sets the addrConn id which initiate the creation of this client transport.
 	ChannelzParentID *channelz.Identifier
+>>>>>>> master
 >>>>>>> master
 >>>>>>> master
 	// MaxHeaderListSize sets the max (uncompressed) size of header list that is prepared to be received.
@@ -778,12 +818,16 @@ type ClientTransport interface {
 type ServerTransport interface {
 	// HandleStreams receives incoming streams using the given handler.
 <<<<<<< HEAD
+	HandleStreams(context.Context, func(*Stream))
+=======
+<<<<<<< HEAD
 	HandleStreams(func(*Stream))
 =======
 <<<<<<< HEAD
 	HandleStreams(context.Context, func(*Stream))
 =======
 	HandleStreams(func(*Stream))
+>>>>>>> master
 >>>>>>> master
 >>>>>>> master
 
@@ -805,6 +849,10 @@ type ServerTransport interface {
 	Close(err error)
 
 <<<<<<< HEAD
+	// Peer returns the peer of the server transport.
+	Peer() *peer.Peer
+=======
+<<<<<<< HEAD
 	// RemoteAddr returns the remote network address.
 	RemoteAddr() net.Addr
 =======
@@ -814,6 +862,7 @@ type ServerTransport interface {
 =======
 	// RemoteAddr returns the remote network address.
 	RemoteAddr() net.Addr
+>>>>>>> master
 >>>>>>> master
 >>>>>>> master
 
@@ -902,6 +951,8 @@ const (
 =======
 <<<<<<< HEAD
 =======
+<<<<<<< HEAD
+=======
 >>>>>>> master
 // channelzData is used to store channelz related data for http2Client and http2Server.
 // These fields cannot be embedded in the original structs (e.g. http2Client), since to do atomic
@@ -929,6 +980,7 @@ type channelzData struct {
 
 <<<<<<< HEAD
 =======
+>>>>>>> master
 >>>>>>> master
 >>>>>>> master
 // ContextErr converts the error from context package into a status error.

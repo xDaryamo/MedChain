@@ -585,12 +585,16 @@ ccflags="$@"
 		$2 ~ /^KEYCTL_/ ||
 		$2 ~ /^PERF_/ ||
 <<<<<<< HEAD
+		$2 ~ /^SECCOMP_/ ||
+=======
+<<<<<<< HEAD
 		$2 ~ /^SECCOMP_MODE_/ ||
 =======
 <<<<<<< HEAD
 		$2 ~ /^SECCOMP_/ ||
 =======
 		$2 ~ /^SECCOMP_MODE_/ ||
+>>>>>>> master
 >>>>>>> master
 >>>>>>> master
 		$2 ~ /^SEEK_/ ||

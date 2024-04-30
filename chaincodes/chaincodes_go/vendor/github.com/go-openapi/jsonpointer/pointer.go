@@ -113,6 +113,9 @@ func SetForToken(document any, decodedToken string, value any) (any, error) {
 <<<<<<< HEAD
 =======
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> master
 func isNil(input any) bool {
 	if input == nil {
 		return true
@@ -137,6 +140,8 @@ func getSingleImpl(node any, decodedToken string, nameProvider *swag.NameProvide
 	switch typed := node.(type) {
 	case JSONPointable:
 		r, err := typed.JSONLookup(decodedToken)
+<<<<<<< HEAD
+=======
 =======
 >>>>>>> master
 func getSingleImpl(node any, decodedToken string, nameProvider *swag.NameProvider) (any, reflect.Kind, error) {
@@ -149,25 +154,32 @@ func getSingleImpl(node any, decodedToken string, nameProvider *swag.NameProvide
 =======
 >>>>>>> master
 >>>>>>> master
+>>>>>>> master
 		if err != nil {
 			return nil, kind, err
 		}
 		return r, kind, nil
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
 	}
 
 	switch kind {
 =======
 <<<<<<< HEAD
+>>>>>>> master
 	case *any: // case of a pointer to interface, that is not resolved by reflect.Indirect
 		return getSingleImpl(*typed, decodedToken, nameProvider)
 	}
 
 	switch kind { //nolint:exhaustive
+<<<<<<< HEAD
+=======
 =======
 	}
 
 	switch kind {
+>>>>>>> master
 >>>>>>> master
 >>>>>>> master
 	case reflect.Struct:
@@ -218,12 +230,16 @@ func setSingleImpl(node, data any, decodedToken string, nameProvider *swag.NameP
 	}
 
 <<<<<<< HEAD
+	switch rValue.Kind() { //nolint:exhaustive
+=======
+<<<<<<< HEAD
 	switch rValue.Kind() {
 =======
 <<<<<<< HEAD
 	switch rValue.Kind() { //nolint:exhaustive
 =======
 	switch rValue.Kind() {
+>>>>>>> master
 >>>>>>> master
 >>>>>>> master
 	case reflect.Struct:
@@ -287,6 +303,9 @@ func (p *Pointer) get(node any, nameProvider *swag.NameProvider) (any, reflect.K
 			return nil, knd, err
 		}
 <<<<<<< HEAD
+		node = r
+=======
+<<<<<<< HEAD
 		node, kind = r, knd
 
 =======
@@ -295,6 +314,7 @@ func (p *Pointer) get(node any, nameProvider *swag.NameProvider) (any, reflect.K
 =======
 		node, kind = r, knd
 
+>>>>>>> master
 >>>>>>> master
 >>>>>>> master
 	}
@@ -310,12 +330,16 @@ func (p *Pointer) set(node, data any, nameProvider *swag.NameProvider) error {
 
 	if knd != reflect.Ptr && knd != reflect.Struct && knd != reflect.Map && knd != reflect.Slice && knd != reflect.Array {
 <<<<<<< HEAD
+		return errors.New("only structs, pointers, maps and slices are supported for setting values")
+=======
+<<<<<<< HEAD
 		return fmt.Errorf("only structs, pointers, maps and slices are supported for setting values")
 =======
 <<<<<<< HEAD
 		return errors.New("only structs, pointers, maps and slices are supported for setting values")
 =======
 		return fmt.Errorf("only structs, pointers, maps and slices are supported for setting values")
+>>>>>>> master
 >>>>>>> master
 >>>>>>> master
 	}
@@ -357,12 +381,16 @@ func (p *Pointer) set(node, data any, nameProvider *swag.NameProvider) error {
 		}
 
 <<<<<<< HEAD
+		switch kind { //nolint:exhaustive
+=======
+<<<<<<< HEAD
 		switch kind {
 =======
 <<<<<<< HEAD
 		switch kind { //nolint:exhaustive
 =======
 		switch kind {
+>>>>>>> master
 >>>>>>> master
 >>>>>>> master
 		case reflect.Struct:
@@ -488,11 +516,16 @@ func offsetSingleObject(dec *json.Decoder, decodedToken string) (int64, error) {
 <<<<<<< HEAD
 =======
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> master
 				if err = drainSingle(dec); err != nil {
 					return 0, err
 				}
 			case '[':
 				if err = drainSingle(dec); err != nil {
+<<<<<<< HEAD
+=======
 =======
 >>>>>>> master
 				if err := drainSingle(dec); err != nil {
@@ -502,6 +535,7 @@ func offsetSingleObject(dec *json.Decoder, decodedToken string) (int64, error) {
 				if err := drainSingle(dec); err != nil {
 <<<<<<< HEAD
 =======
+>>>>>>> master
 >>>>>>> master
 >>>>>>> master
 					return 0, err
@@ -532,6 +566,9 @@ func offsetSingleArray(dec *json.Decoder, decodedToken string) (int64, error) {
 <<<<<<< HEAD
 =======
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> master
 
 		if delim, isDelim := tk.(json.Delim); isDelim {
 			switch delim {
@@ -541,6 +578,8 @@ func offsetSingleArray(dec *json.Decoder, decodedToken string) (int64, error) {
 				}
 			case '[':
 				if err = drainSingle(dec); err != nil {
+<<<<<<< HEAD
+=======
 =======
 >>>>>>> master
 		switch tk := tk.(type) {
@@ -556,16 +595,21 @@ func offsetSingleArray(dec *json.Decoder, decodedToken string) (int64, error) {
 =======
 >>>>>>> master
 >>>>>>> master
+>>>>>>> master
 					return 0, err
 				}
 			}
 		}
 	}
 <<<<<<< HEAD
+
+=======
+<<<<<<< HEAD
 =======
 <<<<<<< HEAD
 
 =======
+>>>>>>> master
 >>>>>>> master
 >>>>>>> master
 	if !dec.More() {
@@ -576,12 +620,16 @@ func offsetSingleArray(dec *json.Decoder, decodedToken string) (int64, error) {
 
 // drainSingle drains a single level of object or array.
 <<<<<<< HEAD
+// The decoder has to guarantee the beginning delim (i.e. '{' or '[') has been consumed.
+=======
+<<<<<<< HEAD
 // The decoder has to guarantee the begining delim (i.e. '{' or '[') has been consumed.
 =======
 <<<<<<< HEAD
 // The decoder has to guarantee the beginning delim (i.e. '{' or '[') has been consumed.
 =======
 // The decoder has to guarantee the begining delim (i.e. '{' or '[') has been consumed.
+>>>>>>> master
 >>>>>>> master
 >>>>>>> master
 func drainSingle(dec *json.Decoder) error {
@@ -593,6 +641,9 @@ func drainSingle(dec *json.Decoder) error {
 <<<<<<< HEAD
 =======
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> master
 		if delim, isDelim := tk.(json.Delim); isDelim {
 			switch delim {
 			case '{':
@@ -601,6 +652,8 @@ func drainSingle(dec *json.Decoder) error {
 				}
 			case '[':
 				if err = drainSingle(dec); err != nil {
+<<<<<<< HEAD
+=======
 =======
 >>>>>>> master
 		switch tk := tk.(type) {
@@ -616,16 +669,21 @@ func drainSingle(dec *json.Decoder) error {
 =======
 >>>>>>> master
 >>>>>>> master
+>>>>>>> master
 					return err
 				}
 			}
 		}
 	}
 <<<<<<< HEAD
+
+=======
+<<<<<<< HEAD
 =======
 <<<<<<< HEAD
 
 =======
+>>>>>>> master
 >>>>>>> master
 >>>>>>> master
 	// Consumes the ending delim
@@ -650,6 +708,10 @@ const (
 // Unescape unescapes a json pointer reference token string to the original representation
 func Unescape(token string) string {
 <<<<<<< HEAD
+	step1 := strings.ReplaceAll(token, encRefTok1, decRefTok1)
+	step2 := strings.ReplaceAll(step1, encRefTok0, decRefTok0)
+=======
+<<<<<<< HEAD
 	step1 := strings.Replace(token, encRefTok1, decRefTok1, -1)
 	step2 := strings.Replace(step1, encRefTok0, decRefTok0, -1)
 =======
@@ -661,11 +723,16 @@ func Unescape(token string) string {
 	step2 := strings.Replace(step1, encRefTok0, decRefTok0, -1)
 >>>>>>> master
 >>>>>>> master
+>>>>>>> master
 	return step2
 }
 
 // Escape escapes a pointer reference token string
 func Escape(token string) string {
+<<<<<<< HEAD
+	step1 := strings.ReplaceAll(token, decRefTok0, encRefTok0)
+	step2 := strings.ReplaceAll(step1, decRefTok1, encRefTok1)
+=======
 <<<<<<< HEAD
 	step1 := strings.Replace(token, decRefTok0, encRefTok0, -1)
 	step2 := strings.Replace(step1, decRefTok1, encRefTok1, -1)
@@ -676,6 +743,7 @@ func Escape(token string) string {
 =======
 	step1 := strings.Replace(token, decRefTok0, encRefTok0, -1)
 	step2 := strings.Replace(step1, decRefTok1, encRefTok1, -1)
+>>>>>>> master
 >>>>>>> master
 >>>>>>> master
 	return step2

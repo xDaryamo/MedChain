@@ -4,6 +4,9 @@ linters-settings:
 <<<<<<< HEAD
 =======
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> master
   golint:
     min-confidence: 0
   gocyclo:
@@ -16,6 +19,8 @@ linters-settings:
     min-len: 2
     min-occurrences: 3
 
+<<<<<<< HEAD
+=======
 =======
 >>>>>>> master
   gocyclo:
@@ -33,23 +38,30 @@ linters-settings:
 =======
 >>>>>>> master
 >>>>>>> master
+>>>>>>> master
 linters:
   enable-all: true
   disable:
     - maligned
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
     - lll
     - gochecknoglobals
 =======
 <<<<<<< HEAD
+>>>>>>> master
     - unparam
     - lll
     - gochecknoinits
     - gochecknoglobals
     - funlen
+<<<<<<< HEAD
+=======
 =======
     - lll
     - gochecknoglobals
+>>>>>>> master
 >>>>>>> master
 >>>>>>> master
     - godox
@@ -59,6 +71,9 @@ linters:
 <<<<<<< HEAD
 =======
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> master
     - wrapcheck
     - testpackage
     - nlreturn
@@ -92,6 +107,8 @@ linters:
     - structcheck
     - golint
     - nosnakecase
+<<<<<<< HEAD
+=======
 =======
 >>>>>>> master
     - funlen
@@ -122,5 +139,6 @@ linters:
     - exhaustruct
 <<<<<<< HEAD
 =======
+>>>>>>> master
 >>>>>>> master
 >>>>>>> master

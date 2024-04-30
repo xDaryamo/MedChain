@@ -36,11 +36,14 @@ if [[ "$1" = "-install" ]]; then
   pushd ./test/tools
   go install \
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
     golang.org/x/lint/golint \
 =======
 <<<<<<< HEAD
 =======
     golang.org/x/lint/golint \
+>>>>>>> master
 >>>>>>> master
 >>>>>>> master
     golang.org/x/tools/cmd/goimports \
@@ -50,12 +53,16 @@ if [[ "$1" = "-install" ]]; then
   if [[ -z "${VET_SKIP_PROTO}" ]]; then
     if [[ "${GITHUB_ACTIONS}" = "true" ]]; then
 <<<<<<< HEAD
+      PROTOBUF_VERSION=25.2 # a.k.a. v4.22.0 in pb.go files.
+=======
+<<<<<<< HEAD
       PROTOBUF_VERSION=22.0 # a.k.a v4.22.0 in pb.go files.
 =======
 <<<<<<< HEAD
       PROTOBUF_VERSION=25.2 # a.k.a. v4.22.0 in pb.go files.
 =======
       PROTOBUF_VERSION=22.0 # a.k.a v4.22.0 in pb.go files.
+>>>>>>> master
 >>>>>>> master
 >>>>>>> master
       PROTOC_FILENAME=protoc-${PROTOBUF_VERSION}-linux-x86_64.zip
@@ -95,6 +102,9 @@ not grep 'func Test[^(]' test/*.go
 <<<<<<< HEAD
 =======
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> master
 # - Check for typos in test function names
 git grep 'func (s) ' -- "*_test.go" | not grep -v 'func (s) Test'
 git grep 'func [A-Z]' -- "*_test.go" | not grep -v 'func Test\|Benchmark\|Example'
@@ -112,6 +122,8 @@ git grep -l '"math/rand"' -- "*.go" 2>&1 | not grep -v '^examples\|^interop/stre
 
 # - Do not use "interface{}"; use "any" instead.
 git grep -l 'interface{}' -- "*.go" 2>&1 | not grep -v '\.pb\.go\|protoc-gen-go-grpc\|grpc_testing_not_regenerate'
+<<<<<<< HEAD
+=======
 =======
 >>>>>>> master
 # - Do not import x/net/context.
@@ -127,6 +139,7 @@ git grep -l 'interface{}' -- "*.go" 2>&1 | not grep -v '\.pb\.go\|protoc-gen-go-
 =======
 >>>>>>> master
 >>>>>>> master
+>>>>>>> master
 
 # - Do not call grpclog directly. Use grpclog.Component instead.
 git grep -l -e 'grpclog.I' --or -e 'grpclog.W' --or -e 'grpclog.E' --or -e 'grpclog.F' --or -e 'grpclog.V' -- "*.go" | not grep -v '^grpclog/component.go\|^internal/grpctest/tlogger_test.go'
@@ -136,6 +149,9 @@ not git grep "\(import \|^\s*\)\"github.com/golang/protobuf/ptypes/" -- "*.go"
 
 # - Ensure all usages of grpc_testing package are renamed when importing.
 <<<<<<< HEAD
+not git grep "\(import \|^\s*\)\"google.golang.org/grpc/interop/grpc_testing" -- "*.go"
+=======
+<<<<<<< HEAD
 not git grep "\(import \|^\s*\)\"google.golang.org/grpc/interop/grpc_testing" -- "*.go" 
 =======
 <<<<<<< HEAD
@@ -144,12 +160,16 @@ not git grep "\(import \|^\s*\)\"google.golang.org/grpc/interop/grpc_testing" --
 not git grep "\(import \|^\s*\)\"google.golang.org/grpc/interop/grpc_testing" -- "*.go" 
 >>>>>>> master
 >>>>>>> master
+>>>>>>> master
 
 # - Ensure all xds proto imports are renamed to *pb or *grpc.
 git grep '"github.com/envoyproxy/go-control-plane/envoy' -- '*.go' ':(exclude)*.pb.go' | not grep -v 'pb "\|grpc "'
 
 misspell -error .
 
+<<<<<<< HEAD
+# - gofmt, goimports, go vet, go mod tidy.
+=======
 <<<<<<< HEAD
 # - gofmt, goimports, golint (with exceptions for generated code), go vet,
 # go mod tidy.
@@ -161,6 +181,7 @@ misspell -error .
 # go mod tidy.
 >>>>>>> master
 >>>>>>> master
+>>>>>>> master
 # Perform these checks on each module inside gRPC.
 for MOD_FILE in $(find . -name 'go.mod'); do
   MOD_DIR=$(dirname ${MOD_FILE})
@@ -169,11 +190,14 @@ for MOD_FILE in $(find . -name 'go.mod'); do
   gofmt -s -d -l . 2>&1 | fail_on_output
   goimports -l . 2>&1 | not grep -vE "\.pb\.go"
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
   golint ./... 2>&1 | not grep -vE "/grpc_testing_not_regenerate/.*\.pb\.go:"
 =======
 <<<<<<< HEAD
 =======
   golint ./... 2>&1 | not grep -vE "/grpc_testing_not_regenerate/.*\.pb\.go:"
+>>>>>>> master
 >>>>>>> master
 >>>>>>> master
 
@@ -187,6 +211,9 @@ done
 <<<<<<< HEAD
 =======
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> master
 SC_OUT="$(mktemp)"
 staticcheck -go 1.19 -checks 'all' ./... > "${SC_OUT}" || true
 
@@ -254,6 +281,8 @@ GetSuffixMatch
 GetTlsCertificateCertificateProviderInstance
 GetValidationContextCertificateProviderInstance
 XXXXX PleaseIgnoreUnused'
+<<<<<<< HEAD
+=======
 =======
 >>>>>>> master
 #
@@ -347,6 +376,7 @@ lint_package_comment() {
 lint_package_comment
 <<<<<<< HEAD
 =======
+>>>>>>> master
 >>>>>>> master
 >>>>>>> master
 

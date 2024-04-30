@@ -169,6 +169,9 @@ func (r *schemaLoader) load(refURL *url.URL) (interface{}, url.URL, bool, error)
 	debugLog("loading doc from: %s", normalized)
 
 <<<<<<< HEAD
+	data, fromCache := r.cache.Get(normalized)
+=======
+<<<<<<< HEAD
 =======
 <<<<<<< HEAD
 	data, fromCache := r.cache.Get(normalized)
@@ -184,6 +187,7 @@ func (r *schemaLoader) load(refURL *url.URL) (interface{}, url.URL, bool, error)
 	data, fromCache := r.cache.Get(u.RequestURI())
 <<<<<<< HEAD
 =======
+>>>>>>> master
 >>>>>>> master
 >>>>>>> master
 	if fromCache {

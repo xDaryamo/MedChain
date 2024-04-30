@@ -21,11 +21,14 @@ package grpcsync
 import (
 	"context"
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
 	"sync"
 =======
 <<<<<<< HEAD
 =======
 	"sync"
+>>>>>>> master
 >>>>>>> master
 >>>>>>> master
 
@@ -46,6 +49,8 @@ type CallbackSerializer struct {
 
 	callbacks *buffer.Unbounded
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
 	closedMu  sync.Mutex
 	closed    bool
 =======
@@ -53,6 +58,7 @@ type CallbackSerializer struct {
 =======
 	closedMu  sync.Mutex
 	closed    bool
+>>>>>>> master
 >>>>>>> master
 >>>>>>> master
 }
@@ -83,6 +89,9 @@ func (cs *CallbackSerializer) Schedule(f func(ctx context.Context)) bool {
 <<<<<<< HEAD
 =======
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> master
 	return cs.callbacks.Put(f) == nil
 }
 
@@ -93,6 +102,8 @@ func (cs *CallbackSerializer) run(ctx context.Context) {
 	// can be replaced with:
 	//
 	// context.AfterFunc(ctx, cs.callbacks.Close)
+<<<<<<< HEAD
+=======
 =======
 >>>>>>> master
 	cs.closedMu.Lock()
@@ -113,6 +124,7 @@ func (cs *CallbackSerializer) run(ctx context.Context) {
 =======
 >>>>>>> master
 >>>>>>> master
+>>>>>>> master
 	for ctx.Err() == nil {
 		select {
 		case <-ctx.Done():
@@ -121,6 +133,9 @@ func (cs *CallbackSerializer) run(ctx context.Context) {
 <<<<<<< HEAD
 =======
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> master
 		case cb := <-cs.callbacks.Get():
 			cs.callbacks.Load()
 			cb.(func(context.Context))(ctx)
@@ -134,6 +149,8 @@ func (cs *CallbackSerializer) run(ctx context.Context) {
 	for cb := range cs.callbacks.Get() {
 		cs.callbacks.Load()
 		cb.(func(context.Context))(ctx)
+<<<<<<< HEAD
+=======
 =======
 >>>>>>> master
 		case callback, ok := <-cs.callbacks.Get():
@@ -169,6 +186,7 @@ func (cs *CallbackSerializer) fetchPendingCallbacks() []func(context.Context) {
 		}
 <<<<<<< HEAD
 =======
+>>>>>>> master
 >>>>>>> master
 >>>>>>> master
 	}

@@ -21,6 +21,9 @@ import (
 <<<<<<< HEAD
 =======
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> master
 	"unicode/utf8"
 )
 
@@ -29,6 +32,8 @@ import (
 //
 // The prefix function is assumed to return a string that starts with an upper case letter.
 //
+<<<<<<< HEAD
+=======
 =======
 >>>>>>> master
 )
@@ -48,6 +53,7 @@ var isInitialism func(string) bool
 =======
 >>>>>>> master
 >>>>>>> master
+>>>>>>> master
 // e.g. to help convert "123" into "{prefix}123"
 //
 // The default is to prefix with "X"
@@ -56,12 +62,17 @@ var GoNamePrefixFunc func(string) string
 <<<<<<< HEAD
 =======
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> master
 func prefixFunc(name, in string) string {
 	if GoNamePrefixFunc == nil {
 		return "X" + in
 	}
 
 	return GoNamePrefixFunc(name) + in
+<<<<<<< HEAD
+=======
 =======
 >>>>>>> master
 func init() {
@@ -118,6 +129,7 @@ func init() {
 	isInitialism = commonInitialisms.isInitialism
 <<<<<<< HEAD
 =======
+>>>>>>> master
 >>>>>>> master
 >>>>>>> master
 }
@@ -189,6 +201,11 @@ func SplitByFormat(data, format string) []string {
 }
 
 <<<<<<< HEAD
+// Removes leading whitespaces
+func trim(str string) string {
+	return strings.TrimSpace(str)
+=======
+<<<<<<< HEAD
 =======
 <<<<<<< HEAD
 // Removes leading whitespaces
@@ -219,6 +236,7 @@ func trim(str string) string {
 =======
 >>>>>>> master
 >>>>>>> master
+>>>>>>> master
 }
 
 // Shortcut to strings.ToUpper()
@@ -235,6 +253,9 @@ func lower(str string) string {
 <<<<<<< HEAD
 =======
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> master
 func Camelize(word string) string {
 	camelized := poolOfBuffers.BorrowBuffer(len(word))
 	defer func() {
@@ -249,6 +270,8 @@ func Camelize(word string) string {
 		}
 	}
 	return camelized.String()
+<<<<<<< HEAD
+=======
 =======
 >>>>>>> master
 func Camelize(word string) (camelized string) {
@@ -262,6 +285,7 @@ func Camelize(word string) (camelized string) {
 	return
 <<<<<<< HEAD
 =======
+>>>>>>> master
 >>>>>>> master
 >>>>>>> master
 }
@@ -294,6 +318,9 @@ func ToHumanNameLower(name string) string {
 <<<<<<< HEAD
 =======
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> master
 	s := poolOfSplitters.BorrowSplitter(withPostSplitInitialismCheck)
 	in := s.split(name)
 	poolOfSplitters.RedeemSplitter(s)
@@ -307,6 +334,8 @@ func ToHumanNameLower(name string) string {
 		}
 	}
 	poolOfLexems.RedeemLexems(in)
+<<<<<<< HEAD
+=======
 =======
 >>>>>>> master
 	in := newSplitter(withPostSplitInitialismCheck).split(name)
@@ -323,6 +352,7 @@ func ToHumanNameLower(name string) string {
 =======
 >>>>>>> master
 >>>>>>> master
+>>>>>>> master
 
 	return strings.Join(out, " ")
 }
@@ -332,6 +362,9 @@ func ToHumanNameTitle(name string) string {
 <<<<<<< HEAD
 =======
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> master
 	s := poolOfSplitters.BorrowSplitter(withPostSplitInitialismCheck)
 	in := s.split(name)
 	poolOfSplitters.RedeemSplitter(s)
@@ -339,6 +372,8 @@ func ToHumanNameTitle(name string) string {
 	out := make([]string, 0, len(*in))
 	for _, w := range *in {
 		original := trim(w.GetOriginal())
+<<<<<<< HEAD
+=======
 =======
 >>>>>>> master
 	in := newSplitter(withPostSplitInitialismCheck).split(name)
@@ -350,6 +385,7 @@ func ToHumanNameTitle(name string) string {
 =======
 >>>>>>> master
 >>>>>>> master
+>>>>>>> master
 		if !w.IsInitialism() {
 			out = append(out, Camelize(original))
 		} else {
@@ -357,11 +393,16 @@ func ToHumanNameTitle(name string) string {
 		}
 	}
 <<<<<<< HEAD
+	poolOfLexems.RedeemLexems(in)
+
+=======
+<<<<<<< HEAD
 =======
 <<<<<<< HEAD
 	poolOfLexems.RedeemLexems(in)
 
 =======
+>>>>>>> master
 >>>>>>> master
 >>>>>>> master
 	return strings.Join(out, " ")
@@ -378,12 +419,16 @@ func ToJSONName(name string) string {
 			continue
 		}
 <<<<<<< HEAD
+		out = append(out, Camelize(trim(w)))
+=======
+<<<<<<< HEAD
 		out = append(out, Camelize(w))
 =======
 <<<<<<< HEAD
 		out = append(out, Camelize(trim(w)))
 =======
 		out = append(out, Camelize(w))
+>>>>>>> master
 >>>>>>> master
 >>>>>>> master
 	}
@@ -407,6 +452,9 @@ func ToGoName(name string) string {
 <<<<<<< HEAD
 =======
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> master
 	s := poolOfSplitters.BorrowSplitter(withPostSplitInitialismCheck)
 	lexems := s.split(name)
 	poolOfSplitters.RedeemSplitter(s)
@@ -461,6 +509,8 @@ func ToGoName(name string) string {
 	}
 
 	for _, lexem := range lexemes[1:] {
+<<<<<<< HEAD
+=======
 =======
 >>>>>>> master
 	lexems := newSplitter(withPostSplitInitialismCheck).split(name)
@@ -469,6 +519,7 @@ func ToGoName(name string) string {
 	for _, lexem := range lexems {
 <<<<<<< HEAD
 =======
+>>>>>>> master
 >>>>>>> master
 >>>>>>> master
 		goName := lexem.GetUnsafeGoName()
@@ -480,10 +531,15 @@ func ToGoName(name string) string {
 <<<<<<< HEAD
 =======
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> master
 		result.WriteString(goName)
 	}
 
 	return result.String()
+<<<<<<< HEAD
+=======
 =======
 >>>>>>> master
 		result += goName
@@ -507,6 +563,7 @@ func ToGoName(name string) string {
 	return result
 <<<<<<< HEAD
 =======
+>>>>>>> master
 >>>>>>> master
 >>>>>>> master
 }
@@ -541,12 +598,16 @@ func IsZero(data interface{}) bool {
 	v := reflect.ValueOf(data)
 	// check for nil data
 <<<<<<< HEAD
+	switch v.Kind() { //nolint:exhaustive
+=======
+<<<<<<< HEAD
 	switch v.Kind() {
 =======
 <<<<<<< HEAD
 	switch v.Kind() { //nolint:exhaustive
 =======
 	switch v.Kind() {
+>>>>>>> master
 >>>>>>> master
 >>>>>>> master
 	case reflect.Interface, reflect.Map, reflect.Ptr, reflect.Slice:
@@ -562,12 +623,16 @@ func IsZero(data interface{}) bool {
 
 	// continue with slightly more complex reflection
 <<<<<<< HEAD
+	switch v.Kind() { //nolint:exhaustive
+=======
+<<<<<<< HEAD
 	switch v.Kind() {
 =======
 <<<<<<< HEAD
 	switch v.Kind() { //nolint:exhaustive
 =======
 	switch v.Kind() {
+>>>>>>> master
 >>>>>>> master
 >>>>>>> master
 	case reflect.String:
@@ -593,6 +658,8 @@ func IsZero(data interface{}) bool {
 =======
 <<<<<<< HEAD
 =======
+<<<<<<< HEAD
+=======
 >>>>>>> master
 // AddInitialisms add additional initialisms
 func AddInitialisms(words ...string) {
@@ -606,6 +673,7 @@ func AddInitialisms(words ...string) {
 
 <<<<<<< HEAD
 =======
+>>>>>>> master
 >>>>>>> master
 >>>>>>> master
 // CommandLineOptionsGroup represents a group of user-defined command line options

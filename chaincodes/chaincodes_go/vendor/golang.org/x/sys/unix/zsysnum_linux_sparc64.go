@@ -393,11 +393,17 @@ const (
 <<<<<<< HEAD
 =======
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> master
 	SYS_MAP_SHADOW_STACK        = 453
 	SYS_FUTEX_WAKE              = 454
 	SYS_FUTEX_WAIT              = 455
 	SYS_FUTEX_REQUEUE           = 456
+<<<<<<< HEAD
 =======
+=======
+>>>>>>> master
 >>>>>>> master
 >>>>>>> master
 )

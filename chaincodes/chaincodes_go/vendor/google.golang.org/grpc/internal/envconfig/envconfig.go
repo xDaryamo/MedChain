@@ -37,6 +37,8 @@ var (
 	// checking which NACKs configs specifying ring sizes > 8*1024*1024 (~8M).
 	RingHashCap = uint64FromEnv("GRPC_RING_HASH_CAP", 4096, 1, 8*1024*1024)
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
 	// PickFirstLBConfig is set if we should support configuration of the
 	// pick_first LB policy.
 	PickFirstLBConfig = boolFromEnv("GRPC_EXPERIMENTAL_PICKFIRST_LB_CONFIG", true)
@@ -46,6 +48,7 @@ var (
 	// PickFirstLBConfig is set if we should support configuration of the
 	// pick_first LB policy.
 	PickFirstLBConfig = boolFromEnv("GRPC_EXPERIMENTAL_PICKFIRST_LB_CONFIG", true)
+>>>>>>> master
 >>>>>>> master
 >>>>>>> master
 	// LeastRequestLB is set if we should support the least_request_experimental

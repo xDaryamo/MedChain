@@ -28,11 +28,14 @@ import (
 //
 // PathLoader injects a document loading method. By default, this resolves to the function provided by the SpecLoader package variable.
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
 //
 =======
 <<<<<<< HEAD
 =======
 //
+>>>>>>> master
 >>>>>>> master
 >>>>>>> master
 type ExpandOptions struct {
@@ -66,12 +69,16 @@ func ExpandSpec(spec *Swagger, options *ExpandOptions) error {
 		for key, definition := range spec.Definitions {
 			parentRefs := make([]string, 0, 10)
 <<<<<<< HEAD
+			parentRefs = append(parentRefs, "#/definitions/"+key)
+=======
+<<<<<<< HEAD
 			parentRefs = append(parentRefs, fmt.Sprintf("#/definitions/%s", key))
 =======
 <<<<<<< HEAD
 			parentRefs = append(parentRefs, "#/definitions/"+key)
 =======
 			parentRefs = append(parentRefs, fmt.Sprintf("#/definitions/%s", key))
+>>>>>>> master
 >>>>>>> master
 >>>>>>> master
 
@@ -121,6 +128,9 @@ const rootBase = ".root"
 <<<<<<< HEAD
 =======
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> master
 func baseForRoot(root interface{}, cache ResolutionCache) string {
 	// cache the root document to resolve $ref's
 	normalizedBase := normalizeBase(rootBase)
@@ -136,6 +146,8 @@ func baseForRoot(root interface{}, cache ResolutionCache) string {
 		root = map[string]interface{}{}
 	}
 
+<<<<<<< HEAD
+=======
 =======
 >>>>>>> master
 //
@@ -149,6 +161,7 @@ func baseForRoot(root interface{}, cache ResolutionCache) string {
 	normalizedBase := normalizeBase(rootBase)
 <<<<<<< HEAD
 =======
+>>>>>>> master
 >>>>>>> master
 >>>>>>> master
 	cache.Set(normalizedBase, root)
@@ -248,9 +261,12 @@ func expandSchema(target Schema, parentRefs []string, resolver *schemaLoader, ba
 
 	if target.Ref.String() != "" {
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
 		return expandSchemaRef(target, parentRefs, resolver, basePath)
 =======
 <<<<<<< HEAD
+>>>>>>> master
 		if !resolver.options.SkipSchemas {
 			return expandSchemaRef(target, parentRefs, resolver, basePath)
 		}
@@ -264,8 +280,11 @@ func expandSchema(target Schema, parentRefs []string, resolver *schemaLoader, ba
 		target.Ref = denormalizeRef(&rebasedRef, resolver.context.basePath, resolver.context.rootID)
 
 		return &target, nil
+<<<<<<< HEAD
+=======
 =======
 		return expandSchemaRef(target, parentRefs, resolver, basePath)
+>>>>>>> master
 >>>>>>> master
 >>>>>>> master
 	}
@@ -580,6 +599,9 @@ func getRefAndSchema(input interface{}) (*Ref, *Schema, error) {
 
 func expandParameterOrResponse(input interface{}, resolver *schemaLoader, basePath string) error {
 <<<<<<< HEAD
+	ref, sch, err := getRefAndSchema(input)
+=======
+<<<<<<< HEAD
 	ref, _, err := getRefAndSchema(input)
 =======
 <<<<<<< HEAD
@@ -588,10 +610,14 @@ func expandParameterOrResponse(input interface{}, resolver *schemaLoader, basePa
 	ref, _, err := getRefAndSchema(input)
 >>>>>>> master
 >>>>>>> master
+>>>>>>> master
 	if err != nil {
 		return err
 	}
 
+<<<<<<< HEAD
+	if ref == nil && sch == nil { // nothing to do
+=======
 <<<<<<< HEAD
 	if ref == nil {
 =======
@@ -601,6 +627,7 @@ func expandParameterOrResponse(input interface{}, resolver *schemaLoader, basePa
 	if ref == nil {
 >>>>>>> master
 >>>>>>> master
+>>>>>>> master
 		return nil
 	}
 
@@ -608,6 +635,9 @@ func expandParameterOrResponse(input interface{}, resolver *schemaLoader, basePa
 <<<<<<< HEAD
 =======
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> master
 	if ref != nil {
 		// dereference this $ref
 		if err = resolver.deref(input, parentRefs, basePath); resolver.shouldStopOnError(err) {
@@ -617,6 +647,8 @@ func expandParameterOrResponse(input interface{}, resolver *schemaLoader, basePa
 		ref, sch, _ = getRefAndSchema(input)
 	}
 
+<<<<<<< HEAD
+=======
 =======
 >>>>>>> master
 	if err = resolver.deref(input, parentRefs, basePath); resolver.shouldStopOnError(err) {
@@ -626,6 +658,7 @@ func expandParameterOrResponse(input interface{}, resolver *schemaLoader, basePa
 	ref, sch, _ := getRefAndSchema(input)
 <<<<<<< HEAD
 =======
+>>>>>>> master
 >>>>>>> master
 >>>>>>> master
 	if ref.String() != "" {
@@ -640,10 +673,14 @@ func expandParameterOrResponse(input interface{}, resolver *schemaLoader, basePa
 			*ref = Ref{}
 		}
 <<<<<<< HEAD
+
+=======
+<<<<<<< HEAD
 =======
 <<<<<<< HEAD
 
 =======
+>>>>>>> master
 >>>>>>> master
 >>>>>>> master
 		return nil
@@ -656,6 +693,9 @@ func expandParameterOrResponse(input interface{}, resolver *schemaLoader, basePa
 		}
 
 <<<<<<< HEAD
+		if resolver.isCircular(&rebasedRef, basePath, parentRefs...) {
+=======
+<<<<<<< HEAD
 		switch {
 		case resolver.isCircular(&rebasedRef, basePath, parentRefs...):
 =======
@@ -664,6 +704,7 @@ func expandParameterOrResponse(input interface{}, resolver *schemaLoader, basePa
 =======
 		switch {
 		case resolver.isCircular(&rebasedRef, basePath, parentRefs...):
+>>>>>>> master
 >>>>>>> master
 >>>>>>> master
 			// this is a circular $ref: stop expansion
@@ -675,10 +716,15 @@ func expandParameterOrResponse(input interface{}, resolver *schemaLoader, basePa
 <<<<<<< HEAD
 =======
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> master
 		}
 	}
 
 	// $ref expansion or rebasing is performed by expandSchema below
+<<<<<<< HEAD
+=======
 =======
 >>>>>>> master
 		case !resolver.options.SkipSchemas:
@@ -695,6 +741,7 @@ func expandParameterOrResponse(input interface{}, resolver *schemaLoader, basePa
 =======
 >>>>>>> master
 >>>>>>> master
+>>>>>>> master
 	if ref != nil {
 		*ref = Ref{}
 	}
@@ -703,6 +750,9 @@ func expandParameterOrResponse(input interface{}, resolver *schemaLoader, basePa
 <<<<<<< HEAD
 =======
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> master
 	// yes, we do it even if options.SkipSchema is true: we have to go down that rabbit hole and rebase nested $ref)
 	s, err := expandSchema(*sch, parentRefs, resolver, basePath)
 	if resolver.shouldStopOnError(err) {
@@ -710,6 +760,8 @@ func expandParameterOrResponse(input interface{}, resolver *schemaLoader, basePa
 	}
 
 	if s != nil { // guard for when continuing on error
+<<<<<<< HEAD
+=======
 =======
 >>>>>>> master
 	if !resolver.options.SkipSchemas {
@@ -723,6 +775,7 @@ func expandParameterOrResponse(input interface{}, resolver *schemaLoader, basePa
 		}
 <<<<<<< HEAD
 =======
+>>>>>>> master
 >>>>>>> master
 >>>>>>> master
 		*sch = *s

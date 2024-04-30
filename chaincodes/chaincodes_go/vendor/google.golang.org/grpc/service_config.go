@@ -26,17 +26,23 @@ import (
 	"time"
 
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/internal"
 =======
 <<<<<<< HEAD
+>>>>>>> master
 	"google.golang.org/grpc/balancer"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/internal"
 	"google.golang.org/grpc/internal/balancer/gracefulswitch"
+<<<<<<< HEAD
+=======
 =======
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/internal"
+>>>>>>> master
 >>>>>>> master
 >>>>>>> master
 	internalserviceconfig "google.golang.org/grpc/internal/serviceconfig"
@@ -57,6 +63,8 @@ type MethodConfig = internalserviceconfig.MethodConfig
 =======
 <<<<<<< HEAD
 =======
+<<<<<<< HEAD
+=======
 >>>>>>> master
 type lbConfig struct {
 	name string
@@ -65,6 +73,7 @@ type lbConfig struct {
 
 <<<<<<< HEAD
 =======
+>>>>>>> master
 >>>>>>> master
 >>>>>>> master
 // ServiceConfig is provided by the service provider and contains parameters for how
@@ -76,6 +85,11 @@ type lbConfig struct {
 type ServiceConfig struct {
 	serviceconfig.Config
 
+<<<<<<< HEAD
+	// lbConfig is the service config's load balancing configuration.  If
+	// lbConfig and LB are both present, lbConfig will be used.
+	lbConfig serviceconfig.LoadBalancingConfig
+=======
 <<<<<<< HEAD
 =======
 <<<<<<< HEAD
@@ -94,6 +108,7 @@ type ServiceConfig struct {
 	lbConfig *lbConfig
 <<<<<<< HEAD
 =======
+>>>>>>> master
 >>>>>>> master
 >>>>>>> master
 
@@ -198,12 +213,16 @@ type jsonMC struct {
 type jsonSC struct {
 	LoadBalancingPolicy *string
 <<<<<<< HEAD
+	LoadBalancingConfig *json.RawMessage
+=======
+<<<<<<< HEAD
 	LoadBalancingConfig *internalserviceconfig.BalancerConfig
 =======
 <<<<<<< HEAD
 	LoadBalancingConfig *json.RawMessage
 =======
 	LoadBalancingConfig *internalserviceconfig.BalancerConfig
+>>>>>>> master
 >>>>>>> master
 >>>>>>> master
 	MethodConfig        *[]jsonMC
@@ -226,11 +245,14 @@ func parseServiceConfig(js string) *serviceconfig.ParseResult {
 	}
 	sc := ServiceConfig{
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
 		LB:                rsc.LoadBalancingPolicy,
 =======
 <<<<<<< HEAD
 =======
 		LB:                rsc.LoadBalancingPolicy,
+>>>>>>> master
 >>>>>>> master
 >>>>>>> master
 		Methods:           make(map[string]MethodConfig),
@@ -241,6 +263,9 @@ func parseServiceConfig(js string) *serviceconfig.ParseResult {
 <<<<<<< HEAD
 =======
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> master
 	c := rsc.LoadBalancingConfig
 	if c == nil {
 		name := PickFirstBalancerName
@@ -263,6 +288,8 @@ func parseServiceConfig(js string) *serviceconfig.ParseResult {
 		return &serviceconfig.ParseResult{Err: err}
 	}
 	sc.lbConfig = cfg
+<<<<<<< HEAD
+=======
 =======
 >>>>>>> master
 	if c := rsc.LoadBalancingConfig; c != nil {
@@ -273,6 +300,7 @@ func parseServiceConfig(js string) *serviceconfig.ParseResult {
 	}
 <<<<<<< HEAD
 =======
+>>>>>>> master
 >>>>>>> master
 >>>>>>> master
 

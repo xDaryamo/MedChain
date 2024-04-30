@@ -38,11 +38,14 @@ type pickerWrapper struct {
 	mu            sync.Mutex
 	done          bool
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
 	idle          bool
 =======
 <<<<<<< HEAD
 =======
 	idle          bool
+>>>>>>> master
 >>>>>>> master
 >>>>>>> master
 	blockingCh    chan struct{}
@@ -61,6 +64,9 @@ func newPickerWrapper(statsHandlers []stats.Handler) *pickerWrapper {
 func (pw *pickerWrapper) updatePicker(p balancer.Picker) {
 	pw.mu.Lock()
 <<<<<<< HEAD
+	if pw.done {
+=======
+<<<<<<< HEAD
 =======
 <<<<<<< HEAD
 	if pw.done {
@@ -73,6 +79,7 @@ func (pw *pickerWrapper) updatePicker(p balancer.Picker) {
 		// to ignore the update from the LB policy.
 <<<<<<< HEAD
 =======
+>>>>>>> master
 >>>>>>> master
 >>>>>>> master
 		pw.mu.Unlock()
@@ -228,6 +235,11 @@ func (pw *pickerWrapper) close() {
 }
 
 <<<<<<< HEAD
+// reset clears the pickerWrapper and prepares it for being used again when idle
+// mode is exited.
+func (pw *pickerWrapper) reset() {
+=======
+<<<<<<< HEAD
 =======
 <<<<<<< HEAD
 // reset clears the pickerWrapper and prepares it for being used again when idle
@@ -249,6 +261,7 @@ func (pw *pickerWrapper) exitIdleMode() {
 =======
 >>>>>>> master
 >>>>>>> master
+>>>>>>> master
 	pw.mu.Lock()
 	defer pw.mu.Unlock()
 	if pw.done {
@@ -256,11 +269,14 @@ func (pw *pickerWrapper) exitIdleMode() {
 	}
 	pw.blockingCh = make(chan struct{})
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
 	pw.idle = false
 =======
 <<<<<<< HEAD
 =======
 	pw.idle = false
+>>>>>>> master
 >>>>>>> master
 >>>>>>> master
 }

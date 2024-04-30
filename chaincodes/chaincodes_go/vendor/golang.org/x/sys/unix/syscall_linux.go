@@ -1852,6 +1852,9 @@ func Dup2(oldfd, newfd int) error {
 <<<<<<< HEAD
 =======
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> master
 
 //sys	fsconfig(fd int, cmd uint, key *byte, value *byte, aux int) (err error)
 
@@ -1951,7 +1954,10 @@ func FsconfigReconfigure(fd int) (err error) {
 	return fsconfig(fd, FSCONFIG_CMD_RECONFIGURE, nil, nil, 0)
 }
 
+<<<<<<< HEAD
 =======
+=======
+>>>>>>> master
 >>>>>>> master
 >>>>>>> master
 //sys	Getdents(fd int, buf []byte) (n int, err error) = SYS_GETDENTS64

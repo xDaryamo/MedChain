@@ -20,11 +20,15 @@ package grpc
 
 // Version is the current grpc version.
 <<<<<<< HEAD
+const Version = "1.63.2"
+=======
+<<<<<<< HEAD
 const Version = "1.59.0"
 =======
 <<<<<<< HEAD
 const Version = "1.63.2"
 =======
 const Version = "1.59.0"
+>>>>>>> master
 >>>>>>> master
 >>>>>>> master

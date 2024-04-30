@@ -58,12 +58,16 @@ var (
 	// stored in the passed in attributes. This is set by
 	// credentials/xds/xds.go.
 <<<<<<< HEAD
+	GetXDSHandshakeInfoForTesting any // func (*attributes.Attributes) *unsafe.Pointer
+=======
+<<<<<<< HEAD
 	GetXDSHandshakeInfoForTesting any // func (*attributes.Attributes) *xds.HandshakeInfo
 =======
 <<<<<<< HEAD
 	GetXDSHandshakeInfoForTesting any // func (*attributes.Attributes) *unsafe.Pointer
 =======
 	GetXDSHandshakeInfoForTesting any // func (*attributes.Attributes) *xds.HandshakeInfo
+>>>>>>> master
 >>>>>>> master
 >>>>>>> master
 	// GetServerCredentials returns the transport credentials configured on a
@@ -79,11 +83,16 @@ var (
 <<<<<<< HEAD
 =======
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> master
 	// IsRegisteredMethod returns whether the passed in method is registered as
 	// a method on the server.
 	IsRegisteredMethod any // func(*grpc.Server, string) bool
 	// ServerFromContext returns the server from the context.
 	ServerFromContext any // func(context.Context) *grpc.Server
+<<<<<<< HEAD
+=======
 =======
 >>>>>>> master
 	// DrainServerTransports initiates a graceful close of existing connections
@@ -93,6 +102,7 @@ var (
 	DrainServerTransports any // func(*grpc.Server, string)
 <<<<<<< HEAD
 =======
+>>>>>>> master
 >>>>>>> master
 >>>>>>> master
 	// AddGlobalServerOptions adds an array of ServerOption that will be
@@ -202,6 +212,9 @@ var (
 <<<<<<< HEAD
 =======
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> master
 	EnterIdleModeForTesting any // func(*grpc.ClientConn)
 
 	// ExitIdleModeForTesting gets the ClientConn to exit IDLE mode.
@@ -225,6 +238,8 @@ var (
 
 	// UserSetDefaultScheme is set to true if the user has overridden the default resolver scheme.
 	UserSetDefaultScheme bool = false
+<<<<<<< HEAD
+=======
 =======
 >>>>>>> master
 	EnterIdleModeForTesting any // func(*grpc.ClientConn) error
@@ -233,6 +248,7 @@ var (
 	ExitIdleModeForTesting any // func(*grpc.ClientConn) error
 <<<<<<< HEAD
 =======
+>>>>>>> master
 >>>>>>> master
 >>>>>>> master
 )

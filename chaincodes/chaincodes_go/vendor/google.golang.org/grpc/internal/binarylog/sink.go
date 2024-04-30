@@ -26,6 +26,10 @@ import (
 	"time"
 
 <<<<<<< HEAD
+	binlogpb "google.golang.org/grpc/binarylog/grpc_binarylog_v1"
+	"google.golang.org/protobuf/proto"
+=======
+<<<<<<< HEAD
 	"github.com/golang/protobuf/proto"
 	binlogpb "google.golang.org/grpc/binarylog/grpc_binarylog_v1"
 =======
@@ -35,6 +39,7 @@ import (
 =======
 	"github.com/golang/protobuf/proto"
 	binlogpb "google.golang.org/grpc/binarylog/grpc_binarylog_v1"
+>>>>>>> master
 >>>>>>> master
 >>>>>>> master
 )

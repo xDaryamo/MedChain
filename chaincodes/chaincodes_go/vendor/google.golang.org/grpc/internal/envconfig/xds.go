@@ -51,6 +51,11 @@ var (
 	// When both bootstrap FileName and FileContent are set, FileName is used.
 	XDSBootstrapFileContent = os.Getenv(XDSBootstrapFileContentEnv)
 <<<<<<< HEAD
+
+	// C2PResolverTestOnlyTrafficDirectorURI is the TD URI for testing.
+	C2PResolverTestOnlyTrafficDirectorURI = os.Getenv("GRPC_TEST_ONLY_GOOGLE_C2P_RESOLVER_TRAFFIC_DIRECTOR_URI")
+=======
+<<<<<<< HEAD
 =======
 <<<<<<< HEAD
 
@@ -102,6 +107,7 @@ var (
 	XDSCustomLBPolicy = boolFromEnv("GRPC_EXPERIMENTAL_XDS_CUSTOM_LB_CONFIG", true)
 <<<<<<< HEAD
 =======
+>>>>>>> master
 >>>>>>> master
 >>>>>>> master
 )

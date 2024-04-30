@@ -68,9 +68,13 @@ services:
       - ../fabric-config/crypto-config/peerOrganizations/laboratorio-analisi-sdn.medchain.com/peers/peer0.laboratorio-analisi-sdn.medchain.com/tls/ca.crt:/var/hyperledger/cli/crypto-peer/peer0.laboratorio-analisi-sdn.medchain.com/tls/ca.crt:ro
       - ../fabric-config/chaincode-packages:/var/hyperledger/cli/chaincode-packages/
 <<<<<<< HEAD
+      - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/:/var/hyperledger/cli/prescription/"
+=======
+<<<<<<< HEAD
       - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/:/var/hyperledger/cli/labresults/"
 =======
       - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/:/var/hyperledger/cli/health-data-management/"
+>>>>>>> master
 >>>>>>> master
     networks:
       - basic
@@ -244,9 +248,13 @@ services:
       - ../fabric-config/crypto-config/peerOrganizations/laboratorio-analisi-sdn.medchain.com/peers/peer0.laboratorio-analisi-sdn.medchain.com/tls/ca.crt:/var/hyperledger/cli/crypto-peer/peer0.laboratorio-analisi-sdn.medchain.com/tls/ca.crt:ro
       - ../fabric-config/chaincode-packages:/var/hyperledger/cli/chaincode-packages/
 <<<<<<< HEAD
+      - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/:/var/hyperledger/cli/prescription/"
+=======
+<<<<<<< HEAD
       - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/:/var/hyperledger/cli/labresults/"
 =======
       - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/:/var/hyperledger/cli/health-data-management/"
+>>>>>>> master
 >>>>>>> master
     networks:
       - basic
@@ -440,9 +448,13 @@ services:
       - ../fabric-config/crypto-config/peerOrganizations/laboratorio-analisi-sdn.medchain.com/peers/peer0.laboratorio-analisi-sdn.medchain.com/tls/ca.crt:/var/hyperledger/cli/crypto-peer/peer0.laboratorio-analisi-sdn.medchain.com/tls/ca.crt:ro
       - ../fabric-config/chaincode-packages:/var/hyperledger/cli/chaincode-packages/
 <<<<<<< HEAD
+      - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/:/var/hyperledger/cli/prescription/"
+=======
+<<<<<<< HEAD
       - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/:/var/hyperledger/cli/labresults/"
 =======
       - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/:/var/hyperledger/cli/health-data-management/"
+>>>>>>> master
 >>>>>>> master
     networks:
       - basic
@@ -636,9 +648,13 @@ services:
       - ../fabric-config/crypto-config/peerOrganizations/laboratorio-analisi-sdn.medchain.com/peers/peer0.laboratorio-analisi-sdn.medchain.com/tls/ca.crt:/var/hyperledger/cli/crypto-peer/peer0.laboratorio-analisi-sdn.medchain.com/tls/ca.crt:ro
       - ../fabric-config/chaincode-packages:/var/hyperledger/cli/chaincode-packages/
 <<<<<<< HEAD
+      - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/:/var/hyperledger/cli/prescription/"
+=======
+<<<<<<< HEAD
       - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/:/var/hyperledger/cli/labresults/"
 =======
       - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/:/var/hyperledger/cli/health-data-management/"
+>>>>>>> master
 >>>>>>> master
     networks:
       - basic
@@ -832,9 +848,13 @@ services:
       - ../fabric-config/crypto-config/peerOrganizations/laboratorio-analisi-sdn.medchain.com/peers/peer0.laboratorio-analisi-sdn.medchain.com/tls/ca.crt:/var/hyperledger/cli/crypto-peer/peer0.laboratorio-analisi-sdn.medchain.com/tls/ca.crt:ro
       - ../fabric-config/chaincode-packages:/var/hyperledger/cli/chaincode-packages/
 <<<<<<< HEAD
+      - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/:/var/hyperledger/cli/prescription/"
+=======
+<<<<<<< HEAD
       - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/:/var/hyperledger/cli/labresults/"
 =======
       - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/:/var/hyperledger/cli/health-data-management/"
+>>>>>>> master
 >>>>>>> master
     networks:
       - basic
@@ -1028,9 +1048,13 @@ services:
       - ../fabric-config/crypto-config/peerOrganizations/laboratorio-analisi-sdn.medchain.com/peers/peer0.laboratorio-analisi-sdn.medchain.com/tls/ca.crt:/var/hyperledger/cli/crypto-peer/peer0.laboratorio-analisi-sdn.medchain.com/tls/ca.crt:ro
       - ../fabric-config/chaincode-packages:/var/hyperledger/cli/chaincode-packages/
 <<<<<<< HEAD
+      - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/:/var/hyperledger/cli/prescription/"
+=======
+<<<<<<< HEAD
       - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/:/var/hyperledger/cli/labresults/"
 =======
       - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/:/var/hyperledger/cli/health-data-management/"
+>>>>>>> master
 >>>>>>> master
     networks:
       - basic
@@ -1224,9 +1248,13 @@ services:
       - ../fabric-config/crypto-config/peerOrganizations/laboratorio-analisi-sdn.medchain.com/peers/peer0.laboratorio-analisi-sdn.medchain.com/tls/ca.crt:/var/hyperledger/cli/crypto-peer/peer0.laboratorio-analisi-sdn.medchain.com/tls/ca.crt:ro
       - ../fabric-config/chaincode-packages:/var/hyperledger/cli/chaincode-packages/
 <<<<<<< HEAD
+      - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/:/var/hyperledger/cli/prescription/"
+=======
+<<<<<<< HEAD
       - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/:/var/hyperledger/cli/labresults/"
 =======
       - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/:/var/hyperledger/cli/health-data-management/"
+>>>>>>> master
 >>>>>>> master
     networks:
       - basic
@@ -1358,9 +1386,13 @@ services:
       - ../fabric-config/crypto-config/peerOrganizations/laboratorio-analisi-sdn.medchain.com/peers/peer0.laboratorio-analisi-sdn.medchain.com/tls/ca.crt:/var/hyperledger/cli/crypto-peer/peer0.laboratorio-analisi-sdn.medchain.com/tls/ca.crt:ro
       - ../fabric-config/chaincode-packages:/var/hyperledger/cli/chaincode-packages/
 <<<<<<< HEAD
+      - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/:/var/hyperledger/cli/prescription/"
+=======
+<<<<<<< HEAD
       - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/:/var/hyperledger/cli/labresults/"
 =======
       - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/:/var/hyperledger/cli/health-data-management/"
+>>>>>>> master
 >>>>>>> master
     networks:
       - basic
@@ -1492,9 +1524,13 @@ services:
       - ../fabric-config/crypto-config/peerOrganizations/laboratorio-analisi-sdn.medchain.com/peers/peer0.laboratorio-analisi-sdn.medchain.com/tls/ca.crt:/var/hyperledger/cli/crypto-peer/peer0.laboratorio-analisi-sdn.medchain.com/tls/ca.crt:ro
       - ../fabric-config/chaincode-packages:/var/hyperledger/cli/chaincode-packages/
 <<<<<<< HEAD
+      - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/:/var/hyperledger/cli/prescription/"
+=======
+<<<<<<< HEAD
       - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/:/var/hyperledger/cli/labresults/"
 =======
       - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/:/var/hyperledger/cli/health-data-management/"
+>>>>>>> master
 >>>>>>> master
     networks:
       - basic
@@ -1626,9 +1662,13 @@ services:
       - ../fabric-config/crypto-config/peerOrganizations/laboratorio-analisi-sdn.medchain.com/peers/peer0.laboratorio-analisi-sdn.medchain.com/tls/ca.crt:/var/hyperledger/cli/crypto-peer/peer0.laboratorio-analisi-sdn.medchain.com/tls/ca.crt:ro
       - ../fabric-config/chaincode-packages:/var/hyperledger/cli/chaincode-packages/
 <<<<<<< HEAD
+      - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/:/var/hyperledger/cli/prescription/"
+=======
+<<<<<<< HEAD
       - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/:/var/hyperledger/cli/labresults/"
 =======
       - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/:/var/hyperledger/cli/health-data-management/"
+>>>>>>> master
 >>>>>>> master
     networks:
       - basic

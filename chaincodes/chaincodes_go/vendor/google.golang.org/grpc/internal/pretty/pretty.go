@@ -25,6 +25,10 @@ import (
 	"fmt"
 
 <<<<<<< HEAD
+	"google.golang.org/protobuf/encoding/protojson"
+	"google.golang.org/protobuf/protoadapt"
+=======
+<<<<<<< HEAD
 =======
 <<<<<<< HEAD
 	"google.golang.org/protobuf/encoding/protojson"
@@ -39,6 +43,7 @@ import (
 =======
 >>>>>>> master
 >>>>>>> master
+>>>>>>> master
 )
 
 const jsonIndent = "  "
@@ -50,6 +55,9 @@ func ToJSON(e any) string {
 <<<<<<< HEAD
 =======
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> master
 	if ee, ok := e.(protoadapt.MessageV1); ok {
 		e = protoadapt.MessageV2Of(ee)
 	}
@@ -58,6 +66,8 @@ func ToJSON(e any) string {
 		mm := protojson.MarshalOptions{
 			Indent:    jsonIndent,
 			Multiline: true,
+<<<<<<< HEAD
+=======
 =======
 >>>>>>> master
 	switch ee := e.(type) {
@@ -79,6 +89,7 @@ func ToJSON(e any) string {
 =======
 >>>>>>> master
 >>>>>>> master
+>>>>>>> master
 		}
 		ret, err := mm.Marshal(ee)
 		if err != nil {
@@ -91,6 +102,9 @@ func ToJSON(e any) string {
 <<<<<<< HEAD
 =======
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> master
 	}
 
 	ret, err := json.MarshalIndent(e, "", jsonIndent)
@@ -98,6 +112,8 @@ func ToJSON(e any) string {
 		return fmt.Sprintf("%+v", e)
 	}
 	return string(ret)
+<<<<<<< HEAD
+=======
 =======
 >>>>>>> master
 	default:
@@ -109,6 +125,7 @@ func ToJSON(e any) string {
 	}
 <<<<<<< HEAD
 =======
+>>>>>>> master
 >>>>>>> master
 >>>>>>> master
 }

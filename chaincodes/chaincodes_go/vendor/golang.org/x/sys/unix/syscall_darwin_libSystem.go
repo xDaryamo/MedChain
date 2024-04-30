@@ -3,12 +3,16 @@
 // license that can be found in the LICENSE file.
 
 <<<<<<< HEAD
+//go:build darwin
+=======
+<<<<<<< HEAD
 //go:build darwin && go1.12
 =======
 <<<<<<< HEAD
 //go:build darwin
 =======
 //go:build darwin && go1.12
+>>>>>>> master
 >>>>>>> master
 >>>>>>> master
 

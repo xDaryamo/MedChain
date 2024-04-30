@@ -97,6 +97,9 @@ func (gsb *Balancer) balancerCurrentOrPending(bw *balancerWrapper) bool {
 <<<<<<< HEAD
 =======
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> master
 //
 // Deprecated: use ParseConfig and pass a parsed config to UpdateClientConnState
 // to cause the Balancer to automatically change to the new child when necessary.
@@ -114,6 +117,8 @@ func (gsb *Balancer) switchTo(builder balancer.Builder) (*balancerWrapper, error
 	bw := &balancerWrapper{
 		builder: builder,
 		gsb:     gsb,
+<<<<<<< HEAD
+=======
 =======
 >>>>>>> master
 func (gsb *Balancer) SwitchTo(builder balancer.Builder) error {
@@ -126,6 +131,7 @@ func (gsb *Balancer) SwitchTo(builder balancer.Builder) error {
 		gsb: gsb,
 <<<<<<< HEAD
 =======
+>>>>>>> master
 >>>>>>> master
 >>>>>>> master
 		lastState: balancer.State{
@@ -156,12 +162,16 @@ func (gsb *Balancer) SwitchTo(builder balancer.Builder) error {
 		}
 		gsb.mu.Unlock()
 <<<<<<< HEAD
+		return nil, balancer.ErrBadResolverState
+=======
+<<<<<<< HEAD
 		return balancer.ErrBadResolverState
 =======
 <<<<<<< HEAD
 		return nil, balancer.ErrBadResolverState
 =======
 		return balancer.ErrBadResolverState
+>>>>>>> master
 >>>>>>> master
 >>>>>>> master
 	}
@@ -173,12 +183,16 @@ func (gsb *Balancer) SwitchTo(builder balancer.Builder) error {
 	// function returns.
 	bw.Balancer = newBalancer
 <<<<<<< HEAD
+	return bw, nil
+=======
+<<<<<<< HEAD
 	return nil
 =======
 <<<<<<< HEAD
 	return bw, nil
 =======
 	return nil
+>>>>>>> master
 >>>>>>> master
 >>>>>>> master
 }
@@ -197,6 +211,9 @@ func (gsb *Balancer) latestBalancer() *balancerWrapper {
 <<<<<<< HEAD
 =======
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> master
 //
 // If the state's BalancerConfig is the config returned by a call to
 // gracefulswitch.ParseConfig, then this function will automatically SwitchTo
@@ -224,6 +241,8 @@ func (gsb *Balancer) UpdateClientConnState(state balancer.ClientConnState) error
 		return errBalancerClosed
 	}
 
+<<<<<<< HEAD
+=======
 =======
 >>>>>>> master
 func (gsb *Balancer) UpdateClientConnState(state balancer.ClientConnState) error {
@@ -234,6 +253,7 @@ func (gsb *Balancer) UpdateClientConnState(state balancer.ClientConnState) error
 	}
 <<<<<<< HEAD
 =======
+>>>>>>> master
 >>>>>>> master
 >>>>>>> master
 	// Perform this call without gsb.mu to prevent deadlocks if the child calls
@@ -250,11 +270,17 @@ func (gsb *Balancer) ResolverError(err error) {
 <<<<<<< HEAD
 =======
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> master
 		gsb.cc.UpdateState(balancer.State{
 			ConnectivityState: connectivity.TransientFailure,
 			Picker:            base.NewErrPicker(err),
 		})
+<<<<<<< HEAD
 =======
+=======
+>>>>>>> master
 >>>>>>> master
 >>>>>>> master
 		return
@@ -350,6 +376,10 @@ func (gsb *Balancer) Close() {
 type balancerWrapper struct {
 	balancer.Balancer
 <<<<<<< HEAD
+	gsb     *Balancer
+	builder balancer.Builder
+=======
+<<<<<<< HEAD
 	gsb *Balancer
 =======
 <<<<<<< HEAD
@@ -357,6 +387,7 @@ type balancerWrapper struct {
 	builder balancer.Builder
 =======
 	gsb *Balancer
+>>>>>>> master
 >>>>>>> master
 >>>>>>> master
 

@@ -7,6 +7,9 @@ linters-settings:
 <<<<<<< HEAD
 =======
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> master
     min-complexity: 45
   maligned:
     suggest-new: true
@@ -15,6 +18,8 @@ linters-settings:
   goconst:
     min-len: 3
     min-occurrences: 3
+<<<<<<< HEAD
+=======
 =======
 >>>>>>> master
     min-complexity: 25
@@ -29,6 +34,7 @@ linters-settings:
 =======
 >>>>>>> master
 >>>>>>> master
+>>>>>>> master
 
 linters:
   enable-all: true
@@ -40,6 +46,9 @@ linters:
 <<<<<<< HEAD
 =======
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> master
     - funlen
     - godox
     - gocognit
@@ -77,6 +86,8 @@ linters:
     - varcheck
     - structcheck
     - golint
+<<<<<<< HEAD
+=======
 =======
 >>>>>>> master
     - nlreturn
@@ -112,6 +123,7 @@ linters:
     - nonamedreturns
 <<<<<<< HEAD
 =======
+>>>>>>> master
 >>>>>>> master
 >>>>>>> master
     - nosnakecase

@@ -3,12 +3,16 @@
 // license that can be found in the LICENSE file.
 
 <<<<<<< HEAD
+//go:build aix || darwin || dragonfly || freebsd || openbsd || solaris || zos
+=======
+<<<<<<< HEAD
 //go:build aix || darwin || dragonfly || freebsd || openbsd || solaris
 =======
 <<<<<<< HEAD
 //go:build aix || darwin || dragonfly || freebsd || openbsd || solaris || zos
 =======
 //go:build aix || darwin || dragonfly || freebsd || openbsd || solaris
+>>>>>>> master
 >>>>>>> master
 >>>>>>> master
 

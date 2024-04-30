@@ -26,11 +26,14 @@ import (
 	"google.golang.org/grpc/balancer"
 	"google.golang.org/grpc/connectivity"
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
 	"google.golang.org/grpc/internal/envconfig"
 =======
 <<<<<<< HEAD
 =======
 	"google.golang.org/grpc/internal/envconfig"
+>>>>>>> master
 >>>>>>> master
 >>>>>>> master
 	internalgrpclog "google.golang.org/grpc/internal/grpclog"
@@ -46,6 +49,11 @@ const (
 	logPrefix             = "[pick-first-lb %p] "
 )
 
+<<<<<<< HEAD
+type pickfirstBuilder struct{}
+
+func (pickfirstBuilder) Build(cc balancer.ClientConn, opt balancer.BuildOptions) balancer.Balancer {
+=======
 <<<<<<< HEAD
 =======
 <<<<<<< HEAD
@@ -65,11 +73,15 @@ func (*pickfirstBuilder) Build(cc balancer.ClientConn, opt balancer.BuildOptions
 =======
 >>>>>>> master
 >>>>>>> master
+>>>>>>> master
 	b := &pickfirstBalancer{cc: cc}
 	b.logger = internalgrpclog.NewPrefixLogger(logger, fmt.Sprintf(logPrefix, b))
 	return b
 }
 
+<<<<<<< HEAD
+func (pickfirstBuilder) Name() string {
+=======
 <<<<<<< HEAD
 func (*pickfirstBuilder) Name() string {
 =======
@@ -77,6 +89,7 @@ func (*pickfirstBuilder) Name() string {
 func (pickfirstBuilder) Name() string {
 =======
 func (*pickfirstBuilder) Name() string {
+>>>>>>> master
 >>>>>>> master
 >>>>>>> master
 	return PickFirstBalancerName
@@ -91,6 +104,9 @@ type pfConfig struct {
 	ShuffleAddressList bool `json:"shuffleAddressList"`
 }
 
+<<<<<<< HEAD
+func (pickfirstBuilder) ParseConfig(js json.RawMessage) (serviceconfig.LoadBalancingConfig, error) {
+=======
 <<<<<<< HEAD
 =======
 <<<<<<< HEAD
@@ -113,6 +129,7 @@ func (*pickfirstBuilder) ParseConfig(js json.RawMessage) (serviceconfig.LoadBala
 
 <<<<<<< HEAD
 =======
+>>>>>>> master
 >>>>>>> master
 >>>>>>> master
 	var cfg pfConfig
@@ -298,6 +315,8 @@ func (i *idlePicker) Pick(balancer.PickInfo) (balancer.PickResult, error) {
 =======
 <<<<<<< HEAD
 =======
+<<<<<<< HEAD
+=======
 >>>>>>> master
 
 func init() {
@@ -305,5 +324,6 @@ func init() {
 }
 <<<<<<< HEAD
 =======
+>>>>>>> master
 >>>>>>> master
 >>>>>>> master
