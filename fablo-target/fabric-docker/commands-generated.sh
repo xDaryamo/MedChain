@@ -156,7 +156,7 @@ installChannels() {
 }
 
 installChaincodes() {
-  if [ -n "$(ls "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go")" ]; then
+  if [ -n "$(ls "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/labresults")" ]; then
     printHeadline "Approving 'labresults' for OspedaleMaresca (dev mode)" "U1F60E"
     chaincodeApprove "cli.ospedale-maresca.aslnapoli3.medchain.com" "peer0.ospedale-maresca.aslnapoli3.medchain.com:7041" "lab-results-channel" "labresults" "1.0" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "" ""
     printHeadline "Approving 'labresults' for MedicinaGeneraleNapoli (dev mode)" "U1F60E"
@@ -171,7 +171,86 @@ installChaincodes() {
     chaincodeCommit "cli.ospedale-maresca.aslnapoli3.medchain.com" "peer0.ospedale-maresca.aslnapoli3.medchain.com:7041" "lab-results-channel" "labresults" "1.0" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "" "peer0.ospedale-maresca.aslnapoli3.medchain.com:7041,peer0.medicina-generale.napoli.medchain.com:7101,peer0.neurologia.napoli.medchain.com:7121,peer0.laboratorio-analisi-cmo.medchain.com:7181,peer0.laboratorio-analisi-sdn.medchain.com:7201" "" ""
   else
     echo "Warning! Skipping chaincode 'labresults' installation. Chaincode directory is empty."
-    echo "Looked in dir: '$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go'"
+    echo "Looked in dir: '$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/labresults'"
+  fi
+  if [ -n "$(ls "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/encounter")" ]; then
+    printHeadline "Approving 'encounter' for OspedaleMaresca (dev mode)" "U1F60E"
+    chaincodeApprove "cli.ospedale-maresca.aslnapoli3.medchain.com" "peer0.ospedale-maresca.aslnapoli3.medchain.com:7041" "patient-records-channel" "encounter" "1.0" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "" ""
+    printHeadline "Approving 'encounter' for OspedaleDelMare (dev mode)" "U1F60E"
+    chaincodeApprove "cli.ospedale-del-mare.aslnapoli1.medchain.com" "peer0.ospedale-del-mare.aslnapoli1.medchain.com:7061" "patient-records-channel" "encounter" "1.0" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "" ""
+    printHeadline "Approving 'encounter' for OspedaleSGiuliano (dev mode)" "U1F60E"
+    chaincodeApprove "cli.ospedale-sgiuliano.aslnapoli2.medchain.com" "peer0.ospedale-sgiuliano.aslnapoli2.medchain.com:7081" "patient-records-channel" "encounter" "1.0" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "" ""
+    printHeadline "Approving 'encounter' for MedicinaGeneraleNapoli (dev mode)" "U1F60E"
+    chaincodeApprove "cli.medicina-generale.napoli.medchain.com" "peer0.medicina-generale.napoli.medchain.com:7101" "patient-records-channel" "encounter" "1.0" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "" ""
+    printHeadline "Approving 'encounter' for NeurologiaNapoli (dev mode)" "U1F60E"
+    chaincodeApprove "cli.neurologia.napoli.medchain.com" "peer0.neurologia.napoli.medchain.com:7121" "patient-records-channel" "encounter" "1.0" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "" ""
+    printItalics "Committing chaincode 'encounter' on channel 'patient-records-channel' as 'OspedaleMaresca' (dev mode)" "U1F618"
+    chaincodeCommit "cli.ospedale-maresca.aslnapoli3.medchain.com" "peer0.ospedale-maresca.aslnapoli3.medchain.com:7041" "patient-records-channel" "encounter" "1.0" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "" "peer0.ospedale-maresca.aslnapoli3.medchain.com:7041,peer0.ospedale-del-mare.aslnapoli1.medchain.com:7061,peer0.ospedale-sgiuliano.aslnapoli2.medchain.com:7081,peer0.medicina-generale.napoli.medchain.com:7101,peer0.neurologia.napoli.medchain.com:7121" "" ""
+  else
+    echo "Warning! Skipping chaincode 'encounter' installation. Chaincode directory is empty."
+    echo "Looked in dir: '$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/encounter'"
+  fi
+  if [ -n "$(ls "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/organization")" ]; then
+    printHeadline "Approving 'organization' for OspedaleMaresca (dev mode)" "U1F60E"
+    chaincodeApprove "cli.ospedale-maresca.aslnapoli3.medchain.com" "peer0.ospedale-maresca.aslnapoli3.medchain.com:7041" "emergency-channel" "organization" "1.0" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "" ""
+    printHeadline "Approving 'organization' for OspedaleDelMare (dev mode)" "U1F60E"
+    chaincodeApprove "cli.ospedale-del-mare.aslnapoli1.medchain.com" "peer0.ospedale-del-mare.aslnapoli1.medchain.com:7061" "emergency-channel" "organization" "1.0" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "" ""
+    printHeadline "Approving 'organization' for OspedaleSGiuliano (dev mode)" "U1F60E"
+    chaincodeApprove "cli.ospedale-sgiuliano.aslnapoli2.medchain.com" "peer0.ospedale-sgiuliano.aslnapoli2.medchain.com:7081" "emergency-channel" "organization" "1.0" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "" ""
+    printItalics "Committing chaincode 'organization' on channel 'emergency-channel' as 'OspedaleMaresca' (dev mode)" "U1F618"
+    chaincodeCommit "cli.ospedale-maresca.aslnapoli3.medchain.com" "peer0.ospedale-maresca.aslnapoli3.medchain.com:7041" "emergency-channel" "organization" "1.0" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "" "peer0.ospedale-maresca.aslnapoli3.medchain.com:7041,peer0.ospedale-del-mare.aslnapoli1.medchain.com:7061,peer0.ospedale-sgiuliano.aslnapoli2.medchain.com:7081" "" ""
+  else
+    echo "Warning! Skipping chaincode 'organization' installation. Chaincode directory is empty."
+    echo "Looked in dir: '$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/organization'"
+  fi
+  if [ -n "$(ls "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/patient")" ]; then
+    printHeadline "Approving 'patient' for OspedaleMaresca (dev mode)" "U1F60E"
+    chaincodeApprove "cli.ospedale-maresca.aslnapoli3.medchain.com" "peer0.ospedale-maresca.aslnapoli3.medchain.com:7041" "patient-records-channel" "patient" "1.0" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "" ""
+    printHeadline "Approving 'patient' for OspedaleDelMare (dev mode)" "U1F60E"
+    chaincodeApprove "cli.ospedale-del-mare.aslnapoli1.medchain.com" "peer0.ospedale-del-mare.aslnapoli1.medchain.com:7061" "patient-records-channel" "patient" "1.0" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "" ""
+    printHeadline "Approving 'patient' for OspedaleSGiuliano (dev mode)" "U1F60E"
+    chaincodeApprove "cli.ospedale-sgiuliano.aslnapoli2.medchain.com" "peer0.ospedale-sgiuliano.aslnapoli2.medchain.com:7081" "patient-records-channel" "patient" "1.0" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "" ""
+    printHeadline "Approving 'patient' for MedicinaGeneraleNapoli (dev mode)" "U1F60E"
+    chaincodeApprove "cli.medicina-generale.napoli.medchain.com" "peer0.medicina-generale.napoli.medchain.com:7101" "patient-records-channel" "patient" "1.0" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "" ""
+    printHeadline "Approving 'patient' for NeurologiaNapoli (dev mode)" "U1F60E"
+    chaincodeApprove "cli.neurologia.napoli.medchain.com" "peer0.neurologia.napoli.medchain.com:7121" "patient-records-channel" "patient" "1.0" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "" ""
+    printItalics "Committing chaincode 'patient' on channel 'patient-records-channel' as 'OspedaleMaresca' (dev mode)" "U1F618"
+    chaincodeCommit "cli.ospedale-maresca.aslnapoli3.medchain.com" "peer0.ospedale-maresca.aslnapoli3.medchain.com:7041" "patient-records-channel" "patient" "1.0" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "" "peer0.ospedale-maresca.aslnapoli3.medchain.com:7041,peer0.ospedale-del-mare.aslnapoli1.medchain.com:7061,peer0.ospedale-sgiuliano.aslnapoli2.medchain.com:7081,peer0.medicina-generale.napoli.medchain.com:7101,peer0.neurologia.napoli.medchain.com:7121" "" ""
+  else
+    echo "Warning! Skipping chaincode 'patient' installation. Chaincode directory is empty."
+    echo "Looked in dir: '$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/patient'"
+  fi
+  if [ -n "$(ls "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/prescriptions")" ]; then
+    printHeadline "Approving 'prescriptions' for MedicinaGeneraleNapoli (dev mode)" "U1F60E"
+    chaincodeApprove "cli.medicina-generale.napoli.medchain.com" "peer0.medicina-generale.napoli.medchain.com:7101" "prescriptions-channel" "prescriptions" "1.0" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "" ""
+    printHeadline "Approving 'prescriptions' for NeurologiaNapoli (dev mode)" "U1F60E"
+    chaincodeApprove "cli.neurologia.napoli.medchain.com" "peer0.neurologia.napoli.medchain.com:7121" "prescriptions-channel" "prescriptions" "1.0" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "" ""
+    printHeadline "Approving 'prescriptions' for FarmaciaPetrone (dev mode)" "U1F60E"
+    chaincodeApprove "cli.farmacia-petrone.napoli.medchain.com" "peer0.farmacia-petrone.napoli.medchain.com:7141" "prescriptions-channel" "prescriptions" "1.0" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "" ""
+    printHeadline "Approving 'prescriptions' for FarmaciaCarbone (dev mode)" "U1F60E"
+    chaincodeApprove "cli.farmacia-carbone.napoli.medchain.com" "peer0.farmacia-carbone.napoli.medchain.com:7161" "prescriptions-channel" "prescriptions" "1.0" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "" ""
+    printItalics "Committing chaincode 'prescriptions' on channel 'prescriptions-channel' as 'MedicinaGeneraleNapoli' (dev mode)" "U1F618"
+    chaincodeCommit "cli.medicina-generale.napoli.medchain.com" "peer0.medicina-generale.napoli.medchain.com:7101" "prescriptions-channel" "prescriptions" "1.0" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "" "peer0.medicina-generale.napoli.medchain.com:7101,peer0.neurologia.napoli.medchain.com:7121,peer0.farmacia-petrone.napoli.medchain.com:7141,peer0.farmacia-carbone.napoli.medchain.com:7161" "" ""
+  else
+    echo "Warning! Skipping chaincode 'prescriptions' installation. Chaincode directory is empty."
+    echo "Looked in dir: '$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/prescriptions'"
+  fi
+  if [ -n "$(ls "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/records")" ]; then
+    printHeadline "Approving 'records' for OspedaleMaresca (dev mode)" "U1F60E"
+    chaincodeApprove "cli.ospedale-maresca.aslnapoli3.medchain.com" "peer0.ospedale-maresca.aslnapoli3.medchain.com:7041" "patient-records-channel" "records" "1.0" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "" ""
+    printHeadline "Approving 'records' for OspedaleDelMare (dev mode)" "U1F60E"
+    chaincodeApprove "cli.ospedale-del-mare.aslnapoli1.medchain.com" "peer0.ospedale-del-mare.aslnapoli1.medchain.com:7061" "patient-records-channel" "records" "1.0" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "" ""
+    printHeadline "Approving 'records' for OspedaleSGiuliano (dev mode)" "U1F60E"
+    chaincodeApprove "cli.ospedale-sgiuliano.aslnapoli2.medchain.com" "peer0.ospedale-sgiuliano.aslnapoli2.medchain.com:7081" "patient-records-channel" "records" "1.0" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "" ""
+    printHeadline "Approving 'records' for MedicinaGeneraleNapoli (dev mode)" "U1F60E"
+    chaincodeApprove "cli.medicina-generale.napoli.medchain.com" "peer0.medicina-generale.napoli.medchain.com:7101" "patient-records-channel" "records" "1.0" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "" ""
+    printHeadline "Approving 'records' for NeurologiaNapoli (dev mode)" "U1F60E"
+    chaincodeApprove "cli.neurologia.napoli.medchain.com" "peer0.neurologia.napoli.medchain.com:7121" "patient-records-channel" "records" "1.0" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "" ""
+    printItalics "Committing chaincode 'records' on channel 'patient-records-channel' as 'OspedaleMaresca' (dev mode)" "U1F618"
+    chaincodeCommit "cli.ospedale-maresca.aslnapoli3.medchain.com" "peer0.ospedale-maresca.aslnapoli3.medchain.com:7041" "patient-records-channel" "records" "1.0" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "" "peer0.ospedale-maresca.aslnapoli3.medchain.com:7041,peer0.ospedale-del-mare.aslnapoli1.medchain.com:7061,peer0.ospedale-sgiuliano.aslnapoli2.medchain.com:7081,peer0.medicina-generale.napoli.medchain.com:7101,peer0.neurologia.napoli.medchain.com:7121" "" ""
+  else
+    echo "Warning! Skipping chaincode 'records' installation. Chaincode directory is empty."
+    echo "Looked in dir: '$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/records'"
   fi
 
 }
@@ -190,9 +269,9 @@ installChaincode() {
   fi
 
   if [ "$chaincodeName" = "labresults" ]; then
-    if [ -n "$(ls "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go")" ]; then
+    if [ -n "$(ls "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/labresults")" ]; then
       printHeadline "Packaging chaincode 'labresults'" "U1F60E"
-      chaincodeBuild "labresults" "golang" "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go" "12"
+      chaincodeBuild "labresults" "golang" "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/labresults" "12"
       chaincodePackage "cli.ospedale-maresca.aslnapoli3.medchain.com" "peer0.ospedale-maresca.aslnapoli3.medchain.com:7041" "labresults" "$version" "golang" printHeadline "Installing 'labresults' for OspedaleMaresca" "U1F60E"
       chaincodeInstall "cli.ospedale-maresca.aslnapoli3.medchain.com" "peer0.ospedale-maresca.aslnapoli3.medchain.com:7041" "labresults" "$version" ""
       chaincodeInstall "cli.ospedale-maresca.aslnapoli3.medchain.com" "peer1.ospedale-maresca.aslnapoli3.medchain.com:7042" "labresults" "$version" ""
@@ -216,7 +295,153 @@ installChaincode() {
 
     else
       echo "Warning! Skipping chaincode 'labresults' install. Chaincode directory is empty."
-      echo "Looked in dir: '$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go'"
+      echo "Looked in dir: '$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/labresults'"
+    fi
+  fi
+  if [ "$chaincodeName" = "encounter" ]; then
+    if [ -n "$(ls "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/encounter")" ]; then
+      printHeadline "Packaging chaincode 'encounter'" "U1F60E"
+      chaincodeBuild "encounter" "golang" "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/encounter" "12"
+      chaincodePackage "cli.ospedale-maresca.aslnapoli3.medchain.com" "peer0.ospedale-maresca.aslnapoli3.medchain.com:7041" "encounter" "$version" "golang" printHeadline "Installing 'encounter' for OspedaleMaresca" "U1F60E"
+      chaincodeInstall "cli.ospedale-maresca.aslnapoli3.medchain.com" "peer0.ospedale-maresca.aslnapoli3.medchain.com:7041" "encounter" "$version" ""
+      chaincodeInstall "cli.ospedale-maresca.aslnapoli3.medchain.com" "peer1.ospedale-maresca.aslnapoli3.medchain.com:7042" "encounter" "$version" ""
+      chaincodeApprove "cli.ospedale-maresca.aslnapoli3.medchain.com" "peer0.ospedale-maresca.aslnapoli3.medchain.com:7041" "patient-records-channel" "encounter" "$version" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "" ""
+      printHeadline "Installing 'encounter' for OspedaleDelMare" "U1F60E"
+      chaincodeInstall "cli.ospedale-del-mare.aslnapoli1.medchain.com" "peer0.ospedale-del-mare.aslnapoli1.medchain.com:7061" "encounter" "$version" ""
+      chaincodeInstall "cli.ospedale-del-mare.aslnapoli1.medchain.com" "peer1.ospedale-del-mare.aslnapoli1.medchain.com:7062" "encounter" "$version" ""
+      chaincodeApprove "cli.ospedale-del-mare.aslnapoli1.medchain.com" "peer0.ospedale-del-mare.aslnapoli1.medchain.com:7061" "patient-records-channel" "encounter" "$version" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "" ""
+      printHeadline "Installing 'encounter' for OspedaleSGiuliano" "U1F60E"
+      chaincodeInstall "cli.ospedale-sgiuliano.aslnapoli2.medchain.com" "peer0.ospedale-sgiuliano.aslnapoli2.medchain.com:7081" "encounter" "$version" ""
+      chaincodeInstall "cli.ospedale-sgiuliano.aslnapoli2.medchain.com" "peer1.ospedale-sgiuliano.aslnapoli2.medchain.com:7082" "encounter" "$version" ""
+      chaincodeApprove "cli.ospedale-sgiuliano.aslnapoli2.medchain.com" "peer0.ospedale-sgiuliano.aslnapoli2.medchain.com:7081" "patient-records-channel" "encounter" "$version" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "" ""
+      printHeadline "Installing 'encounter' for MedicinaGeneraleNapoli" "U1F60E"
+      chaincodeInstall "cli.medicina-generale.napoli.medchain.com" "peer0.medicina-generale.napoli.medchain.com:7101" "encounter" "$version" ""
+      chaincodeInstall "cli.medicina-generale.napoli.medchain.com" "peer1.medicina-generale.napoli.medchain.com:7102" "encounter" "$version" ""
+      chaincodeApprove "cli.medicina-generale.napoli.medchain.com" "peer0.medicina-generale.napoli.medchain.com:7101" "patient-records-channel" "encounter" "$version" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "" ""
+      printHeadline "Installing 'encounter' for NeurologiaNapoli" "U1F60E"
+      chaincodeInstall "cli.neurologia.napoli.medchain.com" "peer0.neurologia.napoli.medchain.com:7121" "encounter" "$version" ""
+      chaincodeInstall "cli.neurologia.napoli.medchain.com" "peer1.neurologia.napoli.medchain.com:7122" "encounter" "$version" ""
+      chaincodeApprove "cli.neurologia.napoli.medchain.com" "peer0.neurologia.napoli.medchain.com:7121" "patient-records-channel" "encounter" "$version" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "" ""
+      printItalics "Committing chaincode 'encounter' on channel 'patient-records-channel' as 'OspedaleMaresca'" "U1F618"
+      chaincodeCommit "cli.ospedale-maresca.aslnapoli3.medchain.com" "peer0.ospedale-maresca.aslnapoli3.medchain.com:7041" "patient-records-channel" "encounter" "$version" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "" "peer0.ospedale-maresca.aslnapoli3.medchain.com:7041,peer0.ospedale-del-mare.aslnapoli1.medchain.com:7061,peer0.ospedale-sgiuliano.aslnapoli2.medchain.com:7081,peer0.medicina-generale.napoli.medchain.com:7101,peer0.neurologia.napoli.medchain.com:7121" "" ""
+
+    else
+      echo "Warning! Skipping chaincode 'encounter' install. Chaincode directory is empty."
+      echo "Looked in dir: '$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/encounter'"
+    fi
+  fi
+  if [ "$chaincodeName" = "organization" ]; then
+    if [ -n "$(ls "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/organization")" ]; then
+      printHeadline "Packaging chaincode 'organization'" "U1F60E"
+      chaincodeBuild "organization" "golang" "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/organization" "12"
+      chaincodePackage "cli.ospedale-maresca.aslnapoli3.medchain.com" "peer0.ospedale-maresca.aslnapoli3.medchain.com:7041" "organization" "$version" "golang" printHeadline "Installing 'organization' for OspedaleMaresca" "U1F60E"
+      chaincodeInstall "cli.ospedale-maresca.aslnapoli3.medchain.com" "peer0.ospedale-maresca.aslnapoli3.medchain.com:7041" "organization" "$version" ""
+      chaincodeInstall "cli.ospedale-maresca.aslnapoli3.medchain.com" "peer1.ospedale-maresca.aslnapoli3.medchain.com:7042" "organization" "$version" ""
+      chaincodeApprove "cli.ospedale-maresca.aslnapoli3.medchain.com" "peer0.ospedale-maresca.aslnapoli3.medchain.com:7041" "emergency-channel" "organization" "$version" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "" ""
+      printHeadline "Installing 'organization' for OspedaleDelMare" "U1F60E"
+      chaincodeInstall "cli.ospedale-del-mare.aslnapoli1.medchain.com" "peer0.ospedale-del-mare.aslnapoli1.medchain.com:7061" "organization" "$version" ""
+      chaincodeInstall "cli.ospedale-del-mare.aslnapoli1.medchain.com" "peer1.ospedale-del-mare.aslnapoli1.medchain.com:7062" "organization" "$version" ""
+      chaincodeApprove "cli.ospedale-del-mare.aslnapoli1.medchain.com" "peer0.ospedale-del-mare.aslnapoli1.medchain.com:7061" "emergency-channel" "organization" "$version" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "" ""
+      printHeadline "Installing 'organization' for OspedaleSGiuliano" "U1F60E"
+      chaincodeInstall "cli.ospedale-sgiuliano.aslnapoli2.medchain.com" "peer0.ospedale-sgiuliano.aslnapoli2.medchain.com:7081" "organization" "$version" ""
+      chaincodeInstall "cli.ospedale-sgiuliano.aslnapoli2.medchain.com" "peer1.ospedale-sgiuliano.aslnapoli2.medchain.com:7082" "organization" "$version" ""
+      chaincodeApprove "cli.ospedale-sgiuliano.aslnapoli2.medchain.com" "peer0.ospedale-sgiuliano.aslnapoli2.medchain.com:7081" "emergency-channel" "organization" "$version" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "" ""
+      printItalics "Committing chaincode 'organization' on channel 'emergency-channel' as 'OspedaleMaresca'" "U1F618"
+      chaincodeCommit "cli.ospedale-maresca.aslnapoli3.medchain.com" "peer0.ospedale-maresca.aslnapoli3.medchain.com:7041" "emergency-channel" "organization" "$version" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "" "peer0.ospedale-maresca.aslnapoli3.medchain.com:7041,peer0.ospedale-del-mare.aslnapoli1.medchain.com:7061,peer0.ospedale-sgiuliano.aslnapoli2.medchain.com:7081" "" ""
+
+    else
+      echo "Warning! Skipping chaincode 'organization' install. Chaincode directory is empty."
+      echo "Looked in dir: '$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/organization'"
+    fi
+  fi
+  if [ "$chaincodeName" = "patient" ]; then
+    if [ -n "$(ls "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/patient")" ]; then
+      printHeadline "Packaging chaincode 'patient'" "U1F60E"
+      chaincodeBuild "patient" "golang" "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/patient" "12"
+      chaincodePackage "cli.ospedale-maresca.aslnapoli3.medchain.com" "peer0.ospedale-maresca.aslnapoli3.medchain.com:7041" "patient" "$version" "golang" printHeadline "Installing 'patient' for OspedaleMaresca" "U1F60E"
+      chaincodeInstall "cli.ospedale-maresca.aslnapoli3.medchain.com" "peer0.ospedale-maresca.aslnapoli3.medchain.com:7041" "patient" "$version" ""
+      chaincodeInstall "cli.ospedale-maresca.aslnapoli3.medchain.com" "peer1.ospedale-maresca.aslnapoli3.medchain.com:7042" "patient" "$version" ""
+      chaincodeApprove "cli.ospedale-maresca.aslnapoli3.medchain.com" "peer0.ospedale-maresca.aslnapoli3.medchain.com:7041" "patient-records-channel" "patient" "$version" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "" ""
+      printHeadline "Installing 'patient' for OspedaleDelMare" "U1F60E"
+      chaincodeInstall "cli.ospedale-del-mare.aslnapoli1.medchain.com" "peer0.ospedale-del-mare.aslnapoli1.medchain.com:7061" "patient" "$version" ""
+      chaincodeInstall "cli.ospedale-del-mare.aslnapoli1.medchain.com" "peer1.ospedale-del-mare.aslnapoli1.medchain.com:7062" "patient" "$version" ""
+      chaincodeApprove "cli.ospedale-del-mare.aslnapoli1.medchain.com" "peer0.ospedale-del-mare.aslnapoli1.medchain.com:7061" "patient-records-channel" "patient" "$version" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "" ""
+      printHeadline "Installing 'patient' for OspedaleSGiuliano" "U1F60E"
+      chaincodeInstall "cli.ospedale-sgiuliano.aslnapoli2.medchain.com" "peer0.ospedale-sgiuliano.aslnapoli2.medchain.com:7081" "patient" "$version" ""
+      chaincodeInstall "cli.ospedale-sgiuliano.aslnapoli2.medchain.com" "peer1.ospedale-sgiuliano.aslnapoli2.medchain.com:7082" "patient" "$version" ""
+      chaincodeApprove "cli.ospedale-sgiuliano.aslnapoli2.medchain.com" "peer0.ospedale-sgiuliano.aslnapoli2.medchain.com:7081" "patient-records-channel" "patient" "$version" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "" ""
+      printHeadline "Installing 'patient' for MedicinaGeneraleNapoli" "U1F60E"
+      chaincodeInstall "cli.medicina-generale.napoli.medchain.com" "peer0.medicina-generale.napoli.medchain.com:7101" "patient" "$version" ""
+      chaincodeInstall "cli.medicina-generale.napoli.medchain.com" "peer1.medicina-generale.napoli.medchain.com:7102" "patient" "$version" ""
+      chaincodeApprove "cli.medicina-generale.napoli.medchain.com" "peer0.medicina-generale.napoli.medchain.com:7101" "patient-records-channel" "patient" "$version" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "" ""
+      printHeadline "Installing 'patient' for NeurologiaNapoli" "U1F60E"
+      chaincodeInstall "cli.neurologia.napoli.medchain.com" "peer0.neurologia.napoli.medchain.com:7121" "patient" "$version" ""
+      chaincodeInstall "cli.neurologia.napoli.medchain.com" "peer1.neurologia.napoli.medchain.com:7122" "patient" "$version" ""
+      chaincodeApprove "cli.neurologia.napoli.medchain.com" "peer0.neurologia.napoli.medchain.com:7121" "patient-records-channel" "patient" "$version" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "" ""
+      printItalics "Committing chaincode 'patient' on channel 'patient-records-channel' as 'OspedaleMaresca'" "U1F618"
+      chaincodeCommit "cli.ospedale-maresca.aslnapoli3.medchain.com" "peer0.ospedale-maresca.aslnapoli3.medchain.com:7041" "patient-records-channel" "patient" "$version" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "" "peer0.ospedale-maresca.aslnapoli3.medchain.com:7041,peer0.ospedale-del-mare.aslnapoli1.medchain.com:7061,peer0.ospedale-sgiuliano.aslnapoli2.medchain.com:7081,peer0.medicina-generale.napoli.medchain.com:7101,peer0.neurologia.napoli.medchain.com:7121" "" ""
+
+    else
+      echo "Warning! Skipping chaincode 'patient' install. Chaincode directory is empty."
+      echo "Looked in dir: '$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/patient'"
+    fi
+  fi
+  if [ "$chaincodeName" = "prescriptions" ]; then
+    if [ -n "$(ls "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/prescriptions")" ]; then
+      printHeadline "Packaging chaincode 'prescriptions'" "U1F60E"
+      chaincodeBuild "prescriptions" "golang" "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/prescriptions" "12"
+      chaincodePackage "cli.medicina-generale.napoli.medchain.com" "peer0.medicina-generale.napoli.medchain.com:7101" "prescriptions" "$version" "golang" printHeadline "Installing 'prescriptions' for MedicinaGeneraleNapoli" "U1F60E"
+      chaincodeInstall "cli.medicina-generale.napoli.medchain.com" "peer0.medicina-generale.napoli.medchain.com:7101" "prescriptions" "$version" ""
+      chaincodeInstall "cli.medicina-generale.napoli.medchain.com" "peer1.medicina-generale.napoli.medchain.com:7102" "prescriptions" "$version" ""
+      chaincodeApprove "cli.medicina-generale.napoli.medchain.com" "peer0.medicina-generale.napoli.medchain.com:7101" "prescriptions-channel" "prescriptions" "$version" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "" ""
+      printHeadline "Installing 'prescriptions' for NeurologiaNapoli" "U1F60E"
+      chaincodeInstall "cli.neurologia.napoli.medchain.com" "peer0.neurologia.napoli.medchain.com:7121" "prescriptions" "$version" ""
+      chaincodeInstall "cli.neurologia.napoli.medchain.com" "peer1.neurologia.napoli.medchain.com:7122" "prescriptions" "$version" ""
+      chaincodeApprove "cli.neurologia.napoli.medchain.com" "peer0.neurologia.napoli.medchain.com:7121" "prescriptions-channel" "prescriptions" "$version" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "" ""
+      printHeadline "Installing 'prescriptions' for FarmaciaPetrone" "U1F60E"
+      chaincodeInstall "cli.farmacia-petrone.napoli.medchain.com" "peer0.farmacia-petrone.napoli.medchain.com:7141" "prescriptions" "$version" ""
+      chaincodeApprove "cli.farmacia-petrone.napoli.medchain.com" "peer0.farmacia-petrone.napoli.medchain.com:7141" "prescriptions-channel" "prescriptions" "$version" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "" ""
+      printHeadline "Installing 'prescriptions' for FarmaciaCarbone" "U1F60E"
+      chaincodeInstall "cli.farmacia-carbone.napoli.medchain.com" "peer0.farmacia-carbone.napoli.medchain.com:7161" "prescriptions" "$version" ""
+      chaincodeApprove "cli.farmacia-carbone.napoli.medchain.com" "peer0.farmacia-carbone.napoli.medchain.com:7161" "prescriptions-channel" "prescriptions" "$version" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "" ""
+      printItalics "Committing chaincode 'prescriptions' on channel 'prescriptions-channel' as 'MedicinaGeneraleNapoli'" "U1F618"
+      chaincodeCommit "cli.medicina-generale.napoli.medchain.com" "peer0.medicina-generale.napoli.medchain.com:7101" "prescriptions-channel" "prescriptions" "$version" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "" "peer0.medicina-generale.napoli.medchain.com:7101,peer0.neurologia.napoli.medchain.com:7121,peer0.farmacia-petrone.napoli.medchain.com:7141,peer0.farmacia-carbone.napoli.medchain.com:7161" "" ""
+
+    else
+      echo "Warning! Skipping chaincode 'prescriptions' install. Chaincode directory is empty."
+      echo "Looked in dir: '$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/prescriptions'"
+    fi
+  fi
+  if [ "$chaincodeName" = "records" ]; then
+    if [ -n "$(ls "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/records")" ]; then
+      printHeadline "Packaging chaincode 'records'" "U1F60E"
+      chaincodeBuild "records" "golang" "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/records" "12"
+      chaincodePackage "cli.ospedale-maresca.aslnapoli3.medchain.com" "peer0.ospedale-maresca.aslnapoli3.medchain.com:7041" "records" "$version" "golang" printHeadline "Installing 'records' for OspedaleMaresca" "U1F60E"
+      chaincodeInstall "cli.ospedale-maresca.aslnapoli3.medchain.com" "peer0.ospedale-maresca.aslnapoli3.medchain.com:7041" "records" "$version" ""
+      chaincodeInstall "cli.ospedale-maresca.aslnapoli3.medchain.com" "peer1.ospedale-maresca.aslnapoli3.medchain.com:7042" "records" "$version" ""
+      chaincodeApprove "cli.ospedale-maresca.aslnapoli3.medchain.com" "peer0.ospedale-maresca.aslnapoli3.medchain.com:7041" "patient-records-channel" "records" "$version" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "" ""
+      printHeadline "Installing 'records' for OspedaleDelMare" "U1F60E"
+      chaincodeInstall "cli.ospedale-del-mare.aslnapoli1.medchain.com" "peer0.ospedale-del-mare.aslnapoli1.medchain.com:7061" "records" "$version" ""
+      chaincodeInstall "cli.ospedale-del-mare.aslnapoli1.medchain.com" "peer1.ospedale-del-mare.aslnapoli1.medchain.com:7062" "records" "$version" ""
+      chaincodeApprove "cli.ospedale-del-mare.aslnapoli1.medchain.com" "peer0.ospedale-del-mare.aslnapoli1.medchain.com:7061" "patient-records-channel" "records" "$version" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "" ""
+      printHeadline "Installing 'records' for OspedaleSGiuliano" "U1F60E"
+      chaincodeInstall "cli.ospedale-sgiuliano.aslnapoli2.medchain.com" "peer0.ospedale-sgiuliano.aslnapoli2.medchain.com:7081" "records" "$version" ""
+      chaincodeInstall "cli.ospedale-sgiuliano.aslnapoli2.medchain.com" "peer1.ospedale-sgiuliano.aslnapoli2.medchain.com:7082" "records" "$version" ""
+      chaincodeApprove "cli.ospedale-sgiuliano.aslnapoli2.medchain.com" "peer0.ospedale-sgiuliano.aslnapoli2.medchain.com:7081" "patient-records-channel" "records" "$version" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "" ""
+      printHeadline "Installing 'records' for MedicinaGeneraleNapoli" "U1F60E"
+      chaincodeInstall "cli.medicina-generale.napoli.medchain.com" "peer0.medicina-generale.napoli.medchain.com:7101" "records" "$version" ""
+      chaincodeInstall "cli.medicina-generale.napoli.medchain.com" "peer1.medicina-generale.napoli.medchain.com:7102" "records" "$version" ""
+      chaincodeApprove "cli.medicina-generale.napoli.medchain.com" "peer0.medicina-generale.napoli.medchain.com:7101" "patient-records-channel" "records" "$version" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "" ""
+      printHeadline "Installing 'records' for NeurologiaNapoli" "U1F60E"
+      chaincodeInstall "cli.neurologia.napoli.medchain.com" "peer0.neurologia.napoli.medchain.com:7121" "records" "$version" ""
+      chaincodeInstall "cli.neurologia.napoli.medchain.com" "peer1.neurologia.napoli.medchain.com:7122" "records" "$version" ""
+      chaincodeApprove "cli.neurologia.napoli.medchain.com" "peer0.neurologia.napoli.medchain.com:7121" "patient-records-channel" "records" "$version" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "" ""
+      printItalics "Committing chaincode 'records' on channel 'patient-records-channel' as 'OspedaleMaresca'" "U1F618"
+      chaincodeCommit "cli.ospedale-maresca.aslnapoli3.medchain.com" "peer0.ospedale-maresca.aslnapoli3.medchain.com:7041" "patient-records-channel" "records" "$version" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "" "peer0.ospedale-maresca.aslnapoli3.medchain.com:7041,peer0.ospedale-del-mare.aslnapoli1.medchain.com:7061,peer0.ospedale-sgiuliano.aslnapoli2.medchain.com:7081,peer0.medicina-generale.napoli.medchain.com:7101,peer0.neurologia.napoli.medchain.com:7121" "" ""
+
+    else
+      echo "Warning! Skipping chaincode 'records' install. Chaincode directory is empty."
+      echo "Looked in dir: '$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/records'"
     fi
   fi
 }
@@ -244,6 +469,80 @@ runDevModeChaincode() {
     chaincodeCommit "cli.ospedale-maresca.aslnapoli3.medchain.com" "peer0.ospedale-maresca.aslnapoli3.medchain.com:7041" "lab-results-channel" "labresults" "1.0" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "" "peer0.ospedale-maresca.aslnapoli3.medchain.com:7041,peer0.medicina-generale.napoli.medchain.com:7101,peer0.neurologia.napoli.medchain.com:7121,peer0.laboratorio-analisi-cmo.medchain.com:7181,peer0.laboratorio-analisi-sdn.medchain.com:7201" "" ""
 
   fi
+  if [ "$chaincodeName" = "encounter" ]; then
+    local version="1.0"
+    printHeadline "Approving 'encounter' for OspedaleMaresca (dev mode)" "U1F60E"
+    chaincodeApprove "cli.ospedale-maresca.aslnapoli3.medchain.com" "peer0.ospedale-maresca.aslnapoli3.medchain.com:7041" "patient-records-channel" "encounter" "1.0" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "" ""
+    printHeadline "Approving 'encounter' for OspedaleDelMare (dev mode)" "U1F60E"
+    chaincodeApprove "cli.ospedale-del-mare.aslnapoli1.medchain.com" "peer0.ospedale-del-mare.aslnapoli1.medchain.com:7061" "patient-records-channel" "encounter" "1.0" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "" ""
+    printHeadline "Approving 'encounter' for OspedaleSGiuliano (dev mode)" "U1F60E"
+    chaincodeApprove "cli.ospedale-sgiuliano.aslnapoli2.medchain.com" "peer0.ospedale-sgiuliano.aslnapoli2.medchain.com:7081" "patient-records-channel" "encounter" "1.0" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "" ""
+    printHeadline "Approving 'encounter' for MedicinaGeneraleNapoli (dev mode)" "U1F60E"
+    chaincodeApprove "cli.medicina-generale.napoli.medchain.com" "peer0.medicina-generale.napoli.medchain.com:7101" "patient-records-channel" "encounter" "1.0" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "" ""
+    printHeadline "Approving 'encounter' for NeurologiaNapoli (dev mode)" "U1F60E"
+    chaincodeApprove "cli.neurologia.napoli.medchain.com" "peer0.neurologia.napoli.medchain.com:7121" "patient-records-channel" "encounter" "1.0" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "" ""
+    printItalics "Committing chaincode 'encounter' on channel 'patient-records-channel' as 'OspedaleMaresca' (dev mode)" "U1F618"
+    chaincodeCommit "cli.ospedale-maresca.aslnapoli3.medchain.com" "peer0.ospedale-maresca.aslnapoli3.medchain.com:7041" "patient-records-channel" "encounter" "1.0" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "" "peer0.ospedale-maresca.aslnapoli3.medchain.com:7041,peer0.ospedale-del-mare.aslnapoli1.medchain.com:7061,peer0.ospedale-sgiuliano.aslnapoli2.medchain.com:7081,peer0.medicina-generale.napoli.medchain.com:7101,peer0.neurologia.napoli.medchain.com:7121" "" ""
+
+  fi
+  if [ "$chaincodeName" = "organization" ]; then
+    local version="1.0"
+    printHeadline "Approving 'organization' for OspedaleMaresca (dev mode)" "U1F60E"
+    chaincodeApprove "cli.ospedale-maresca.aslnapoli3.medchain.com" "peer0.ospedale-maresca.aslnapoli3.medchain.com:7041" "emergency-channel" "organization" "1.0" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "" ""
+    printHeadline "Approving 'organization' for OspedaleDelMare (dev mode)" "U1F60E"
+    chaincodeApprove "cli.ospedale-del-mare.aslnapoli1.medchain.com" "peer0.ospedale-del-mare.aslnapoli1.medchain.com:7061" "emergency-channel" "organization" "1.0" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "" ""
+    printHeadline "Approving 'organization' for OspedaleSGiuliano (dev mode)" "U1F60E"
+    chaincodeApprove "cli.ospedale-sgiuliano.aslnapoli2.medchain.com" "peer0.ospedale-sgiuliano.aslnapoli2.medchain.com:7081" "emergency-channel" "organization" "1.0" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "" ""
+    printItalics "Committing chaincode 'organization' on channel 'emergency-channel' as 'OspedaleMaresca' (dev mode)" "U1F618"
+    chaincodeCommit "cli.ospedale-maresca.aslnapoli3.medchain.com" "peer0.ospedale-maresca.aslnapoli3.medchain.com:7041" "emergency-channel" "organization" "1.0" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "" "peer0.ospedale-maresca.aslnapoli3.medchain.com:7041,peer0.ospedale-del-mare.aslnapoli1.medchain.com:7061,peer0.ospedale-sgiuliano.aslnapoli2.medchain.com:7081" "" ""
+
+  fi
+  if [ "$chaincodeName" = "patient" ]; then
+    local version="1.0"
+    printHeadline "Approving 'patient' for OspedaleMaresca (dev mode)" "U1F60E"
+    chaincodeApprove "cli.ospedale-maresca.aslnapoli3.medchain.com" "peer0.ospedale-maresca.aslnapoli3.medchain.com:7041" "patient-records-channel" "patient" "1.0" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "" ""
+    printHeadline "Approving 'patient' for OspedaleDelMare (dev mode)" "U1F60E"
+    chaincodeApprove "cli.ospedale-del-mare.aslnapoli1.medchain.com" "peer0.ospedale-del-mare.aslnapoli1.medchain.com:7061" "patient-records-channel" "patient" "1.0" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "" ""
+    printHeadline "Approving 'patient' for OspedaleSGiuliano (dev mode)" "U1F60E"
+    chaincodeApprove "cli.ospedale-sgiuliano.aslnapoli2.medchain.com" "peer0.ospedale-sgiuliano.aslnapoli2.medchain.com:7081" "patient-records-channel" "patient" "1.0" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "" ""
+    printHeadline "Approving 'patient' for MedicinaGeneraleNapoli (dev mode)" "U1F60E"
+    chaincodeApprove "cli.medicina-generale.napoli.medchain.com" "peer0.medicina-generale.napoli.medchain.com:7101" "patient-records-channel" "patient" "1.0" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "" ""
+    printHeadline "Approving 'patient' for NeurologiaNapoli (dev mode)" "U1F60E"
+    chaincodeApprove "cli.neurologia.napoli.medchain.com" "peer0.neurologia.napoli.medchain.com:7121" "patient-records-channel" "patient" "1.0" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "" ""
+    printItalics "Committing chaincode 'patient' on channel 'patient-records-channel' as 'OspedaleMaresca' (dev mode)" "U1F618"
+    chaincodeCommit "cli.ospedale-maresca.aslnapoli3.medchain.com" "peer0.ospedale-maresca.aslnapoli3.medchain.com:7041" "patient-records-channel" "patient" "1.0" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "" "peer0.ospedale-maresca.aslnapoli3.medchain.com:7041,peer0.ospedale-del-mare.aslnapoli1.medchain.com:7061,peer0.ospedale-sgiuliano.aslnapoli2.medchain.com:7081,peer0.medicina-generale.napoli.medchain.com:7101,peer0.neurologia.napoli.medchain.com:7121" "" ""
+
+  fi
+  if [ "$chaincodeName" = "prescriptions" ]; then
+    local version="1.0"
+    printHeadline "Approving 'prescriptions' for MedicinaGeneraleNapoli (dev mode)" "U1F60E"
+    chaincodeApprove "cli.medicina-generale.napoli.medchain.com" "peer0.medicina-generale.napoli.medchain.com:7101" "prescriptions-channel" "prescriptions" "1.0" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "" ""
+    printHeadline "Approving 'prescriptions' for NeurologiaNapoli (dev mode)" "U1F60E"
+    chaincodeApprove "cli.neurologia.napoli.medchain.com" "peer0.neurologia.napoli.medchain.com:7121" "prescriptions-channel" "prescriptions" "1.0" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "" ""
+    printHeadline "Approving 'prescriptions' for FarmaciaPetrone (dev mode)" "U1F60E"
+    chaincodeApprove "cli.farmacia-petrone.napoli.medchain.com" "peer0.farmacia-petrone.napoli.medchain.com:7141" "prescriptions-channel" "prescriptions" "1.0" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "" ""
+    printHeadline "Approving 'prescriptions' for FarmaciaCarbone (dev mode)" "U1F60E"
+    chaincodeApprove "cli.farmacia-carbone.napoli.medchain.com" "peer0.farmacia-carbone.napoli.medchain.com:7161" "prescriptions-channel" "prescriptions" "1.0" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "" ""
+    printItalics "Committing chaincode 'prescriptions' on channel 'prescriptions-channel' as 'MedicinaGeneraleNapoli' (dev mode)" "U1F618"
+    chaincodeCommit "cli.medicina-generale.napoli.medchain.com" "peer0.medicina-generale.napoli.medchain.com:7101" "prescriptions-channel" "prescriptions" "1.0" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "" "peer0.medicina-generale.napoli.medchain.com:7101,peer0.neurologia.napoli.medchain.com:7121,peer0.farmacia-petrone.napoli.medchain.com:7141,peer0.farmacia-carbone.napoli.medchain.com:7161" "" ""
+
+  fi
+  if [ "$chaincodeName" = "records" ]; then
+    local version="1.0"
+    printHeadline "Approving 'records' for OspedaleMaresca (dev mode)" "U1F60E"
+    chaincodeApprove "cli.ospedale-maresca.aslnapoli3.medchain.com" "peer0.ospedale-maresca.aslnapoli3.medchain.com:7041" "patient-records-channel" "records" "1.0" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "" ""
+    printHeadline "Approving 'records' for OspedaleDelMare (dev mode)" "U1F60E"
+    chaincodeApprove "cli.ospedale-del-mare.aslnapoli1.medchain.com" "peer0.ospedale-del-mare.aslnapoli1.medchain.com:7061" "patient-records-channel" "records" "1.0" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "" ""
+    printHeadline "Approving 'records' for OspedaleSGiuliano (dev mode)" "U1F60E"
+    chaincodeApprove "cli.ospedale-sgiuliano.aslnapoli2.medchain.com" "peer0.ospedale-sgiuliano.aslnapoli2.medchain.com:7081" "patient-records-channel" "records" "1.0" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "" ""
+    printHeadline "Approving 'records' for MedicinaGeneraleNapoli (dev mode)" "U1F60E"
+    chaincodeApprove "cli.medicina-generale.napoli.medchain.com" "peer0.medicina-generale.napoli.medchain.com:7101" "patient-records-channel" "records" "1.0" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "" ""
+    printHeadline "Approving 'records' for NeurologiaNapoli (dev mode)" "U1F60E"
+    chaincodeApprove "cli.neurologia.napoli.medchain.com" "peer0.neurologia.napoli.medchain.com:7121" "patient-records-channel" "records" "1.0" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "" ""
+    printItalics "Committing chaincode 'records' on channel 'patient-records-channel' as 'OspedaleMaresca' (dev mode)" "U1F618"
+    chaincodeCommit "cli.ospedale-maresca.aslnapoli3.medchain.com" "peer0.ospedale-maresca.aslnapoli3.medchain.com:7041" "patient-records-channel" "records" "1.0" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "" "peer0.ospedale-maresca.aslnapoli3.medchain.com:7041,peer0.ospedale-del-mare.aslnapoli1.medchain.com:7061,peer0.ospedale-sgiuliano.aslnapoli2.medchain.com:7081,peer0.medicina-generale.napoli.medchain.com:7101,peer0.neurologia.napoli.medchain.com:7121" "" ""
+
+  fi
 }
 
 upgradeChaincode() {
@@ -260,9 +559,9 @@ upgradeChaincode() {
   fi
 
   if [ "$chaincodeName" = "labresults" ]; then
-    if [ -n "$(ls "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go")" ]; then
+    if [ -n "$(ls "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/labresults")" ]; then
       printHeadline "Packaging chaincode 'labresults'" "U1F60E"
-      chaincodeBuild "labresults" "golang" "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go" "12"
+      chaincodeBuild "labresults" "golang" "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/labresults" "12"
       chaincodePackage "cli.ospedale-maresca.aslnapoli3.medchain.com" "peer0.ospedale-maresca.aslnapoli3.medchain.com:7041" "labresults" "$version" "golang" printHeadline "Installing 'labresults' for OspedaleMaresca" "U1F60E"
       chaincodeInstall "cli.ospedale-maresca.aslnapoli3.medchain.com" "peer0.ospedale-maresca.aslnapoli3.medchain.com:7041" "labresults" "$version" ""
       chaincodeInstall "cli.ospedale-maresca.aslnapoli3.medchain.com" "peer1.ospedale-maresca.aslnapoli3.medchain.com:7042" "labresults" "$version" ""
@@ -286,7 +585,153 @@ upgradeChaincode() {
 
     else
       echo "Warning! Skipping chaincode 'labresults' upgrade. Chaincode directory is empty."
-      echo "Looked in dir: '$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go'"
+      echo "Looked in dir: '$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/labresults'"
+    fi
+  fi
+  if [ "$chaincodeName" = "encounter" ]; then
+    if [ -n "$(ls "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/encounter")" ]; then
+      printHeadline "Packaging chaincode 'encounter'" "U1F60E"
+      chaincodeBuild "encounter" "golang" "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/encounter" "12"
+      chaincodePackage "cli.ospedale-maresca.aslnapoli3.medchain.com" "peer0.ospedale-maresca.aslnapoli3.medchain.com:7041" "encounter" "$version" "golang" printHeadline "Installing 'encounter' for OspedaleMaresca" "U1F60E"
+      chaincodeInstall "cli.ospedale-maresca.aslnapoli3.medchain.com" "peer0.ospedale-maresca.aslnapoli3.medchain.com:7041" "encounter" "$version" ""
+      chaincodeInstall "cli.ospedale-maresca.aslnapoli3.medchain.com" "peer1.ospedale-maresca.aslnapoli3.medchain.com:7042" "encounter" "$version" ""
+      chaincodeApprove "cli.ospedale-maresca.aslnapoli3.medchain.com" "peer0.ospedale-maresca.aslnapoli3.medchain.com:7041" "patient-records-channel" "encounter" "$version" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "" ""
+      printHeadline "Installing 'encounter' for OspedaleDelMare" "U1F60E"
+      chaincodeInstall "cli.ospedale-del-mare.aslnapoli1.medchain.com" "peer0.ospedale-del-mare.aslnapoli1.medchain.com:7061" "encounter" "$version" ""
+      chaincodeInstall "cli.ospedale-del-mare.aslnapoli1.medchain.com" "peer1.ospedale-del-mare.aslnapoli1.medchain.com:7062" "encounter" "$version" ""
+      chaincodeApprove "cli.ospedale-del-mare.aslnapoli1.medchain.com" "peer0.ospedale-del-mare.aslnapoli1.medchain.com:7061" "patient-records-channel" "encounter" "$version" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "" ""
+      printHeadline "Installing 'encounter' for OspedaleSGiuliano" "U1F60E"
+      chaincodeInstall "cli.ospedale-sgiuliano.aslnapoli2.medchain.com" "peer0.ospedale-sgiuliano.aslnapoli2.medchain.com:7081" "encounter" "$version" ""
+      chaincodeInstall "cli.ospedale-sgiuliano.aslnapoli2.medchain.com" "peer1.ospedale-sgiuliano.aslnapoli2.medchain.com:7082" "encounter" "$version" ""
+      chaincodeApprove "cli.ospedale-sgiuliano.aslnapoli2.medchain.com" "peer0.ospedale-sgiuliano.aslnapoli2.medchain.com:7081" "patient-records-channel" "encounter" "$version" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "" ""
+      printHeadline "Installing 'encounter' for MedicinaGeneraleNapoli" "U1F60E"
+      chaincodeInstall "cli.medicina-generale.napoli.medchain.com" "peer0.medicina-generale.napoli.medchain.com:7101" "encounter" "$version" ""
+      chaincodeInstall "cli.medicina-generale.napoli.medchain.com" "peer1.medicina-generale.napoli.medchain.com:7102" "encounter" "$version" ""
+      chaincodeApprove "cli.medicina-generale.napoli.medchain.com" "peer0.medicina-generale.napoli.medchain.com:7101" "patient-records-channel" "encounter" "$version" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "" ""
+      printHeadline "Installing 'encounter' for NeurologiaNapoli" "U1F60E"
+      chaincodeInstall "cli.neurologia.napoli.medchain.com" "peer0.neurologia.napoli.medchain.com:7121" "encounter" "$version" ""
+      chaincodeInstall "cli.neurologia.napoli.medchain.com" "peer1.neurologia.napoli.medchain.com:7122" "encounter" "$version" ""
+      chaincodeApprove "cli.neurologia.napoli.medchain.com" "peer0.neurologia.napoli.medchain.com:7121" "patient-records-channel" "encounter" "$version" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "" ""
+      printItalics "Committing chaincode 'encounter' on channel 'patient-records-channel' as 'OspedaleMaresca'" "U1F618"
+      chaincodeCommit "cli.ospedale-maresca.aslnapoli3.medchain.com" "peer0.ospedale-maresca.aslnapoli3.medchain.com:7041" "patient-records-channel" "encounter" "$version" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "" "peer0.ospedale-maresca.aslnapoli3.medchain.com:7041,peer0.ospedale-del-mare.aslnapoli1.medchain.com:7061,peer0.ospedale-sgiuliano.aslnapoli2.medchain.com:7081,peer0.medicina-generale.napoli.medchain.com:7101,peer0.neurologia.napoli.medchain.com:7121" "" ""
+
+    else
+      echo "Warning! Skipping chaincode 'encounter' upgrade. Chaincode directory is empty."
+      echo "Looked in dir: '$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/encounter'"
+    fi
+  fi
+  if [ "$chaincodeName" = "organization" ]; then
+    if [ -n "$(ls "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/organization")" ]; then
+      printHeadline "Packaging chaincode 'organization'" "U1F60E"
+      chaincodeBuild "organization" "golang" "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/organization" "12"
+      chaincodePackage "cli.ospedale-maresca.aslnapoli3.medchain.com" "peer0.ospedale-maresca.aslnapoli3.medchain.com:7041" "organization" "$version" "golang" printHeadline "Installing 'organization' for OspedaleMaresca" "U1F60E"
+      chaincodeInstall "cli.ospedale-maresca.aslnapoli3.medchain.com" "peer0.ospedale-maresca.aslnapoli3.medchain.com:7041" "organization" "$version" ""
+      chaincodeInstall "cli.ospedale-maresca.aslnapoli3.medchain.com" "peer1.ospedale-maresca.aslnapoli3.medchain.com:7042" "organization" "$version" ""
+      chaincodeApprove "cli.ospedale-maresca.aslnapoli3.medchain.com" "peer0.ospedale-maresca.aslnapoli3.medchain.com:7041" "emergency-channel" "organization" "$version" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "" ""
+      printHeadline "Installing 'organization' for OspedaleDelMare" "U1F60E"
+      chaincodeInstall "cli.ospedale-del-mare.aslnapoli1.medchain.com" "peer0.ospedale-del-mare.aslnapoli1.medchain.com:7061" "organization" "$version" ""
+      chaincodeInstall "cli.ospedale-del-mare.aslnapoli1.medchain.com" "peer1.ospedale-del-mare.aslnapoli1.medchain.com:7062" "organization" "$version" ""
+      chaincodeApprove "cli.ospedale-del-mare.aslnapoli1.medchain.com" "peer0.ospedale-del-mare.aslnapoli1.medchain.com:7061" "emergency-channel" "organization" "$version" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "" ""
+      printHeadline "Installing 'organization' for OspedaleSGiuliano" "U1F60E"
+      chaincodeInstall "cli.ospedale-sgiuliano.aslnapoli2.medchain.com" "peer0.ospedale-sgiuliano.aslnapoli2.medchain.com:7081" "organization" "$version" ""
+      chaincodeInstall "cli.ospedale-sgiuliano.aslnapoli2.medchain.com" "peer1.ospedale-sgiuliano.aslnapoli2.medchain.com:7082" "organization" "$version" ""
+      chaincodeApprove "cli.ospedale-sgiuliano.aslnapoli2.medchain.com" "peer0.ospedale-sgiuliano.aslnapoli2.medchain.com:7081" "emergency-channel" "organization" "$version" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "" ""
+      printItalics "Committing chaincode 'organization' on channel 'emergency-channel' as 'OspedaleMaresca'" "U1F618"
+      chaincodeCommit "cli.ospedale-maresca.aslnapoli3.medchain.com" "peer0.ospedale-maresca.aslnapoli3.medchain.com:7041" "emergency-channel" "organization" "$version" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "" "peer0.ospedale-maresca.aslnapoli3.medchain.com:7041,peer0.ospedale-del-mare.aslnapoli1.medchain.com:7061,peer0.ospedale-sgiuliano.aslnapoli2.medchain.com:7081" "" ""
+
+    else
+      echo "Warning! Skipping chaincode 'organization' upgrade. Chaincode directory is empty."
+      echo "Looked in dir: '$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/organization'"
+    fi
+  fi
+  if [ "$chaincodeName" = "patient" ]; then
+    if [ -n "$(ls "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/patient")" ]; then
+      printHeadline "Packaging chaincode 'patient'" "U1F60E"
+      chaincodeBuild "patient" "golang" "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/patient" "12"
+      chaincodePackage "cli.ospedale-maresca.aslnapoli3.medchain.com" "peer0.ospedale-maresca.aslnapoli3.medchain.com:7041" "patient" "$version" "golang" printHeadline "Installing 'patient' for OspedaleMaresca" "U1F60E"
+      chaincodeInstall "cli.ospedale-maresca.aslnapoli3.medchain.com" "peer0.ospedale-maresca.aslnapoli3.medchain.com:7041" "patient" "$version" ""
+      chaincodeInstall "cli.ospedale-maresca.aslnapoli3.medchain.com" "peer1.ospedale-maresca.aslnapoli3.medchain.com:7042" "patient" "$version" ""
+      chaincodeApprove "cli.ospedale-maresca.aslnapoli3.medchain.com" "peer0.ospedale-maresca.aslnapoli3.medchain.com:7041" "patient-records-channel" "patient" "$version" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "" ""
+      printHeadline "Installing 'patient' for OspedaleDelMare" "U1F60E"
+      chaincodeInstall "cli.ospedale-del-mare.aslnapoli1.medchain.com" "peer0.ospedale-del-mare.aslnapoli1.medchain.com:7061" "patient" "$version" ""
+      chaincodeInstall "cli.ospedale-del-mare.aslnapoli1.medchain.com" "peer1.ospedale-del-mare.aslnapoli1.medchain.com:7062" "patient" "$version" ""
+      chaincodeApprove "cli.ospedale-del-mare.aslnapoli1.medchain.com" "peer0.ospedale-del-mare.aslnapoli1.medchain.com:7061" "patient-records-channel" "patient" "$version" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "" ""
+      printHeadline "Installing 'patient' for OspedaleSGiuliano" "U1F60E"
+      chaincodeInstall "cli.ospedale-sgiuliano.aslnapoli2.medchain.com" "peer0.ospedale-sgiuliano.aslnapoli2.medchain.com:7081" "patient" "$version" ""
+      chaincodeInstall "cli.ospedale-sgiuliano.aslnapoli2.medchain.com" "peer1.ospedale-sgiuliano.aslnapoli2.medchain.com:7082" "patient" "$version" ""
+      chaincodeApprove "cli.ospedale-sgiuliano.aslnapoli2.medchain.com" "peer0.ospedale-sgiuliano.aslnapoli2.medchain.com:7081" "patient-records-channel" "patient" "$version" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "" ""
+      printHeadline "Installing 'patient' for MedicinaGeneraleNapoli" "U1F60E"
+      chaincodeInstall "cli.medicina-generale.napoli.medchain.com" "peer0.medicina-generale.napoli.medchain.com:7101" "patient" "$version" ""
+      chaincodeInstall "cli.medicina-generale.napoli.medchain.com" "peer1.medicina-generale.napoli.medchain.com:7102" "patient" "$version" ""
+      chaincodeApprove "cli.medicina-generale.napoli.medchain.com" "peer0.medicina-generale.napoli.medchain.com:7101" "patient-records-channel" "patient" "$version" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "" ""
+      printHeadline "Installing 'patient' for NeurologiaNapoli" "U1F60E"
+      chaincodeInstall "cli.neurologia.napoli.medchain.com" "peer0.neurologia.napoli.medchain.com:7121" "patient" "$version" ""
+      chaincodeInstall "cli.neurologia.napoli.medchain.com" "peer1.neurologia.napoli.medchain.com:7122" "patient" "$version" ""
+      chaincodeApprove "cli.neurologia.napoli.medchain.com" "peer0.neurologia.napoli.medchain.com:7121" "patient-records-channel" "patient" "$version" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "" ""
+      printItalics "Committing chaincode 'patient' on channel 'patient-records-channel' as 'OspedaleMaresca'" "U1F618"
+      chaincodeCommit "cli.ospedale-maresca.aslnapoli3.medchain.com" "peer0.ospedale-maresca.aslnapoli3.medchain.com:7041" "patient-records-channel" "patient" "$version" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "" "peer0.ospedale-maresca.aslnapoli3.medchain.com:7041,peer0.ospedale-del-mare.aslnapoli1.medchain.com:7061,peer0.ospedale-sgiuliano.aslnapoli2.medchain.com:7081,peer0.medicina-generale.napoli.medchain.com:7101,peer0.neurologia.napoli.medchain.com:7121" "" ""
+
+    else
+      echo "Warning! Skipping chaincode 'patient' upgrade. Chaincode directory is empty."
+      echo "Looked in dir: '$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/patient'"
+    fi
+  fi
+  if [ "$chaincodeName" = "prescriptions" ]; then
+    if [ -n "$(ls "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/prescriptions")" ]; then
+      printHeadline "Packaging chaincode 'prescriptions'" "U1F60E"
+      chaincodeBuild "prescriptions" "golang" "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/prescriptions" "12"
+      chaincodePackage "cli.medicina-generale.napoli.medchain.com" "peer0.medicina-generale.napoli.medchain.com:7101" "prescriptions" "$version" "golang" printHeadline "Installing 'prescriptions' for MedicinaGeneraleNapoli" "U1F60E"
+      chaincodeInstall "cli.medicina-generale.napoli.medchain.com" "peer0.medicina-generale.napoli.medchain.com:7101" "prescriptions" "$version" ""
+      chaincodeInstall "cli.medicina-generale.napoli.medchain.com" "peer1.medicina-generale.napoli.medchain.com:7102" "prescriptions" "$version" ""
+      chaincodeApprove "cli.medicina-generale.napoli.medchain.com" "peer0.medicina-generale.napoli.medchain.com:7101" "prescriptions-channel" "prescriptions" "$version" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "" ""
+      printHeadline "Installing 'prescriptions' for NeurologiaNapoli" "U1F60E"
+      chaincodeInstall "cli.neurologia.napoli.medchain.com" "peer0.neurologia.napoli.medchain.com:7121" "prescriptions" "$version" ""
+      chaincodeInstall "cli.neurologia.napoli.medchain.com" "peer1.neurologia.napoli.medchain.com:7122" "prescriptions" "$version" ""
+      chaincodeApprove "cli.neurologia.napoli.medchain.com" "peer0.neurologia.napoli.medchain.com:7121" "prescriptions-channel" "prescriptions" "$version" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "" ""
+      printHeadline "Installing 'prescriptions' for FarmaciaPetrone" "U1F60E"
+      chaincodeInstall "cli.farmacia-petrone.napoli.medchain.com" "peer0.farmacia-petrone.napoli.medchain.com:7141" "prescriptions" "$version" ""
+      chaincodeApprove "cli.farmacia-petrone.napoli.medchain.com" "peer0.farmacia-petrone.napoli.medchain.com:7141" "prescriptions-channel" "prescriptions" "$version" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "" ""
+      printHeadline "Installing 'prescriptions' for FarmaciaCarbone" "U1F60E"
+      chaincodeInstall "cli.farmacia-carbone.napoli.medchain.com" "peer0.farmacia-carbone.napoli.medchain.com:7161" "prescriptions" "$version" ""
+      chaincodeApprove "cli.farmacia-carbone.napoli.medchain.com" "peer0.farmacia-carbone.napoli.medchain.com:7161" "prescriptions-channel" "prescriptions" "$version" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "" ""
+      printItalics "Committing chaincode 'prescriptions' on channel 'prescriptions-channel' as 'MedicinaGeneraleNapoli'" "U1F618"
+      chaincodeCommit "cli.medicina-generale.napoli.medchain.com" "peer0.medicina-generale.napoli.medchain.com:7101" "prescriptions-channel" "prescriptions" "$version" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "" "peer0.medicina-generale.napoli.medchain.com:7101,peer0.neurologia.napoli.medchain.com:7121,peer0.farmacia-petrone.napoli.medchain.com:7141,peer0.farmacia-carbone.napoli.medchain.com:7161" "" ""
+
+    else
+      echo "Warning! Skipping chaincode 'prescriptions' upgrade. Chaincode directory is empty."
+      echo "Looked in dir: '$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/prescriptions'"
+    fi
+  fi
+  if [ "$chaincodeName" = "records" ]; then
+    if [ -n "$(ls "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/records")" ]; then
+      printHeadline "Packaging chaincode 'records'" "U1F60E"
+      chaincodeBuild "records" "golang" "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/records" "12"
+      chaincodePackage "cli.ospedale-maresca.aslnapoli3.medchain.com" "peer0.ospedale-maresca.aslnapoli3.medchain.com:7041" "records" "$version" "golang" printHeadline "Installing 'records' for OspedaleMaresca" "U1F60E"
+      chaincodeInstall "cli.ospedale-maresca.aslnapoli3.medchain.com" "peer0.ospedale-maresca.aslnapoli3.medchain.com:7041" "records" "$version" ""
+      chaincodeInstall "cli.ospedale-maresca.aslnapoli3.medchain.com" "peer1.ospedale-maresca.aslnapoli3.medchain.com:7042" "records" "$version" ""
+      chaincodeApprove "cli.ospedale-maresca.aslnapoli3.medchain.com" "peer0.ospedale-maresca.aslnapoli3.medchain.com:7041" "patient-records-channel" "records" "$version" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "" ""
+      printHeadline "Installing 'records' for OspedaleDelMare" "U1F60E"
+      chaincodeInstall "cli.ospedale-del-mare.aslnapoli1.medchain.com" "peer0.ospedale-del-mare.aslnapoli1.medchain.com:7061" "records" "$version" ""
+      chaincodeInstall "cli.ospedale-del-mare.aslnapoli1.medchain.com" "peer1.ospedale-del-mare.aslnapoli1.medchain.com:7062" "records" "$version" ""
+      chaincodeApprove "cli.ospedale-del-mare.aslnapoli1.medchain.com" "peer0.ospedale-del-mare.aslnapoli1.medchain.com:7061" "patient-records-channel" "records" "$version" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "" ""
+      printHeadline "Installing 'records' for OspedaleSGiuliano" "U1F60E"
+      chaincodeInstall "cli.ospedale-sgiuliano.aslnapoli2.medchain.com" "peer0.ospedale-sgiuliano.aslnapoli2.medchain.com:7081" "records" "$version" ""
+      chaincodeInstall "cli.ospedale-sgiuliano.aslnapoli2.medchain.com" "peer1.ospedale-sgiuliano.aslnapoli2.medchain.com:7082" "records" "$version" ""
+      chaincodeApprove "cli.ospedale-sgiuliano.aslnapoli2.medchain.com" "peer0.ospedale-sgiuliano.aslnapoli2.medchain.com:7081" "patient-records-channel" "records" "$version" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "" ""
+      printHeadline "Installing 'records' for MedicinaGeneraleNapoli" "U1F60E"
+      chaincodeInstall "cli.medicina-generale.napoli.medchain.com" "peer0.medicina-generale.napoli.medchain.com:7101" "records" "$version" ""
+      chaincodeInstall "cli.medicina-generale.napoli.medchain.com" "peer1.medicina-generale.napoli.medchain.com:7102" "records" "$version" ""
+      chaincodeApprove "cli.medicina-generale.napoli.medchain.com" "peer0.medicina-generale.napoli.medchain.com:7101" "patient-records-channel" "records" "$version" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "" ""
+      printHeadline "Installing 'records' for NeurologiaNapoli" "U1F60E"
+      chaincodeInstall "cli.neurologia.napoli.medchain.com" "peer0.neurologia.napoli.medchain.com:7121" "records" "$version" ""
+      chaincodeInstall "cli.neurologia.napoli.medchain.com" "peer1.neurologia.napoli.medchain.com:7122" "records" "$version" ""
+      chaincodeApprove "cli.neurologia.napoli.medchain.com" "peer0.neurologia.napoli.medchain.com:7121" "patient-records-channel" "records" "$version" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "" ""
+      printItalics "Committing chaincode 'records' on channel 'patient-records-channel' as 'OspedaleMaresca'" "U1F618"
+      chaincodeCommit "cli.ospedale-maresca.aslnapoli3.medchain.com" "peer0.ospedale-maresca.aslnapoli3.medchain.com:7041" "patient-records-channel" "records" "$version" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "" "peer0.ospedale-maresca.aslnapoli3.medchain.com:7041,peer0.ospedale-del-mare.aslnapoli1.medchain.com:7061,peer0.ospedale-sgiuliano.aslnapoli2.medchain.com:7081,peer0.medicina-generale.napoli.medchain.com:7101,peer0.neurologia.napoli.medchain.com:7121" "" ""
+
+    else
+      echo "Warning! Skipping chaincode 'records' upgrade. Chaincode directory is empty."
+      echo "Looked in dir: '$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/records'"
     fi
   fi
 }
@@ -454,6 +899,342 @@ networkDown() {
     docker rm -f "$container" || echo "docker rm of $container failed. Check if all fabric dockers properly was deleted"
   done
   for image in $(docker images "dev-peer0.laboratorio-analisi-sdn.medchain.com-labresults*" -q); do
+    echo "Removing image $image..."
+    docker rmi "$image" || echo "docker rmi of $image failed. Check if all fabric dockers properly was deleted"
+  done
+  for container in $(docker ps -a | grep "dev-peer0.ospedale-maresca.aslnapoli3.medchain.com-encounter" | awk '{print $1}'); do
+    echo "Removing container $container..."
+    docker rm -f "$container" || echo "docker rm of $container failed. Check if all fabric dockers properly was deleted"
+  done
+  for image in $(docker images "dev-peer0.ospedale-maresca.aslnapoli3.medchain.com-encounter*" -q); do
+    echo "Removing image $image..."
+    docker rmi "$image" || echo "docker rmi of $image failed. Check if all fabric dockers properly was deleted"
+  done
+  for container in $(docker ps -a | grep "dev-peer1.ospedale-maresca.aslnapoli3.medchain.com-encounter" | awk '{print $1}'); do
+    echo "Removing container $container..."
+    docker rm -f "$container" || echo "docker rm of $container failed. Check if all fabric dockers properly was deleted"
+  done
+  for image in $(docker images "dev-peer1.ospedale-maresca.aslnapoli3.medchain.com-encounter*" -q); do
+    echo "Removing image $image..."
+    docker rmi "$image" || echo "docker rmi of $image failed. Check if all fabric dockers properly was deleted"
+  done
+  for container in $(docker ps -a | grep "dev-peer0.ospedale-del-mare.aslnapoli1.medchain.com-encounter" | awk '{print $1}'); do
+    echo "Removing container $container..."
+    docker rm -f "$container" || echo "docker rm of $container failed. Check if all fabric dockers properly was deleted"
+  done
+  for image in $(docker images "dev-peer0.ospedale-del-mare.aslnapoli1.medchain.com-encounter*" -q); do
+    echo "Removing image $image..."
+    docker rmi "$image" || echo "docker rmi of $image failed. Check if all fabric dockers properly was deleted"
+  done
+  for container in $(docker ps -a | grep "dev-peer1.ospedale-del-mare.aslnapoli1.medchain.com-encounter" | awk '{print $1}'); do
+    echo "Removing container $container..."
+    docker rm -f "$container" || echo "docker rm of $container failed. Check if all fabric dockers properly was deleted"
+  done
+  for image in $(docker images "dev-peer1.ospedale-del-mare.aslnapoli1.medchain.com-encounter*" -q); do
+    echo "Removing image $image..."
+    docker rmi "$image" || echo "docker rmi of $image failed. Check if all fabric dockers properly was deleted"
+  done
+  for container in $(docker ps -a | grep "dev-peer0.ospedale-sgiuliano.aslnapoli2.medchain.com-encounter" | awk '{print $1}'); do
+    echo "Removing container $container..."
+    docker rm -f "$container" || echo "docker rm of $container failed. Check if all fabric dockers properly was deleted"
+  done
+  for image in $(docker images "dev-peer0.ospedale-sgiuliano.aslnapoli2.medchain.com-encounter*" -q); do
+    echo "Removing image $image..."
+    docker rmi "$image" || echo "docker rmi of $image failed. Check if all fabric dockers properly was deleted"
+  done
+  for container in $(docker ps -a | grep "dev-peer1.ospedale-sgiuliano.aslnapoli2.medchain.com-encounter" | awk '{print $1}'); do
+    echo "Removing container $container..."
+    docker rm -f "$container" || echo "docker rm of $container failed. Check if all fabric dockers properly was deleted"
+  done
+  for image in $(docker images "dev-peer1.ospedale-sgiuliano.aslnapoli2.medchain.com-encounter*" -q); do
+    echo "Removing image $image..."
+    docker rmi "$image" || echo "docker rmi of $image failed. Check if all fabric dockers properly was deleted"
+  done
+  for container in $(docker ps -a | grep "dev-peer0.medicina-generale.napoli.medchain.com-encounter" | awk '{print $1}'); do
+    echo "Removing container $container..."
+    docker rm -f "$container" || echo "docker rm of $container failed. Check if all fabric dockers properly was deleted"
+  done
+  for image in $(docker images "dev-peer0.medicina-generale.napoli.medchain.com-encounter*" -q); do
+    echo "Removing image $image..."
+    docker rmi "$image" || echo "docker rmi of $image failed. Check if all fabric dockers properly was deleted"
+  done
+  for container in $(docker ps -a | grep "dev-peer1.medicina-generale.napoli.medchain.com-encounter" | awk '{print $1}'); do
+    echo "Removing container $container..."
+    docker rm -f "$container" || echo "docker rm of $container failed. Check if all fabric dockers properly was deleted"
+  done
+  for image in $(docker images "dev-peer1.medicina-generale.napoli.medchain.com-encounter*" -q); do
+    echo "Removing image $image..."
+    docker rmi "$image" || echo "docker rmi of $image failed. Check if all fabric dockers properly was deleted"
+  done
+  for container in $(docker ps -a | grep "dev-peer0.neurologia.napoli.medchain.com-encounter" | awk '{print $1}'); do
+    echo "Removing container $container..."
+    docker rm -f "$container" || echo "docker rm of $container failed. Check if all fabric dockers properly was deleted"
+  done
+  for image in $(docker images "dev-peer0.neurologia.napoli.medchain.com-encounter*" -q); do
+    echo "Removing image $image..."
+    docker rmi "$image" || echo "docker rmi of $image failed. Check if all fabric dockers properly was deleted"
+  done
+  for container in $(docker ps -a | grep "dev-peer1.neurologia.napoli.medchain.com-encounter" | awk '{print $1}'); do
+    echo "Removing container $container..."
+    docker rm -f "$container" || echo "docker rm of $container failed. Check if all fabric dockers properly was deleted"
+  done
+  for image in $(docker images "dev-peer1.neurologia.napoli.medchain.com-encounter*" -q); do
+    echo "Removing image $image..."
+    docker rmi "$image" || echo "docker rmi of $image failed. Check if all fabric dockers properly was deleted"
+  done
+  for container in $(docker ps -a | grep "dev-peer0.ospedale-maresca.aslnapoli3.medchain.com-organization" | awk '{print $1}'); do
+    echo "Removing container $container..."
+    docker rm -f "$container" || echo "docker rm of $container failed. Check if all fabric dockers properly was deleted"
+  done
+  for image in $(docker images "dev-peer0.ospedale-maresca.aslnapoli3.medchain.com-organization*" -q); do
+    echo "Removing image $image..."
+    docker rmi "$image" || echo "docker rmi of $image failed. Check if all fabric dockers properly was deleted"
+  done
+  for container in $(docker ps -a | grep "dev-peer1.ospedale-maresca.aslnapoli3.medchain.com-organization" | awk '{print $1}'); do
+    echo "Removing container $container..."
+    docker rm -f "$container" || echo "docker rm of $container failed. Check if all fabric dockers properly was deleted"
+  done
+  for image in $(docker images "dev-peer1.ospedale-maresca.aslnapoli3.medchain.com-organization*" -q); do
+    echo "Removing image $image..."
+    docker rmi "$image" || echo "docker rmi of $image failed. Check if all fabric dockers properly was deleted"
+  done
+  for container in $(docker ps -a | grep "dev-peer0.ospedale-del-mare.aslnapoli1.medchain.com-organization" | awk '{print $1}'); do
+    echo "Removing container $container..."
+    docker rm -f "$container" || echo "docker rm of $container failed. Check if all fabric dockers properly was deleted"
+  done
+  for image in $(docker images "dev-peer0.ospedale-del-mare.aslnapoli1.medchain.com-organization*" -q); do
+    echo "Removing image $image..."
+    docker rmi "$image" || echo "docker rmi of $image failed. Check if all fabric dockers properly was deleted"
+  done
+  for container in $(docker ps -a | grep "dev-peer1.ospedale-del-mare.aslnapoli1.medchain.com-organization" | awk '{print $1}'); do
+    echo "Removing container $container..."
+    docker rm -f "$container" || echo "docker rm of $container failed. Check if all fabric dockers properly was deleted"
+  done
+  for image in $(docker images "dev-peer1.ospedale-del-mare.aslnapoli1.medchain.com-organization*" -q); do
+    echo "Removing image $image..."
+    docker rmi "$image" || echo "docker rmi of $image failed. Check if all fabric dockers properly was deleted"
+  done
+  for container in $(docker ps -a | grep "dev-peer0.ospedale-sgiuliano.aslnapoli2.medchain.com-organization" | awk '{print $1}'); do
+    echo "Removing container $container..."
+    docker rm -f "$container" || echo "docker rm of $container failed. Check if all fabric dockers properly was deleted"
+  done
+  for image in $(docker images "dev-peer0.ospedale-sgiuliano.aslnapoli2.medchain.com-organization*" -q); do
+    echo "Removing image $image..."
+    docker rmi "$image" || echo "docker rmi of $image failed. Check if all fabric dockers properly was deleted"
+  done
+  for container in $(docker ps -a | grep "dev-peer1.ospedale-sgiuliano.aslnapoli2.medchain.com-organization" | awk '{print $1}'); do
+    echo "Removing container $container..."
+    docker rm -f "$container" || echo "docker rm of $container failed. Check if all fabric dockers properly was deleted"
+  done
+  for image in $(docker images "dev-peer1.ospedale-sgiuliano.aslnapoli2.medchain.com-organization*" -q); do
+    echo "Removing image $image..."
+    docker rmi "$image" || echo "docker rmi of $image failed. Check if all fabric dockers properly was deleted"
+  done
+  for container in $(docker ps -a | grep "dev-peer0.ospedale-maresca.aslnapoli3.medchain.com-patient" | awk '{print $1}'); do
+    echo "Removing container $container..."
+    docker rm -f "$container" || echo "docker rm of $container failed. Check if all fabric dockers properly was deleted"
+  done
+  for image in $(docker images "dev-peer0.ospedale-maresca.aslnapoli3.medchain.com-patient*" -q); do
+    echo "Removing image $image..."
+    docker rmi "$image" || echo "docker rmi of $image failed. Check if all fabric dockers properly was deleted"
+  done
+  for container in $(docker ps -a | grep "dev-peer1.ospedale-maresca.aslnapoli3.medchain.com-patient" | awk '{print $1}'); do
+    echo "Removing container $container..."
+    docker rm -f "$container" || echo "docker rm of $container failed. Check if all fabric dockers properly was deleted"
+  done
+  for image in $(docker images "dev-peer1.ospedale-maresca.aslnapoli3.medchain.com-patient*" -q); do
+    echo "Removing image $image..."
+    docker rmi "$image" || echo "docker rmi of $image failed. Check if all fabric dockers properly was deleted"
+  done
+  for container in $(docker ps -a | grep "dev-peer0.ospedale-del-mare.aslnapoli1.medchain.com-patient" | awk '{print $1}'); do
+    echo "Removing container $container..."
+    docker rm -f "$container" || echo "docker rm of $container failed. Check if all fabric dockers properly was deleted"
+  done
+  for image in $(docker images "dev-peer0.ospedale-del-mare.aslnapoli1.medchain.com-patient*" -q); do
+    echo "Removing image $image..."
+    docker rmi "$image" || echo "docker rmi of $image failed. Check if all fabric dockers properly was deleted"
+  done
+  for container in $(docker ps -a | grep "dev-peer1.ospedale-del-mare.aslnapoli1.medchain.com-patient" | awk '{print $1}'); do
+    echo "Removing container $container..."
+    docker rm -f "$container" || echo "docker rm of $container failed. Check if all fabric dockers properly was deleted"
+  done
+  for image in $(docker images "dev-peer1.ospedale-del-mare.aslnapoli1.medchain.com-patient*" -q); do
+    echo "Removing image $image..."
+    docker rmi "$image" || echo "docker rmi of $image failed. Check if all fabric dockers properly was deleted"
+  done
+  for container in $(docker ps -a | grep "dev-peer0.ospedale-sgiuliano.aslnapoli2.medchain.com-patient" | awk '{print $1}'); do
+    echo "Removing container $container..."
+    docker rm -f "$container" || echo "docker rm of $container failed. Check if all fabric dockers properly was deleted"
+  done
+  for image in $(docker images "dev-peer0.ospedale-sgiuliano.aslnapoli2.medchain.com-patient*" -q); do
+    echo "Removing image $image..."
+    docker rmi "$image" || echo "docker rmi of $image failed. Check if all fabric dockers properly was deleted"
+  done
+  for container in $(docker ps -a | grep "dev-peer1.ospedale-sgiuliano.aslnapoli2.medchain.com-patient" | awk '{print $1}'); do
+    echo "Removing container $container..."
+    docker rm -f "$container" || echo "docker rm of $container failed. Check if all fabric dockers properly was deleted"
+  done
+  for image in $(docker images "dev-peer1.ospedale-sgiuliano.aslnapoli2.medchain.com-patient*" -q); do
+    echo "Removing image $image..."
+    docker rmi "$image" || echo "docker rmi of $image failed. Check if all fabric dockers properly was deleted"
+  done
+  for container in $(docker ps -a | grep "dev-peer0.medicina-generale.napoli.medchain.com-patient" | awk '{print $1}'); do
+    echo "Removing container $container..."
+    docker rm -f "$container" || echo "docker rm of $container failed. Check if all fabric dockers properly was deleted"
+  done
+  for image in $(docker images "dev-peer0.medicina-generale.napoli.medchain.com-patient*" -q); do
+    echo "Removing image $image..."
+    docker rmi "$image" || echo "docker rmi of $image failed. Check if all fabric dockers properly was deleted"
+  done
+  for container in $(docker ps -a | grep "dev-peer1.medicina-generale.napoli.medchain.com-patient" | awk '{print $1}'); do
+    echo "Removing container $container..."
+    docker rm -f "$container" || echo "docker rm of $container failed. Check if all fabric dockers properly was deleted"
+  done
+  for image in $(docker images "dev-peer1.medicina-generale.napoli.medchain.com-patient*" -q); do
+    echo "Removing image $image..."
+    docker rmi "$image" || echo "docker rmi of $image failed. Check if all fabric dockers properly was deleted"
+  done
+  for container in $(docker ps -a | grep "dev-peer0.neurologia.napoli.medchain.com-patient" | awk '{print $1}'); do
+    echo "Removing container $container..."
+    docker rm -f "$container" || echo "docker rm of $container failed. Check if all fabric dockers properly was deleted"
+  done
+  for image in $(docker images "dev-peer0.neurologia.napoli.medchain.com-patient*" -q); do
+    echo "Removing image $image..."
+    docker rmi "$image" || echo "docker rmi of $image failed. Check if all fabric dockers properly was deleted"
+  done
+  for container in $(docker ps -a | grep "dev-peer1.neurologia.napoli.medchain.com-patient" | awk '{print $1}'); do
+    echo "Removing container $container..."
+    docker rm -f "$container" || echo "docker rm of $container failed. Check if all fabric dockers properly was deleted"
+  done
+  for image in $(docker images "dev-peer1.neurologia.napoli.medchain.com-patient*" -q); do
+    echo "Removing image $image..."
+    docker rmi "$image" || echo "docker rmi of $image failed. Check if all fabric dockers properly was deleted"
+  done
+  for container in $(docker ps -a | grep "dev-peer0.medicina-generale.napoli.medchain.com-prescriptions" | awk '{print $1}'); do
+    echo "Removing container $container..."
+    docker rm -f "$container" || echo "docker rm of $container failed. Check if all fabric dockers properly was deleted"
+  done
+  for image in $(docker images "dev-peer0.medicina-generale.napoli.medchain.com-prescriptions*" -q); do
+    echo "Removing image $image..."
+    docker rmi "$image" || echo "docker rmi of $image failed. Check if all fabric dockers properly was deleted"
+  done
+  for container in $(docker ps -a | grep "dev-peer1.medicina-generale.napoli.medchain.com-prescriptions" | awk '{print $1}'); do
+    echo "Removing container $container..."
+    docker rm -f "$container" || echo "docker rm of $container failed. Check if all fabric dockers properly was deleted"
+  done
+  for image in $(docker images "dev-peer1.medicina-generale.napoli.medchain.com-prescriptions*" -q); do
+    echo "Removing image $image..."
+    docker rmi "$image" || echo "docker rmi of $image failed. Check if all fabric dockers properly was deleted"
+  done
+  for container in $(docker ps -a | grep "dev-peer0.neurologia.napoli.medchain.com-prescriptions" | awk '{print $1}'); do
+    echo "Removing container $container..."
+    docker rm -f "$container" || echo "docker rm of $container failed. Check if all fabric dockers properly was deleted"
+  done
+  for image in $(docker images "dev-peer0.neurologia.napoli.medchain.com-prescriptions*" -q); do
+    echo "Removing image $image..."
+    docker rmi "$image" || echo "docker rmi of $image failed. Check if all fabric dockers properly was deleted"
+  done
+  for container in $(docker ps -a | grep "dev-peer1.neurologia.napoli.medchain.com-prescriptions" | awk '{print $1}'); do
+    echo "Removing container $container..."
+    docker rm -f "$container" || echo "docker rm of $container failed. Check if all fabric dockers properly was deleted"
+  done
+  for image in $(docker images "dev-peer1.neurologia.napoli.medchain.com-prescriptions*" -q); do
+    echo "Removing image $image..."
+    docker rmi "$image" || echo "docker rmi of $image failed. Check if all fabric dockers properly was deleted"
+  done
+  for container in $(docker ps -a | grep "dev-peer0.farmacia-petrone.napoli.medchain.com-prescriptions" | awk '{print $1}'); do
+    echo "Removing container $container..."
+    docker rm -f "$container" || echo "docker rm of $container failed. Check if all fabric dockers properly was deleted"
+  done
+  for image in $(docker images "dev-peer0.farmacia-petrone.napoli.medchain.com-prescriptions*" -q); do
+    echo "Removing image $image..."
+    docker rmi "$image" || echo "docker rmi of $image failed. Check if all fabric dockers properly was deleted"
+  done
+  for container in $(docker ps -a | grep "dev-peer0.farmacia-carbone.napoli.medchain.com-prescriptions" | awk '{print $1}'); do
+    echo "Removing container $container..."
+    docker rm -f "$container" || echo "docker rm of $container failed. Check if all fabric dockers properly was deleted"
+  done
+  for image in $(docker images "dev-peer0.farmacia-carbone.napoli.medchain.com-prescriptions*" -q); do
+    echo "Removing image $image..."
+    docker rmi "$image" || echo "docker rmi of $image failed. Check if all fabric dockers properly was deleted"
+  done
+  for container in $(docker ps -a | grep "dev-peer0.ospedale-maresca.aslnapoli3.medchain.com-records" | awk '{print $1}'); do
+    echo "Removing container $container..."
+    docker rm -f "$container" || echo "docker rm of $container failed. Check if all fabric dockers properly was deleted"
+  done
+  for image in $(docker images "dev-peer0.ospedale-maresca.aslnapoli3.medchain.com-records*" -q); do
+    echo "Removing image $image..."
+    docker rmi "$image" || echo "docker rmi of $image failed. Check if all fabric dockers properly was deleted"
+  done
+  for container in $(docker ps -a | grep "dev-peer1.ospedale-maresca.aslnapoli3.medchain.com-records" | awk '{print $1}'); do
+    echo "Removing container $container..."
+    docker rm -f "$container" || echo "docker rm of $container failed. Check if all fabric dockers properly was deleted"
+  done
+  for image in $(docker images "dev-peer1.ospedale-maresca.aslnapoli3.medchain.com-records*" -q); do
+    echo "Removing image $image..."
+    docker rmi "$image" || echo "docker rmi of $image failed. Check if all fabric dockers properly was deleted"
+  done
+  for container in $(docker ps -a | grep "dev-peer0.ospedale-del-mare.aslnapoli1.medchain.com-records" | awk '{print $1}'); do
+    echo "Removing container $container..."
+    docker rm -f "$container" || echo "docker rm of $container failed. Check if all fabric dockers properly was deleted"
+  done
+  for image in $(docker images "dev-peer0.ospedale-del-mare.aslnapoli1.medchain.com-records*" -q); do
+    echo "Removing image $image..."
+    docker rmi "$image" || echo "docker rmi of $image failed. Check if all fabric dockers properly was deleted"
+  done
+  for container in $(docker ps -a | grep "dev-peer1.ospedale-del-mare.aslnapoli1.medchain.com-records" | awk '{print $1}'); do
+    echo "Removing container $container..."
+    docker rm -f "$container" || echo "docker rm of $container failed. Check if all fabric dockers properly was deleted"
+  done
+  for image in $(docker images "dev-peer1.ospedale-del-mare.aslnapoli1.medchain.com-records*" -q); do
+    echo "Removing image $image..."
+    docker rmi "$image" || echo "docker rmi of $image failed. Check if all fabric dockers properly was deleted"
+  done
+  for container in $(docker ps -a | grep "dev-peer0.ospedale-sgiuliano.aslnapoli2.medchain.com-records" | awk '{print $1}'); do
+    echo "Removing container $container..."
+    docker rm -f "$container" || echo "docker rm of $container failed. Check if all fabric dockers properly was deleted"
+  done
+  for image in $(docker images "dev-peer0.ospedale-sgiuliano.aslnapoli2.medchain.com-records*" -q); do
+    echo "Removing image $image..."
+    docker rmi "$image" || echo "docker rmi of $image failed. Check if all fabric dockers properly was deleted"
+  done
+  for container in $(docker ps -a | grep "dev-peer1.ospedale-sgiuliano.aslnapoli2.medchain.com-records" | awk '{print $1}'); do
+    echo "Removing container $container..."
+    docker rm -f "$container" || echo "docker rm of $container failed. Check if all fabric dockers properly was deleted"
+  done
+  for image in $(docker images "dev-peer1.ospedale-sgiuliano.aslnapoli2.medchain.com-records*" -q); do
+    echo "Removing image $image..."
+    docker rmi "$image" || echo "docker rmi of $image failed. Check if all fabric dockers properly was deleted"
+  done
+  for container in $(docker ps -a | grep "dev-peer0.medicina-generale.napoli.medchain.com-records" | awk '{print $1}'); do
+    echo "Removing container $container..."
+    docker rm -f "$container" || echo "docker rm of $container failed. Check if all fabric dockers properly was deleted"
+  done
+  for image in $(docker images "dev-peer0.medicina-generale.napoli.medchain.com-records*" -q); do
+    echo "Removing image $image..."
+    docker rmi "$image" || echo "docker rmi of $image failed. Check if all fabric dockers properly was deleted"
+  done
+  for container in $(docker ps -a | grep "dev-peer1.medicina-generale.napoli.medchain.com-records" | awk '{print $1}'); do
+    echo "Removing container $container..."
+    docker rm -f "$container" || echo "docker rm of $container failed. Check if all fabric dockers properly was deleted"
+  done
+  for image in $(docker images "dev-peer1.medicina-generale.napoli.medchain.com-records*" -q); do
+    echo "Removing image $image..."
+    docker rmi "$image" || echo "docker rmi of $image failed. Check if all fabric dockers properly was deleted"
+  done
+  for container in $(docker ps -a | grep "dev-peer0.neurologia.napoli.medchain.com-records" | awk '{print $1}'); do
+    echo "Removing container $container..."
+    docker rm -f "$container" || echo "docker rm of $container failed. Check if all fabric dockers properly was deleted"
+  done
+  for image in $(docker images "dev-peer0.neurologia.napoli.medchain.com-records*" -q); do
+    echo "Removing image $image..."
+    docker rmi "$image" || echo "docker rmi of $image failed. Check if all fabric dockers properly was deleted"
+  done
+  for container in $(docker ps -a | grep "dev-peer1.neurologia.napoli.medchain.com-records" | awk '{print $1}'); do
+    echo "Removing container $container..."
+    docker rm -f "$container" || echo "docker rm of $container failed. Check if all fabric dockers properly was deleted"
+  done
+  for image in $(docker images "dev-peer1.neurologia.napoli.medchain.com-records*" -q); do
     echo "Removing image $image..."
     docker rmi "$image" || echo "docker rmi of $image failed. Check if all fabric dockers properly was deleted"
   done
