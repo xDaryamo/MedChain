@@ -1,7 +1,7 @@
 const { addPatient, getPatient } = require('./blockchain/contracts/patient');
 
 async function testBlockchainOperations() {
-  const org = 'ospedale-maresca'; 
+  const org = 'ospedalemaresca'; 
   const patientData = {
     id: "1",
     name: "Test Patient",
