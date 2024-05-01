@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"github.com/hyperledger/fabric-contract-api-go/contractapi"
+	"github.com/xDaryamo/MedChain/fhir"
 )
 
 // MedicalRecordsChaincode represents the Chaincode for managing medical records on the blockchain
@@ -17,11 +18,11 @@ type MedicalRecordsChaincode struct {
 // MedicalRecords represents the data structure for a medical record folder
 type MedicalRecords struct {
 	PatienID      string
-	Allergies     []AllergyIntolerance
-	Conditions    []Condition
-	Prescriptions []MedicationStatement
-	CarePlan      CarePlanActivity
-	Request       MedicationRequest
+	Allergies     []fhir.AllergyIntolerance
+	Conditions    []fhir.Condition
+	Prescriptions []fhir.MedicationStatement
+	CarePlan      fhir.CarePlanActivity
+	Request       fhir.MedicationRequest
 }
 
 // CreateMedicalRecords creates a new medical record folder for a patient

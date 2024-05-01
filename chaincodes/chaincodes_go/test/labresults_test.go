@@ -1,4 +1,4 @@
-package labresults
+package test
 
 import (
 	"encoding/json"
@@ -7,16 +7,18 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
+	"github.com/xDaryamo/MedChain/fhir"
+	"github.com/xDaryamo/MedChain/labresults"
 )
 
 // Tests
 
 // Helper function to create a sample observation JSON
 func sampleObservationJSON(id string) string {
-	observation := Observation{
+	observation := fhir.Observation{
 		ID:     id,
 		Status: "final",
-		Code: CodeableConcept{
+		Code: fhir.CodeableConcept{
 			Text: "Blood Test",
 		},
 	}
@@ -26,13 +28,13 @@ func sampleObservationJSON(id string) string {
 
 // Helper function to create a sample observation JSON that includes patient data
 func sampleObservationJSONWithPatient(id string, patientID string) string {
-	observation := Observation{
+	observation := fhir.Observation{
 		ID:     id,
 		Status: "final",
-		Code: CodeableConcept{
+		Code: fhir.CodeableConcept{
 			Text: "Blood Test",
 		},
-		Subject: &Reference{
+		Subject: &fhir.Reference{
 			Reference: "Patient/" + patientID,
 		},
 	}
@@ -41,7 +43,7 @@ func sampleObservationJSONWithPatient(id string, patientID string) string {
 }
 
 func TestCreateLabResult_Successful(t *testing.T) {
-	labChaincode := new(LabResultsChaincode)
+	labChaincode := new(labresults.LabResultsChaincode)
 	mockCtx := new(MockTransactionContext)
 	mockStub := new(MockStub)
 	mockCtx.On("GetStub").Return(mockStub)
@@ -55,7 +57,7 @@ func TestCreateLabResult_Successful(t *testing.T) {
 }
 
 func TestCreateLabResult_FailureDueToExistingID(t *testing.T) {
-	labChaincode := new(LabResultsChaincode)
+	labChaincode := new(labresults.LabResultsChaincode)
 	mockCtx := new(MockTransactionContext)
 	mockStub := new(MockStub)
 	mockCtx.On("GetStub").Return(mockStub)
@@ -68,13 +70,13 @@ func TestCreateLabResult_FailureDueToExistingID(t *testing.T) {
 }
 
 func TestUpdateLabResult_Successful(t *testing.T) {
-	labChaincode := new(LabResultsChaincode)
+	labChaincode := new(labresults.LabResultsChaincode)
 	mockCtx := new(MockTransactionContext)
 	mockStub := new(MockStub)
 	mockCtx.On("GetStub").Return(mockStub)
 
 	originalObservationJSON := sampleObservationJSON("obs1")
-	var originalObservation Observation
+	var originalObservation fhir.Observation
 	json.Unmarshal([]byte(originalObservationJSON), &originalObservation)
 
 	updatedObservation := originalObservation
@@ -89,7 +91,7 @@ func TestUpdateLabResult_Successful(t *testing.T) {
 }
 
 func TestUpdateLabResult_NonExistentResult(t *testing.T) {
-	labChaincode := new(LabResultsChaincode)
+	labChaincode := new(labresults.LabResultsChaincode)
 	mockCtx := new(MockTransactionContext)
 	mockStub := new(MockStub)
 	mockCtx.On("GetStub").Return(mockStub)
@@ -103,7 +105,7 @@ func TestUpdateLabResult_NonExistentResult(t *testing.T) {
 }
 
 func TestUpdateLabResult_DecodingError(t *testing.T) {
-	labChaincode := new(LabResultsChaincode)
+	labChaincode := new(labresults.LabResultsChaincode)
 	mockCtx := new(MockTransactionContext)
 	mockStub := new(MockStub)
 	mockCtx.On("GetStub").Return(mockStub)
@@ -118,7 +120,7 @@ func TestUpdateLabResult_DecodingError(t *testing.T) {
 }
 
 func TestGetLabResult_Successful(t *testing.T) {
-	labChaincode := new(LabResultsChaincode)
+	labChaincode := new(labresults.LabResultsChaincode)
 	mockCtx := new(MockTransactionContext)
 	mockStub := new(MockStub)
 	mockCtx.On("GetStub").Return(mockStub)
@@ -132,7 +134,7 @@ func TestGetLabResult_Successful(t *testing.T) {
 }
 
 func TestGetLabResult_NonExistentResult(t *testing.T) {
-	labChaincode := new(LabResultsChaincode)
+	labChaincode := new(labresults.LabResultsChaincode)
 	mockCtx := new(MockTransactionContext)
 	mockStub := new(MockStub)
 	mockCtx.On("GetStub").Return(mockStub)
@@ -146,7 +148,7 @@ func TestGetLabResult_NonExistentResult(t *testing.T) {
 }
 
 func TestGetLabResult_AccessError(t *testing.T) {
-	labChaincode := new(LabResultsChaincode)
+	labChaincode := new(labresults.LabResultsChaincode)
 	mockCtx := new(MockTransactionContext)
 	mockStub := new(MockStub)
 	mockCtx.On("GetStub").Return(mockStub)
@@ -160,7 +162,7 @@ func TestGetLabResult_AccessError(t *testing.T) {
 }
 
 func TestLabResultExists_Exists(t *testing.T) {
-	labChaincode := new(LabResultsChaincode)
+	labChaincode := new(labresults.LabResultsChaincode)
 	mockCtx := new(MockTransactionContext)
 	mockStub := new(MockStub)
 	mockCtx.On("GetStub").Return(mockStub)
@@ -172,7 +174,7 @@ func TestLabResultExists_Exists(t *testing.T) {
 }
 
 func TestLabResultExists_DoesNotExist(t *testing.T) {
-	labChaincode := new(LabResultsChaincode)
+	labChaincode := new(labresults.LabResultsChaincode)
 	mockCtx := new(MockTransactionContext)
 	mockStub := new(MockStub)
 	mockCtx.On("GetStub").Return(mockStub)
@@ -184,7 +186,7 @@ func TestLabResultExists_DoesNotExist(t *testing.T) {
 }
 
 func TestLabResultExists_WorldStateAccessError(t *testing.T) {
-	labChaincode := new(LabResultsChaincode)
+	labChaincode := new(labresults.LabResultsChaincode)
 	mockCtx := new(MockTransactionContext)
 	mockStub := new(MockStub)
 	mockCtx.On("GetStub").Return(mockStub)
@@ -197,7 +199,7 @@ func TestLabResultExists_WorldStateAccessError(t *testing.T) {
 }
 
 func TestQueryLabResults_Successful(t *testing.T) {
-	labChaincode := new(LabResultsChaincode)
+	labChaincode := new(labresults.LabResultsChaincode)
 	mockCtx := new(MockTransactionContext)
 	mockStub := new(MockStub)
 	mockCtx.On("GetStub").Return(mockStub)
@@ -215,7 +217,7 @@ func TestQueryLabResults_Successful(t *testing.T) {
 }
 
 func TestQueryLabResults_NoResults(t *testing.T) {
-	labChaincode := new(LabResultsChaincode)
+	labChaincode := new(labresults.LabResultsChaincode)
 	mockCtx := new(MockTransactionContext)
 	mockStub := new(MockStub)
 	mockCtx.On("GetStub").Return(mockStub)
@@ -228,7 +230,7 @@ func TestQueryLabResults_NoResults(t *testing.T) {
 }
 
 func TestQueryLabResults_ErrorHandling(t *testing.T) {
-	labChaincode := new(LabResultsChaincode)
+	labChaincode := new(labresults.LabResultsChaincode)
 	mockCtx := new(MockTransactionContext)
 	mockStub := new(MockStub)
 	mockCtx.On("GetStub").Return(mockStub)

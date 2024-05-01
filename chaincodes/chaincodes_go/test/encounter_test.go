@@ -1,4 +1,4 @@
-package encounter
+package test
 
 import (
 	"encoding/json"
@@ -6,6 +6,8 @@ import (
 	"time"
 
 	"github.com/stretchr/testify/mock"
+	"github.com/xDaryamo/MedChain/encounter"
+	"github.com/xDaryamo/MedChain/fhir"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -20,7 +22,7 @@ func TestCreateEncounter(t *testing.T) {
 	mockStub = new(MockStub)
 
 	// Creating an instance of EncounterChaincode
-	ec := new(EncounterChaincode)
+	ec := new(encounter.EncounterChaincode)
 
 	// Ensure GetStub returns the same instance of mockStub
 	mockCtx.On("GetStub").Return(mockStub)
@@ -58,7 +60,7 @@ func TestGetEncounter(t *testing.T) {
 	mockCtx := new(MockTransactionContext)
 
 	// Creating an instance of EncounterChaincode
-	ec := new(EncounterChaincode)
+	ec := new(encounter.EncounterChaincode)
 
 	mockStub = new(MockStub)
 
@@ -89,7 +91,7 @@ func TestGetEncounter(t *testing.T) {
 	assert.NotNil(t, resultEncounter)
 
 	// Deserialize the expected encounter JSON
-	var expectedEncounter Encounter
+	var expectedEncounter fhir.Encounter
 	err = json.Unmarshal([]byte(encounterJSON), &expectedEncounter)
 	assert.NoError(t, err)
 
@@ -105,7 +107,7 @@ func TestSearchEncounter(t *testing.T) {
 	mockCtx := new(MockTransactionContext)
 
 	// Creating an instance of EncounterChaincode
-	ec := new(EncounterChaincode)
+	ec := new(encounter.EncounterChaincode)
 
 	mockStub = new(MockStub)
 
@@ -113,9 +115,9 @@ func TestSearchEncounter(t *testing.T) {
 	mockCtx.On("GetStub").Return(mockStub)
 
 	// Define sample encounter data
-	encounter1 := Encounter{ID: Identifier{System: "http://example.com/enc1", Value: "123456"}}
-	encounter2 := Encounter{ID: Identifier{System: "http://example.com/enc2", Value: "789012"}}
-	encounter3 := Encounter{ID: Identifier{System: "http://example.com/enc3", Value: "345678"}}
+	encounter1 := fhir.Encounter{ID: fhir.Identifier{System: "http://example.com/enc1", Value: "123456"}}
+	encounter2 := fhir.Encounter{ID: fhir.Identifier{System: "http://example.com/enc2", Value: "789012"}}
+	encounter3 := fhir.Encounter{ID: fhir.Identifier{System: "http://example.com/enc3", Value: "345678"}}
 
 	// Serialize sample encounters to JSON
 	encounter1JSON, _ := json.Marshal(encounter1)
@@ -152,7 +154,7 @@ func TestUpdateEncounter(t *testing.T) {
 	mockCtx := new(MockTransactionContext)
 
 	// Creating an instance of EncounterChaincode
-	ec := new(EncounterChaincode)
+	ec := new(encounter.EncounterChaincode)
 
 	mockStub = new(MockStub)
 
@@ -160,8 +162,8 @@ func TestUpdateEncounter(t *testing.T) {
 	mockCtx.On("GetStub").Return(mockStub)
 
 	// Define sample encounter data
-	existingEncounter := Encounter{ID: Identifier{System: "http://example.com/enc1", Value: "123456"}}
-	updatedEncounter := Encounter{ID: Identifier{System: "http://example.com/enc1", Value: "123456"} /* Add any updates */}
+	existingEncounter := fhir.Encounter{ID: fhir.Identifier{System: "http://example.com/enc1", Value: "123456"}}
+	updatedEncounter := fhir.Encounter{ID: fhir.Identifier{System: "http://example.com/enc1", Value: "123456"} /* Add any updates */}
 
 	// Serialize sample encounters to JSON
 	existingEncounterJSON, _ := json.Marshal(existingEncounter)
@@ -188,7 +190,7 @@ func TestDeleteEncounter(t *testing.T) {
 	mockCtx := new(MockTransactionContext)
 
 	// Creating an instance of EncounterChaincode
-	ec := new(EncounterChaincode)
+	ec := new(encounter.EncounterChaincode)
 
 	mockStub = new(MockStub)
 
@@ -196,7 +198,7 @@ func TestDeleteEncounter(t *testing.T) {
 	mockCtx.On("GetStub").Return(mockStub)
 
 	// Define sample encounter data
-	existingEncounter := Encounter{ID: Identifier{System: "http://example.com/enc1", Value: "123456"}}
+	existingEncounter := fhir.Encounter{ID: fhir.Identifier{System: "http://example.com/enc1", Value: "123456"}}
 
 	// Serialize sample encounter to JSON
 	existingEncounterJSON, _ := json.Marshal(existingEncounter)
@@ -222,7 +224,7 @@ func TestGetEncountersByPatientID(t *testing.T) {
 	mockCtx := new(MockTransactionContext)
 
 	// Creating an instance of EncounterChaincode
-	ec := new(EncounterChaincode)
+	ec := new(encounter.EncounterChaincode)
 
 	mockStub = new(MockStub)
 
@@ -248,7 +250,7 @@ func TestGetEncountersByDateRange(t *testing.T) {
 	mockCtx := new(MockTransactionContext)
 
 	// Creating an instance of EncounterChaincode
-	ec := new(EncounterChaincode)
+	ec := new(encounter.EncounterChaincode)
 
 	mockStub = new(MockStub)
 
@@ -278,7 +280,7 @@ func TestGetEncountersByType(t *testing.T) {
 	mockCtx := new(MockTransactionContext)
 
 	// Creating an instance of EncounterChaincode
-	ec := new(EncounterChaincode)
+	ec := new(encounter.EncounterChaincode)
 
 	mockStub = new(MockStub)
 
@@ -304,7 +306,7 @@ func TestGetEncountersByLocation(t *testing.T) {
 	mockCtx := new(MockTransactionContext)
 
 	// Creating an instance of EncounterChaincode
-	ec := new(EncounterChaincode)
+	ec := new(encounter.EncounterChaincode)
 
 	mockStub = new(MockStub)
 
@@ -330,7 +332,7 @@ func TestGetEncountersByPractitioner(t *testing.T) {
 	mockCtx := new(MockTransactionContext)
 
 	// Creating an instance of EncounterChaincode
-	ec := new(EncounterChaincode)
+	ec := new(encounter.EncounterChaincode)
 
 	mockStub = new(MockStub)
 
@@ -356,12 +358,12 @@ func TestUpdateEncounterStatus(t *testing.T) {
 	mockCtx := new(MockTransactionContext)
 
 	// Creating an instance of EncounterChaincode
-	ec := new(EncounterChaincode)
+	ec := new(encounter.EncounterChaincode)
 
 	mockStub = new(MockStub)
 
 	// Define sample encounter data
-	encounter := Encounter{ID: Identifier{System: "http://example.com/enc1", Value: "123456"}}
+	encounter := fhir.Encounter{ID: fhir.Identifier{System: "http://example.com/enc1", Value: "123456"}}
 
 	// Serialize sample encounters to JSON
 	encounterJSON, _ := json.Marshal(encounter)
@@ -382,15 +384,15 @@ func TestUpdateEncounterStatus(t *testing.T) {
 
 	mockStub.On("PutState", mock.Anything, mock.Anything).Return(nil)
 
-	// Create a sample Coding struct
-	coding := Coding{
+	// Create a sample fhir.Coding struct
+	coding := fhir.Coding{
 		System:  "http://example.com/coding/system",
 		Code:    "12345",
 		Display: "Sample Coding",
 	}
 
-	// Create a sample Code struct with the coding
-	statusCode := Code{Coding: []Coding{coding}}
+	// Create a sample fhir.Code struct with the coding
+	statusCode := fhir.Code{Coding: []fhir.Coding{coding}}
 
 	// Call the function under test
 	err := ec.UpdateEncounterStatus(mockCtx, "encounterID", statusCode)
@@ -407,7 +409,7 @@ func TestAddDiagnosisToEncounter(t *testing.T) {
 	mockCtx := new(MockTransactionContext)
 
 	// Creating an instance of EncounterChaincode
-	ec := new(EncounterChaincode)
+	ec := new(encounter.EncounterChaincode)
 
 	mockStub = new(MockStub)
 
@@ -420,7 +422,7 @@ func TestAddDiagnosisToEncounter(t *testing.T) {
 	mockStub.On("PutState", mock.Anything, mock.Anything).Return(nil)
 
 	// Call the function under test
-	err := ec.AddDiagnosisToEncounter(mockCtx, "encounterID", EncounterDiagnosis{})
+	err := ec.AddDiagnosisToEncounter(mockCtx, "encounterID", fhir.EncounterDiagnosis{})
 
 	// Verify that the result is as expected
 	assert.NoError(t, err, "AddDiagnosisToEncounter should not return an error")
@@ -434,7 +436,7 @@ func TestAddParticipantToEncounter(t *testing.T) {
 	mockCtx := new(MockTransactionContext)
 
 	// Creating an instance of EncounterChaincode
-	ec := new(EncounterChaincode)
+	ec := new(encounter.EncounterChaincode)
 
 	mockStub = new(MockStub)
 
@@ -447,7 +449,7 @@ func TestAddParticipantToEncounter(t *testing.T) {
 	mockStub.On("PutState", mock.Anything, mock.Anything).Return(nil)
 
 	// Call the function under test
-	err := ec.AddParticipantToEncounter(mockCtx, "encounterID", EncounterParticipant{})
+	err := ec.AddParticipantToEncounter(mockCtx, "encounterID", fhir.EncounterParticipant{})
 
 	// Verify that the result is as expected
 	assert.NoError(t, err, "AddParticipantToEncounter should not return an error")
@@ -461,7 +463,7 @@ func TestRemoveParticipantFromEncounter(t *testing.T) {
 	mockCtx := new(MockTransactionContext)
 
 	// Creating an instance of EncounterChaincode
-	ec := new(EncounterChaincode)
+	ec := new(encounter.EncounterChaincode)
 
 	mockStub = new(MockStub)
 
@@ -491,7 +493,7 @@ func TestAddLocationToEncounter(t *testing.T) {
 	mockCtx := new(MockTransactionContext)
 
 	// Creating an instance of EncounterChaincode
-	ec := new(EncounterChaincode)
+	ec := new(encounter.EncounterChaincode)
 
 	mockStub = new(MockStub)
 
@@ -504,7 +506,7 @@ func TestAddLocationToEncounter(t *testing.T) {
 	mockStub.On("PutState", mock.Anything, mock.Anything).Return(nil)
 
 	// Call the function under test
-	err := ec.AddLocationToEncounter(mockCtx, "encounterID", Location{})
+	err := ec.AddLocationToEncounter(mockCtx, "encounterID", fhir.Location{})
 
 	// Verify that the result is as expected
 	assert.NoError(t, err, "AddLocationToEncounter should not return an error")
@@ -518,7 +520,7 @@ func TestRemoveLocationFromEncounter(t *testing.T) {
 	mockCtx := new(MockTransactionContext)
 
 	// Creating an instance of EncounterChaincode
-	ec := new(EncounterChaincode)
+	ec := new(encounter.EncounterChaincode)
 
 	mockStub = new(MockStub)
 
@@ -545,7 +547,7 @@ func TestGetEncountersByReason(t *testing.T) {
 	mockCtx := new(MockTransactionContext)
 
 	// Creating an instance of EncounterChaincode
-	ec := new(EncounterChaincode)
+	ec := new(encounter.EncounterChaincode)
 
 	mockStub = new(MockStub)
 
@@ -571,7 +573,7 @@ func TestGetEncountersByServiceProvider(t *testing.T) {
 	mockCtx := new(MockTransactionContext)
 
 	// Creating an instance of EncounterChaincode
-	ec := new(EncounterChaincode)
+	ec := new(encounter.EncounterChaincode)
 
 	mockStub = new(MockStub)
 

@@ -1,4 +1,4 @@
-package organization
+package test
 
 import (
 	"github.com/golang/protobuf/ptypes/timestamp"

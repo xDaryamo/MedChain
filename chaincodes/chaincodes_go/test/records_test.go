@@ -1,4 +1,4 @@
-package records
+package test
 
 import (
 	"fmt"
@@ -6,12 +6,13 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
+	"github.com/xDaryamo/MedChain/records"
 )
 
 // TestCreateMedicalRecords tests the CreateMedicalRecords function
 func TestCreateMedicalRecords(t *testing.T) {
 	// Create a new instance of the chaincode
-	cc := new(MedicalRecordsChaincode)
+	cc := new(records.MedicalRecordsChaincode)
 
 	// Mock TransactionContext
 	mockCtx := new(MockTransactionContext)
@@ -36,7 +37,7 @@ func TestCreateMedicalRecords(t *testing.T) {
 // TestCreateMedicalRecordsIfExists tests the behavior of CreateMedicalRecords when the record already exists
 func TestCreateMedicalRecordsIfExists(t *testing.T) {
 	// Create a new instance of the chaincode
-	cc := new(MedicalRecordsChaincode)
+	cc := new(records.MedicalRecordsChaincode)
 
 	// Mock TransactionContext
 	mockCtx := new(MockTransactionContext)
@@ -53,7 +54,7 @@ func TestCreateMedicalRecordsIfExists(t *testing.T) {
 
 func TestUpdateMedicalRecords(t *testing.T) {
 	// Create a new instance of the chaincode
-	cc := new(MedicalRecordsChaincode)
+	cc := new(records.MedicalRecordsChaincode)
 
 	// Mock TransactionContext
 	mockCtx := new(MockTransactionContext)
@@ -105,7 +106,7 @@ func TestUpdateMedicalRecords(t *testing.T) {
 
 func TestDeleteMedicalRecords(t *testing.T) {
 	// Create a new instance of the chaincode
-	cc := new(MedicalRecordsChaincode)
+	cc := new(records.MedicalRecordsChaincode)
 	var existingRecordJSON = `{"PatientID": "patient1", "Allergies": [], "Conditions": [], "Prescriptions": [], "CarePlan": {}, "Request": {}}`
 
 	// Mock TransactionContext
@@ -153,7 +154,7 @@ func TestSearchMedicalRecords(t *testing.T) {
 	}`
 
 	// Create a new instance of the chaincode
-	cc := new(MedicalRecordsChaincode)
+	cc := new(records.MedicalRecordsChaincode)
 
 	// Mock TransactionContext
 	mockCtx := new(MockTransactionContext)
@@ -176,7 +177,7 @@ func TestSearchMedicalRecords(t *testing.T) {
 
 func TestSearchNonExistentMedicalRecords(t *testing.T) {
 	// Create a new instance of the chaincode
-	cc := new(MedicalRecordsChaincode)
+	cc := new(records.MedicalRecordsChaincode)
 
 	// Mock TransactionContext
 	mockCtx := new(MockTransactionContext)
@@ -193,7 +194,7 @@ func TestSearchNonExistentMedicalRecords(t *testing.T) {
 
 	// If results are nil, assign an empty slice to avoid nil pointer dereference
 	if results == nil {
-		results = make([]*MedicalRecords, 0)
+		results = make([]*records.MedicalRecords, 0)
 	}
 
 	assert.NotNil(t, results)
@@ -202,7 +203,7 @@ func TestSearchNonExistentMedicalRecords(t *testing.T) {
 
 func TestUpdateNonExistentMedicalRecords(t *testing.T) {
 	// Create a new instance of the chaincode
-	cc := new(MedicalRecordsChaincode)
+	cc := new(records.MedicalRecordsChaincode)
 
 	// Mock TransactionContext
 	mockCtx := new(MockTransactionContext)
@@ -226,7 +227,7 @@ func TestUpdateNonExistentMedicalRecords(t *testing.T) {
 
 func TestDeleteNonExistentMedicalRecords(t *testing.T) {
 	// Create a new instance of the chaincode
-	cc := new(MedicalRecordsChaincode)
+	cc := new(records.MedicalRecordsChaincode)
 
 	// Mock TransactionContext
 	mockCtx := new(MockTransactionContext)
@@ -243,7 +244,7 @@ func TestDeleteNonExistentMedicalRecords(t *testing.T) {
 
 func TestInvalidJSONFormat(t *testing.T) {
 	// Create a new instance of the chaincode
-	cc := new(MedicalRecordsChaincode)
+	cc := new(records.MedicalRecordsChaincode)
 
 	// Mock TransactionContext
 	mockCtx := new(MockTransactionContext)
@@ -257,7 +258,7 @@ func TestInvalidJSONFormat(t *testing.T) {
 
 func TestErrorPaths(t *testing.T) {
 	// Create a new instance of the chaincode
-	cc := new(MedicalRecordsChaincode)
+	cc := new(records.MedicalRecordsChaincode)
 
 	// Mock TransactionContext
 	mockCtx := new(MockTransactionContext)

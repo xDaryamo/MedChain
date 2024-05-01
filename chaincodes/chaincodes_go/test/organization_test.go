@@ -1,4 +1,4 @@
-package organization
+package test
 
 import (
 	"encoding/json"
@@ -8,11 +8,13 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/require"
+	"github.com/xDaryamo/MedChain/fhir"
+	"github.com/xDaryamo/MedChain/organization"
 )
 
 func TestCreateOrganization(t *testing.T) {
 	// Create a new instance of the organization chaincode
-	cc := new(OrganizationChaincode)
+	cc := new(organization.OrganizationChaincode)
 
 	// Create a new mock transaction context
 	mockCtx := new(MockTransactionContext)
@@ -53,7 +55,7 @@ func TestCreateOrganization(t *testing.T) {
 }
 
 func TestCreateOrganization_OrganizationExists(t *testing.T) {
-	cc := new(OrganizationChaincode)
+	cc := new(organization.OrganizationChaincode)
 	mockCtx := new(MockTransactionContext)
 
 	// Mock organization data
@@ -90,7 +92,7 @@ func TestCreateOrganization_OrganizationExists(t *testing.T) {
 }
 
 func TestCreateOrganization_InvalidJSON(t *testing.T) {
-	cc := new(OrganizationChaincode)
+	cc := new(organization.OrganizationChaincode)
 	mockCtx := new(MockTransactionContext)
 
 	// Mock organization data with invalid JSON
@@ -123,7 +125,7 @@ func TestCreateOrganization_InvalidJSON(t *testing.T) {
 }
 
 func TestGetOrganization(t *testing.T) {
-	cc := new(OrganizationChaincode)
+	cc := new(organization.OrganizationChaincode)
 	mockCtx := new(MockTransactionContext)
 
 	// Mock organization data
@@ -158,7 +160,7 @@ func TestGetOrganization(t *testing.T) {
 	assert.NoError(t, err)
 	assert.NotNil(t, result)
 
-	var expectedOrganization Organization
+	var expectedOrganization fhir.Organization
 	err = json.Unmarshal(organizationBytes, &expectedOrganization)
 	assert.NoError(t, err)
 
@@ -166,7 +168,7 @@ func TestGetOrganization(t *testing.T) {
 }
 
 func TestGetOrganization_OrganizationNotFound(t *testing.T) {
-	cc := new(OrganizationChaincode)
+	cc := new(organization.OrganizationChaincode)
 	mockCtx := new(MockTransactionContext)
 
 	// Mock organization ID
@@ -185,15 +187,15 @@ func TestGetOrganization_OrganizationNotFound(t *testing.T) {
 }
 
 func TestSearchOrganizationsByType(t *testing.T) {
-	cc := new(OrganizationChaincode)
+	cc := new(organization.OrganizationChaincode)
 	mockCtx := new(MockTransactionContext)
 
 	// Mock organization data
-	organizationID := Identifier{System: "exampleSystem", Value: "org1"}
-	organization1 := &Organization{ID: organizationID, Name: "Hospital A", Type: CodeableConcept{Text: "Hospital"}}
+	organizationID := fhir.Identifier{System: "exampleSystem", Value: "org1"}
+	organization1 := &fhir.Organization{ID: organizationID, Name: "Hospital A", Type: fhir.CodeableConcept{Text: "Hospital"}}
 
-	organizationID2 := Identifier{System: "exampleSystem", Value: "org2"}
-	organization2 := Organization{ID: organizationID2, Name: "Clinic B", Type: CodeableConcept{Text: "Clinic"}}
+	organizationID2 := fhir.Identifier{System: "exampleSystem", Value: "org2"}
+	organization2 := fhir.Organization{ID: organizationID2, Name: "Clinic B", Type: fhir.CodeableConcept{Text: "Clinic"}}
 
 	organizationBytes1, _ := json.Marshal(&organization1)
 	organizationBytes2, _ := json.Marshal(&organization2)
@@ -218,16 +220,16 @@ func TestSearchOrganizationsByType(t *testing.T) {
 }
 
 func TestSearchOrganizationByName(t *testing.T) {
-	cc := new(OrganizationChaincode)
+	cc := new(organization.OrganizationChaincode)
 	mockCtx := new(MockTransactionContext)
 
 	// Mock organization data
 
-	organizationID := Identifier{System: "exampleSystem", Value: "org1"}
-	organization1 := &Organization{ID: organizationID, Name: "Hospital A", Type: CodeableConcept{Text: "Hospital"}}
+	organizationID := fhir.Identifier{System: "exampleSystem", Value: "org1"}
+	organization1 := &fhir.Organization{ID: organizationID, Name: "Hospital A", Type: fhir.CodeableConcept{Text: "Hospital"}}
 
-	organizationID2 := Identifier{System: "exampleSystem", Value: "org2"}
-	organization2 := Organization{ID: organizationID2, Name: "Clinic B", Type: CodeableConcept{Text: "Clinic"}}
+	organizationID2 := fhir.Identifier{System: "exampleSystem", Value: "org2"}
+	organization2 := fhir.Organization{ID: organizationID2, Name: "Clinic B", Type: fhir.CodeableConcept{Text: "Clinic"}}
 
 	organizationBytes1, _ := json.Marshal(&organization1)
 	organizationBytes2, _ := json.Marshal(&organization2)
@@ -252,7 +254,7 @@ func TestSearchOrganizationByName(t *testing.T) {
 }
 
 func TestSearchOrganizationByName_OrganizationNotFound(t *testing.T) {
-	cc := new(OrganizationChaincode)
+	cc := new(organization.OrganizationChaincode)
 	mockCtx := new(MockTransactionContext)
 
 	// Mock organization name
@@ -273,13 +275,13 @@ func TestSearchOrganizationByName_OrganizationNotFound(t *testing.T) {
 }
 
 func TestAddEndpoint(t *testing.T) {
-	cc := new(OrganizationChaincode)
+	cc := new(organization.OrganizationChaincode)
 	mockCtx := new(MockTransactionContext)
 
 	// Mock organization data
-	organizationID := Identifier{System: "exampleSystem", Value: "org1"}
-	organization := &Organization{ID: organizationID, Name: "Hospital A"}
-	endpoint := Reference{Reference: "http://hospital-a.com/api"}
+	organizationID := fhir.Identifier{System: "exampleSystem", Value: "org1"}
+	organization := &fhir.Organization{ID: organizationID, Name: "Hospital A"}
+	endpoint := fhir.Reference{Reference: "http://hospital-a.com/api"}
 
 	// Mock GetOrganization method to return existing organization
 	organizationBytes, _ := json.Marshal(organization)
@@ -298,12 +300,12 @@ func TestAddEndpoint(t *testing.T) {
 }
 
 func TestAddEndpoint_OrganizationNotFound(t *testing.T) {
-	cc := new(OrganizationChaincode)
+	cc := new(organization.OrganizationChaincode)
 	mockCtx := new(MockTransactionContext)
 
 	// Mock organization ID
 	organizationID := "org1"
-	endpoint := Reference{Reference: "http://hospital-a.com/api"}
+	endpoint := fhir.Reference{Reference: "http://hospital-a.com/api"}
 
 	// Mock GetOrganization method to return nil, indicating organization not found
 	mockStub := new(MockStub)
@@ -316,13 +318,13 @@ func TestAddEndpoint_OrganizationNotFound(t *testing.T) {
 }
 
 func TestRemoveEndpoint(t *testing.T) {
-	cc := new(OrganizationChaincode)
+	cc := new(organization.OrganizationChaincode)
 	mockCtx := new(MockTransactionContext)
 
 	// Mock organization data
-	organizationID := Identifier{System: "exampleSystem", Value: "org1"}
-	organization := &Organization{ID: organizationID, Name: "Hospital A", Type: CodeableConcept{Text: "Hospital"},
-		EndPoint: &Reference{Reference: "http://hospital-a.com/api"}}
+	organizationID := fhir.Identifier{System: "exampleSystem", Value: "org1"}
+	organization := &fhir.Organization{ID: organizationID, Name: "Hospital A", Type: fhir.CodeableConcept{Text: "Hospital"},
+		EndPoint: &fhir.Reference{Reference: "http://hospital-a.com/api"}}
 
 	// Mock GetOrganization method to return existing organization
 	organizationBytes, _ := json.Marshal(organization)
@@ -341,11 +343,11 @@ func TestRemoveEndpoint(t *testing.T) {
 }
 
 func TestRemoveEndpoint_OrganizationNotFound(t *testing.T) {
-	cc := new(OrganizationChaincode)
+	cc := new(organization.OrganizationChaincode)
 	mockCtx := new(MockTransactionContext)
 
 	// Mock organization ID
-	organizationID := Identifier{System: "exampleSystem", Value: "org1"}
+	organizationID := fhir.Identifier{System: "exampleSystem", Value: "org1"}
 
 	// Mock GetOrganization method to return nil, indicating organization not found
 	mockStub := new(MockStub)
@@ -358,16 +360,16 @@ func TestRemoveEndpoint_OrganizationNotFound(t *testing.T) {
 }
 
 func TestGetParentOrganization(t *testing.T) {
-	cc := new(OrganizationChaincode)
+	cc := new(organization.OrganizationChaincode)
 	mockCtx := new(MockTransactionContext)
 
 	// Mock organization data
-	organizationID := Identifier{System: "exampleSystem", Value: "org1"}
-	parentOrganization := Reference{Reference: "http://parent-com/api"}
+	organizationID := fhir.Identifier{System: "exampleSystem", Value: "org1"}
+	parentOrganization := fhir.Reference{Reference: "http://parent-organization.com/api"}
 
 	// Mock GetOrganization method to return existing organization
-	organization := &Organization{
-		ID:     Identifier{System: "exampleSystem", Value: organizationID.Value},
+	organization := &fhir.Organization{
+		ID:     fhir.Identifier{System: "exampleSystem", Value: organizationID.Value},
 		Name:   "Hospital A",
 		PartOf: &parentOrganization,
 	}
@@ -383,16 +385,16 @@ func TestGetParentOrganization(t *testing.T) {
 }
 
 func TestUpdateParentOrganization(t *testing.T) {
-	cc := new(OrganizationChaincode)
+	cc := new(organization.OrganizationChaincode)
 	mockCtx := new(MockTransactionContext)
 
 	// Mock organization data
-	organizationID := Identifier{System: "exampleSystem", Value: "org1"}
-	parentOrganization := Reference{Reference: "http://parent-com/api"}
+	organizationID := fhir.Identifier{System: "exampleSystem", Value: "org1"}
+	parentOrganization := fhir.Reference{Reference: "http://parent-organization.com/api"}
 
 	// Mock GetOrganization method to return existing organization
-	organization := &Organization{
-		ID:     Identifier{System: "exampleSystem", Value: organizationID.Value},
+	organization := &fhir.Organization{
+		ID:     fhir.Identifier{System: "exampleSystem", Value: organizationID.Value},
 		Name:   "Hospital A",
 		PartOf: &parentOrganization,
 	}
@@ -413,17 +415,17 @@ func TestUpdateParentOrganization(t *testing.T) {
 }
 
 func TestAddQualification(t *testing.T) {
-	cc := new(OrganizationChaincode)
+	cc := new(organization.OrganizationChaincode)
 	mockCtx := new(MockTransactionContext)
 
 	// Mock organization data
-	organizationID := Identifier{System: "exampleSystem", Value: "org1"}
-	organization := &Organization{ID: organizationID, Name: "Hospital A"}
-	qualification := Qualification{
-		ID:     Identifier{System: "exampleSystem", Value: "qualification1"},
-		Code:   CodeableConcept{Text: "Qualification Code", Coding: []Coding{{System: "exampleSystem", Code: "code1", Display: "Display 1"}}},
-		Status: CodeableConcept{Text: "Active", Coding: []Coding{{System: "exampleSystem", Code: "active", Display: "Active"}}},
-		Issuer: &Reference{Reference: "http://issuer.com"},
+	organizationID := fhir.Identifier{System: "exampleSystem", Value: "org1"}
+	organization := &fhir.Organization{ID: organizationID, Name: "Hospital A"}
+	qualification := fhir.Qualification{
+		ID:     fhir.Identifier{System: "exampleSystem", Value: "qualification1"},
+		Code:   fhir.CodeableConcept{Text: "Qualification Code", Coding: []fhir.Coding{{System: "exampleSystem", Code: "code1", Display: "Display 1"}}},
+		Status: fhir.CodeableConcept{Text: "Active", Coding: []fhir.Coding{{System: "exampleSystem", Code: "active", Display: "Active"}}},
+		Issuer: &fhir.Reference{Reference: "http://issuer.com"},
 	}
 
 	// Mock GetOrganization method to return existing organization
@@ -443,22 +445,22 @@ func TestAddQualification(t *testing.T) {
 }
 
 func TestRemoveQualification(t *testing.T) {
-	cc := new(OrganizationChaincode)
+	cc := new(organization.OrganizationChaincode)
 	mockCtx := new(MockTransactionContext)
 
 	// Mock organization data
-	organizationID := Identifier{System: "exampleSystem", Value: "org1"}
-	qualificationID := Identifier{System: "exampleSystem", Value: "qual1"}
-	qualification := Qualification{
+	organizationID := fhir.Identifier{System: "exampleSystem", Value: "org1"}
+	qualificationID := fhir.Identifier{System: "exampleSystem", Value: "qual1"}
+	qualification := fhir.Qualification{
 		ID:     qualificationID,
-		Code:   CodeableConcept{Text: "Qualification Code"},
-		Status: CodeableConcept{Text: "Active"},
-		Issuer: &Reference{Reference: "http://issuer.com"},
+		Code:   fhir.CodeableConcept{Text: "Qualification Code"},
+		Status: fhir.CodeableConcept{Text: "Active"},
+		Issuer: &fhir.Reference{Reference: "http://issuer.com"},
 	}
-	organization := &Organization{
+	organization := &fhir.Organization{
 		ID:            organizationID,
 		Name:          "Hospital A",
-		Qualification: []Qualification{qualification},
+		Qualification: []fhir.Qualification{qualification},
 	}
 
 	// Mock GetOrganization method to return existing organization
@@ -470,7 +472,7 @@ func TestRemoveQualification(t *testing.T) {
 	// Mock PutState method to return success
 	mockStub.On("PutState", organizationID.Value, mock.Anything).Return(nil).Run(func(args mock.Arguments) {
 		arg := args.Get(1).([]byte)
-		var updatedOrganization Organization
+		var updatedOrganization fhir.Organization
 		err := json.Unmarshal(arg, &updatedOrganization)
 		require.NoError(t, err)
 		assert.Len(t, updatedOrganization.Qualification, 0) // Qualification should be removed
@@ -481,29 +483,29 @@ func TestRemoveQualification(t *testing.T) {
 }
 
 func TestUpdateQualification(t *testing.T) {
-	cc := new(OrganizationChaincode)
+	cc := new(organization.OrganizationChaincode)
 	mockCtx := new(MockTransactionContext)
 
 	// Mock organization data
-	organizationID := Identifier{System: "exampleSystem", Value: "org1"}
-	qualificationID := Identifier{System: "exampleSystem", Value: "qual1"}
-	qualification := Qualification{
+	organizationID := fhir.Identifier{System: "exampleSystem", Value: "org1"}
+	qualificationID := fhir.Identifier{System: "exampleSystem", Value: "qual1"}
+	qualification := fhir.Qualification{
 		ID:     qualificationID,
-		Code:   CodeableConcept{Text: "Qualification Code"},
-		Status: CodeableConcept{Text: "Active"},
-		Issuer: &Reference{Reference: "http://issuer.com"},
+		Code:   fhir.CodeableConcept{Text: "Qualification Code"},
+		Status: fhir.CodeableConcept{Text: "Active"},
+		Issuer: &fhir.Reference{Reference: "http://issuer.com"},
 	}
-	organization := &Organization{
+	organization := &fhir.Organization{
 		ID:            organizationID,
 		Name:          "Hospital A",
-		Qualification: []Qualification{qualification},
+		Qualification: []fhir.Qualification{qualification},
 	}
 	qualificationIndex := 0
-	updatedQualification := Qualification{
-		ID:     Identifier{System: "exampleSystem", Value: "updatedQualification"},
-		Code:   CodeableConcept{Text: "Updated Qualification Code", Coding: []Coding{{System: "exampleSystem", Code: "updatedCode", Display: "Updated Display"}}},
-		Status: CodeableConcept{Text: "Inactive", Coding: []Coding{{System: "exampleSystem", Code: "inactive", Display: "Inactive"}}},
-		Issuer: &Reference{Reference: "http://updatedIssuer.com"},
+	updatedQualification := fhir.Qualification{
+		ID:     fhir.Identifier{System: "exampleSystem", Value: "updatedQualification"},
+		Code:   fhir.CodeableConcept{Text: "Updated Qualification Code", Coding: []fhir.Coding{{System: "exampleSystem", Code: "updatedCode", Display: "Updated Display"}}},
+		Status: fhir.CodeableConcept{Text: "Inactive", Coding: []fhir.Coding{{System: "exampleSystem", Code: "inactive", Display: "Inactive"}}},
+		Issuer: &fhir.Reference{Reference: "http://updatedIssuer.com"},
 	}
 
 	// Mock GetOrganization method to return existing organization
@@ -515,7 +517,7 @@ func TestUpdateQualification(t *testing.T) {
 	// Mock PutState method to return success
 	mockStub.On("PutState", organizationID.Value, mock.Anything).Return(nil).Run(func(args mock.Arguments) {
 		arg := args.Get(1).([]byte)
-		var updatedOrganization Organization
+		var updatedOrganization fhir.Organization
 		err := json.Unmarshal(arg, &updatedOrganization)
 		require.NoError(t, err)
 		assert.Equal(t, updatedQualification, updatedOrganization.Qualification[qualificationIndex]) // Updated qualification should match
@@ -526,46 +528,46 @@ func TestUpdateQualification(t *testing.T) {
 }
 
 func TestUpdateContact(t *testing.T) {
-	cc := new(OrganizationChaincode)
+	cc := new(organization.OrganizationChaincode)
 	mockCtx := new(MockTransactionContext)
 
 	// Mock organization data
 	organizationID := "org1"
-	organization := &Organization{
-		ID:   Identifier{System: "exampleSystem", Value: organizationID},
+	organization := &fhir.Organization{
+		ID:   fhir.Identifier{System: "exampleSystem", Value: organizationID},
 		Name: "Hospital A",
-		Contact: ExtendedContactDetail{
-			Name: HumanName{
+		Contact: fhir.ExtendedContactDetail{
+			Name: fhir.HumanName{
 				Text: "John Doe",
 			},
-			Telecom: ContactPoint{
-				System: Code{Coding: []Coding{{System: "exampleSystem", Code: "email", Display: "jhnd"}}},
+			Telecom: fhir.ContactPoint{
+				System: fhir.Code{Coding: []fhir.Coding{{System: "exampleSystem", Code: "email", Display: "jhnd"}}},
 				Value:  "123456789",
-				Use:    Code{Coding: []Coding{{System: "useSystem", Code: "useCode", Display: "useDisplay"}}},
+				Use:    fhir.Code{Coding: []fhir.Coding{{System: "useSystem", Code: "useCode", Display: "useDisplay"}}},
 				Rank:   1,
 			},
-			Address: Address{
+			Address: fhir.Address{
 				City:    "New York",
 				Country: "USA",
 			},
-			Organization: &Reference{
+			Organization: &fhir.Reference{
 				Reference: "http://example.com/organization",
 			},
-			Period: Period{
+			Period: fhir.Period{
 				Start: time.Now(),
 				End:   time.Now().AddDate(1, 0, 0),
 			},
 		},
 	}
-	updatedTelecom := ContactPoint{
-		System: Code{Coding: []Coding{{System: "exampleSystem", Code: "email", Display: "johndoe"}}},
+	updatedTelecom := fhir.ContactPoint{
+		System: fhir.Code{Coding: []fhir.Coding{{System: "exampleSystem", Code: "email", Display: "johndoe"}}},
 		Value:  "jane@example.com",
-		Use:    Code{Coding: []Coding{{System: "newUseSystem", Code: "newUseCode", Display: "newUseDisplay"}}},
+		Use:    fhir.Code{Coding: []fhir.Coding{{System: "newUseSystem", Code: "newUseCode", Display: "newUseDisplay"}}},
 		Rank:   2, // Set the Rank field to the expected value
 	}
-	updatedContact := ExtendedContactDetail{
+	updatedContact := fhir.ExtendedContactDetail{
 		Name:         organization.Contact.Name,
-		Telecom:      organization.Contact.Telecom,
+		Telecom:      updatedTelecom,
 		Address:      organization.Contact.Address,
 		Organization: organization.Contact.Organization,
 		Period:       organization.Contact.Period,
@@ -580,7 +582,7 @@ func TestUpdateContact(t *testing.T) {
 	// Mock PutState method to return success
 	mockStub.On("PutState", organizationID, mock.Anything).Return(nil).Run(func(args mock.Arguments) {
 		arg := args.Get(1).([]byte)
-		var updatedOrganization Organization
+		var updatedOrganization fhir.Organization
 		err := json.Unmarshal(arg, &updatedOrganization)
 		require.NoError(t, err)
 		assert.Equal(t, updatedTelecom, updatedOrganization.Contact.Telecom) // Updated telecom should match

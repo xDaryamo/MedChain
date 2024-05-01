@@ -1,4 +1,4 @@
-package patient
+package test
 
 import (
 	"encoding/json"
@@ -8,15 +8,17 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
+	"github.com/xDaryamo/MedChain/fhir"
+	"github.com/xDaryamo/MedChain/patient"
 )
 
 // Tests
 
 func generatePatientJSON(id string) string {
-	patient := Patient{
-		ID:        Identifier{Value: id},
-		Name:      HumanName{Family: "Smith", Given: []string{"John"}},
-		Gender:    Code{Coding: []Coding{{System: "http://hl7.org/fhir/ValueSet/administrative-gender", Code: "male", Display: "Male"}}},
+	patient := fhir.Patient{
+		ID:        fhir.Identifier{Value: id},
+		Name:      fhir.HumanName{Family: "Smith", Given: []string{"John"}},
+		Gender:    fhir.Code{Coding: []fhir.Coding{{System: "http://hl7.org/fhir/ValueSet/administrative-gender", Code: "male", Display: "Male"}}},
 		BirthDate: time.Now(),
 	}
 	patientJSON, _ := json.Marshal(patient)
@@ -34,7 +36,7 @@ func TestCreatePatient_ValidInput(t *testing.T) {
 	mockStub.On("GetState", patientID).Return(nil, nil)           // Patient does not exist
 	mockStub.On("PutState", patientID, mock.Anything).Return(nil) // Simulate successful write
 
-	contract := PatientContract{}
+	contract := patient.PatientContract{}
 	err := contract.CreatePatient(mockCtx, patientID, patientJSON)
 
 	assert.Nil(t, err)
@@ -51,7 +53,7 @@ func TestCreatePatient_PatientExists(t *testing.T) {
 
 	mockStub.On("GetState", patientID).Return([]byte("existing patient data"), nil) // Patient exists
 
-	contract := PatientContract{}
+	contract := patient.PatientContract{}
 	err := contract.CreatePatient(mockCtx, patientID, patientJSON)
 
 	assert.NotNil(t, err)
@@ -69,7 +71,7 @@ func TestCreatePatient_InvalidJSON(t *testing.T) {
 
 	mockStub.On("GetState", patientID).Return(nil, nil) // No pre-existing patient
 
-	contract := PatientContract{}
+	contract := patient.PatientContract{}
 	err := contract.CreatePatient(mockCtx, patientID, patientJSON)
 
 	assert.NotNil(t, err)
@@ -87,7 +89,7 @@ func TestCreatePatient_StubFailure(t *testing.T) {
 
 	mockStub.On("GetState", patientID).Return(nil, errors.New("ledger error")) // Simulate a ledger error
 
-	contract := PatientContract{}
+	contract := patient.PatientContract{}
 	err := contract.CreatePatient(mockCtx, patientID, patientJSON)
 
 	assert.NotNil(t, err)
@@ -105,7 +107,7 @@ func TestReadPatient_Success(t *testing.T) {
 
 	mockStub.On("GetState", patientID).Return([]byte(patientJSON), nil) // Simulate existing patient data
 
-	contract := PatientContract{}
+	contract := patient.PatientContract{}
 	result, err := contract.ReadPatient(mockCtx, patientID)
 
 	assert.Nil(t, err)
@@ -123,7 +125,7 @@ func TestReadPatient_NotFound(t *testing.T) {
 
 	mockStub.On("GetState", patientID).Return(nil, nil) // No data for the patient
 
-	contract := PatientContract{}
+	contract := patient.PatientContract{}
 	result, err := contract.ReadPatient(mockCtx, patientID)
 
 	assert.NotNil(t, err)
@@ -141,7 +143,7 @@ func TestReadPatient_StubFailure(t *testing.T) {
 
 	mockStub.On("GetState", patientID).Return(nil, errors.New("ledger error")) // Simulate a ledger error
 
-	contract := PatientContract{}
+	contract := patient.PatientContract{}
 	result, err := contract.ReadPatient(mockCtx, patientID)
 
 	assert.NotNil(t, err)
@@ -162,7 +164,7 @@ func TestUpdatePatient_Success(t *testing.T) {
 	mockStub.On("GetState", patientID).Return([]byte("existing patient data"), nil)
 	mockStub.On("PutState", patientID, mock.Anything).Return(nil) // Expect the update to succeed
 
-	contract := PatientContract{}
+	contract := patient.PatientContract{}
 	err := contract.UpdatePatient(mockCtx, patientID, updatedPatientJSON)
 
 	assert.Nil(t, err)
@@ -179,7 +181,7 @@ func TestUpdatePatient_NotFound(t *testing.T) {
 
 	mockStub.On("GetState", patientID).Return(nil, nil) // No data for the patient
 
-	contract := PatientContract{}
+	contract := patient.PatientContract{}
 	err := contract.UpdatePatient(mockCtx, patientID, updatedPatientJSON)
 
 	assert.NotNil(t, err)
@@ -198,7 +200,7 @@ func TestUpdatePatient_InvalidJSON(t *testing.T) {
 	// Simulate that the patient already exists
 	mockStub.On("GetState", patientID).Return([]byte("existing patient data"), nil)
 
-	contract := PatientContract{}
+	contract := patient.PatientContract{}
 	err := contract.UpdatePatient(mockCtx, patientID, invalidJSON)
 
 	assert.NotNil(t, err)
@@ -217,7 +219,7 @@ func TestUpdatePatient_StubFailure(t *testing.T) {
 	mockStub.On("GetState", patientID).Return([]byte("existing patient data"), nil)
 	mockStub.On("PutState", patientID, mock.Anything).Return(errors.New("ledger write error")) // Simulate a ledger write error
 
-	contract := PatientContract{}
+	contract := patient.PatientContract{}
 	err := contract.UpdatePatient(mockCtx, patientID, updatedPatientJSON)
 
 	assert.NotNil(t, err)
@@ -237,7 +239,7 @@ func TestDeletePatient_Success(t *testing.T) {
 	// Expect the delete to succeed
 	mockStub.On("DelState", patientID).Return(nil)
 
-	contract := PatientContract{}
+	contract := patient.PatientContract{}
 	err := contract.DeletePatient(mockCtx, patientID)
 
 	assert.Nil(t, err)
@@ -254,7 +256,7 @@ func TestDeletePatient_NotFound(t *testing.T) {
 	// Simulate that the patient does not exist
 	mockStub.On("GetState", patientID).Return(nil, nil)
 
-	contract := PatientContract{}
+	contract := patient.PatientContract{}
 	err := contract.DeletePatient(mockCtx, patientID)
 
 	assert.NotNil(t, err)
@@ -272,7 +274,7 @@ func TestDeletePatient_StubFailure(t *testing.T) {
 	// Simulate a ledger error when checking if the patient exists
 	mockStub.On("GetState", patientID).Return(nil, errors.New("ledger error"))
 
-	contract := PatientContract{}
+	contract := patient.PatientContract{}
 	err := contract.DeletePatient(mockCtx, patientID)
 
 	assert.NotNil(t, err)

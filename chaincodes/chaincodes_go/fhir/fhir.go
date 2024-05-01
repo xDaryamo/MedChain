@@ -1,4 +1,4 @@
-package encounter
+package fhir
 
 import (
 	"encoding/base64"

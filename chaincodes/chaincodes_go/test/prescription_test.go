@@ -1,4 +1,4 @@
-package prescription
+package test
 
 import (
 	"encoding/json"
@@ -8,19 +8,21 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
+	"github.com/xDaryamo/MedChain/fhir"
+	"github.com/xDaryamo/MedChain/prescription"
 )
 
 // Tests
 
 func generateMedicationRequestJSON(id string, status string) string {
 	// Create a simple MedicationRequest struct
-	medicationRequest := MedicationRequest{
-		ID: Identifier{
+	medicationRequest := fhir.MedicationRequest{
+		ID: fhir.Identifier{
 			System: "http://hospital.smarthealth.it/medicationrequests",
 			Value:  id,
 		},
-		Status: Code{
-			Coding: []Coding{
+		Status: fhir.Code{
+			Coding: []fhir.Coding{
 				{
 					System:  "http://hl7.org/fhir/medicationrequest-status",
 					Code:    status,
@@ -28,8 +30,8 @@ func generateMedicationRequestJSON(id string, status string) string {
 				},
 			},
 		},
-		Intent: Code{
-			Coding: []Coding{
+		Intent: fhir.Code{
+			Coding: []fhir.Coding{
 				{
 					System:  "http://hl7.org/fhir/medication-request-intent",
 					Code:    "order",
@@ -37,8 +39,8 @@ func generateMedicationRequestJSON(id string, status string) string {
 				},
 			},
 		},
-		MedicationCodeableConcept: CodeableConcept{
-			Coding: []Coding{
+		MedicationCodeableConcept: fhir.CodeableConcept{
+			Coding: []fhir.Coding{
 				{
 					System:  "http://www.nlm.nih.gov/research/umls/rxnorm",
 					Code:    "582620",
@@ -47,29 +49,29 @@ func generateMedicationRequestJSON(id string, status string) string {
 			},
 			Text: "Amoxicillin 250mg/5ml Suspension",
 		},
-		Subject: &Reference{
+		Subject: &fhir.Reference{
 			Reference: "Patient/example",
 			Display:   "John Doe",
 		},
 		AuthoredOn: time.Now(),
-		Requester: &Reference{
+		Requester: &fhir.Reference{
 			Reference: "Practitioner/example",
 			Display:   "Dr. Jane Smith",
 		},
-		DosageInstruction: []Dosage{
+		DosageInstruction: []fhir.Dosage{
 			{
 				Text: "Take one teaspoonful by mouth three times daily",
 			},
 		},
-		DispenseRequest: &DispenseRequest{
-			Performer: &Reference{
+		DispenseRequest: &fhir.DispenseRequest{
+			Performer: &fhir.Reference{
 				Reference: "Organization/pharmacy",
 			},
-			Quantity: Quantity{
+			Quantity: fhir.Quantity{
 				Value: 15,
 				Unit:  "teaspoonful",
 			},
-			ExpectedSupplyDuration: Duration{
+			ExpectedSupplyDuration: fhir.Duration{
 				Value: 10,
 				Unit:  "days",
 			},
@@ -96,7 +98,7 @@ func TestCreateMedicationRequest_Success(t *testing.T) {
 	mockStub.On("GetState", medicationRequestID).Return(nil, nil)           // Medication request does not exist
 	mockStub.On("PutState", medicationRequestID, mock.Anything).Return(nil) // Expect the put to succeed
 
-	chaincode := PrescriptionChaincode{}
+	chaincode := prescription.PrescriptionChaincode{}
 	err := chaincode.CreateMedicationRequest(mockCtx, medicationRequestJSON)
 
 	assert.Nil(t, err)
@@ -113,7 +115,7 @@ func TestCreateMedicationRequest_AlreadyExists(t *testing.T) {
 
 	mockStub.On("GetState", medicationRequestID).Return([]byte("existing medication request"), nil) // Medication request already exists
 
-	chaincode := PrescriptionChaincode{}
+	chaincode := prescription.PrescriptionChaincode{}
 	err := chaincode.CreateMedicationRequest(mockCtx, medicationRequestJSON)
 
 	assert.NotNil(t, err)
@@ -128,7 +130,7 @@ func TestCreateMedicationRequest_InvalidJSON(t *testing.T) {
 
 	invalidJSON := "{this is not valid JSON"
 
-	chaincode := PrescriptionChaincode{}
+	chaincode := prescription.PrescriptionChaincode{}
 	err := chaincode.CreateMedicationRequest(mockCtx, invalidJSON)
 
 	assert.NotNil(t, err)
@@ -143,7 +145,7 @@ func TestCreateMedicationRequest_NoID(t *testing.T) {
 
 	medicationRequestJSON := generateMedicationRequestJSON("", "active")
 
-	chaincode := PrescriptionChaincode{}
+	chaincode := prescription.PrescriptionChaincode{}
 	err := chaincode.CreateMedicationRequest(mockCtx, medicationRequestJSON)
 
 	assert.NotNil(t, err)
@@ -163,7 +165,7 @@ func TestVerifyPrescription_Success(t *testing.T) {
 	mockStub.On("GetState", prescriptionID).Return([]byte(activePrescriptionJSON), nil)
 	mockStub.On("PutState", prescriptionID, mock.Anything).Return(nil)
 
-	chaincode := PrescriptionChaincode{}
+	chaincode := prescription.PrescriptionChaincode{}
 	err := chaincode.VerifyPrescription(mockCtx, prescriptionID, pharmacyID)
 
 	assert.Nil(t, err)
@@ -180,7 +182,7 @@ func TestVerifyPrescription_NotFound(t *testing.T) {
 
 	mockStub.On("GetState", prescriptionID).Return(nil, nil)
 
-	chaincode := PrescriptionChaincode{}
+	chaincode := prescription.PrescriptionChaincode{}
 	err := chaincode.VerifyPrescription(mockCtx, prescriptionID, pharmacyID)
 
 	assert.NotNil(t, err)
@@ -199,7 +201,7 @@ func TestVerifyPrescription_NotActive(t *testing.T) {
 
 	mockStub.On("GetState", prescriptionID).Return([]byte(inactivePrescriptionJSON), nil)
 
-	chaincode := PrescriptionChaincode{}
+	chaincode := prescription.PrescriptionChaincode{}
 	err := chaincode.VerifyPrescription(mockCtx, prescriptionID, pharmacyID)
 
 	assert.NotNil(t, err)
@@ -217,7 +219,7 @@ func TestVerifyPrescription_StubFailure(t *testing.T) {
 
 	mockStub.On("GetState", prescriptionID).Return(nil, errors.New("ledger error"))
 
-	chaincode := PrescriptionChaincode{}
+	chaincode := prescription.PrescriptionChaincode{}
 	err := chaincode.VerifyPrescription(mockCtx, prescriptionID, pharmacyID)
 
 	assert.NotNil(t, err)
@@ -235,7 +237,7 @@ func TestGetMedicationRequest_Success(t *testing.T) {
 
 	mockStub.On("GetState", medicationRequestID).Return([]byte(medicationRequestJSON), nil)
 
-	chaincode := PrescriptionChaincode{}
+	chaincode := prescription.PrescriptionChaincode{}
 	result, err := chaincode.GetMedicationRequest(mockCtx, medicationRequestID)
 
 	assert.Nil(t, err)
@@ -252,7 +254,7 @@ func TestGetMedicationRequest_NotFound(t *testing.T) {
 
 	mockStub.On("GetState", medicationRequestID).Return(nil, nil)
 
-	chaincode := PrescriptionChaincode{}
+	chaincode := prescription.PrescriptionChaincode{}
 	result, err := chaincode.GetMedicationRequest(mockCtx, medicationRequestID)
 
 	assert.NotNil(t, err)
@@ -270,7 +272,7 @@ func TestGetMedicationRequest_LedgerError(t *testing.T) {
 
 	mockStub.On("GetState", medicationRequestID).Return(nil, errors.New("ledger error"))
 
-	chaincode := PrescriptionChaincode{}
+	chaincode := prescription.PrescriptionChaincode{}
 	result, err := chaincode.GetMedicationRequest(mockCtx, medicationRequestID)
 
 	assert.NotNil(t, err)
@@ -289,7 +291,7 @@ func TestPrescriptionExists_Exists(t *testing.T) {
 	// Simulate finding the prescription in the blockchain
 	mockStub.On("GetState", prescriptionID).Return([]byte("prescription data"), nil)
 
-	chaincode := PrescriptionChaincode{}
+	chaincode := prescription.PrescriptionChaincode{}
 	exists, err := chaincode.PrescriptionExists(mockCtx, prescriptionID)
 
 	assert.Nil(t, err)
@@ -307,7 +309,7 @@ func TestPrescriptionExists_DoesNotExist(t *testing.T) {
 	// Simulate the prescription not being found in the blockchain
 	mockStub.On("GetState", prescriptionID).Return(nil, nil)
 
-	chaincode := PrescriptionChaincode{}
+	chaincode := prescription.PrescriptionChaincode{}
 	exists, err := chaincode.PrescriptionExists(mockCtx, prescriptionID)
 
 	assert.Nil(t, err)
@@ -325,7 +327,7 @@ func TestPrescriptionExists_LedgerError(t *testing.T) {
 	// Simulate an error accessing the ledger
 	mockStub.On("GetState", prescriptionID).Return(nil, errors.New("ledger access error"))
 
-	chaincode := PrescriptionChaincode{}
+	chaincode := prescription.PrescriptionChaincode{}
 	exists, err := chaincode.PrescriptionExists(mockCtx, prescriptionID)
 
 	assert.NotNil(t, err)

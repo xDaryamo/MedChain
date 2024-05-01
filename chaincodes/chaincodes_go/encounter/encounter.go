@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/hyperledger/fabric-contract-api-go/contractapi"
+	"github.com/xDaryamo/MedChain/fhir"
 )
 
 // EncounterChaincode represents the Chaincode for managing Encounters on the blockchain
@@ -18,7 +19,7 @@ type EncounterChaincode struct {
 // CreateEncounter creates a new Encounter
 func (ec *EncounterChaincode) CreateEncounter(ctx contractapi.TransactionContextInterface, encounterID string, encounterJSON string) error {
 	// Deserialize JSON data into a Go data structure
-	var encounter Encounter
+	var encounter fhir.Encounter
 	if err := json.Unmarshal([]byte(encounterJSON), &encounter); err != nil {
 		return err
 	}
@@ -41,7 +42,7 @@ func (ec *EncounterChaincode) CreateEncounter(ctx contractapi.TransactionContext
 }
 
 // GetEncounter retrieves an Encounter from the blockchain
-func (ec *EncounterChaincode) GetEncounter(ctx contractapi.TransactionContextInterface, encounterID string) (*Encounter, error) {
+func (ec *EncounterChaincode) GetEncounter(ctx contractapi.TransactionContextInterface, encounterID string) (*fhir.Encounter, error) {
 	// Retrieve the Encounter record from the blockchain
 	encounterJSON, err := ctx.GetStub().GetState(encounterID)
 	if err != nil {
@@ -52,7 +53,7 @@ func (ec *EncounterChaincode) GetEncounter(ctx contractapi.TransactionContextInt
 	}
 
 	// Deserialize the Encounter record
-	var encounter Encounter
+	var encounter fhir.Encounter
 	err = json.Unmarshal(encounterJSON, &encounter)
 	if err != nil {
 		return nil, err
@@ -73,7 +74,7 @@ func (ec *EncounterChaincode) UpdateEncounter(ctx contractapi.TransactionContext
 	}
 
 	// Deserialize the updated JSON data into a Go data structure
-	var updatedEncounter Encounter
+	var updatedEncounter fhir.Encounter
 	if err := json.Unmarshal([]byte(updatedEncounterJSON), &updatedEncounter); err != nil {
 		return err
 	}
@@ -106,8 +107,8 @@ func (ec *EncounterChaincode) DeleteEncounter(ctx contractapi.TransactionContext
 }
 
 // SearchEncounter allows searching for Encounter based on certain criteria
-func (ec *EncounterChaincode) SearchEncounter(ctx contractapi.TransactionContextInterface, query string) ([]*Encounter, error) {
-	var results []*Encounter
+func (ec *EncounterChaincode) SearchEncounter(ctx contractapi.TransactionContextInterface, query string) ([]*fhir.Encounter, error) {
+	var results []*fhir.Encounter
 
 	// Retrieve all Encounter records stored on the blockchain
 	iterator, err := ctx.GetStub().GetStateByRange("", "")
@@ -122,7 +123,7 @@ func (ec *EncounterChaincode) SearchEncounter(ctx contractapi.TransactionContext
 		if err != nil {
 			return nil, err
 		}
-		var encounter Encounter
+		var encounter fhir.Encounter
 		err = json.Unmarshal(result.Value, &encounter)
 		if err != nil {
 			return nil, err
@@ -138,8 +139,8 @@ func (ec *EncounterChaincode) SearchEncounter(ctx contractapi.TransactionContext
 }
 
 // GetEncountersByPatientID retrieves all Encounters associated with a specific patient ID
-func (ec *EncounterChaincode) GetEncountersByPatientID(ctx contractapi.TransactionContextInterface, patientID string) ([]*Encounter, error) {
-	var results []*Encounter
+func (ec *EncounterChaincode) GetEncountersByPatientID(ctx contractapi.TransactionContextInterface, patientID string) ([]*fhir.Encounter, error) {
+	var results []*fhir.Encounter
 
 	// Retrieve all Encounter records stored on the blockchain
 	iterator, err := ctx.GetStub().GetStateByRange("", "")
@@ -154,7 +155,7 @@ func (ec *EncounterChaincode) GetEncountersByPatientID(ctx contractapi.Transacti
 		if err != nil {
 			return nil, err
 		}
-		var encounter Encounter
+		var encounter fhir.Encounter
 		err = json.Unmarshal(result.Value, &encounter)
 		if err != nil {
 			return nil, err
@@ -170,8 +171,8 @@ func (ec *EncounterChaincode) GetEncountersByPatientID(ctx contractapi.Transacti
 }
 
 // GetEncountersByDateRange retrieves all Encounters that occurred within a specified date range
-func (ec *EncounterChaincode) GetEncountersByDateRange(ctx contractapi.TransactionContextInterface, startDate time.Time, endDate time.Time) ([]*Encounter, error) {
-	var results []*Encounter
+func (ec *EncounterChaincode) GetEncountersByDateRange(ctx contractapi.TransactionContextInterface, startDate time.Time, endDate time.Time) ([]*fhir.Encounter, error) {
+	var results []*fhir.Encounter
 
 	// Retrieve all Encounter records stored on the blockchain
 	iterator, err := ctx.GetStub().GetStateByRange("", "")
@@ -186,7 +187,7 @@ func (ec *EncounterChaincode) GetEncountersByDateRange(ctx contractapi.Transacti
 		if err != nil {
 			return nil, err
 		}
-		var encounter Encounter
+		var encounter fhir.Encounter
 		err = json.Unmarshal(result.Value, &encounter)
 		if err != nil {
 			return nil, err
@@ -202,8 +203,8 @@ func (ec *EncounterChaincode) GetEncountersByDateRange(ctx contractapi.Transacti
 }
 
 // GetEncountersByType retrieves all Encounters of a specific type
-func (ec *EncounterChaincode) GetEncountersByType(ctx contractapi.TransactionContextInterface, encounterType string) ([]*Encounter, error) {
-	var results []*Encounter
+func (ec *EncounterChaincode) GetEncountersByType(ctx contractapi.TransactionContextInterface, encounterType string) ([]*fhir.Encounter, error) {
+	var results []*fhir.Encounter
 
 	// Retrieve all Encounter records stored on the blockchain
 	iterator, err := ctx.GetStub().GetStateByRange("", "")
@@ -218,7 +219,7 @@ func (ec *EncounterChaincode) GetEncountersByType(ctx contractapi.TransactionCon
 		if err != nil {
 			return nil, err
 		}
-		var encounter Encounter
+		var encounter fhir.Encounter
 		err = json.Unmarshal(result.Value, &encounter)
 		if err != nil {
 			return nil, err
@@ -237,8 +238,8 @@ func (ec *EncounterChaincode) GetEncountersByType(ctx contractapi.TransactionCon
 }
 
 // GetEncountersByLocation retrieves all Encounters that occurred at a specific location
-func (ec *EncounterChaincode) GetEncountersByLocation(ctx contractapi.TransactionContextInterface, locationID string) ([]*Encounter, error) {
-	var results []*Encounter
+func (ec *EncounterChaincode) GetEncountersByLocation(ctx contractapi.TransactionContextInterface, locationID string) ([]*fhir.Encounter, error) {
+	var results []*fhir.Encounter
 
 	// Retrieve all Encounter records stored on the blockchain
 	iterator, err := ctx.GetStub().GetStateByRange("", "")
@@ -253,7 +254,7 @@ func (ec *EncounterChaincode) GetEncountersByLocation(ctx contractapi.Transactio
 		if err != nil {
 			return nil, err
 		}
-		var encounter Encounter
+		var encounter fhir.Encounter
 		err = json.Unmarshal(result.Value, &encounter)
 		if err != nil {
 			return nil, err
@@ -272,8 +273,8 @@ func (ec *EncounterChaincode) GetEncountersByLocation(ctx contractapi.Transactio
 }
 
 // GetEncountersByPractitioner retrieves all Encounters involving a specific practitioner
-func (ec *EncounterChaincode) GetEncountersByPractitioner(ctx contractapi.TransactionContextInterface, practitionerID string) ([]*Encounter, error) {
-	var results []*Encounter
+func (ec *EncounterChaincode) GetEncountersByPractitioner(ctx contractapi.TransactionContextInterface, practitionerID string) ([]*fhir.Encounter, error) {
+	var results []*fhir.Encounter
 
 	// Retrieve all Encounter records stored on the blockchain
 	iterator, err := ctx.GetStub().GetStateByRange("", "")
@@ -288,7 +289,7 @@ func (ec *EncounterChaincode) GetEncountersByPractitioner(ctx contractapi.Transa
 		if err != nil {
 			return nil, err
 		}
-		var encounter Encounter
+		var encounter fhir.Encounter
 		err = json.Unmarshal(result.Value, &encounter)
 		if err != nil {
 			return nil, err
@@ -307,7 +308,7 @@ func (ec *EncounterChaincode) GetEncountersByPractitioner(ctx contractapi.Transa
 }
 
 // UpdateEncounterStatus updates the status of an existing Encounter
-func (ec *EncounterChaincode) UpdateEncounterStatus(ctx contractapi.TransactionContextInterface, encounterID string, newStatus Code) error {
+func (ec *EncounterChaincode) UpdateEncounterStatus(ctx contractapi.TransactionContextInterface, encounterID string, newStatus fhir.Code) error {
 	// Retrieve the existing Encounter record
 	existingEncounter, err := ec.GetEncounter(ctx, encounterID)
 	if err != nil {
@@ -329,7 +330,7 @@ func (ec *EncounterChaincode) UpdateEncounterStatus(ctx contractapi.TransactionC
 }
 
 // AddDiagnosisToEncounter adds a new diagnosis to an existing Encounter
-func (ec *EncounterChaincode) AddDiagnosisToEncounter(ctx contractapi.TransactionContextInterface, encounterID string, diagnosis EncounterDiagnosis) error {
+func (ec *EncounterChaincode) AddDiagnosisToEncounter(ctx contractapi.TransactionContextInterface, encounterID string, diagnosis fhir.EncounterDiagnosis) error {
 	// Retrieve the existing Encounter record
 	existingEncounter, err := ec.GetEncounter(ctx, encounterID)
 	if err != nil {
@@ -351,7 +352,7 @@ func (ec *EncounterChaincode) AddDiagnosisToEncounter(ctx contractapi.Transactio
 }
 
 // AddParticipantToEncounter adds a new participant to an existing Encounter
-func (ec *EncounterChaincode) AddParticipantToEncounter(ctx contractapi.TransactionContextInterface, encounterID string, participant EncounterParticipant) error {
+func (ec *EncounterChaincode) AddParticipantToEncounter(ctx contractapi.TransactionContextInterface, encounterID string, participant fhir.EncounterParticipant) error {
 	// Retrieve the existing Encounter record
 	existingEncounter, err := ec.GetEncounter(ctx, encounterID)
 	if err != nil {
@@ -398,7 +399,7 @@ func (ec *EncounterChaincode) RemoveParticipantFromEncounter(ctx contractapi.Tra
 }
 
 // AddLocationToEncounter adds a new location to an existing Encounter
-func (ec *EncounterChaincode) AddLocationToEncounter(ctx contractapi.TransactionContextInterface, encounterID string, location Location) error {
+func (ec *EncounterChaincode) AddLocationToEncounter(ctx contractapi.TransactionContextInterface, encounterID string, location fhir.Location) error {
 	// Retrieve the existing Encounter record
 	existingEncounter, err := ec.GetEncounter(ctx, encounterID)
 	if err != nil {
@@ -445,8 +446,8 @@ func (ec *EncounterChaincode) RemoveLocationFromEncounter(ctx contractapi.Transa
 }
 
 // GetEncountersByReason retrieves all Encounters with a specific reason for the encounter
-func (ec *EncounterChaincode) GetEncountersByReason(ctx contractapi.TransactionContextInterface, reason string) ([]*Encounter, error) {
-	var results []*Encounter
+func (ec *EncounterChaincode) GetEncountersByReason(ctx contractapi.TransactionContextInterface, reason string) ([]*fhir.Encounter, error) {
+	var results []*fhir.Encounter
 
 	// Retrieve all Encounter records stored on the blockchain
 	iterator, err := ctx.GetStub().GetStateByRange("", "")
@@ -461,7 +462,7 @@ func (ec *EncounterChaincode) GetEncountersByReason(ctx contractapi.TransactionC
 		if err != nil {
 			return nil, err
 		}
-		var encounter Encounter
+		var encounter fhir.Encounter
 		err = json.Unmarshal(result.Value, &encounter)
 		if err != nil {
 			return nil, err
@@ -482,8 +483,8 @@ func (ec *EncounterChaincode) GetEncountersByReason(ctx contractapi.TransactionC
 }
 
 // GetEncountersByServiceProvider retrieves all Encounters provided by a specific healthcare service provider
-func (ec *EncounterChaincode) GetEncountersByServiceProvider(ctx contractapi.TransactionContextInterface, serviceProviderID string) ([]*Encounter, error) {
-	var results []*Encounter
+func (ec *EncounterChaincode) GetEncountersByServiceProvider(ctx contractapi.TransactionContextInterface, serviceProviderID string) ([]*fhir.Encounter, error) {
+	var results []*fhir.Encounter
 
 	// Retrieve all Encounter records stored on the blockchain
 	iterator, err := ctx.GetStub().GetStateByRange("", "")
@@ -498,7 +499,7 @@ func (ec *EncounterChaincode) GetEncountersByServiceProvider(ctx contractapi.Tra
 		if err != nil {
 			return nil, err
 		}
-		var encounter Encounter
+		var encounter fhir.Encounter
 		err = json.Unmarshal(result.Value, &encounter)
 		if err != nil {
 			return nil, err
