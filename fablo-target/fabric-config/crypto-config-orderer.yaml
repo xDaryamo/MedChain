@@ -3,8 +3,6 @@ PeerOrgs:
     Domain: orderer.medchain.com
     Specs:
       - Hostname: orderer0.medchain-orderergroup
-      - Hostname: orderer1.medchain-orderergroup
-      - Hostname: orderer2.medchain-orderergroup
     Template:
       Count: 0
     Users:

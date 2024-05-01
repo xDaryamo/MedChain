@@ -25,109 +25,36 @@ organizations:
       - ca.ospedale-del-mare.aslnapoli1.medchain.com
 peers:
   peer0.ospedale-maresca.aslnapoli3.medchain.com:
-    url: grpcs://localhost:7041
-    tlsCACerts:
-      path: >-
-        /home/dazza/sicurezza/MedChain/fablo-target/fabric-config/crypto-config/peerOrganizations/ospedale-maresca.aslnapoli3.medchain.com/peers/peer0.ospedale-maresca.aslnapoli3.medchain.com/tls/ca.crt
-    grpcOptions:
-      ssl-target-name-override: peer0.ospedale-maresca.aslnapoli3.medchain.com
+    url: grpc://localhost:7041
   peer1.ospedale-maresca.aslnapoli3.medchain.com:
-    url: grpcs://localhost:7042
-    tlsCACerts:
-      path: >-
-        /home/dazza/sicurezza/MedChain/fablo-target/fabric-config/crypto-config/peerOrganizations/ospedale-maresca.aslnapoli3.medchain.com/peers/peer1.ospedale-maresca.aslnapoli3.medchain.com/tls/ca.crt
-    grpcOptions:
-      ssl-target-name-override: peer1.ospedale-maresca.aslnapoli3.medchain.com
+    url: grpc://localhost:7042
   peer0.ospedale-del-mare.aslnapoli1.medchain.com:
-    url: grpcs://localhost:7061
-    tlsCACerts:
-      path: >-
-        /home/dazza/sicurezza/MedChain/fablo-target/fabric-config/crypto-config/peerOrganizations/ospedale-del-mare.aslnapoli1.medchain.com/peers/peer0.ospedale-del-mare.aslnapoli1.medchain.com/tls/ca.crt
-    grpcOptions:
-      ssl-target-name-override: peer0.ospedale-del-mare.aslnapoli1.medchain.com
+    url: grpc://localhost:7061
   peer1.ospedale-del-mare.aslnapoli1.medchain.com:
-    url: grpcs://localhost:7062
-    tlsCACerts:
-      path: >-
-        /home/dazza/sicurezza/MedChain/fablo-target/fabric-config/crypto-config/peerOrganizations/ospedale-del-mare.aslnapoli1.medchain.com/peers/peer1.ospedale-del-mare.aslnapoli1.medchain.com/tls/ca.crt
-    grpcOptions:
-      ssl-target-name-override: peer1.ospedale-del-mare.aslnapoli1.medchain.com
+    url: grpc://localhost:7062
   peer0.ospedale-sgiuliano.aslnapoli2.medchain.com:
-    url: grpcs://localhost:7081
-    tlsCACerts:
-      path: >-
-        /home/dazza/sicurezza/MedChain/fablo-target/fabric-config/crypto-config/peerOrganizations/ospedale-sgiuliano.aslnapoli2.medchain.com/peers/peer0.ospedale-sgiuliano.aslnapoli2.medchain.com/tls/ca.crt
-    grpcOptions:
-      ssl-target-name-override: peer0.ospedale-sgiuliano.aslnapoli2.medchain.com
+    url: grpc://localhost:7081
   peer1.ospedale-sgiuliano.aslnapoli2.medchain.com:
-    url: grpcs://localhost:7082
-    tlsCACerts:
-      path: >-
-        /home/dazza/sicurezza/MedChain/fablo-target/fabric-config/crypto-config/peerOrganizations/ospedale-sgiuliano.aslnapoli2.medchain.com/peers/peer1.ospedale-sgiuliano.aslnapoli2.medchain.com/tls/ca.crt
-    grpcOptions:
-      ssl-target-name-override: peer1.ospedale-sgiuliano.aslnapoli2.medchain.com
+    url: grpc://localhost:7082
   peer0.medicina-generale.napoli.medchain.com:
-    url: grpcs://localhost:7101
-    tlsCACerts:
-      path: >-
-        /home/dazza/sicurezza/MedChain/fablo-target/fabric-config/crypto-config/peerOrganizations/medicina-generale.napoli.medchain.com/peers/peer0.medicina-generale.napoli.medchain.com/tls/ca.crt
-    grpcOptions:
-      ssl-target-name-override: peer0.medicina-generale.napoli.medchain.com
+    url: grpc://localhost:7101
   peer1.medicina-generale.napoli.medchain.com:
-    url: grpcs://localhost:7102
-    tlsCACerts:
-      path: >-
-        /home/dazza/sicurezza/MedChain/fablo-target/fabric-config/crypto-config/peerOrganizations/medicina-generale.napoli.medchain.com/peers/peer1.medicina-generale.napoli.medchain.com/tls/ca.crt
-    grpcOptions:
-      ssl-target-name-override: peer1.medicina-generale.napoli.medchain.com
+    url: grpc://localhost:7102
   peer0.neurologia.napoli.medchain.com:
-    url: grpcs://localhost:7121
-    tlsCACerts:
-      path: >-
-        /home/dazza/sicurezza/MedChain/fablo-target/fabric-config/crypto-config/peerOrganizations/neurologia.napoli.medchain.com/peers/peer0.neurologia.napoli.medchain.com/tls/ca.crt
-    grpcOptions:
-      ssl-target-name-override: peer0.neurologia.napoli.medchain.com
+    url: grpc://localhost:7121
   peer1.neurologia.napoli.medchain.com:
-    url: grpcs://localhost:7122
-    tlsCACerts:
-      path: >-
-        /home/dazza/sicurezza/MedChain/fablo-target/fabric-config/crypto-config/peerOrganizations/neurologia.napoli.medchain.com/peers/peer1.neurologia.napoli.medchain.com/tls/ca.crt
-    grpcOptions:
-      ssl-target-name-override: peer1.neurologia.napoli.medchain.com
+    url: grpc://localhost:7122
   peer0.farmacia-petrone.napoli.medchain.com:
-    url: grpcs://localhost:7141
-    tlsCACerts:
-      path: >-
-        /home/dazza/sicurezza/MedChain/fablo-target/fabric-config/crypto-config/peerOrganizations/farmacia-petrone.napoli.medchain.com/peers/peer0.farmacia-petrone.napoli.medchain.com/tls/ca.crt
-    grpcOptions:
-      ssl-target-name-override: peer0.farmacia-petrone.napoli.medchain.com
+    url: grpc://localhost:7141
   peer0.farmacia-carbone.napoli.medchain.com:
-    url: grpcs://localhost:7161
-    tlsCACerts:
-      path: >-
-        /home/dazza/sicurezza/MedChain/fablo-target/fabric-config/crypto-config/peerOrganizations/farmacia-carbone.napoli.medchain.com/peers/peer0.farmacia-carbone.napoli.medchain.com/tls/ca.crt
-    grpcOptions:
-      ssl-target-name-override: peer0.farmacia-carbone.napoli.medchain.com
+    url: grpc://localhost:7161
   peer0.laboratorio-analisi-cmo.medchain.com:
-    url: grpcs://localhost:7181
-    tlsCACerts:
-      path: >-
-        /home/dazza/sicurezza/MedChain/fablo-target/fabric-config/crypto-config/peerOrganizations/laboratorio-analisi-cmo.medchain.com/peers/peer0.laboratorio-analisi-cmo.medchain.com/tls/ca.crt
-    grpcOptions:
-      ssl-target-name-override: peer0.laboratorio-analisi-cmo.medchain.com
+    url: grpc://localhost:7181
   peer0.laboratorio-analisi-sdn.medchain.com:
-    url: grpcs://localhost:7201
-    tlsCACerts:
-      path: >-
-        /home/dazza/sicurezza/MedChain/fablo-target/fabric-config/crypto-config/peerOrganizations/laboratorio-analisi-sdn.medchain.com/peers/peer0.laboratorio-analisi-sdn.medchain.com/tls/ca.crt
-    grpcOptions:
-      ssl-target-name-override: peer0.laboratorio-analisi-sdn.medchain.com
+    url: grpc://localhost:7201
 certificateAuthorities:
   ca.ospedale-del-mare.aslnapoli1.medchain.com:
     url: http://localhost:7060
     caName: ca.ospedale-del-mare.aslnapoli1.medchain.com
-    tlsCACerts:
-      path: >-
-        /home/dazza/sicurezza/MedChain/fablo-target/fabric-config/crypto-config/peerOrganizations/ospedale-del-mare.aslnapoli1.medchain.com/ca/ca.ospedale-del-mare.aslnapoli1.medchain.com-cert.pem
     httpOptions:
       verify: false

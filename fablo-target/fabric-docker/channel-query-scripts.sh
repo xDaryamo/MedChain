@@ -12,834 +12,834 @@ channelQuery() {
 
   elif [ "$1" = "list" ] && [ "$2" = "ospedalemaresca" ] && [ "$3" = "peer0" ]; then
 
-    peerChannelListTls "cli.ospedale-maresca.aslnapoli3.medchain.com" "peer0.ospedale-maresca.aslnapoli3.medchain.com:7041" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem"
+    peerChannelList "cli.ospedale-maresca.aslnapoli3.medchain.com" "peer0.ospedale-maresca.aslnapoli3.medchain.com:7041"
 
   elif
     [ "$1" = "list" ] && [ "$2" = "ospedalemaresca" ] && [ "$3" = "peer1" ]
   then
 
-    peerChannelListTls "cli.ospedale-maresca.aslnapoli3.medchain.com" "peer1.ospedale-maresca.aslnapoli3.medchain.com:7042" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem"
+    peerChannelList "cli.ospedale-maresca.aslnapoli3.medchain.com" "peer1.ospedale-maresca.aslnapoli3.medchain.com:7042"
 
   elif
     [ "$1" = "list" ] && [ "$2" = "ospedaledelmare" ] && [ "$3" = "peer0" ]
   then
 
-    peerChannelListTls "cli.ospedale-del-mare.aslnapoli1.medchain.com" "peer0.ospedale-del-mare.aslnapoli1.medchain.com:7061" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem"
+    peerChannelList "cli.ospedale-del-mare.aslnapoli1.medchain.com" "peer0.ospedale-del-mare.aslnapoli1.medchain.com:7061"
 
   elif
     [ "$1" = "list" ] && [ "$2" = "ospedaledelmare" ] && [ "$3" = "peer1" ]
   then
 
-    peerChannelListTls "cli.ospedale-del-mare.aslnapoli1.medchain.com" "peer1.ospedale-del-mare.aslnapoli1.medchain.com:7062" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem"
+    peerChannelList "cli.ospedale-del-mare.aslnapoli1.medchain.com" "peer1.ospedale-del-mare.aslnapoli1.medchain.com:7062"
 
   elif
     [ "$1" = "list" ] && [ "$2" = "ospedalesgiuliano" ] && [ "$3" = "peer0" ]
   then
 
-    peerChannelListTls "cli.ospedale-sgiuliano.aslnapoli2.medchain.com" "peer0.ospedale-sgiuliano.aslnapoli2.medchain.com:7081" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem"
+    peerChannelList "cli.ospedale-sgiuliano.aslnapoli2.medchain.com" "peer0.ospedale-sgiuliano.aslnapoli2.medchain.com:7081"
 
   elif
     [ "$1" = "list" ] && [ "$2" = "ospedalesgiuliano" ] && [ "$3" = "peer1" ]
   then
 
-    peerChannelListTls "cli.ospedale-sgiuliano.aslnapoli2.medchain.com" "peer1.ospedale-sgiuliano.aslnapoli2.medchain.com:7082" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem"
+    peerChannelList "cli.ospedale-sgiuliano.aslnapoli2.medchain.com" "peer1.ospedale-sgiuliano.aslnapoli2.medchain.com:7082"
 
   elif
     [ "$1" = "list" ] && [ "$2" = "medicinageneralenapoli" ] && [ "$3" = "peer0" ]
   then
 
-    peerChannelListTls "cli.medicina-generale.napoli.medchain.com" "peer0.medicina-generale.napoli.medchain.com:7101" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem"
+    peerChannelList "cli.medicina-generale.napoli.medchain.com" "peer0.medicina-generale.napoli.medchain.com:7101"
 
   elif
     [ "$1" = "list" ] && [ "$2" = "medicinageneralenapoli" ] && [ "$3" = "peer1" ]
   then
 
-    peerChannelListTls "cli.medicina-generale.napoli.medchain.com" "peer1.medicina-generale.napoli.medchain.com:7102" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem"
+    peerChannelList "cli.medicina-generale.napoli.medchain.com" "peer1.medicina-generale.napoli.medchain.com:7102"
 
   elif
     [ "$1" = "list" ] && [ "$2" = "neurologianapoli" ] && [ "$3" = "peer0" ]
   then
 
-    peerChannelListTls "cli.neurologia.napoli.medchain.com" "peer0.neurologia.napoli.medchain.com:7121" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem"
+    peerChannelList "cli.neurologia.napoli.medchain.com" "peer0.neurologia.napoli.medchain.com:7121"
 
   elif
     [ "$1" = "list" ] && [ "$2" = "neurologianapoli" ] && [ "$3" = "peer1" ]
   then
 
-    peerChannelListTls "cli.neurologia.napoli.medchain.com" "peer1.neurologia.napoli.medchain.com:7122" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem"
+    peerChannelList "cli.neurologia.napoli.medchain.com" "peer1.neurologia.napoli.medchain.com:7122"
 
   elif
     [ "$1" = "list" ] && [ "$2" = "farmaciapetrone" ] && [ "$3" = "peer0" ]
   then
 
-    peerChannelListTls "cli.farmacia-petrone.napoli.medchain.com" "peer0.farmacia-petrone.napoli.medchain.com:7141" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem"
+    peerChannelList "cli.farmacia-petrone.napoli.medchain.com" "peer0.farmacia-petrone.napoli.medchain.com:7141"
 
   elif
     [ "$1" = "list" ] && [ "$2" = "farmaciacarbone" ] && [ "$3" = "peer0" ]
   then
 
-    peerChannelListTls "cli.farmacia-carbone.napoli.medchain.com" "peer0.farmacia-carbone.napoli.medchain.com:7161" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem"
+    peerChannelList "cli.farmacia-carbone.napoli.medchain.com" "peer0.farmacia-carbone.napoli.medchain.com:7161"
 
   elif
     [ "$1" = "list" ] && [ "$2" = "laboratorioanalisicmo" ] && [ "$3" = "peer0" ]
   then
 
-    peerChannelListTls "cli.laboratorio-analisi-cmo.medchain.com" "peer0.laboratorio-analisi-cmo.medchain.com:7181" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem"
+    peerChannelList "cli.laboratorio-analisi-cmo.medchain.com" "peer0.laboratorio-analisi-cmo.medchain.com:7181"
 
   elif
     [ "$1" = "list" ] && [ "$2" = "laboratorioanalisisdn" ] && [ "$3" = "peer0" ]
   then
 
-    peerChannelListTls "cli.laboratorio-analisi-sdn.medchain.com" "peer0.laboratorio-analisi-sdn.medchain.com:7201" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem"
+    peerChannelList "cli.laboratorio-analisi-sdn.medchain.com" "peer0.laboratorio-analisi-sdn.medchain.com:7201"
 
   elif
 
     [ "$1" = "getinfo" ] && [ "$2" = "patient-records-channel" ] && [ "$3" = "ospedalemaresca" ] && [ "$4" = "peer0" ]
   then
 
-    peerChannelGetInfoTls "patient-records-channel" "cli.ospedale-maresca.aslnapoli3.medchain.com" "peer0.ospedale-maresca.aslnapoli3.medchain.com:7041" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem"
+    peerChannelGetInfo "patient-records-channel" "cli.ospedale-maresca.aslnapoli3.medchain.com" "peer0.ospedale-maresca.aslnapoli3.medchain.com:7041"
 
   elif [ "$1" = "fetch" ] && [ "$2" = "config" ] && [ "$3" = "patient-records-channel" ] && [ "$4" = "ospedalemaresca" ] && [ "$5" = "peer0" ]; then
     TARGET_FILE=${6:-"$channel-config.json"}
 
-    peerChannelFetchConfigTls "patient-records-channel" "cli.ospedale-maresca.aslnapoli3.medchain.com" "$TARGET_FILE" "peer0.ospedale-maresca.aslnapoli3.medchain.com:7041" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem"
+    peerChannelFetchConfig "patient-records-channel" "cli.ospedale-maresca.aslnapoli3.medchain.com" "$TARGET_FILE" "peer0.ospedale-maresca.aslnapoli3.medchain.com:7041"
 
   elif [ "$1" = "fetch" ] && [ "$3" = "patient-records-channel" ] && [ "$4" = "ospedalemaresca" ] && [ "$5" = "peer0" ]; then
     BLOCK_NAME=$2
     TARGET_FILE=${6:-"$BLOCK_NAME.block"}
 
-    peerChannelFetchBlockTls "patient-records-channel" "cli.ospedale-maresca.aslnapoli3.medchain.com" "${BLOCK_NAME}" "peer0.ospedale-maresca.aslnapoli3.medchain.com:7041" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem" "$TARGET_FILE"
+    peerChannelFetchBlock "patient-records-channel" "cli.ospedale-maresca.aslnapoli3.medchain.com" "${BLOCK_NAME}" "peer0.ospedale-maresca.aslnapoli3.medchain.com:7041" "$TARGET_FILE"
 
   elif
     [ "$1" = "getinfo" ] && [ "$2" = "patient-records-channel" ] && [ "$3" = "ospedalemaresca" ] && [ "$4" = "peer1" ]
   then
 
-    peerChannelGetInfoTls "patient-records-channel" "cli.ospedale-maresca.aslnapoli3.medchain.com" "peer1.ospedale-maresca.aslnapoli3.medchain.com:7042" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem"
+    peerChannelGetInfo "patient-records-channel" "cli.ospedale-maresca.aslnapoli3.medchain.com" "peer1.ospedale-maresca.aslnapoli3.medchain.com:7042"
 
   elif [ "$1" = "fetch" ] && [ "$2" = "config" ] && [ "$3" = "patient-records-channel" ] && [ "$4" = "ospedalemaresca" ] && [ "$5" = "peer1" ]; then
     TARGET_FILE=${6:-"$channel-config.json"}
 
-    peerChannelFetchConfigTls "patient-records-channel" "cli.ospedale-maresca.aslnapoli3.medchain.com" "$TARGET_FILE" "peer1.ospedale-maresca.aslnapoli3.medchain.com:7042" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem"
+    peerChannelFetchConfig "patient-records-channel" "cli.ospedale-maresca.aslnapoli3.medchain.com" "$TARGET_FILE" "peer1.ospedale-maresca.aslnapoli3.medchain.com:7042"
 
   elif [ "$1" = "fetch" ] && [ "$3" = "patient-records-channel" ] && [ "$4" = "ospedalemaresca" ] && [ "$5" = "peer1" ]; then
     BLOCK_NAME=$2
     TARGET_FILE=${6:-"$BLOCK_NAME.block"}
 
-    peerChannelFetchBlockTls "patient-records-channel" "cli.ospedale-maresca.aslnapoli3.medchain.com" "${BLOCK_NAME}" "peer1.ospedale-maresca.aslnapoli3.medchain.com:7042" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem" "$TARGET_FILE"
+    peerChannelFetchBlock "patient-records-channel" "cli.ospedale-maresca.aslnapoli3.medchain.com" "${BLOCK_NAME}" "peer1.ospedale-maresca.aslnapoli3.medchain.com:7042" "$TARGET_FILE"
 
   elif
     [ "$1" = "getinfo" ] && [ "$2" = "patient-records-channel" ] && [ "$3" = "ospedaledelmare" ] && [ "$4" = "peer0" ]
   then
 
-    peerChannelGetInfoTls "patient-records-channel" "cli.ospedale-del-mare.aslnapoli1.medchain.com" "peer0.ospedale-del-mare.aslnapoli1.medchain.com:7061" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem"
+    peerChannelGetInfo "patient-records-channel" "cli.ospedale-del-mare.aslnapoli1.medchain.com" "peer0.ospedale-del-mare.aslnapoli1.medchain.com:7061"
 
   elif [ "$1" = "fetch" ] && [ "$2" = "config" ] && [ "$3" = "patient-records-channel" ] && [ "$4" = "ospedaledelmare" ] && [ "$5" = "peer0" ]; then
     TARGET_FILE=${6:-"$channel-config.json"}
 
-    peerChannelFetchConfigTls "patient-records-channel" "cli.ospedale-del-mare.aslnapoli1.medchain.com" "$TARGET_FILE" "peer0.ospedale-del-mare.aslnapoli1.medchain.com:7061" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem"
+    peerChannelFetchConfig "patient-records-channel" "cli.ospedale-del-mare.aslnapoli1.medchain.com" "$TARGET_FILE" "peer0.ospedale-del-mare.aslnapoli1.medchain.com:7061"
 
   elif [ "$1" = "fetch" ] && [ "$3" = "patient-records-channel" ] && [ "$4" = "ospedaledelmare" ] && [ "$5" = "peer0" ]; then
     BLOCK_NAME=$2
     TARGET_FILE=${6:-"$BLOCK_NAME.block"}
 
-    peerChannelFetchBlockTls "patient-records-channel" "cli.ospedale-del-mare.aslnapoli1.medchain.com" "${BLOCK_NAME}" "peer0.ospedale-del-mare.aslnapoli1.medchain.com:7061" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem" "$TARGET_FILE"
+    peerChannelFetchBlock "patient-records-channel" "cli.ospedale-del-mare.aslnapoli1.medchain.com" "${BLOCK_NAME}" "peer0.ospedale-del-mare.aslnapoli1.medchain.com:7061" "$TARGET_FILE"
 
   elif
     [ "$1" = "getinfo" ] && [ "$2" = "patient-records-channel" ] && [ "$3" = "ospedaledelmare" ] && [ "$4" = "peer1" ]
   then
 
-    peerChannelGetInfoTls "patient-records-channel" "cli.ospedale-del-mare.aslnapoli1.medchain.com" "peer1.ospedale-del-mare.aslnapoli1.medchain.com:7062" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem"
+    peerChannelGetInfo "patient-records-channel" "cli.ospedale-del-mare.aslnapoli1.medchain.com" "peer1.ospedale-del-mare.aslnapoli1.medchain.com:7062"
 
   elif [ "$1" = "fetch" ] && [ "$2" = "config" ] && [ "$3" = "patient-records-channel" ] && [ "$4" = "ospedaledelmare" ] && [ "$5" = "peer1" ]; then
     TARGET_FILE=${6:-"$channel-config.json"}
 
-    peerChannelFetchConfigTls "patient-records-channel" "cli.ospedale-del-mare.aslnapoli1.medchain.com" "$TARGET_FILE" "peer1.ospedale-del-mare.aslnapoli1.medchain.com:7062" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem"
+    peerChannelFetchConfig "patient-records-channel" "cli.ospedale-del-mare.aslnapoli1.medchain.com" "$TARGET_FILE" "peer1.ospedale-del-mare.aslnapoli1.medchain.com:7062"
 
   elif [ "$1" = "fetch" ] && [ "$3" = "patient-records-channel" ] && [ "$4" = "ospedaledelmare" ] && [ "$5" = "peer1" ]; then
     BLOCK_NAME=$2
     TARGET_FILE=${6:-"$BLOCK_NAME.block"}
 
-    peerChannelFetchBlockTls "patient-records-channel" "cli.ospedale-del-mare.aslnapoli1.medchain.com" "${BLOCK_NAME}" "peer1.ospedale-del-mare.aslnapoli1.medchain.com:7062" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem" "$TARGET_FILE"
+    peerChannelFetchBlock "patient-records-channel" "cli.ospedale-del-mare.aslnapoli1.medchain.com" "${BLOCK_NAME}" "peer1.ospedale-del-mare.aslnapoli1.medchain.com:7062" "$TARGET_FILE"
 
   elif
     [ "$1" = "getinfo" ] && [ "$2" = "patient-records-channel" ] && [ "$3" = "ospedalesgiuliano" ] && [ "$4" = "peer0" ]
   then
 
-    peerChannelGetInfoTls "patient-records-channel" "cli.ospedale-sgiuliano.aslnapoli2.medchain.com" "peer0.ospedale-sgiuliano.aslnapoli2.medchain.com:7081" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem"
+    peerChannelGetInfo "patient-records-channel" "cli.ospedale-sgiuliano.aslnapoli2.medchain.com" "peer0.ospedale-sgiuliano.aslnapoli2.medchain.com:7081"
 
   elif [ "$1" = "fetch" ] && [ "$2" = "config" ] && [ "$3" = "patient-records-channel" ] && [ "$4" = "ospedalesgiuliano" ] && [ "$5" = "peer0" ]; then
     TARGET_FILE=${6:-"$channel-config.json"}
 
-    peerChannelFetchConfigTls "patient-records-channel" "cli.ospedale-sgiuliano.aslnapoli2.medchain.com" "$TARGET_FILE" "peer0.ospedale-sgiuliano.aslnapoli2.medchain.com:7081" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem"
+    peerChannelFetchConfig "patient-records-channel" "cli.ospedale-sgiuliano.aslnapoli2.medchain.com" "$TARGET_FILE" "peer0.ospedale-sgiuliano.aslnapoli2.medchain.com:7081"
 
   elif [ "$1" = "fetch" ] && [ "$3" = "patient-records-channel" ] && [ "$4" = "ospedalesgiuliano" ] && [ "$5" = "peer0" ]; then
     BLOCK_NAME=$2
     TARGET_FILE=${6:-"$BLOCK_NAME.block"}
 
-    peerChannelFetchBlockTls "patient-records-channel" "cli.ospedale-sgiuliano.aslnapoli2.medchain.com" "${BLOCK_NAME}" "peer0.ospedale-sgiuliano.aslnapoli2.medchain.com:7081" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem" "$TARGET_FILE"
+    peerChannelFetchBlock "patient-records-channel" "cli.ospedale-sgiuliano.aslnapoli2.medchain.com" "${BLOCK_NAME}" "peer0.ospedale-sgiuliano.aslnapoli2.medchain.com:7081" "$TARGET_FILE"
 
   elif
     [ "$1" = "getinfo" ] && [ "$2" = "patient-records-channel" ] && [ "$3" = "ospedalesgiuliano" ] && [ "$4" = "peer1" ]
   then
 
-    peerChannelGetInfoTls "patient-records-channel" "cli.ospedale-sgiuliano.aslnapoli2.medchain.com" "peer1.ospedale-sgiuliano.aslnapoli2.medchain.com:7082" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem"
+    peerChannelGetInfo "patient-records-channel" "cli.ospedale-sgiuliano.aslnapoli2.medchain.com" "peer1.ospedale-sgiuliano.aslnapoli2.medchain.com:7082"
 
   elif [ "$1" = "fetch" ] && [ "$2" = "config" ] && [ "$3" = "patient-records-channel" ] && [ "$4" = "ospedalesgiuliano" ] && [ "$5" = "peer1" ]; then
     TARGET_FILE=${6:-"$channel-config.json"}
 
-    peerChannelFetchConfigTls "patient-records-channel" "cli.ospedale-sgiuliano.aslnapoli2.medchain.com" "$TARGET_FILE" "peer1.ospedale-sgiuliano.aslnapoli2.medchain.com:7082" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem"
+    peerChannelFetchConfig "patient-records-channel" "cli.ospedale-sgiuliano.aslnapoli2.medchain.com" "$TARGET_FILE" "peer1.ospedale-sgiuliano.aslnapoli2.medchain.com:7082"
 
   elif [ "$1" = "fetch" ] && [ "$3" = "patient-records-channel" ] && [ "$4" = "ospedalesgiuliano" ] && [ "$5" = "peer1" ]; then
     BLOCK_NAME=$2
     TARGET_FILE=${6:-"$BLOCK_NAME.block"}
 
-    peerChannelFetchBlockTls "patient-records-channel" "cli.ospedale-sgiuliano.aslnapoli2.medchain.com" "${BLOCK_NAME}" "peer1.ospedale-sgiuliano.aslnapoli2.medchain.com:7082" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem" "$TARGET_FILE"
+    peerChannelFetchBlock "patient-records-channel" "cli.ospedale-sgiuliano.aslnapoli2.medchain.com" "${BLOCK_NAME}" "peer1.ospedale-sgiuliano.aslnapoli2.medchain.com:7082" "$TARGET_FILE"
 
   elif
     [ "$1" = "getinfo" ] && [ "$2" = "patient-records-channel" ] && [ "$3" = "medicinageneralenapoli" ] && [ "$4" = "peer0" ]
   then
 
-    peerChannelGetInfoTls "patient-records-channel" "cli.medicina-generale.napoli.medchain.com" "peer0.medicina-generale.napoli.medchain.com:7101" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem"
+    peerChannelGetInfo "patient-records-channel" "cli.medicina-generale.napoli.medchain.com" "peer0.medicina-generale.napoli.medchain.com:7101"
 
   elif [ "$1" = "fetch" ] && [ "$2" = "config" ] && [ "$3" = "patient-records-channel" ] && [ "$4" = "medicinageneralenapoli" ] && [ "$5" = "peer0" ]; then
     TARGET_FILE=${6:-"$channel-config.json"}
 
-    peerChannelFetchConfigTls "patient-records-channel" "cli.medicina-generale.napoli.medchain.com" "$TARGET_FILE" "peer0.medicina-generale.napoli.medchain.com:7101" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem"
+    peerChannelFetchConfig "patient-records-channel" "cli.medicina-generale.napoli.medchain.com" "$TARGET_FILE" "peer0.medicina-generale.napoli.medchain.com:7101"
 
   elif [ "$1" = "fetch" ] && [ "$3" = "patient-records-channel" ] && [ "$4" = "medicinageneralenapoli" ] && [ "$5" = "peer0" ]; then
     BLOCK_NAME=$2
     TARGET_FILE=${6:-"$BLOCK_NAME.block"}
 
-    peerChannelFetchBlockTls "patient-records-channel" "cli.medicina-generale.napoli.medchain.com" "${BLOCK_NAME}" "peer0.medicina-generale.napoli.medchain.com:7101" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem" "$TARGET_FILE"
+    peerChannelFetchBlock "patient-records-channel" "cli.medicina-generale.napoli.medchain.com" "${BLOCK_NAME}" "peer0.medicina-generale.napoli.medchain.com:7101" "$TARGET_FILE"
 
   elif
     [ "$1" = "getinfo" ] && [ "$2" = "patient-records-channel" ] && [ "$3" = "medicinageneralenapoli" ] && [ "$4" = "peer1" ]
   then
 
-    peerChannelGetInfoTls "patient-records-channel" "cli.medicina-generale.napoli.medchain.com" "peer1.medicina-generale.napoli.medchain.com:7102" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem"
+    peerChannelGetInfo "patient-records-channel" "cli.medicina-generale.napoli.medchain.com" "peer1.medicina-generale.napoli.medchain.com:7102"
 
   elif [ "$1" = "fetch" ] && [ "$2" = "config" ] && [ "$3" = "patient-records-channel" ] && [ "$4" = "medicinageneralenapoli" ] && [ "$5" = "peer1" ]; then
     TARGET_FILE=${6:-"$channel-config.json"}
 
-    peerChannelFetchConfigTls "patient-records-channel" "cli.medicina-generale.napoli.medchain.com" "$TARGET_FILE" "peer1.medicina-generale.napoli.medchain.com:7102" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem"
+    peerChannelFetchConfig "patient-records-channel" "cli.medicina-generale.napoli.medchain.com" "$TARGET_FILE" "peer1.medicina-generale.napoli.medchain.com:7102"
 
   elif [ "$1" = "fetch" ] && [ "$3" = "patient-records-channel" ] && [ "$4" = "medicinageneralenapoli" ] && [ "$5" = "peer1" ]; then
     BLOCK_NAME=$2
     TARGET_FILE=${6:-"$BLOCK_NAME.block"}
 
-    peerChannelFetchBlockTls "patient-records-channel" "cli.medicina-generale.napoli.medchain.com" "${BLOCK_NAME}" "peer1.medicina-generale.napoli.medchain.com:7102" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem" "$TARGET_FILE"
+    peerChannelFetchBlock "patient-records-channel" "cli.medicina-generale.napoli.medchain.com" "${BLOCK_NAME}" "peer1.medicina-generale.napoli.medchain.com:7102" "$TARGET_FILE"
 
   elif
     [ "$1" = "getinfo" ] && [ "$2" = "patient-records-channel" ] && [ "$3" = "neurologianapoli" ] && [ "$4" = "peer0" ]
   then
 
-    peerChannelGetInfoTls "patient-records-channel" "cli.neurologia.napoli.medchain.com" "peer0.neurologia.napoli.medchain.com:7121" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem"
+    peerChannelGetInfo "patient-records-channel" "cli.neurologia.napoli.medchain.com" "peer0.neurologia.napoli.medchain.com:7121"
 
   elif [ "$1" = "fetch" ] && [ "$2" = "config" ] && [ "$3" = "patient-records-channel" ] && [ "$4" = "neurologianapoli" ] && [ "$5" = "peer0" ]; then
     TARGET_FILE=${6:-"$channel-config.json"}
 
-    peerChannelFetchConfigTls "patient-records-channel" "cli.neurologia.napoli.medchain.com" "$TARGET_FILE" "peer0.neurologia.napoli.medchain.com:7121" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem"
+    peerChannelFetchConfig "patient-records-channel" "cli.neurologia.napoli.medchain.com" "$TARGET_FILE" "peer0.neurologia.napoli.medchain.com:7121"
 
   elif [ "$1" = "fetch" ] && [ "$3" = "patient-records-channel" ] && [ "$4" = "neurologianapoli" ] && [ "$5" = "peer0" ]; then
     BLOCK_NAME=$2
     TARGET_FILE=${6:-"$BLOCK_NAME.block"}
 
-    peerChannelFetchBlockTls "patient-records-channel" "cli.neurologia.napoli.medchain.com" "${BLOCK_NAME}" "peer0.neurologia.napoli.medchain.com:7121" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem" "$TARGET_FILE"
+    peerChannelFetchBlock "patient-records-channel" "cli.neurologia.napoli.medchain.com" "${BLOCK_NAME}" "peer0.neurologia.napoli.medchain.com:7121" "$TARGET_FILE"
 
   elif
     [ "$1" = "getinfo" ] && [ "$2" = "patient-records-channel" ] && [ "$3" = "neurologianapoli" ] && [ "$4" = "peer1" ]
   then
 
-    peerChannelGetInfoTls "patient-records-channel" "cli.neurologia.napoli.medchain.com" "peer1.neurologia.napoli.medchain.com:7122" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem"
+    peerChannelGetInfo "patient-records-channel" "cli.neurologia.napoli.medchain.com" "peer1.neurologia.napoli.medchain.com:7122"
 
   elif [ "$1" = "fetch" ] && [ "$2" = "config" ] && [ "$3" = "patient-records-channel" ] && [ "$4" = "neurologianapoli" ] && [ "$5" = "peer1" ]; then
     TARGET_FILE=${6:-"$channel-config.json"}
 
-    peerChannelFetchConfigTls "patient-records-channel" "cli.neurologia.napoli.medchain.com" "$TARGET_FILE" "peer1.neurologia.napoli.medchain.com:7122" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem"
+    peerChannelFetchConfig "patient-records-channel" "cli.neurologia.napoli.medchain.com" "$TARGET_FILE" "peer1.neurologia.napoli.medchain.com:7122"
 
   elif [ "$1" = "fetch" ] && [ "$3" = "patient-records-channel" ] && [ "$4" = "neurologianapoli" ] && [ "$5" = "peer1" ]; then
     BLOCK_NAME=$2
     TARGET_FILE=${6:-"$BLOCK_NAME.block"}
 
-    peerChannelFetchBlockTls "patient-records-channel" "cli.neurologia.napoli.medchain.com" "${BLOCK_NAME}" "peer1.neurologia.napoli.medchain.com:7122" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem" "$TARGET_FILE"
+    peerChannelFetchBlock "patient-records-channel" "cli.neurologia.napoli.medchain.com" "${BLOCK_NAME}" "peer1.neurologia.napoli.medchain.com:7122" "$TARGET_FILE"
 
   elif
     [ "$1" = "getinfo" ] && [ "$2" = "prescriptions-channel" ] && [ "$3" = "medicinageneralenapoli" ] && [ "$4" = "peer0" ]
   then
 
-    peerChannelGetInfoTls "prescriptions-channel" "cli.medicina-generale.napoli.medchain.com" "peer0.medicina-generale.napoli.medchain.com:7101" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem"
+    peerChannelGetInfo "prescriptions-channel" "cli.medicina-generale.napoli.medchain.com" "peer0.medicina-generale.napoli.medchain.com:7101"
 
   elif [ "$1" = "fetch" ] && [ "$2" = "config" ] && [ "$3" = "prescriptions-channel" ] && [ "$4" = "medicinageneralenapoli" ] && [ "$5" = "peer0" ]; then
     TARGET_FILE=${6:-"$channel-config.json"}
 
-    peerChannelFetchConfigTls "prescriptions-channel" "cli.medicina-generale.napoli.medchain.com" "$TARGET_FILE" "peer0.medicina-generale.napoli.medchain.com:7101" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem"
+    peerChannelFetchConfig "prescriptions-channel" "cli.medicina-generale.napoli.medchain.com" "$TARGET_FILE" "peer0.medicina-generale.napoli.medchain.com:7101"
 
   elif [ "$1" = "fetch" ] && [ "$3" = "prescriptions-channel" ] && [ "$4" = "medicinageneralenapoli" ] && [ "$5" = "peer0" ]; then
     BLOCK_NAME=$2
     TARGET_FILE=${6:-"$BLOCK_NAME.block"}
 
-    peerChannelFetchBlockTls "prescriptions-channel" "cli.medicina-generale.napoli.medchain.com" "${BLOCK_NAME}" "peer0.medicina-generale.napoli.medchain.com:7101" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem" "$TARGET_FILE"
+    peerChannelFetchBlock "prescriptions-channel" "cli.medicina-generale.napoli.medchain.com" "${BLOCK_NAME}" "peer0.medicina-generale.napoli.medchain.com:7101" "$TARGET_FILE"
 
   elif
     [ "$1" = "getinfo" ] && [ "$2" = "prescriptions-channel" ] && [ "$3" = "medicinageneralenapoli" ] && [ "$4" = "peer1" ]
   then
 
-    peerChannelGetInfoTls "prescriptions-channel" "cli.medicina-generale.napoli.medchain.com" "peer1.medicina-generale.napoli.medchain.com:7102" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem"
+    peerChannelGetInfo "prescriptions-channel" "cli.medicina-generale.napoli.medchain.com" "peer1.medicina-generale.napoli.medchain.com:7102"
 
   elif [ "$1" = "fetch" ] && [ "$2" = "config" ] && [ "$3" = "prescriptions-channel" ] && [ "$4" = "medicinageneralenapoli" ] && [ "$5" = "peer1" ]; then
     TARGET_FILE=${6:-"$channel-config.json"}
 
-    peerChannelFetchConfigTls "prescriptions-channel" "cli.medicina-generale.napoli.medchain.com" "$TARGET_FILE" "peer1.medicina-generale.napoli.medchain.com:7102" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem"
+    peerChannelFetchConfig "prescriptions-channel" "cli.medicina-generale.napoli.medchain.com" "$TARGET_FILE" "peer1.medicina-generale.napoli.medchain.com:7102"
 
   elif [ "$1" = "fetch" ] && [ "$3" = "prescriptions-channel" ] && [ "$4" = "medicinageneralenapoli" ] && [ "$5" = "peer1" ]; then
     BLOCK_NAME=$2
     TARGET_FILE=${6:-"$BLOCK_NAME.block"}
 
-    peerChannelFetchBlockTls "prescriptions-channel" "cli.medicina-generale.napoli.medchain.com" "${BLOCK_NAME}" "peer1.medicina-generale.napoli.medchain.com:7102" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem" "$TARGET_FILE"
+    peerChannelFetchBlock "prescriptions-channel" "cli.medicina-generale.napoli.medchain.com" "${BLOCK_NAME}" "peer1.medicina-generale.napoli.medchain.com:7102" "$TARGET_FILE"
 
   elif
     [ "$1" = "getinfo" ] && [ "$2" = "prescriptions-channel" ] && [ "$3" = "neurologianapoli" ] && [ "$4" = "peer0" ]
   then
 
-    peerChannelGetInfoTls "prescriptions-channel" "cli.neurologia.napoli.medchain.com" "peer0.neurologia.napoli.medchain.com:7121" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem"
+    peerChannelGetInfo "prescriptions-channel" "cli.neurologia.napoli.medchain.com" "peer0.neurologia.napoli.medchain.com:7121"
 
   elif [ "$1" = "fetch" ] && [ "$2" = "config" ] && [ "$3" = "prescriptions-channel" ] && [ "$4" = "neurologianapoli" ] && [ "$5" = "peer0" ]; then
     TARGET_FILE=${6:-"$channel-config.json"}
 
-    peerChannelFetchConfigTls "prescriptions-channel" "cli.neurologia.napoli.medchain.com" "$TARGET_FILE" "peer0.neurologia.napoli.medchain.com:7121" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem"
+    peerChannelFetchConfig "prescriptions-channel" "cli.neurologia.napoli.medchain.com" "$TARGET_FILE" "peer0.neurologia.napoli.medchain.com:7121"
 
   elif [ "$1" = "fetch" ] && [ "$3" = "prescriptions-channel" ] && [ "$4" = "neurologianapoli" ] && [ "$5" = "peer0" ]; then
     BLOCK_NAME=$2
     TARGET_FILE=${6:-"$BLOCK_NAME.block"}
 
-    peerChannelFetchBlockTls "prescriptions-channel" "cli.neurologia.napoli.medchain.com" "${BLOCK_NAME}" "peer0.neurologia.napoli.medchain.com:7121" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem" "$TARGET_FILE"
+    peerChannelFetchBlock "prescriptions-channel" "cli.neurologia.napoli.medchain.com" "${BLOCK_NAME}" "peer0.neurologia.napoli.medchain.com:7121" "$TARGET_FILE"
 
   elif
     [ "$1" = "getinfo" ] && [ "$2" = "prescriptions-channel" ] && [ "$3" = "neurologianapoli" ] && [ "$4" = "peer1" ]
   then
 
-    peerChannelGetInfoTls "prescriptions-channel" "cli.neurologia.napoli.medchain.com" "peer1.neurologia.napoli.medchain.com:7122" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem"
+    peerChannelGetInfo "prescriptions-channel" "cli.neurologia.napoli.medchain.com" "peer1.neurologia.napoli.medchain.com:7122"
 
   elif [ "$1" = "fetch" ] && [ "$2" = "config" ] && [ "$3" = "prescriptions-channel" ] && [ "$4" = "neurologianapoli" ] && [ "$5" = "peer1" ]; then
     TARGET_FILE=${6:-"$channel-config.json"}
 
-    peerChannelFetchConfigTls "prescriptions-channel" "cli.neurologia.napoli.medchain.com" "$TARGET_FILE" "peer1.neurologia.napoli.medchain.com:7122" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem"
+    peerChannelFetchConfig "prescriptions-channel" "cli.neurologia.napoli.medchain.com" "$TARGET_FILE" "peer1.neurologia.napoli.medchain.com:7122"
 
   elif [ "$1" = "fetch" ] && [ "$3" = "prescriptions-channel" ] && [ "$4" = "neurologianapoli" ] && [ "$5" = "peer1" ]; then
     BLOCK_NAME=$2
     TARGET_FILE=${6:-"$BLOCK_NAME.block"}
 
-    peerChannelFetchBlockTls "prescriptions-channel" "cli.neurologia.napoli.medchain.com" "${BLOCK_NAME}" "peer1.neurologia.napoli.medchain.com:7122" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem" "$TARGET_FILE"
+    peerChannelFetchBlock "prescriptions-channel" "cli.neurologia.napoli.medchain.com" "${BLOCK_NAME}" "peer1.neurologia.napoli.medchain.com:7122" "$TARGET_FILE"
 
   elif
     [ "$1" = "getinfo" ] && [ "$2" = "prescriptions-channel" ] && [ "$3" = "farmaciapetrone" ] && [ "$4" = "peer0" ]
   then
 
-    peerChannelGetInfoTls "prescriptions-channel" "cli.farmacia-petrone.napoli.medchain.com" "peer0.farmacia-petrone.napoli.medchain.com:7141" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem"
+    peerChannelGetInfo "prescriptions-channel" "cli.farmacia-petrone.napoli.medchain.com" "peer0.farmacia-petrone.napoli.medchain.com:7141"
 
   elif [ "$1" = "fetch" ] && [ "$2" = "config" ] && [ "$3" = "prescriptions-channel" ] && [ "$4" = "farmaciapetrone" ] && [ "$5" = "peer0" ]; then
     TARGET_FILE=${6:-"$channel-config.json"}
 
-    peerChannelFetchConfigTls "prescriptions-channel" "cli.farmacia-petrone.napoli.medchain.com" "$TARGET_FILE" "peer0.farmacia-petrone.napoli.medchain.com:7141" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem"
+    peerChannelFetchConfig "prescriptions-channel" "cli.farmacia-petrone.napoli.medchain.com" "$TARGET_FILE" "peer0.farmacia-petrone.napoli.medchain.com:7141"
 
   elif [ "$1" = "fetch" ] && [ "$3" = "prescriptions-channel" ] && [ "$4" = "farmaciapetrone" ] && [ "$5" = "peer0" ]; then
     BLOCK_NAME=$2
     TARGET_FILE=${6:-"$BLOCK_NAME.block"}
 
-    peerChannelFetchBlockTls "prescriptions-channel" "cli.farmacia-petrone.napoli.medchain.com" "${BLOCK_NAME}" "peer0.farmacia-petrone.napoli.medchain.com:7141" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem" "$TARGET_FILE"
+    peerChannelFetchBlock "prescriptions-channel" "cli.farmacia-petrone.napoli.medchain.com" "${BLOCK_NAME}" "peer0.farmacia-petrone.napoli.medchain.com:7141" "$TARGET_FILE"
 
   elif
     [ "$1" = "getinfo" ] && [ "$2" = "prescriptions-channel" ] && [ "$3" = "farmaciacarbone" ] && [ "$4" = "peer0" ]
   then
 
-    peerChannelGetInfoTls "prescriptions-channel" "cli.farmacia-carbone.napoli.medchain.com" "peer0.farmacia-carbone.napoli.medchain.com:7161" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem"
+    peerChannelGetInfo "prescriptions-channel" "cli.farmacia-carbone.napoli.medchain.com" "peer0.farmacia-carbone.napoli.medchain.com:7161"
 
   elif [ "$1" = "fetch" ] && [ "$2" = "config" ] && [ "$3" = "prescriptions-channel" ] && [ "$4" = "farmaciacarbone" ] && [ "$5" = "peer0" ]; then
     TARGET_FILE=${6:-"$channel-config.json"}
 
-    peerChannelFetchConfigTls "prescriptions-channel" "cli.farmacia-carbone.napoli.medchain.com" "$TARGET_FILE" "peer0.farmacia-carbone.napoli.medchain.com:7161" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem"
+    peerChannelFetchConfig "prescriptions-channel" "cli.farmacia-carbone.napoli.medchain.com" "$TARGET_FILE" "peer0.farmacia-carbone.napoli.medchain.com:7161"
 
   elif [ "$1" = "fetch" ] && [ "$3" = "prescriptions-channel" ] && [ "$4" = "farmaciacarbone" ] && [ "$5" = "peer0" ]; then
     BLOCK_NAME=$2
     TARGET_FILE=${6:-"$BLOCK_NAME.block"}
 
-    peerChannelFetchBlockTls "prescriptions-channel" "cli.farmacia-carbone.napoli.medchain.com" "${BLOCK_NAME}" "peer0.farmacia-carbone.napoli.medchain.com:7161" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem" "$TARGET_FILE"
+    peerChannelFetchBlock "prescriptions-channel" "cli.farmacia-carbone.napoli.medchain.com" "${BLOCK_NAME}" "peer0.farmacia-carbone.napoli.medchain.com:7161" "$TARGET_FILE"
 
   elif
     [ "$1" = "getinfo" ] && [ "$2" = "lab-results-channel" ] && [ "$3" = "ospedalemaresca" ] && [ "$4" = "peer0" ]
   then
 
-    peerChannelGetInfoTls "lab-results-channel" "cli.ospedale-maresca.aslnapoli3.medchain.com" "peer0.ospedale-maresca.aslnapoli3.medchain.com:7041" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem"
+    peerChannelGetInfo "lab-results-channel" "cli.ospedale-maresca.aslnapoli3.medchain.com" "peer0.ospedale-maresca.aslnapoli3.medchain.com:7041"
 
   elif [ "$1" = "fetch" ] && [ "$2" = "config" ] && [ "$3" = "lab-results-channel" ] && [ "$4" = "ospedalemaresca" ] && [ "$5" = "peer0" ]; then
     TARGET_FILE=${6:-"$channel-config.json"}
 
-    peerChannelFetchConfigTls "lab-results-channel" "cli.ospedale-maresca.aslnapoli3.medchain.com" "$TARGET_FILE" "peer0.ospedale-maresca.aslnapoli3.medchain.com:7041" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem"
+    peerChannelFetchConfig "lab-results-channel" "cli.ospedale-maresca.aslnapoli3.medchain.com" "$TARGET_FILE" "peer0.ospedale-maresca.aslnapoli3.medchain.com:7041"
 
   elif [ "$1" = "fetch" ] && [ "$3" = "lab-results-channel" ] && [ "$4" = "ospedalemaresca" ] && [ "$5" = "peer0" ]; then
     BLOCK_NAME=$2
     TARGET_FILE=${6:-"$BLOCK_NAME.block"}
 
-    peerChannelFetchBlockTls "lab-results-channel" "cli.ospedale-maresca.aslnapoli3.medchain.com" "${BLOCK_NAME}" "peer0.ospedale-maresca.aslnapoli3.medchain.com:7041" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem" "$TARGET_FILE"
+    peerChannelFetchBlock "lab-results-channel" "cli.ospedale-maresca.aslnapoli3.medchain.com" "${BLOCK_NAME}" "peer0.ospedale-maresca.aslnapoli3.medchain.com:7041" "$TARGET_FILE"
 
   elif
     [ "$1" = "getinfo" ] && [ "$2" = "lab-results-channel" ] && [ "$3" = "ospedalemaresca" ] && [ "$4" = "peer1" ]
   then
 
-    peerChannelGetInfoTls "lab-results-channel" "cli.ospedale-maresca.aslnapoli3.medchain.com" "peer1.ospedale-maresca.aslnapoli3.medchain.com:7042" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem"
+    peerChannelGetInfo "lab-results-channel" "cli.ospedale-maresca.aslnapoli3.medchain.com" "peer1.ospedale-maresca.aslnapoli3.medchain.com:7042"
 
   elif [ "$1" = "fetch" ] && [ "$2" = "config" ] && [ "$3" = "lab-results-channel" ] && [ "$4" = "ospedalemaresca" ] && [ "$5" = "peer1" ]; then
     TARGET_FILE=${6:-"$channel-config.json"}
 
-    peerChannelFetchConfigTls "lab-results-channel" "cli.ospedale-maresca.aslnapoli3.medchain.com" "$TARGET_FILE" "peer1.ospedale-maresca.aslnapoli3.medchain.com:7042" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem"
+    peerChannelFetchConfig "lab-results-channel" "cli.ospedale-maresca.aslnapoli3.medchain.com" "$TARGET_FILE" "peer1.ospedale-maresca.aslnapoli3.medchain.com:7042"
 
   elif [ "$1" = "fetch" ] && [ "$3" = "lab-results-channel" ] && [ "$4" = "ospedalemaresca" ] && [ "$5" = "peer1" ]; then
     BLOCK_NAME=$2
     TARGET_FILE=${6:-"$BLOCK_NAME.block"}
 
-    peerChannelFetchBlockTls "lab-results-channel" "cli.ospedale-maresca.aslnapoli3.medchain.com" "${BLOCK_NAME}" "peer1.ospedale-maresca.aslnapoli3.medchain.com:7042" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem" "$TARGET_FILE"
+    peerChannelFetchBlock "lab-results-channel" "cli.ospedale-maresca.aslnapoli3.medchain.com" "${BLOCK_NAME}" "peer1.ospedale-maresca.aslnapoli3.medchain.com:7042" "$TARGET_FILE"
 
   elif
     [ "$1" = "getinfo" ] && [ "$2" = "lab-results-channel" ] && [ "$3" = "medicinageneralenapoli" ] && [ "$4" = "peer0" ]
   then
 
-    peerChannelGetInfoTls "lab-results-channel" "cli.medicina-generale.napoli.medchain.com" "peer0.medicina-generale.napoli.medchain.com:7101" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem"
+    peerChannelGetInfo "lab-results-channel" "cli.medicina-generale.napoli.medchain.com" "peer0.medicina-generale.napoli.medchain.com:7101"
 
   elif [ "$1" = "fetch" ] && [ "$2" = "config" ] && [ "$3" = "lab-results-channel" ] && [ "$4" = "medicinageneralenapoli" ] && [ "$5" = "peer0" ]; then
     TARGET_FILE=${6:-"$channel-config.json"}
 
-    peerChannelFetchConfigTls "lab-results-channel" "cli.medicina-generale.napoli.medchain.com" "$TARGET_FILE" "peer0.medicina-generale.napoli.medchain.com:7101" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem"
+    peerChannelFetchConfig "lab-results-channel" "cli.medicina-generale.napoli.medchain.com" "$TARGET_FILE" "peer0.medicina-generale.napoli.medchain.com:7101"
 
   elif [ "$1" = "fetch" ] && [ "$3" = "lab-results-channel" ] && [ "$4" = "medicinageneralenapoli" ] && [ "$5" = "peer0" ]; then
     BLOCK_NAME=$2
     TARGET_FILE=${6:-"$BLOCK_NAME.block"}
 
-    peerChannelFetchBlockTls "lab-results-channel" "cli.medicina-generale.napoli.medchain.com" "${BLOCK_NAME}" "peer0.medicina-generale.napoli.medchain.com:7101" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem" "$TARGET_FILE"
+    peerChannelFetchBlock "lab-results-channel" "cli.medicina-generale.napoli.medchain.com" "${BLOCK_NAME}" "peer0.medicina-generale.napoli.medchain.com:7101" "$TARGET_FILE"
 
   elif
     [ "$1" = "getinfo" ] && [ "$2" = "lab-results-channel" ] && [ "$3" = "medicinageneralenapoli" ] && [ "$4" = "peer1" ]
   then
 
-    peerChannelGetInfoTls "lab-results-channel" "cli.medicina-generale.napoli.medchain.com" "peer1.medicina-generale.napoli.medchain.com:7102" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem"
+    peerChannelGetInfo "lab-results-channel" "cli.medicina-generale.napoli.medchain.com" "peer1.medicina-generale.napoli.medchain.com:7102"
 
   elif [ "$1" = "fetch" ] && [ "$2" = "config" ] && [ "$3" = "lab-results-channel" ] && [ "$4" = "medicinageneralenapoli" ] && [ "$5" = "peer1" ]; then
     TARGET_FILE=${6:-"$channel-config.json"}
 
-    peerChannelFetchConfigTls "lab-results-channel" "cli.medicina-generale.napoli.medchain.com" "$TARGET_FILE" "peer1.medicina-generale.napoli.medchain.com:7102" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem"
+    peerChannelFetchConfig "lab-results-channel" "cli.medicina-generale.napoli.medchain.com" "$TARGET_FILE" "peer1.medicina-generale.napoli.medchain.com:7102"
 
   elif [ "$1" = "fetch" ] && [ "$3" = "lab-results-channel" ] && [ "$4" = "medicinageneralenapoli" ] && [ "$5" = "peer1" ]; then
     BLOCK_NAME=$2
     TARGET_FILE=${6:-"$BLOCK_NAME.block"}
 
-    peerChannelFetchBlockTls "lab-results-channel" "cli.medicina-generale.napoli.medchain.com" "${BLOCK_NAME}" "peer1.medicina-generale.napoli.medchain.com:7102" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem" "$TARGET_FILE"
+    peerChannelFetchBlock "lab-results-channel" "cli.medicina-generale.napoli.medchain.com" "${BLOCK_NAME}" "peer1.medicina-generale.napoli.medchain.com:7102" "$TARGET_FILE"
 
   elif
     [ "$1" = "getinfo" ] && [ "$2" = "lab-results-channel" ] && [ "$3" = "neurologianapoli" ] && [ "$4" = "peer0" ]
   then
 
-    peerChannelGetInfoTls "lab-results-channel" "cli.neurologia.napoli.medchain.com" "peer0.neurologia.napoli.medchain.com:7121" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem"
+    peerChannelGetInfo "lab-results-channel" "cli.neurologia.napoli.medchain.com" "peer0.neurologia.napoli.medchain.com:7121"
 
   elif [ "$1" = "fetch" ] && [ "$2" = "config" ] && [ "$3" = "lab-results-channel" ] && [ "$4" = "neurologianapoli" ] && [ "$5" = "peer0" ]; then
     TARGET_FILE=${6:-"$channel-config.json"}
 
-    peerChannelFetchConfigTls "lab-results-channel" "cli.neurologia.napoli.medchain.com" "$TARGET_FILE" "peer0.neurologia.napoli.medchain.com:7121" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem"
+    peerChannelFetchConfig "lab-results-channel" "cli.neurologia.napoli.medchain.com" "$TARGET_FILE" "peer0.neurologia.napoli.medchain.com:7121"
 
   elif [ "$1" = "fetch" ] && [ "$3" = "lab-results-channel" ] && [ "$4" = "neurologianapoli" ] && [ "$5" = "peer0" ]; then
     BLOCK_NAME=$2
     TARGET_FILE=${6:-"$BLOCK_NAME.block"}
 
-    peerChannelFetchBlockTls "lab-results-channel" "cli.neurologia.napoli.medchain.com" "${BLOCK_NAME}" "peer0.neurologia.napoli.medchain.com:7121" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem" "$TARGET_FILE"
+    peerChannelFetchBlock "lab-results-channel" "cli.neurologia.napoli.medchain.com" "${BLOCK_NAME}" "peer0.neurologia.napoli.medchain.com:7121" "$TARGET_FILE"
 
   elif
     [ "$1" = "getinfo" ] && [ "$2" = "lab-results-channel" ] && [ "$3" = "neurologianapoli" ] && [ "$4" = "peer1" ]
   then
 
-    peerChannelGetInfoTls "lab-results-channel" "cli.neurologia.napoli.medchain.com" "peer1.neurologia.napoli.medchain.com:7122" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem"
+    peerChannelGetInfo "lab-results-channel" "cli.neurologia.napoli.medchain.com" "peer1.neurologia.napoli.medchain.com:7122"
 
   elif [ "$1" = "fetch" ] && [ "$2" = "config" ] && [ "$3" = "lab-results-channel" ] && [ "$4" = "neurologianapoli" ] && [ "$5" = "peer1" ]; then
     TARGET_FILE=${6:-"$channel-config.json"}
 
-    peerChannelFetchConfigTls "lab-results-channel" "cli.neurologia.napoli.medchain.com" "$TARGET_FILE" "peer1.neurologia.napoli.medchain.com:7122" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem"
+    peerChannelFetchConfig "lab-results-channel" "cli.neurologia.napoli.medchain.com" "$TARGET_FILE" "peer1.neurologia.napoli.medchain.com:7122"
 
   elif [ "$1" = "fetch" ] && [ "$3" = "lab-results-channel" ] && [ "$4" = "neurologianapoli" ] && [ "$5" = "peer1" ]; then
     BLOCK_NAME=$2
     TARGET_FILE=${6:-"$BLOCK_NAME.block"}
 
-    peerChannelFetchBlockTls "lab-results-channel" "cli.neurologia.napoli.medchain.com" "${BLOCK_NAME}" "peer1.neurologia.napoli.medchain.com:7122" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem" "$TARGET_FILE"
+    peerChannelFetchBlock "lab-results-channel" "cli.neurologia.napoli.medchain.com" "${BLOCK_NAME}" "peer1.neurologia.napoli.medchain.com:7122" "$TARGET_FILE"
 
   elif
     [ "$1" = "getinfo" ] && [ "$2" = "lab-results-channel" ] && [ "$3" = "laboratorioanalisicmo" ] && [ "$4" = "peer0" ]
   then
 
-    peerChannelGetInfoTls "lab-results-channel" "cli.laboratorio-analisi-cmo.medchain.com" "peer0.laboratorio-analisi-cmo.medchain.com:7181" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem"
+    peerChannelGetInfo "lab-results-channel" "cli.laboratorio-analisi-cmo.medchain.com" "peer0.laboratorio-analisi-cmo.medchain.com:7181"
 
   elif [ "$1" = "fetch" ] && [ "$2" = "config" ] && [ "$3" = "lab-results-channel" ] && [ "$4" = "laboratorioanalisicmo" ] && [ "$5" = "peer0" ]; then
     TARGET_FILE=${6:-"$channel-config.json"}
 
-    peerChannelFetchConfigTls "lab-results-channel" "cli.laboratorio-analisi-cmo.medchain.com" "$TARGET_FILE" "peer0.laboratorio-analisi-cmo.medchain.com:7181" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem"
+    peerChannelFetchConfig "lab-results-channel" "cli.laboratorio-analisi-cmo.medchain.com" "$TARGET_FILE" "peer0.laboratorio-analisi-cmo.medchain.com:7181"
 
   elif [ "$1" = "fetch" ] && [ "$3" = "lab-results-channel" ] && [ "$4" = "laboratorioanalisicmo" ] && [ "$5" = "peer0" ]; then
     BLOCK_NAME=$2
     TARGET_FILE=${6:-"$BLOCK_NAME.block"}
 
-    peerChannelFetchBlockTls "lab-results-channel" "cli.laboratorio-analisi-cmo.medchain.com" "${BLOCK_NAME}" "peer0.laboratorio-analisi-cmo.medchain.com:7181" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem" "$TARGET_FILE"
+    peerChannelFetchBlock "lab-results-channel" "cli.laboratorio-analisi-cmo.medchain.com" "${BLOCK_NAME}" "peer0.laboratorio-analisi-cmo.medchain.com:7181" "$TARGET_FILE"
 
   elif
     [ "$1" = "getinfo" ] && [ "$2" = "lab-results-channel" ] && [ "$3" = "laboratorioanalisisdn" ] && [ "$4" = "peer0" ]
   then
 
-    peerChannelGetInfoTls "lab-results-channel" "cli.laboratorio-analisi-sdn.medchain.com" "peer0.laboratorio-analisi-sdn.medchain.com:7201" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem"
+    peerChannelGetInfo "lab-results-channel" "cli.laboratorio-analisi-sdn.medchain.com" "peer0.laboratorio-analisi-sdn.medchain.com:7201"
 
   elif [ "$1" = "fetch" ] && [ "$2" = "config" ] && [ "$3" = "lab-results-channel" ] && [ "$4" = "laboratorioanalisisdn" ] && [ "$5" = "peer0" ]; then
     TARGET_FILE=${6:-"$channel-config.json"}
 
-    peerChannelFetchConfigTls "lab-results-channel" "cli.laboratorio-analisi-sdn.medchain.com" "$TARGET_FILE" "peer0.laboratorio-analisi-sdn.medchain.com:7201" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem"
+    peerChannelFetchConfig "lab-results-channel" "cli.laboratorio-analisi-sdn.medchain.com" "$TARGET_FILE" "peer0.laboratorio-analisi-sdn.medchain.com:7201"
 
   elif [ "$1" = "fetch" ] && [ "$3" = "lab-results-channel" ] && [ "$4" = "laboratorioanalisisdn" ] && [ "$5" = "peer0" ]; then
     BLOCK_NAME=$2
     TARGET_FILE=${6:-"$BLOCK_NAME.block"}
 
-    peerChannelFetchBlockTls "lab-results-channel" "cli.laboratorio-analisi-sdn.medchain.com" "${BLOCK_NAME}" "peer0.laboratorio-analisi-sdn.medchain.com:7201" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem" "$TARGET_FILE"
+    peerChannelFetchBlock "lab-results-channel" "cli.laboratorio-analisi-sdn.medchain.com" "${BLOCK_NAME}" "peer0.laboratorio-analisi-sdn.medchain.com:7201" "$TARGET_FILE"
 
   elif
     [ "$1" = "getinfo" ] && [ "$2" = "emergency-channel" ] && [ "$3" = "ospedalemaresca" ] && [ "$4" = "peer0" ]
   then
 
-    peerChannelGetInfoTls "emergency-channel" "cli.ospedale-maresca.aslnapoli3.medchain.com" "peer0.ospedale-maresca.aslnapoli3.medchain.com:7041" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem"
+    peerChannelGetInfo "emergency-channel" "cli.ospedale-maresca.aslnapoli3.medchain.com" "peer0.ospedale-maresca.aslnapoli3.medchain.com:7041"
 
   elif [ "$1" = "fetch" ] && [ "$2" = "config" ] && [ "$3" = "emergency-channel" ] && [ "$4" = "ospedalemaresca" ] && [ "$5" = "peer0" ]; then
     TARGET_FILE=${6:-"$channel-config.json"}
 
-    peerChannelFetchConfigTls "emergency-channel" "cli.ospedale-maresca.aslnapoli3.medchain.com" "$TARGET_FILE" "peer0.ospedale-maresca.aslnapoli3.medchain.com:7041" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem"
+    peerChannelFetchConfig "emergency-channel" "cli.ospedale-maresca.aslnapoli3.medchain.com" "$TARGET_FILE" "peer0.ospedale-maresca.aslnapoli3.medchain.com:7041"
 
   elif [ "$1" = "fetch" ] && [ "$3" = "emergency-channel" ] && [ "$4" = "ospedalemaresca" ] && [ "$5" = "peer0" ]; then
     BLOCK_NAME=$2
     TARGET_FILE=${6:-"$BLOCK_NAME.block"}
 
-    peerChannelFetchBlockTls "emergency-channel" "cli.ospedale-maresca.aslnapoli3.medchain.com" "${BLOCK_NAME}" "peer0.ospedale-maresca.aslnapoli3.medchain.com:7041" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem" "$TARGET_FILE"
+    peerChannelFetchBlock "emergency-channel" "cli.ospedale-maresca.aslnapoli3.medchain.com" "${BLOCK_NAME}" "peer0.ospedale-maresca.aslnapoli3.medchain.com:7041" "$TARGET_FILE"
 
   elif
     [ "$1" = "getinfo" ] && [ "$2" = "emergency-channel" ] && [ "$3" = "ospedalemaresca" ] && [ "$4" = "peer1" ]
   then
 
-    peerChannelGetInfoTls "emergency-channel" "cli.ospedale-maresca.aslnapoli3.medchain.com" "peer1.ospedale-maresca.aslnapoli3.medchain.com:7042" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem"
+    peerChannelGetInfo "emergency-channel" "cli.ospedale-maresca.aslnapoli3.medchain.com" "peer1.ospedale-maresca.aslnapoli3.medchain.com:7042"
 
   elif [ "$1" = "fetch" ] && [ "$2" = "config" ] && [ "$3" = "emergency-channel" ] && [ "$4" = "ospedalemaresca" ] && [ "$5" = "peer1" ]; then
     TARGET_FILE=${6:-"$channel-config.json"}
 
-    peerChannelFetchConfigTls "emergency-channel" "cli.ospedale-maresca.aslnapoli3.medchain.com" "$TARGET_FILE" "peer1.ospedale-maresca.aslnapoli3.medchain.com:7042" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem"
+    peerChannelFetchConfig "emergency-channel" "cli.ospedale-maresca.aslnapoli3.medchain.com" "$TARGET_FILE" "peer1.ospedale-maresca.aslnapoli3.medchain.com:7042"
 
   elif [ "$1" = "fetch" ] && [ "$3" = "emergency-channel" ] && [ "$4" = "ospedalemaresca" ] && [ "$5" = "peer1" ]; then
     BLOCK_NAME=$2
     TARGET_FILE=${6:-"$BLOCK_NAME.block"}
 
-    peerChannelFetchBlockTls "emergency-channel" "cli.ospedale-maresca.aslnapoli3.medchain.com" "${BLOCK_NAME}" "peer1.ospedale-maresca.aslnapoli3.medchain.com:7042" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem" "$TARGET_FILE"
+    peerChannelFetchBlock "emergency-channel" "cli.ospedale-maresca.aslnapoli3.medchain.com" "${BLOCK_NAME}" "peer1.ospedale-maresca.aslnapoli3.medchain.com:7042" "$TARGET_FILE"
 
   elif
     [ "$1" = "getinfo" ] && [ "$2" = "emergency-channel" ] && [ "$3" = "ospedaledelmare" ] && [ "$4" = "peer0" ]
   then
 
-    peerChannelGetInfoTls "emergency-channel" "cli.ospedale-del-mare.aslnapoli1.medchain.com" "peer0.ospedale-del-mare.aslnapoli1.medchain.com:7061" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem"
+    peerChannelGetInfo "emergency-channel" "cli.ospedale-del-mare.aslnapoli1.medchain.com" "peer0.ospedale-del-mare.aslnapoli1.medchain.com:7061"
 
   elif [ "$1" = "fetch" ] && [ "$2" = "config" ] && [ "$3" = "emergency-channel" ] && [ "$4" = "ospedaledelmare" ] && [ "$5" = "peer0" ]; then
     TARGET_FILE=${6:-"$channel-config.json"}
 
-    peerChannelFetchConfigTls "emergency-channel" "cli.ospedale-del-mare.aslnapoli1.medchain.com" "$TARGET_FILE" "peer0.ospedale-del-mare.aslnapoli1.medchain.com:7061" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem"
+    peerChannelFetchConfig "emergency-channel" "cli.ospedale-del-mare.aslnapoli1.medchain.com" "$TARGET_FILE" "peer0.ospedale-del-mare.aslnapoli1.medchain.com:7061"
 
   elif [ "$1" = "fetch" ] && [ "$3" = "emergency-channel" ] && [ "$4" = "ospedaledelmare" ] && [ "$5" = "peer0" ]; then
     BLOCK_NAME=$2
     TARGET_FILE=${6:-"$BLOCK_NAME.block"}
 
-    peerChannelFetchBlockTls "emergency-channel" "cli.ospedale-del-mare.aslnapoli1.medchain.com" "${BLOCK_NAME}" "peer0.ospedale-del-mare.aslnapoli1.medchain.com:7061" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem" "$TARGET_FILE"
+    peerChannelFetchBlock "emergency-channel" "cli.ospedale-del-mare.aslnapoli1.medchain.com" "${BLOCK_NAME}" "peer0.ospedale-del-mare.aslnapoli1.medchain.com:7061" "$TARGET_FILE"
 
   elif
     [ "$1" = "getinfo" ] && [ "$2" = "emergency-channel" ] && [ "$3" = "ospedaledelmare" ] && [ "$4" = "peer1" ]
   then
 
-    peerChannelGetInfoTls "emergency-channel" "cli.ospedale-del-mare.aslnapoli1.medchain.com" "peer1.ospedale-del-mare.aslnapoli1.medchain.com:7062" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem"
+    peerChannelGetInfo "emergency-channel" "cli.ospedale-del-mare.aslnapoli1.medchain.com" "peer1.ospedale-del-mare.aslnapoli1.medchain.com:7062"
 
   elif [ "$1" = "fetch" ] && [ "$2" = "config" ] && [ "$3" = "emergency-channel" ] && [ "$4" = "ospedaledelmare" ] && [ "$5" = "peer1" ]; then
     TARGET_FILE=${6:-"$channel-config.json"}
 
-    peerChannelFetchConfigTls "emergency-channel" "cli.ospedale-del-mare.aslnapoli1.medchain.com" "$TARGET_FILE" "peer1.ospedale-del-mare.aslnapoli1.medchain.com:7062" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem"
+    peerChannelFetchConfig "emergency-channel" "cli.ospedale-del-mare.aslnapoli1.medchain.com" "$TARGET_FILE" "peer1.ospedale-del-mare.aslnapoli1.medchain.com:7062"
 
   elif [ "$1" = "fetch" ] && [ "$3" = "emergency-channel" ] && [ "$4" = "ospedaledelmare" ] && [ "$5" = "peer1" ]; then
     BLOCK_NAME=$2
     TARGET_FILE=${6:-"$BLOCK_NAME.block"}
 
-    peerChannelFetchBlockTls "emergency-channel" "cli.ospedale-del-mare.aslnapoli1.medchain.com" "${BLOCK_NAME}" "peer1.ospedale-del-mare.aslnapoli1.medchain.com:7062" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem" "$TARGET_FILE"
+    peerChannelFetchBlock "emergency-channel" "cli.ospedale-del-mare.aslnapoli1.medchain.com" "${BLOCK_NAME}" "peer1.ospedale-del-mare.aslnapoli1.medchain.com:7062" "$TARGET_FILE"
 
   elif
     [ "$1" = "getinfo" ] && [ "$2" = "emergency-channel" ] && [ "$3" = "ospedalesgiuliano" ] && [ "$4" = "peer0" ]
   then
 
-    peerChannelGetInfoTls "emergency-channel" "cli.ospedale-sgiuliano.aslnapoli2.medchain.com" "peer0.ospedale-sgiuliano.aslnapoli2.medchain.com:7081" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem"
+    peerChannelGetInfo "emergency-channel" "cli.ospedale-sgiuliano.aslnapoli2.medchain.com" "peer0.ospedale-sgiuliano.aslnapoli2.medchain.com:7081"
 
   elif [ "$1" = "fetch" ] && [ "$2" = "config" ] && [ "$3" = "emergency-channel" ] && [ "$4" = "ospedalesgiuliano" ] && [ "$5" = "peer0" ]; then
     TARGET_FILE=${6:-"$channel-config.json"}
 
-    peerChannelFetchConfigTls "emergency-channel" "cli.ospedale-sgiuliano.aslnapoli2.medchain.com" "$TARGET_FILE" "peer0.ospedale-sgiuliano.aslnapoli2.medchain.com:7081" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem"
+    peerChannelFetchConfig "emergency-channel" "cli.ospedale-sgiuliano.aslnapoli2.medchain.com" "$TARGET_FILE" "peer0.ospedale-sgiuliano.aslnapoli2.medchain.com:7081"
 
   elif [ "$1" = "fetch" ] && [ "$3" = "emergency-channel" ] && [ "$4" = "ospedalesgiuliano" ] && [ "$5" = "peer0" ]; then
     BLOCK_NAME=$2
     TARGET_FILE=${6:-"$BLOCK_NAME.block"}
 
-    peerChannelFetchBlockTls "emergency-channel" "cli.ospedale-sgiuliano.aslnapoli2.medchain.com" "${BLOCK_NAME}" "peer0.ospedale-sgiuliano.aslnapoli2.medchain.com:7081" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem" "$TARGET_FILE"
+    peerChannelFetchBlock "emergency-channel" "cli.ospedale-sgiuliano.aslnapoli2.medchain.com" "${BLOCK_NAME}" "peer0.ospedale-sgiuliano.aslnapoli2.medchain.com:7081" "$TARGET_FILE"
 
   elif
     [ "$1" = "getinfo" ] && [ "$2" = "emergency-channel" ] && [ "$3" = "ospedalesgiuliano" ] && [ "$4" = "peer1" ]
   then
 
-    peerChannelGetInfoTls "emergency-channel" "cli.ospedale-sgiuliano.aslnapoli2.medchain.com" "peer1.ospedale-sgiuliano.aslnapoli2.medchain.com:7082" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem"
+    peerChannelGetInfo "emergency-channel" "cli.ospedale-sgiuliano.aslnapoli2.medchain.com" "peer1.ospedale-sgiuliano.aslnapoli2.medchain.com:7082"
 
   elif [ "$1" = "fetch" ] && [ "$2" = "config" ] && [ "$3" = "emergency-channel" ] && [ "$4" = "ospedalesgiuliano" ] && [ "$5" = "peer1" ]; then
     TARGET_FILE=${6:-"$channel-config.json"}
 
-    peerChannelFetchConfigTls "emergency-channel" "cli.ospedale-sgiuliano.aslnapoli2.medchain.com" "$TARGET_FILE" "peer1.ospedale-sgiuliano.aslnapoli2.medchain.com:7082" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem"
+    peerChannelFetchConfig "emergency-channel" "cli.ospedale-sgiuliano.aslnapoli2.medchain.com" "$TARGET_FILE" "peer1.ospedale-sgiuliano.aslnapoli2.medchain.com:7082"
 
   elif [ "$1" = "fetch" ] && [ "$3" = "emergency-channel" ] && [ "$4" = "ospedalesgiuliano" ] && [ "$5" = "peer1" ]; then
     BLOCK_NAME=$2
     TARGET_FILE=${6:-"$BLOCK_NAME.block"}
 
-    peerChannelFetchBlockTls "emergency-channel" "cli.ospedale-sgiuliano.aslnapoli2.medchain.com" "${BLOCK_NAME}" "peer1.ospedale-sgiuliano.aslnapoli2.medchain.com:7082" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem" "$TARGET_FILE"
+    peerChannelFetchBlock "emergency-channel" "cli.ospedale-sgiuliano.aslnapoli2.medchain.com" "${BLOCK_NAME}" "peer1.ospedale-sgiuliano.aslnapoli2.medchain.com:7082" "$TARGET_FILE"
 
   elif
     [ "$1" = "getinfo" ] && [ "$2" = "public-health-channel" ] && [ "$3" = "ospedalemaresca" ] && [ "$4" = "peer0" ]
   then
 
-    peerChannelGetInfoTls "public-health-channel" "cli.ospedale-maresca.aslnapoli3.medchain.com" "peer0.ospedale-maresca.aslnapoli3.medchain.com:7041" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem"
+    peerChannelGetInfo "public-health-channel" "cli.ospedale-maresca.aslnapoli3.medchain.com" "peer0.ospedale-maresca.aslnapoli3.medchain.com:7041"
 
   elif [ "$1" = "fetch" ] && [ "$2" = "config" ] && [ "$3" = "public-health-channel" ] && [ "$4" = "ospedalemaresca" ] && [ "$5" = "peer0" ]; then
     TARGET_FILE=${6:-"$channel-config.json"}
 
-    peerChannelFetchConfigTls "public-health-channel" "cli.ospedale-maresca.aslnapoli3.medchain.com" "$TARGET_FILE" "peer0.ospedale-maresca.aslnapoli3.medchain.com:7041" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem"
+    peerChannelFetchConfig "public-health-channel" "cli.ospedale-maresca.aslnapoli3.medchain.com" "$TARGET_FILE" "peer0.ospedale-maresca.aslnapoli3.medchain.com:7041"
 
   elif [ "$1" = "fetch" ] && [ "$3" = "public-health-channel" ] && [ "$4" = "ospedalemaresca" ] && [ "$5" = "peer0" ]; then
     BLOCK_NAME=$2
     TARGET_FILE=${6:-"$BLOCK_NAME.block"}
 
-    peerChannelFetchBlockTls "public-health-channel" "cli.ospedale-maresca.aslnapoli3.medchain.com" "${BLOCK_NAME}" "peer0.ospedale-maresca.aslnapoli3.medchain.com:7041" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem" "$TARGET_FILE"
+    peerChannelFetchBlock "public-health-channel" "cli.ospedale-maresca.aslnapoli3.medchain.com" "${BLOCK_NAME}" "peer0.ospedale-maresca.aslnapoli3.medchain.com:7041" "$TARGET_FILE"
 
   elif
     [ "$1" = "getinfo" ] && [ "$2" = "public-health-channel" ] && [ "$3" = "ospedalemaresca" ] && [ "$4" = "peer1" ]
   then
 
-    peerChannelGetInfoTls "public-health-channel" "cli.ospedale-maresca.aslnapoli3.medchain.com" "peer1.ospedale-maresca.aslnapoli3.medchain.com:7042" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem"
+    peerChannelGetInfo "public-health-channel" "cli.ospedale-maresca.aslnapoli3.medchain.com" "peer1.ospedale-maresca.aslnapoli3.medchain.com:7042"
 
   elif [ "$1" = "fetch" ] && [ "$2" = "config" ] && [ "$3" = "public-health-channel" ] && [ "$4" = "ospedalemaresca" ] && [ "$5" = "peer1" ]; then
     TARGET_FILE=${6:-"$channel-config.json"}
 
-    peerChannelFetchConfigTls "public-health-channel" "cli.ospedale-maresca.aslnapoli3.medchain.com" "$TARGET_FILE" "peer1.ospedale-maresca.aslnapoli3.medchain.com:7042" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem"
+    peerChannelFetchConfig "public-health-channel" "cli.ospedale-maresca.aslnapoli3.medchain.com" "$TARGET_FILE" "peer1.ospedale-maresca.aslnapoli3.medchain.com:7042"
 
   elif [ "$1" = "fetch" ] && [ "$3" = "public-health-channel" ] && [ "$4" = "ospedalemaresca" ] && [ "$5" = "peer1" ]; then
     BLOCK_NAME=$2
     TARGET_FILE=${6:-"$BLOCK_NAME.block"}
 
-    peerChannelFetchBlockTls "public-health-channel" "cli.ospedale-maresca.aslnapoli3.medchain.com" "${BLOCK_NAME}" "peer1.ospedale-maresca.aslnapoli3.medchain.com:7042" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem" "$TARGET_FILE"
+    peerChannelFetchBlock "public-health-channel" "cli.ospedale-maresca.aslnapoli3.medchain.com" "${BLOCK_NAME}" "peer1.ospedale-maresca.aslnapoli3.medchain.com:7042" "$TARGET_FILE"
 
   elif
     [ "$1" = "getinfo" ] && [ "$2" = "public-health-channel" ] && [ "$3" = "ospedaledelmare" ] && [ "$4" = "peer0" ]
   then
 
-    peerChannelGetInfoTls "public-health-channel" "cli.ospedale-del-mare.aslnapoli1.medchain.com" "peer0.ospedale-del-mare.aslnapoli1.medchain.com:7061" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem"
+    peerChannelGetInfo "public-health-channel" "cli.ospedale-del-mare.aslnapoli1.medchain.com" "peer0.ospedale-del-mare.aslnapoli1.medchain.com:7061"
 
   elif [ "$1" = "fetch" ] && [ "$2" = "config" ] && [ "$3" = "public-health-channel" ] && [ "$4" = "ospedaledelmare" ] && [ "$5" = "peer0" ]; then
     TARGET_FILE=${6:-"$channel-config.json"}
 
-    peerChannelFetchConfigTls "public-health-channel" "cli.ospedale-del-mare.aslnapoli1.medchain.com" "$TARGET_FILE" "peer0.ospedale-del-mare.aslnapoli1.medchain.com:7061" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem"
+    peerChannelFetchConfig "public-health-channel" "cli.ospedale-del-mare.aslnapoli1.medchain.com" "$TARGET_FILE" "peer0.ospedale-del-mare.aslnapoli1.medchain.com:7061"
 
   elif [ "$1" = "fetch" ] && [ "$3" = "public-health-channel" ] && [ "$4" = "ospedaledelmare" ] && [ "$5" = "peer0" ]; then
     BLOCK_NAME=$2
     TARGET_FILE=${6:-"$BLOCK_NAME.block"}
 
-    peerChannelFetchBlockTls "public-health-channel" "cli.ospedale-del-mare.aslnapoli1.medchain.com" "${BLOCK_NAME}" "peer0.ospedale-del-mare.aslnapoli1.medchain.com:7061" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem" "$TARGET_FILE"
+    peerChannelFetchBlock "public-health-channel" "cli.ospedale-del-mare.aslnapoli1.medchain.com" "${BLOCK_NAME}" "peer0.ospedale-del-mare.aslnapoli1.medchain.com:7061" "$TARGET_FILE"
 
   elif
     [ "$1" = "getinfo" ] && [ "$2" = "public-health-channel" ] && [ "$3" = "ospedaledelmare" ] && [ "$4" = "peer1" ]
   then
 
-    peerChannelGetInfoTls "public-health-channel" "cli.ospedale-del-mare.aslnapoli1.medchain.com" "peer1.ospedale-del-mare.aslnapoli1.medchain.com:7062" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem"
+    peerChannelGetInfo "public-health-channel" "cli.ospedale-del-mare.aslnapoli1.medchain.com" "peer1.ospedale-del-mare.aslnapoli1.medchain.com:7062"
 
   elif [ "$1" = "fetch" ] && [ "$2" = "config" ] && [ "$3" = "public-health-channel" ] && [ "$4" = "ospedaledelmare" ] && [ "$5" = "peer1" ]; then
     TARGET_FILE=${6:-"$channel-config.json"}
 
-    peerChannelFetchConfigTls "public-health-channel" "cli.ospedale-del-mare.aslnapoli1.medchain.com" "$TARGET_FILE" "peer1.ospedale-del-mare.aslnapoli1.medchain.com:7062" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem"
+    peerChannelFetchConfig "public-health-channel" "cli.ospedale-del-mare.aslnapoli1.medchain.com" "$TARGET_FILE" "peer1.ospedale-del-mare.aslnapoli1.medchain.com:7062"
 
   elif [ "$1" = "fetch" ] && [ "$3" = "public-health-channel" ] && [ "$4" = "ospedaledelmare" ] && [ "$5" = "peer1" ]; then
     BLOCK_NAME=$2
     TARGET_FILE=${6:-"$BLOCK_NAME.block"}
 
-    peerChannelFetchBlockTls "public-health-channel" "cli.ospedale-del-mare.aslnapoli1.medchain.com" "${BLOCK_NAME}" "peer1.ospedale-del-mare.aslnapoli1.medchain.com:7062" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem" "$TARGET_FILE"
+    peerChannelFetchBlock "public-health-channel" "cli.ospedale-del-mare.aslnapoli1.medchain.com" "${BLOCK_NAME}" "peer1.ospedale-del-mare.aslnapoli1.medchain.com:7062" "$TARGET_FILE"
 
   elif
     [ "$1" = "getinfo" ] && [ "$2" = "public-health-channel" ] && [ "$3" = "ospedalesgiuliano" ] && [ "$4" = "peer0" ]
   then
 
-    peerChannelGetInfoTls "public-health-channel" "cli.ospedale-sgiuliano.aslnapoli2.medchain.com" "peer0.ospedale-sgiuliano.aslnapoli2.medchain.com:7081" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem"
+    peerChannelGetInfo "public-health-channel" "cli.ospedale-sgiuliano.aslnapoli2.medchain.com" "peer0.ospedale-sgiuliano.aslnapoli2.medchain.com:7081"
 
   elif [ "$1" = "fetch" ] && [ "$2" = "config" ] && [ "$3" = "public-health-channel" ] && [ "$4" = "ospedalesgiuliano" ] && [ "$5" = "peer0" ]; then
     TARGET_FILE=${6:-"$channel-config.json"}
 
-    peerChannelFetchConfigTls "public-health-channel" "cli.ospedale-sgiuliano.aslnapoli2.medchain.com" "$TARGET_FILE" "peer0.ospedale-sgiuliano.aslnapoli2.medchain.com:7081" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem"
+    peerChannelFetchConfig "public-health-channel" "cli.ospedale-sgiuliano.aslnapoli2.medchain.com" "$TARGET_FILE" "peer0.ospedale-sgiuliano.aslnapoli2.medchain.com:7081"
 
   elif [ "$1" = "fetch" ] && [ "$3" = "public-health-channel" ] && [ "$4" = "ospedalesgiuliano" ] && [ "$5" = "peer0" ]; then
     BLOCK_NAME=$2
     TARGET_FILE=${6:-"$BLOCK_NAME.block"}
 
-    peerChannelFetchBlockTls "public-health-channel" "cli.ospedale-sgiuliano.aslnapoli2.medchain.com" "${BLOCK_NAME}" "peer0.ospedale-sgiuliano.aslnapoli2.medchain.com:7081" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem" "$TARGET_FILE"
+    peerChannelFetchBlock "public-health-channel" "cli.ospedale-sgiuliano.aslnapoli2.medchain.com" "${BLOCK_NAME}" "peer0.ospedale-sgiuliano.aslnapoli2.medchain.com:7081" "$TARGET_FILE"
 
   elif
     [ "$1" = "getinfo" ] && [ "$2" = "public-health-channel" ] && [ "$3" = "ospedalesgiuliano" ] && [ "$4" = "peer1" ]
   then
 
-    peerChannelGetInfoTls "public-health-channel" "cli.ospedale-sgiuliano.aslnapoli2.medchain.com" "peer1.ospedale-sgiuliano.aslnapoli2.medchain.com:7082" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem"
+    peerChannelGetInfo "public-health-channel" "cli.ospedale-sgiuliano.aslnapoli2.medchain.com" "peer1.ospedale-sgiuliano.aslnapoli2.medchain.com:7082"
 
   elif [ "$1" = "fetch" ] && [ "$2" = "config" ] && [ "$3" = "public-health-channel" ] && [ "$4" = "ospedalesgiuliano" ] && [ "$5" = "peer1" ]; then
     TARGET_FILE=${6:-"$channel-config.json"}
 
-    peerChannelFetchConfigTls "public-health-channel" "cli.ospedale-sgiuliano.aslnapoli2.medchain.com" "$TARGET_FILE" "peer1.ospedale-sgiuliano.aslnapoli2.medchain.com:7082" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem"
+    peerChannelFetchConfig "public-health-channel" "cli.ospedale-sgiuliano.aslnapoli2.medchain.com" "$TARGET_FILE" "peer1.ospedale-sgiuliano.aslnapoli2.medchain.com:7082"
 
   elif [ "$1" = "fetch" ] && [ "$3" = "public-health-channel" ] && [ "$4" = "ospedalesgiuliano" ] && [ "$5" = "peer1" ]; then
     BLOCK_NAME=$2
     TARGET_FILE=${6:-"$BLOCK_NAME.block"}
 
-    peerChannelFetchBlockTls "public-health-channel" "cli.ospedale-sgiuliano.aslnapoli2.medchain.com" "${BLOCK_NAME}" "peer1.ospedale-sgiuliano.aslnapoli2.medchain.com:7082" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem" "$TARGET_FILE"
+    peerChannelFetchBlock "public-health-channel" "cli.ospedale-sgiuliano.aslnapoli2.medchain.com" "${BLOCK_NAME}" "peer1.ospedale-sgiuliano.aslnapoli2.medchain.com:7082" "$TARGET_FILE"
 
   elif
     [ "$1" = "getinfo" ] && [ "$2" = "public-health-channel" ] && [ "$3" = "medicinageneralenapoli" ] && [ "$4" = "peer0" ]
   then
 
-    peerChannelGetInfoTls "public-health-channel" "cli.medicina-generale.napoli.medchain.com" "peer0.medicina-generale.napoli.medchain.com:7101" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem"
+    peerChannelGetInfo "public-health-channel" "cli.medicina-generale.napoli.medchain.com" "peer0.medicina-generale.napoli.medchain.com:7101"
 
   elif [ "$1" = "fetch" ] && [ "$2" = "config" ] && [ "$3" = "public-health-channel" ] && [ "$4" = "medicinageneralenapoli" ] && [ "$5" = "peer0" ]; then
     TARGET_FILE=${6:-"$channel-config.json"}
 
-    peerChannelFetchConfigTls "public-health-channel" "cli.medicina-generale.napoli.medchain.com" "$TARGET_FILE" "peer0.medicina-generale.napoli.medchain.com:7101" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem"
+    peerChannelFetchConfig "public-health-channel" "cli.medicina-generale.napoli.medchain.com" "$TARGET_FILE" "peer0.medicina-generale.napoli.medchain.com:7101"
 
   elif [ "$1" = "fetch" ] && [ "$3" = "public-health-channel" ] && [ "$4" = "medicinageneralenapoli" ] && [ "$5" = "peer0" ]; then
     BLOCK_NAME=$2
     TARGET_FILE=${6:-"$BLOCK_NAME.block"}
 
-    peerChannelFetchBlockTls "public-health-channel" "cli.medicina-generale.napoli.medchain.com" "${BLOCK_NAME}" "peer0.medicina-generale.napoli.medchain.com:7101" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem" "$TARGET_FILE"
+    peerChannelFetchBlock "public-health-channel" "cli.medicina-generale.napoli.medchain.com" "${BLOCK_NAME}" "peer0.medicina-generale.napoli.medchain.com:7101" "$TARGET_FILE"
 
   elif
     [ "$1" = "getinfo" ] && [ "$2" = "public-health-channel" ] && [ "$3" = "medicinageneralenapoli" ] && [ "$4" = "peer1" ]
   then
 
-    peerChannelGetInfoTls "public-health-channel" "cli.medicina-generale.napoli.medchain.com" "peer1.medicina-generale.napoli.medchain.com:7102" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem"
+    peerChannelGetInfo "public-health-channel" "cli.medicina-generale.napoli.medchain.com" "peer1.medicina-generale.napoli.medchain.com:7102"
 
   elif [ "$1" = "fetch" ] && [ "$2" = "config" ] && [ "$3" = "public-health-channel" ] && [ "$4" = "medicinageneralenapoli" ] && [ "$5" = "peer1" ]; then
     TARGET_FILE=${6:-"$channel-config.json"}
 
-    peerChannelFetchConfigTls "public-health-channel" "cli.medicina-generale.napoli.medchain.com" "$TARGET_FILE" "peer1.medicina-generale.napoli.medchain.com:7102" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem"
+    peerChannelFetchConfig "public-health-channel" "cli.medicina-generale.napoli.medchain.com" "$TARGET_FILE" "peer1.medicina-generale.napoli.medchain.com:7102"
 
   elif [ "$1" = "fetch" ] && [ "$3" = "public-health-channel" ] && [ "$4" = "medicinageneralenapoli" ] && [ "$5" = "peer1" ]; then
     BLOCK_NAME=$2
     TARGET_FILE=${6:-"$BLOCK_NAME.block"}
 
-    peerChannelFetchBlockTls "public-health-channel" "cli.medicina-generale.napoli.medchain.com" "${BLOCK_NAME}" "peer1.medicina-generale.napoli.medchain.com:7102" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem" "$TARGET_FILE"
+    peerChannelFetchBlock "public-health-channel" "cli.medicina-generale.napoli.medchain.com" "${BLOCK_NAME}" "peer1.medicina-generale.napoli.medchain.com:7102" "$TARGET_FILE"
 
   elif
     [ "$1" = "getinfo" ] && [ "$2" = "public-health-channel" ] && [ "$3" = "neurologianapoli" ] && [ "$4" = "peer0" ]
   then
 
-    peerChannelGetInfoTls "public-health-channel" "cli.neurologia.napoli.medchain.com" "peer0.neurologia.napoli.medchain.com:7121" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem"
+    peerChannelGetInfo "public-health-channel" "cli.neurologia.napoli.medchain.com" "peer0.neurologia.napoli.medchain.com:7121"
 
   elif [ "$1" = "fetch" ] && [ "$2" = "config" ] && [ "$3" = "public-health-channel" ] && [ "$4" = "neurologianapoli" ] && [ "$5" = "peer0" ]; then
     TARGET_FILE=${6:-"$channel-config.json"}
 
-    peerChannelFetchConfigTls "public-health-channel" "cli.neurologia.napoli.medchain.com" "$TARGET_FILE" "peer0.neurologia.napoli.medchain.com:7121" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem"
+    peerChannelFetchConfig "public-health-channel" "cli.neurologia.napoli.medchain.com" "$TARGET_FILE" "peer0.neurologia.napoli.medchain.com:7121"
 
   elif [ "$1" = "fetch" ] && [ "$3" = "public-health-channel" ] && [ "$4" = "neurologianapoli" ] && [ "$5" = "peer0" ]; then
     BLOCK_NAME=$2
     TARGET_FILE=${6:-"$BLOCK_NAME.block"}
 
-    peerChannelFetchBlockTls "public-health-channel" "cli.neurologia.napoli.medchain.com" "${BLOCK_NAME}" "peer0.neurologia.napoli.medchain.com:7121" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem" "$TARGET_FILE"
+    peerChannelFetchBlock "public-health-channel" "cli.neurologia.napoli.medchain.com" "${BLOCK_NAME}" "peer0.neurologia.napoli.medchain.com:7121" "$TARGET_FILE"
 
   elif
     [ "$1" = "getinfo" ] && [ "$2" = "public-health-channel" ] && [ "$3" = "neurologianapoli" ] && [ "$4" = "peer1" ]
   then
 
-    peerChannelGetInfoTls "public-health-channel" "cli.neurologia.napoli.medchain.com" "peer1.neurologia.napoli.medchain.com:7122" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem"
+    peerChannelGetInfo "public-health-channel" "cli.neurologia.napoli.medchain.com" "peer1.neurologia.napoli.medchain.com:7122"
 
   elif [ "$1" = "fetch" ] && [ "$2" = "config" ] && [ "$3" = "public-health-channel" ] && [ "$4" = "neurologianapoli" ] && [ "$5" = "peer1" ]; then
     TARGET_FILE=${6:-"$channel-config.json"}
 
-    peerChannelFetchConfigTls "public-health-channel" "cli.neurologia.napoli.medchain.com" "$TARGET_FILE" "peer1.neurologia.napoli.medchain.com:7122" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem"
+    peerChannelFetchConfig "public-health-channel" "cli.neurologia.napoli.medchain.com" "$TARGET_FILE" "peer1.neurologia.napoli.medchain.com:7122"
 
   elif [ "$1" = "fetch" ] && [ "$3" = "public-health-channel" ] && [ "$4" = "neurologianapoli" ] && [ "$5" = "peer1" ]; then
     BLOCK_NAME=$2
     TARGET_FILE=${6:-"$BLOCK_NAME.block"}
 
-    peerChannelFetchBlockTls "public-health-channel" "cli.neurologia.napoli.medchain.com" "${BLOCK_NAME}" "peer1.neurologia.napoli.medchain.com:7122" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem" "$TARGET_FILE"
+    peerChannelFetchBlock "public-health-channel" "cli.neurologia.napoli.medchain.com" "${BLOCK_NAME}" "peer1.neurologia.napoli.medchain.com:7122" "$TARGET_FILE"
 
   elif
     [ "$1" = "getinfo" ] && [ "$2" = "public-health-channel" ] && [ "$3" = "farmaciapetrone" ] && [ "$4" = "peer0" ]
   then
 
-    peerChannelGetInfoTls "public-health-channel" "cli.farmacia-petrone.napoli.medchain.com" "peer0.farmacia-petrone.napoli.medchain.com:7141" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem"
+    peerChannelGetInfo "public-health-channel" "cli.farmacia-petrone.napoli.medchain.com" "peer0.farmacia-petrone.napoli.medchain.com:7141"
 
   elif [ "$1" = "fetch" ] && [ "$2" = "config" ] && [ "$3" = "public-health-channel" ] && [ "$4" = "farmaciapetrone" ] && [ "$5" = "peer0" ]; then
     TARGET_FILE=${6:-"$channel-config.json"}
 
-    peerChannelFetchConfigTls "public-health-channel" "cli.farmacia-petrone.napoli.medchain.com" "$TARGET_FILE" "peer0.farmacia-petrone.napoli.medchain.com:7141" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem"
+    peerChannelFetchConfig "public-health-channel" "cli.farmacia-petrone.napoli.medchain.com" "$TARGET_FILE" "peer0.farmacia-petrone.napoli.medchain.com:7141"
 
   elif [ "$1" = "fetch" ] && [ "$3" = "public-health-channel" ] && [ "$4" = "farmaciapetrone" ] && [ "$5" = "peer0" ]; then
     BLOCK_NAME=$2
     TARGET_FILE=${6:-"$BLOCK_NAME.block"}
 
-    peerChannelFetchBlockTls "public-health-channel" "cli.farmacia-petrone.napoli.medchain.com" "${BLOCK_NAME}" "peer0.farmacia-petrone.napoli.medchain.com:7141" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem" "$TARGET_FILE"
+    peerChannelFetchBlock "public-health-channel" "cli.farmacia-petrone.napoli.medchain.com" "${BLOCK_NAME}" "peer0.farmacia-petrone.napoli.medchain.com:7141" "$TARGET_FILE"
 
   elif
     [ "$1" = "getinfo" ] && [ "$2" = "public-health-channel" ] && [ "$3" = "farmaciacarbone" ] && [ "$4" = "peer0" ]
   then
 
-    peerChannelGetInfoTls "public-health-channel" "cli.farmacia-carbone.napoli.medchain.com" "peer0.farmacia-carbone.napoli.medchain.com:7161" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem"
+    peerChannelGetInfo "public-health-channel" "cli.farmacia-carbone.napoli.medchain.com" "peer0.farmacia-carbone.napoli.medchain.com:7161"
 
   elif [ "$1" = "fetch" ] && [ "$2" = "config" ] && [ "$3" = "public-health-channel" ] && [ "$4" = "farmaciacarbone" ] && [ "$5" = "peer0" ]; then
     TARGET_FILE=${6:-"$channel-config.json"}
 
-    peerChannelFetchConfigTls "public-health-channel" "cli.farmacia-carbone.napoli.medchain.com" "$TARGET_FILE" "peer0.farmacia-carbone.napoli.medchain.com:7161" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem"
+    peerChannelFetchConfig "public-health-channel" "cli.farmacia-carbone.napoli.medchain.com" "$TARGET_FILE" "peer0.farmacia-carbone.napoli.medchain.com:7161"
 
   elif [ "$1" = "fetch" ] && [ "$3" = "public-health-channel" ] && [ "$4" = "farmaciacarbone" ] && [ "$5" = "peer0" ]; then
     BLOCK_NAME=$2
     TARGET_FILE=${6:-"$BLOCK_NAME.block"}
 
-    peerChannelFetchBlockTls "public-health-channel" "cli.farmacia-carbone.napoli.medchain.com" "${BLOCK_NAME}" "peer0.farmacia-carbone.napoli.medchain.com:7161" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem" "$TARGET_FILE"
+    peerChannelFetchBlock "public-health-channel" "cli.farmacia-carbone.napoli.medchain.com" "${BLOCK_NAME}" "peer0.farmacia-carbone.napoli.medchain.com:7161" "$TARGET_FILE"
 
   elif
     [ "$1" = "getinfo" ] && [ "$2" = "public-health-channel" ] && [ "$3" = "laboratorioanalisicmo" ] && [ "$4" = "peer0" ]
   then
 
-    peerChannelGetInfoTls "public-health-channel" "cli.laboratorio-analisi-cmo.medchain.com" "peer0.laboratorio-analisi-cmo.medchain.com:7181" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem"
+    peerChannelGetInfo "public-health-channel" "cli.laboratorio-analisi-cmo.medchain.com" "peer0.laboratorio-analisi-cmo.medchain.com:7181"
 
   elif [ "$1" = "fetch" ] && [ "$2" = "config" ] && [ "$3" = "public-health-channel" ] && [ "$4" = "laboratorioanalisicmo" ] && [ "$5" = "peer0" ]; then
     TARGET_FILE=${6:-"$channel-config.json"}
 
-    peerChannelFetchConfigTls "public-health-channel" "cli.laboratorio-analisi-cmo.medchain.com" "$TARGET_FILE" "peer0.laboratorio-analisi-cmo.medchain.com:7181" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem"
+    peerChannelFetchConfig "public-health-channel" "cli.laboratorio-analisi-cmo.medchain.com" "$TARGET_FILE" "peer0.laboratorio-analisi-cmo.medchain.com:7181"
 
   elif [ "$1" = "fetch" ] && [ "$3" = "public-health-channel" ] && [ "$4" = "laboratorioanalisicmo" ] && [ "$5" = "peer0" ]; then
     BLOCK_NAME=$2
     TARGET_FILE=${6:-"$BLOCK_NAME.block"}
 
-    peerChannelFetchBlockTls "public-health-channel" "cli.laboratorio-analisi-cmo.medchain.com" "${BLOCK_NAME}" "peer0.laboratorio-analisi-cmo.medchain.com:7181" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem" "$TARGET_FILE"
+    peerChannelFetchBlock "public-health-channel" "cli.laboratorio-analisi-cmo.medchain.com" "${BLOCK_NAME}" "peer0.laboratorio-analisi-cmo.medchain.com:7181" "$TARGET_FILE"
 
   elif
     [ "$1" = "getinfo" ] && [ "$2" = "public-health-channel" ] && [ "$3" = "laboratorioanalisisdn" ] && [ "$4" = "peer0" ]
   then
 
-    peerChannelGetInfoTls "public-health-channel" "cli.laboratorio-analisi-sdn.medchain.com" "peer0.laboratorio-analisi-sdn.medchain.com:7201" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem"
+    peerChannelGetInfo "public-health-channel" "cli.laboratorio-analisi-sdn.medchain.com" "peer0.laboratorio-analisi-sdn.medchain.com:7201"
 
   elif [ "$1" = "fetch" ] && [ "$2" = "config" ] && [ "$3" = "public-health-channel" ] && [ "$4" = "laboratorioanalisisdn" ] && [ "$5" = "peer0" ]; then
     TARGET_FILE=${6:-"$channel-config.json"}
 
-    peerChannelFetchConfigTls "public-health-channel" "cli.laboratorio-analisi-sdn.medchain.com" "$TARGET_FILE" "peer0.laboratorio-analisi-sdn.medchain.com:7201" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem"
+    peerChannelFetchConfig "public-health-channel" "cli.laboratorio-analisi-sdn.medchain.com" "$TARGET_FILE" "peer0.laboratorio-analisi-sdn.medchain.com:7201"
 
   elif [ "$1" = "fetch" ] && [ "$3" = "public-health-channel" ] && [ "$4" = "laboratorioanalisisdn" ] && [ "$5" = "peer0" ]; then
     BLOCK_NAME=$2
     TARGET_FILE=${6:-"$BLOCK_NAME.block"}
 
-    peerChannelFetchBlockTls "public-health-channel" "cli.laboratorio-analisi-sdn.medchain.com" "${BLOCK_NAME}" "peer0.laboratorio-analisi-sdn.medchain.com:7201" "crypto-orderer/tlsca.orderer.medchain.com-cert.pem" "$TARGET_FILE"
+    peerChannelFetchBlock "public-health-channel" "cli.laboratorio-analisi-sdn.medchain.com" "${BLOCK_NAME}" "peer0.laboratorio-analisi-sdn.medchain.com:7201" "$TARGET_FILE"
 
   else
 

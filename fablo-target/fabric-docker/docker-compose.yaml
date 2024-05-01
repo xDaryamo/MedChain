@@ -14,7 +14,6 @@ services:
       - FABRIC_CA_SERVER_CA_CERTFILE=/etc/hyperledger/fabric-ca-server/crypto/ca.orderer.medchain.com-cert.pem
       - FABRIC_CA_SERVER_CA_KEYFILE=/etc/hyperledger/fabric-ca-server/crypto/priv-key.pem
       - FABRIC_LOGGING_SPEC=${LOGGING_LEVEL}
-      - FABRIC_CA_SERVER_TLS_ENABLED=true
     ports:
       - 7020:7054
     working_dir: /etc/hyperledger/fabric-ca-server
@@ -38,12 +37,6 @@ services:
       #
       - CORE_PEER_LOCALMSPID=OrdererMSP
       - CORE_PEER_MSPCONFIGPATH=/var/hyperledger/cli/crypto/users/Admin@orderer.medchain.com/msp
-      # enabled TLS
-      - CORE_PEER_TLS_ENABLED=true
-      - CORE_PEER_TLS_CERT_FILE=/var/hyperledger/cli/crypto/users/Admin@orderer.medchain.com/tls/client.crt
-      - CORE_PEER_TLS_KEY_FILE=/var/hyperledger/cli/crypto/users/Admin@orderer.medchain.com/tls/client.key
-      - CORE_PEER_TLS_ROOTCERT_FILE=/var/hyperledger/cli/crypto/users/Admin@orderer.medchain.com/tls/ca.crt
-      - TLS_CA_CERT_PATH=/var/hyperledger/cli/crypto-orderer/tlsca.orderer.medchain.com-cert.pem
     working_dir: /var/hyperledger/cli/
     command: /bin/bash
     volumes:
@@ -51,31 +44,8 @@ services:
       - ../fabric-docker/scripts/cli:/var/hyperledger/cli/scripts/
       - ../fabric-config/config:/var/hyperledger/cli/config/ # genesis.block and channel.tx's
       - ../fabric-config/crypto-config/peerOrganizations/orderer.medchain.com:/var/hyperledger/cli/crypto/
-      - ../fabric-config/crypto-config/peerOrganizations/orderer.medchain.com/peers/orderer0.medchain-orderergroup.orderer.medchain.com/msp/tlscacerts/tlsca.orderer.medchain.com-cert.pem:/var/hyperledger/cli/crypto-orderer/tlsca.orderer.medchain.com-cert.pem:ro
-      - ../fabric-config/crypto-config/peerOrganizations/ospedale-maresca.aslnapoli3.medchain.com/peers/peer0.ospedale-maresca.aslnapoli3.medchain.com/tls/ca.crt:/var/hyperledger/cli/crypto-peer/peer0.ospedale-maresca.aslnapoli3.medchain.com/tls/ca.crt:ro
-      - ../fabric-config/crypto-config/peerOrganizations/ospedale-maresca.aslnapoli3.medchain.com/peers/peer1.ospedale-maresca.aslnapoli3.medchain.com/tls/ca.crt:/var/hyperledger/cli/crypto-peer/peer1.ospedale-maresca.aslnapoli3.medchain.com/tls/ca.crt:ro
-      - ../fabric-config/crypto-config/peerOrganizations/ospedale-del-mare.aslnapoli1.medchain.com/peers/peer0.ospedale-del-mare.aslnapoli1.medchain.com/tls/ca.crt:/var/hyperledger/cli/crypto-peer/peer0.ospedale-del-mare.aslnapoli1.medchain.com/tls/ca.crt:ro
-      - ../fabric-config/crypto-config/peerOrganizations/ospedale-del-mare.aslnapoli1.medchain.com/peers/peer1.ospedale-del-mare.aslnapoli1.medchain.com/tls/ca.crt:/var/hyperledger/cli/crypto-peer/peer1.ospedale-del-mare.aslnapoli1.medchain.com/tls/ca.crt:ro
-      - ../fabric-config/crypto-config/peerOrganizations/ospedale-sgiuliano.aslnapoli2.medchain.com/peers/peer0.ospedale-sgiuliano.aslnapoli2.medchain.com/tls/ca.crt:/var/hyperledger/cli/crypto-peer/peer0.ospedale-sgiuliano.aslnapoli2.medchain.com/tls/ca.crt:ro
-      - ../fabric-config/crypto-config/peerOrganizations/ospedale-sgiuliano.aslnapoli2.medchain.com/peers/peer1.ospedale-sgiuliano.aslnapoli2.medchain.com/tls/ca.crt:/var/hyperledger/cli/crypto-peer/peer1.ospedale-sgiuliano.aslnapoli2.medchain.com/tls/ca.crt:ro
-      - ../fabric-config/crypto-config/peerOrganizations/medicina-generale.napoli.medchain.com/peers/peer0.medicina-generale.napoli.medchain.com/tls/ca.crt:/var/hyperledger/cli/crypto-peer/peer0.medicina-generale.napoli.medchain.com/tls/ca.crt:ro
-      - ../fabric-config/crypto-config/peerOrganizations/medicina-generale.napoli.medchain.com/peers/peer1.medicina-generale.napoli.medchain.com/tls/ca.crt:/var/hyperledger/cli/crypto-peer/peer1.medicina-generale.napoli.medchain.com/tls/ca.crt:ro
-      - ../fabric-config/crypto-config/peerOrganizations/neurologia.napoli.medchain.com/peers/peer0.neurologia.napoli.medchain.com/tls/ca.crt:/var/hyperledger/cli/crypto-peer/peer0.neurologia.napoli.medchain.com/tls/ca.crt:ro
-      - ../fabric-config/crypto-config/peerOrganizations/neurologia.napoli.medchain.com/peers/peer1.neurologia.napoli.medchain.com/tls/ca.crt:/var/hyperledger/cli/crypto-peer/peer1.neurologia.napoli.medchain.com/tls/ca.crt:ro
-      - ../fabric-config/crypto-config/peerOrganizations/farmacia-petrone.napoli.medchain.com/peers/peer0.farmacia-petrone.napoli.medchain.com/tls/ca.crt:/var/hyperledger/cli/crypto-peer/peer0.farmacia-petrone.napoli.medchain.com/tls/ca.crt:ro
-      - ../fabric-config/crypto-config/peerOrganizations/farmacia-carbone.napoli.medchain.com/peers/peer0.farmacia-carbone.napoli.medchain.com/tls/ca.crt:/var/hyperledger/cli/crypto-peer/peer0.farmacia-carbone.napoli.medchain.com/tls/ca.crt:ro
-      - ../fabric-config/crypto-config/peerOrganizations/laboratorio-analisi-cmo.medchain.com/peers/peer0.laboratorio-analisi-cmo.medchain.com/tls/ca.crt:/var/hyperledger/cli/crypto-peer/peer0.laboratorio-analisi-cmo.medchain.com/tls/ca.crt:ro
-      - ../fabric-config/crypto-config/peerOrganizations/laboratorio-analisi-sdn.medchain.com/peers/peer0.laboratorio-analisi-sdn.medchain.com/tls/ca.crt:/var/hyperledger/cli/crypto-peer/peer0.laboratorio-analisi-sdn.medchain.com/tls/ca.crt:ro
       - ../fabric-config/chaincode-packages:/var/hyperledger/cli/chaincode-packages/
-<<<<<<< HEAD
-      - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/:/var/hyperledger/cli/prescription/"
-=======
-<<<<<<< HEAD
       - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/:/var/hyperledger/cli/labresults/"
-=======
-      - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/:/var/hyperledger/cli/health-data-management/"
->>>>>>> master
->>>>>>> master
     networks:
       - basic
 
@@ -91,17 +61,6 @@ services:
       - ORDERER_GENERAL_LOCALMSPID=OrdererMSP
       - ORDERER_GENERAL_LOCALMSPDIR=/var/hyperledger/orderer/msp
       - GODEBUG=netdns=go
-      # metrics
-      - ORDERER_OPERATIONS_LISTENADDRESS=orderer0.medchain-orderergroup.orderer.medchain.com:9440
-      - ORDERER_METRICS_PROVIDER=prometheus
-      # enabled TLS
-      - ORDERER_GENERAL_TLS_ENABLED=true
-      - ORDERER_GENERAL_TLS_PRIVATEKEY=/var/hyperledger/orderer/tls/server.key
-      - ORDERER_GENERAL_TLS_CERTIFICATE=/var/hyperledger/orderer/tls/server.crt
-      - ORDERER_GENERAL_TLS_ROOTCAS=[/var/hyperledger/orderer/tls/ca.crt]
-      - ORDERER_GENERAL_CLUSTER_CLIENTCERTIFICATE=/var/hyperledger/orderer/tls/server.crt
-      - ORDERER_GENERAL_CLUSTER_CLIENTPRIVATEKEY=/var/hyperledger/orderer/tls/server.key
-      - ORDERER_GENERAL_CLUSTER_ROOTCAS=[/var/hyperledger/orderer/tls/ca.crt]
     working_dir: /var/hyperledger/orderer
     command: orderer
     ports:
@@ -114,76 +73,6 @@ services:
     networks:
       - basic
 
-  orderer1.medchain-orderergroup.orderer.medchain.com:
-    container_name: orderer1.medchain-orderergroup.orderer.medchain.com
-    image: hyperledger/fabric-orderer:${FABRIC_VERSION}
-    environment:
-      - FABRIC_LOGGING_SPEC=${LOGGING_LEVEL}
-      - ORDERER_GENERAL_LISTENADDRESS=0.0.0.0
-      - ORDERER_GENERAL_LISTENPORT=7031
-      - ORDERER_GENERAL_GENESISMETHOD=file
-      - ORDERER_GENERAL_BOOTSTRAPFILE=/var/hyperledger/config/Medchain-orderergroupGenesis.block
-      - ORDERER_GENERAL_LOCALMSPID=OrdererMSP
-      - ORDERER_GENERAL_LOCALMSPDIR=/var/hyperledger/orderer/msp
-      - GODEBUG=netdns=go
-      # metrics
-      - ORDERER_OPERATIONS_LISTENADDRESS=orderer1.medchain-orderergroup.orderer.medchain.com:9440
-      - ORDERER_METRICS_PROVIDER=prometheus
-      # enabled TLS
-      - ORDERER_GENERAL_TLS_ENABLED=true
-      - ORDERER_GENERAL_TLS_PRIVATEKEY=/var/hyperledger/orderer/tls/server.key
-      - ORDERER_GENERAL_TLS_CERTIFICATE=/var/hyperledger/orderer/tls/server.crt
-      - ORDERER_GENERAL_TLS_ROOTCAS=[/var/hyperledger/orderer/tls/ca.crt]
-      - ORDERER_GENERAL_CLUSTER_CLIENTCERTIFICATE=/var/hyperledger/orderer/tls/server.crt
-      - ORDERER_GENERAL_CLUSTER_CLIENTPRIVATEKEY=/var/hyperledger/orderer/tls/server.key
-      - ORDERER_GENERAL_CLUSTER_ROOTCAS=[/var/hyperledger/orderer/tls/ca.crt]
-    working_dir: /var/hyperledger/orderer
-    command: orderer
-    ports:
-      - 7031:7031
-      - 8031:9440
-    volumes:
-      - ../fabric-config/config/:/var/hyperledger/config
-      - ../fabric-config/crypto-config/peerOrganizations/orderer.medchain.com/peers/orderer1.medchain-orderergroup.orderer.medchain.com/msp/:/var/hyperledger/orderer/msp
-      - ../fabric-config/crypto-config/peerOrganizations/orderer.medchain.com/peers/orderer1.medchain-orderergroup.orderer.medchain.com/tls/:/var/hyperledger/orderer/tls
-    networks:
-      - basic
-
-  orderer2.medchain-orderergroup.orderer.medchain.com:
-    container_name: orderer2.medchain-orderergroup.orderer.medchain.com
-    image: hyperledger/fabric-orderer:${FABRIC_VERSION}
-    environment:
-      - FABRIC_LOGGING_SPEC=${LOGGING_LEVEL}
-      - ORDERER_GENERAL_LISTENADDRESS=0.0.0.0
-      - ORDERER_GENERAL_LISTENPORT=7032
-      - ORDERER_GENERAL_GENESISMETHOD=file
-      - ORDERER_GENERAL_BOOTSTRAPFILE=/var/hyperledger/config/Medchain-orderergroupGenesis.block
-      - ORDERER_GENERAL_LOCALMSPID=OrdererMSP
-      - ORDERER_GENERAL_LOCALMSPDIR=/var/hyperledger/orderer/msp
-      - GODEBUG=netdns=go
-      # metrics
-      - ORDERER_OPERATIONS_LISTENADDRESS=orderer2.medchain-orderergroup.orderer.medchain.com:9440
-      - ORDERER_METRICS_PROVIDER=prometheus
-      # enabled TLS
-      - ORDERER_GENERAL_TLS_ENABLED=true
-      - ORDERER_GENERAL_TLS_PRIVATEKEY=/var/hyperledger/orderer/tls/server.key
-      - ORDERER_GENERAL_TLS_CERTIFICATE=/var/hyperledger/orderer/tls/server.crt
-      - ORDERER_GENERAL_TLS_ROOTCAS=[/var/hyperledger/orderer/tls/ca.crt]
-      - ORDERER_GENERAL_CLUSTER_CLIENTCERTIFICATE=/var/hyperledger/orderer/tls/server.crt
-      - ORDERER_GENERAL_CLUSTER_CLIENTPRIVATEKEY=/var/hyperledger/orderer/tls/server.key
-      - ORDERER_GENERAL_CLUSTER_ROOTCAS=[/var/hyperledger/orderer/tls/ca.crt]
-    working_dir: /var/hyperledger/orderer
-    command: orderer
-    ports:
-      - 7032:7032
-      - 8032:9440
-    volumes:
-      - ../fabric-config/config/:/var/hyperledger/config
-      - ../fabric-config/crypto-config/peerOrganizations/orderer.medchain.com/peers/orderer2.medchain-orderergroup.orderer.medchain.com/msp/:/var/hyperledger/orderer/msp
-      - ../fabric-config/crypto-config/peerOrganizations/orderer.medchain.com/peers/orderer2.medchain-orderergroup.orderer.medchain.com/tls/:/var/hyperledger/orderer/tls
-    networks:
-      - basic
-
   ca.ospedale-maresca.aslnapoli3.medchain.com:
     container_name: ca.ospedale-maresca.aslnapoli3.medchain.com
     image: hyperledger/fabric-ca:${FABRIC_CA_VERSION}
@@ -193,7 +82,6 @@ services:
       - FABRIC_CA_SERVER_CA_CERTFILE=/etc/hyperledger/fabric-ca-server/crypto/ca.ospedale-maresca.aslnapoli3.medchain.com-cert.pem
       - FABRIC_CA_SERVER_CA_KEYFILE=/etc/hyperledger/fabric-ca-server/crypto/priv-key.pem
       - FABRIC_LOGGING_SPEC=${LOGGING_LEVEL}
-      - FABRIC_CA_SERVER_TLS_ENABLED=true
     ports:
       - 7040:7054
     working_dir: /etc/hyperledger/fabric-ca-server
@@ -218,12 +106,6 @@ services:
       - CORE_PEER_LOCALMSPID=OspedaleMarescaMSP
       - CORE_PEER_MSPCONFIGPATH=/var/hyperledger/cli/crypto/users/Admin@ospedale-maresca.aslnapoli3.medchain.com/msp
       - CORE_PEER_ADDRESS=peer0.ospedale-maresca.aslnapoli3.medchain.com:7041
-      # enabled TLS
-      - CORE_PEER_TLS_ENABLED=true
-      - CORE_PEER_TLS_CERT_FILE=/var/hyperledger/cli/crypto/users/Admin@ospedale-maresca.aslnapoli3.medchain.com/tls/client.crt
-      - CORE_PEER_TLS_KEY_FILE=/var/hyperledger/cli/crypto/users/Admin@ospedale-maresca.aslnapoli3.medchain.com/tls/client.key
-      - CORE_PEER_TLS_ROOTCERT_FILE=/var/hyperledger/cli/crypto/users/Admin@ospedale-maresca.aslnapoli3.medchain.com/tls/ca.crt
-      - TLS_CA_CERT_PATH=/var/hyperledger/cli/crypto-orderer/tlsca.orderer.medchain.com-cert.pem
     working_dir: /var/hyperledger/cli/
     command: /bin/bash
     volumes:
@@ -231,31 +113,8 @@ services:
       - ../fabric-docker/scripts/cli:/var/hyperledger/cli/scripts/
       - ../fabric-config/config:/var/hyperledger/cli/config/ # genesis.block and channel.tx's
       - ../fabric-config/crypto-config/peerOrganizations/ospedale-maresca.aslnapoli3.medchain.com:/var/hyperledger/cli/crypto/
-      - ../fabric-config/crypto-config/peerOrganizations/orderer.medchain.com/peers/orderer0.medchain-orderergroup.orderer.medchain.com/msp/tlscacerts/tlsca.orderer.medchain.com-cert.pem:/var/hyperledger/cli/crypto-orderer/tlsca.orderer.medchain.com-cert.pem:ro
-      - ../fabric-config/crypto-config/peerOrganizations/ospedale-maresca.aslnapoli3.medchain.com/peers/peer0.ospedale-maresca.aslnapoli3.medchain.com/tls/ca.crt:/var/hyperledger/cli/crypto-peer/peer0.ospedale-maresca.aslnapoli3.medchain.com/tls/ca.crt:ro
-      - ../fabric-config/crypto-config/peerOrganizations/ospedale-maresca.aslnapoli3.medchain.com/peers/peer1.ospedale-maresca.aslnapoli3.medchain.com/tls/ca.crt:/var/hyperledger/cli/crypto-peer/peer1.ospedale-maresca.aslnapoli3.medchain.com/tls/ca.crt:ro
-      - ../fabric-config/crypto-config/peerOrganizations/ospedale-del-mare.aslnapoli1.medchain.com/peers/peer0.ospedale-del-mare.aslnapoli1.medchain.com/tls/ca.crt:/var/hyperledger/cli/crypto-peer/peer0.ospedale-del-mare.aslnapoli1.medchain.com/tls/ca.crt:ro
-      - ../fabric-config/crypto-config/peerOrganizations/ospedale-del-mare.aslnapoli1.medchain.com/peers/peer1.ospedale-del-mare.aslnapoli1.medchain.com/tls/ca.crt:/var/hyperledger/cli/crypto-peer/peer1.ospedale-del-mare.aslnapoli1.medchain.com/tls/ca.crt:ro
-      - ../fabric-config/crypto-config/peerOrganizations/ospedale-sgiuliano.aslnapoli2.medchain.com/peers/peer0.ospedale-sgiuliano.aslnapoli2.medchain.com/tls/ca.crt:/var/hyperledger/cli/crypto-peer/peer0.ospedale-sgiuliano.aslnapoli2.medchain.com/tls/ca.crt:ro
-      - ../fabric-config/crypto-config/peerOrganizations/ospedale-sgiuliano.aslnapoli2.medchain.com/peers/peer1.ospedale-sgiuliano.aslnapoli2.medchain.com/tls/ca.crt:/var/hyperledger/cli/crypto-peer/peer1.ospedale-sgiuliano.aslnapoli2.medchain.com/tls/ca.crt:ro
-      - ../fabric-config/crypto-config/peerOrganizations/medicina-generale.napoli.medchain.com/peers/peer0.medicina-generale.napoli.medchain.com/tls/ca.crt:/var/hyperledger/cli/crypto-peer/peer0.medicina-generale.napoli.medchain.com/tls/ca.crt:ro
-      - ../fabric-config/crypto-config/peerOrganizations/medicina-generale.napoli.medchain.com/peers/peer1.medicina-generale.napoli.medchain.com/tls/ca.crt:/var/hyperledger/cli/crypto-peer/peer1.medicina-generale.napoli.medchain.com/tls/ca.crt:ro
-      - ../fabric-config/crypto-config/peerOrganizations/neurologia.napoli.medchain.com/peers/peer0.neurologia.napoli.medchain.com/tls/ca.crt:/var/hyperledger/cli/crypto-peer/peer0.neurologia.napoli.medchain.com/tls/ca.crt:ro
-      - ../fabric-config/crypto-config/peerOrganizations/neurologia.napoli.medchain.com/peers/peer1.neurologia.napoli.medchain.com/tls/ca.crt:/var/hyperledger/cli/crypto-peer/peer1.neurologia.napoli.medchain.com/tls/ca.crt:ro
-      - ../fabric-config/crypto-config/peerOrganizations/farmacia-petrone.napoli.medchain.com/peers/peer0.farmacia-petrone.napoli.medchain.com/tls/ca.crt:/var/hyperledger/cli/crypto-peer/peer0.farmacia-petrone.napoli.medchain.com/tls/ca.crt:ro
-      - ../fabric-config/crypto-config/peerOrganizations/farmacia-carbone.napoli.medchain.com/peers/peer0.farmacia-carbone.napoli.medchain.com/tls/ca.crt:/var/hyperledger/cli/crypto-peer/peer0.farmacia-carbone.napoli.medchain.com/tls/ca.crt:ro
-      - ../fabric-config/crypto-config/peerOrganizations/laboratorio-analisi-cmo.medchain.com/peers/peer0.laboratorio-analisi-cmo.medchain.com/tls/ca.crt:/var/hyperledger/cli/crypto-peer/peer0.laboratorio-analisi-cmo.medchain.com/tls/ca.crt:ro
-      - ../fabric-config/crypto-config/peerOrganizations/laboratorio-analisi-sdn.medchain.com/peers/peer0.laboratorio-analisi-sdn.medchain.com/tls/ca.crt:/var/hyperledger/cli/crypto-peer/peer0.laboratorio-analisi-sdn.medchain.com/tls/ca.crt:ro
       - ../fabric-config/chaincode-packages:/var/hyperledger/cli/chaincode-packages/
-<<<<<<< HEAD
-      - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/:/var/hyperledger/cli/prescription/"
-=======
-<<<<<<< HEAD
       - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/:/var/hyperledger/cli/labresults/"
-=======
-      - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/:/var/hyperledger/cli/health-data-management/"
->>>>>>> master
->>>>>>> master
     networks:
       - basic
 
@@ -287,21 +146,17 @@ services:
       - CORE_VM_DOCKER_ATTACHSTDOUT=true
       - CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
       - GODEBUG=netdns=go
-      # enabled TLS
-      - CORE_PEER_TLS_ENABLED=true
-      - CORE_PEER_TLS_CERT_FILE=/etc/hyperledger/fabric/peer/tls/server.crt
-      - CORE_PEER_TLS_KEY_FILE=/etc/hyperledger/fabric/peer/tls/server.key
-      - CORE_PEER_TLS_ROOTCERT_FILE=/etc/hyperledger/fabric/peer/tls/ca.crt
       # CouchDB
       - CORE_LEDGER_STATE_STATEDATABASE=CouchDB
       - CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS=couchdb.peer0.ospedale-maresca.aslnapoli3.medchain.com:5984
       - CORE_LEDGER_STATE_COUCHDBCONFIG_USERNAME=peer0
       - CORE_LEDGER_STATE_COUCHDBCONFIG_PASSWORD=peer0Password
     working_dir: /etc/hyperledger/fabric/peer/
-    command: peer node start
+    command: peer node start --peer-chaincodedev=true
     ports:
       - 8041:9440
       - 7041:7041
+      - 8541:7050
     volumes:
       - /var/run/docker.sock:/host/var/run/docker.sock
       - ../fabric-config/crypto-config/peerOrganizations/ospedale-maresca.aslnapoli3.medchain.com/peers/peer0.ospedale-maresca.aslnapoli3.medchain.com/msp:/etc/hyperledger/fabric/peer/msp
@@ -349,21 +204,17 @@ services:
       - CORE_VM_DOCKER_ATTACHSTDOUT=true
       - CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
       - GODEBUG=netdns=go
-      # enabled TLS
-      - CORE_PEER_TLS_ENABLED=true
-      - CORE_PEER_TLS_CERT_FILE=/etc/hyperledger/fabric/peer/tls/server.crt
-      - CORE_PEER_TLS_KEY_FILE=/etc/hyperledger/fabric/peer/tls/server.key
-      - CORE_PEER_TLS_ROOTCERT_FILE=/etc/hyperledger/fabric/peer/tls/ca.crt
       # CouchDB
       - CORE_LEDGER_STATE_STATEDATABASE=CouchDB
       - CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS=couchdb.peer1.ospedale-maresca.aslnapoli3.medchain.com:5984
       - CORE_LEDGER_STATE_COUCHDBCONFIG_USERNAME=peer1
       - CORE_LEDGER_STATE_COUCHDBCONFIG_PASSWORD=peer1Password
     working_dir: /etc/hyperledger/fabric/peer/
-    command: peer node start
+    command: peer node start --peer-chaincodedev=true
     ports:
       - 8042:9440
       - 7042:7042
+      - 8542:7050
     volumes:
       - /var/run/docker.sock:/host/var/run/docker.sock
       - ../fabric-config/crypto-config/peerOrganizations/ospedale-maresca.aslnapoli3.medchain.com/peers/peer1.ospedale-maresca.aslnapoli3.medchain.com/msp:/etc/hyperledger/fabric/peer/msp
@@ -393,7 +244,6 @@ services:
       - FABRIC_CA_SERVER_CA_CERTFILE=/etc/hyperledger/fabric-ca-server/crypto/ca.ospedale-del-mare.aslnapoli1.medchain.com-cert.pem
       - FABRIC_CA_SERVER_CA_KEYFILE=/etc/hyperledger/fabric-ca-server/crypto/priv-key.pem
       - FABRIC_LOGGING_SPEC=${LOGGING_LEVEL}
-      - FABRIC_CA_SERVER_TLS_ENABLED=true
     ports:
       - 7060:7054
     working_dir: /etc/hyperledger/fabric-ca-server
@@ -418,12 +268,6 @@ services:
       - CORE_PEER_LOCALMSPID=OspedaleDelMareMSP
       - CORE_PEER_MSPCONFIGPATH=/var/hyperledger/cli/crypto/users/Admin@ospedale-del-mare.aslnapoli1.medchain.com/msp
       - CORE_PEER_ADDRESS=peer0.ospedale-del-mare.aslnapoli1.medchain.com:7061
-      # enabled TLS
-      - CORE_PEER_TLS_ENABLED=true
-      - CORE_PEER_TLS_CERT_FILE=/var/hyperledger/cli/crypto/users/Admin@ospedale-del-mare.aslnapoli1.medchain.com/tls/client.crt
-      - CORE_PEER_TLS_KEY_FILE=/var/hyperledger/cli/crypto/users/Admin@ospedale-del-mare.aslnapoli1.medchain.com/tls/client.key
-      - CORE_PEER_TLS_ROOTCERT_FILE=/var/hyperledger/cli/crypto/users/Admin@ospedale-del-mare.aslnapoli1.medchain.com/tls/ca.crt
-      - TLS_CA_CERT_PATH=/var/hyperledger/cli/crypto-orderer/tlsca.orderer.medchain.com-cert.pem
     working_dir: /var/hyperledger/cli/
     command: /bin/bash
     volumes:
@@ -431,31 +275,8 @@ services:
       - ../fabric-docker/scripts/cli:/var/hyperledger/cli/scripts/
       - ../fabric-config/config:/var/hyperledger/cli/config/ # genesis.block and channel.tx's
       - ../fabric-config/crypto-config/peerOrganizations/ospedale-del-mare.aslnapoli1.medchain.com:/var/hyperledger/cli/crypto/
-      - ../fabric-config/crypto-config/peerOrganizations/orderer.medchain.com/peers/orderer0.medchain-orderergroup.orderer.medchain.com/msp/tlscacerts/tlsca.orderer.medchain.com-cert.pem:/var/hyperledger/cli/crypto-orderer/tlsca.orderer.medchain.com-cert.pem:ro
-      - ../fabric-config/crypto-config/peerOrganizations/ospedale-maresca.aslnapoli3.medchain.com/peers/peer0.ospedale-maresca.aslnapoli3.medchain.com/tls/ca.crt:/var/hyperledger/cli/crypto-peer/peer0.ospedale-maresca.aslnapoli3.medchain.com/tls/ca.crt:ro
-      - ../fabric-config/crypto-config/peerOrganizations/ospedale-maresca.aslnapoli3.medchain.com/peers/peer1.ospedale-maresca.aslnapoli3.medchain.com/tls/ca.crt:/var/hyperledger/cli/crypto-peer/peer1.ospedale-maresca.aslnapoli3.medchain.com/tls/ca.crt:ro
-      - ../fabric-config/crypto-config/peerOrganizations/ospedale-del-mare.aslnapoli1.medchain.com/peers/peer0.ospedale-del-mare.aslnapoli1.medchain.com/tls/ca.crt:/var/hyperledger/cli/crypto-peer/peer0.ospedale-del-mare.aslnapoli1.medchain.com/tls/ca.crt:ro
-      - ../fabric-config/crypto-config/peerOrganizations/ospedale-del-mare.aslnapoli1.medchain.com/peers/peer1.ospedale-del-mare.aslnapoli1.medchain.com/tls/ca.crt:/var/hyperledger/cli/crypto-peer/peer1.ospedale-del-mare.aslnapoli1.medchain.com/tls/ca.crt:ro
-      - ../fabric-config/crypto-config/peerOrganizations/ospedale-sgiuliano.aslnapoli2.medchain.com/peers/peer0.ospedale-sgiuliano.aslnapoli2.medchain.com/tls/ca.crt:/var/hyperledger/cli/crypto-peer/peer0.ospedale-sgiuliano.aslnapoli2.medchain.com/tls/ca.crt:ro
-      - ../fabric-config/crypto-config/peerOrganizations/ospedale-sgiuliano.aslnapoli2.medchain.com/peers/peer1.ospedale-sgiuliano.aslnapoli2.medchain.com/tls/ca.crt:/var/hyperledger/cli/crypto-peer/peer1.ospedale-sgiuliano.aslnapoli2.medchain.com/tls/ca.crt:ro
-      - ../fabric-config/crypto-config/peerOrganizations/medicina-generale.napoli.medchain.com/peers/peer0.medicina-generale.napoli.medchain.com/tls/ca.crt:/var/hyperledger/cli/crypto-peer/peer0.medicina-generale.napoli.medchain.com/tls/ca.crt:ro
-      - ../fabric-config/crypto-config/peerOrganizations/medicina-generale.napoli.medchain.com/peers/peer1.medicina-generale.napoli.medchain.com/tls/ca.crt:/var/hyperledger/cli/crypto-peer/peer1.medicina-generale.napoli.medchain.com/tls/ca.crt:ro
-      - ../fabric-config/crypto-config/peerOrganizations/neurologia.napoli.medchain.com/peers/peer0.neurologia.napoli.medchain.com/tls/ca.crt:/var/hyperledger/cli/crypto-peer/peer0.neurologia.napoli.medchain.com/tls/ca.crt:ro
-      - ../fabric-config/crypto-config/peerOrganizations/neurologia.napoli.medchain.com/peers/peer1.neurologia.napoli.medchain.com/tls/ca.crt:/var/hyperledger/cli/crypto-peer/peer1.neurologia.napoli.medchain.com/tls/ca.crt:ro
-      - ../fabric-config/crypto-config/peerOrganizations/farmacia-petrone.napoli.medchain.com/peers/peer0.farmacia-petrone.napoli.medchain.com/tls/ca.crt:/var/hyperledger/cli/crypto-peer/peer0.farmacia-petrone.napoli.medchain.com/tls/ca.crt:ro
-      - ../fabric-config/crypto-config/peerOrganizations/farmacia-carbone.napoli.medchain.com/peers/peer0.farmacia-carbone.napoli.medchain.com/tls/ca.crt:/var/hyperledger/cli/crypto-peer/peer0.farmacia-carbone.napoli.medchain.com/tls/ca.crt:ro
-      - ../fabric-config/crypto-config/peerOrganizations/laboratorio-analisi-cmo.medchain.com/peers/peer0.laboratorio-analisi-cmo.medchain.com/tls/ca.crt:/var/hyperledger/cli/crypto-peer/peer0.laboratorio-analisi-cmo.medchain.com/tls/ca.crt:ro
-      - ../fabric-config/crypto-config/peerOrganizations/laboratorio-analisi-sdn.medchain.com/peers/peer0.laboratorio-analisi-sdn.medchain.com/tls/ca.crt:/var/hyperledger/cli/crypto-peer/peer0.laboratorio-analisi-sdn.medchain.com/tls/ca.crt:ro
       - ../fabric-config/chaincode-packages:/var/hyperledger/cli/chaincode-packages/
-<<<<<<< HEAD
-      - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/:/var/hyperledger/cli/prescription/"
-=======
-<<<<<<< HEAD
       - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/:/var/hyperledger/cli/labresults/"
-=======
-      - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/:/var/hyperledger/cli/health-data-management/"
->>>>>>> master
->>>>>>> master
     networks:
       - basic
 
@@ -487,21 +308,17 @@ services:
       - CORE_VM_DOCKER_ATTACHSTDOUT=true
       - CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
       - GODEBUG=netdns=go
-      # enabled TLS
-      - CORE_PEER_TLS_ENABLED=true
-      - CORE_PEER_TLS_CERT_FILE=/etc/hyperledger/fabric/peer/tls/server.crt
-      - CORE_PEER_TLS_KEY_FILE=/etc/hyperledger/fabric/peer/tls/server.key
-      - CORE_PEER_TLS_ROOTCERT_FILE=/etc/hyperledger/fabric/peer/tls/ca.crt
       # CouchDB
       - CORE_LEDGER_STATE_STATEDATABASE=CouchDB
       - CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS=couchdb.peer0.ospedale-del-mare.aslnapoli1.medchain.com:5984
       - CORE_LEDGER_STATE_COUCHDBCONFIG_USERNAME=peer0
       - CORE_LEDGER_STATE_COUCHDBCONFIG_PASSWORD=peer0Password
     working_dir: /etc/hyperledger/fabric/peer/
-    command: peer node start
+    command: peer node start --peer-chaincodedev=true
     ports:
       - 8061:9440
       - 7061:7061
+      - 8561:7050
     volumes:
       - /var/run/docker.sock:/host/var/run/docker.sock
       - ../fabric-config/crypto-config/peerOrganizations/ospedale-del-mare.aslnapoli1.medchain.com/peers/peer0.ospedale-del-mare.aslnapoli1.medchain.com/msp:/etc/hyperledger/fabric/peer/msp
@@ -549,21 +366,17 @@ services:
       - CORE_VM_DOCKER_ATTACHSTDOUT=true
       - CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
       - GODEBUG=netdns=go
-      # enabled TLS
-      - CORE_PEER_TLS_ENABLED=true
-      - CORE_PEER_TLS_CERT_FILE=/etc/hyperledger/fabric/peer/tls/server.crt
-      - CORE_PEER_TLS_KEY_FILE=/etc/hyperledger/fabric/peer/tls/server.key
-      - CORE_PEER_TLS_ROOTCERT_FILE=/etc/hyperledger/fabric/peer/tls/ca.crt
       # CouchDB
       - CORE_LEDGER_STATE_STATEDATABASE=CouchDB
       - CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS=couchdb.peer1.ospedale-del-mare.aslnapoli1.medchain.com:5984
       - CORE_LEDGER_STATE_COUCHDBCONFIG_USERNAME=peer1
       - CORE_LEDGER_STATE_COUCHDBCONFIG_PASSWORD=peer1Password
     working_dir: /etc/hyperledger/fabric/peer/
-    command: peer node start
+    command: peer node start --peer-chaincodedev=true
     ports:
       - 8062:9440
       - 7062:7062
+      - 8562:7050
     volumes:
       - /var/run/docker.sock:/host/var/run/docker.sock
       - ../fabric-config/crypto-config/peerOrganizations/ospedale-del-mare.aslnapoli1.medchain.com/peers/peer1.ospedale-del-mare.aslnapoli1.medchain.com/msp:/etc/hyperledger/fabric/peer/msp
@@ -593,7 +406,6 @@ services:
       - FABRIC_CA_SERVER_CA_CERTFILE=/etc/hyperledger/fabric-ca-server/crypto/ca.ospedale-sgiuliano.aslnapoli2.medchain.com-cert.pem
       - FABRIC_CA_SERVER_CA_KEYFILE=/etc/hyperledger/fabric-ca-server/crypto/priv-key.pem
       - FABRIC_LOGGING_SPEC=${LOGGING_LEVEL}
-      - FABRIC_CA_SERVER_TLS_ENABLED=true
     ports:
       - 7080:7054
     working_dir: /etc/hyperledger/fabric-ca-server
@@ -618,12 +430,6 @@ services:
       - CORE_PEER_LOCALMSPID=OspedaleSGiulianoMSP
       - CORE_PEER_MSPCONFIGPATH=/var/hyperledger/cli/crypto/users/Admin@ospedale-sgiuliano.aslnapoli2.medchain.com/msp
       - CORE_PEER_ADDRESS=peer0.ospedale-sgiuliano.aslnapoli2.medchain.com:7081
-      # enabled TLS
-      - CORE_PEER_TLS_ENABLED=true
-      - CORE_PEER_TLS_CERT_FILE=/var/hyperledger/cli/crypto/users/Admin@ospedale-sgiuliano.aslnapoli2.medchain.com/tls/client.crt
-      - CORE_PEER_TLS_KEY_FILE=/var/hyperledger/cli/crypto/users/Admin@ospedale-sgiuliano.aslnapoli2.medchain.com/tls/client.key
-      - CORE_PEER_TLS_ROOTCERT_FILE=/var/hyperledger/cli/crypto/users/Admin@ospedale-sgiuliano.aslnapoli2.medchain.com/tls/ca.crt
-      - TLS_CA_CERT_PATH=/var/hyperledger/cli/crypto-orderer/tlsca.orderer.medchain.com-cert.pem
     working_dir: /var/hyperledger/cli/
     command: /bin/bash
     volumes:
@@ -631,31 +437,8 @@ services:
       - ../fabric-docker/scripts/cli:/var/hyperledger/cli/scripts/
       - ../fabric-config/config:/var/hyperledger/cli/config/ # genesis.block and channel.tx's
       - ../fabric-config/crypto-config/peerOrganizations/ospedale-sgiuliano.aslnapoli2.medchain.com:/var/hyperledger/cli/crypto/
-      - ../fabric-config/crypto-config/peerOrganizations/orderer.medchain.com/peers/orderer0.medchain-orderergroup.orderer.medchain.com/msp/tlscacerts/tlsca.orderer.medchain.com-cert.pem:/var/hyperledger/cli/crypto-orderer/tlsca.orderer.medchain.com-cert.pem:ro
-      - ../fabric-config/crypto-config/peerOrganizations/ospedale-maresca.aslnapoli3.medchain.com/peers/peer0.ospedale-maresca.aslnapoli3.medchain.com/tls/ca.crt:/var/hyperledger/cli/crypto-peer/peer0.ospedale-maresca.aslnapoli3.medchain.com/tls/ca.crt:ro
-      - ../fabric-config/crypto-config/peerOrganizations/ospedale-maresca.aslnapoli3.medchain.com/peers/peer1.ospedale-maresca.aslnapoli3.medchain.com/tls/ca.crt:/var/hyperledger/cli/crypto-peer/peer1.ospedale-maresca.aslnapoli3.medchain.com/tls/ca.crt:ro
-      - ../fabric-config/crypto-config/peerOrganizations/ospedale-del-mare.aslnapoli1.medchain.com/peers/peer0.ospedale-del-mare.aslnapoli1.medchain.com/tls/ca.crt:/var/hyperledger/cli/crypto-peer/peer0.ospedale-del-mare.aslnapoli1.medchain.com/tls/ca.crt:ro
-      - ../fabric-config/crypto-config/peerOrganizations/ospedale-del-mare.aslnapoli1.medchain.com/peers/peer1.ospedale-del-mare.aslnapoli1.medchain.com/tls/ca.crt:/var/hyperledger/cli/crypto-peer/peer1.ospedale-del-mare.aslnapoli1.medchain.com/tls/ca.crt:ro
-      - ../fabric-config/crypto-config/peerOrganizations/ospedale-sgiuliano.aslnapoli2.medchain.com/peers/peer0.ospedale-sgiuliano.aslnapoli2.medchain.com/tls/ca.crt:/var/hyperledger/cli/crypto-peer/peer0.ospedale-sgiuliano.aslnapoli2.medchain.com/tls/ca.crt:ro
-      - ../fabric-config/crypto-config/peerOrganizations/ospedale-sgiuliano.aslnapoli2.medchain.com/peers/peer1.ospedale-sgiuliano.aslnapoli2.medchain.com/tls/ca.crt:/var/hyperledger/cli/crypto-peer/peer1.ospedale-sgiuliano.aslnapoli2.medchain.com/tls/ca.crt:ro
-      - ../fabric-config/crypto-config/peerOrganizations/medicina-generale.napoli.medchain.com/peers/peer0.medicina-generale.napoli.medchain.com/tls/ca.crt:/var/hyperledger/cli/crypto-peer/peer0.medicina-generale.napoli.medchain.com/tls/ca.crt:ro
-      - ../fabric-config/crypto-config/peerOrganizations/medicina-generale.napoli.medchain.com/peers/peer1.medicina-generale.napoli.medchain.com/tls/ca.crt:/var/hyperledger/cli/crypto-peer/peer1.medicina-generale.napoli.medchain.com/tls/ca.crt:ro
-      - ../fabric-config/crypto-config/peerOrganizations/neurologia.napoli.medchain.com/peers/peer0.neurologia.napoli.medchain.com/tls/ca.crt:/var/hyperledger/cli/crypto-peer/peer0.neurologia.napoli.medchain.com/tls/ca.crt:ro
-      - ../fabric-config/crypto-config/peerOrganizations/neurologia.napoli.medchain.com/peers/peer1.neurologia.napoli.medchain.com/tls/ca.crt:/var/hyperledger/cli/crypto-peer/peer1.neurologia.napoli.medchain.com/tls/ca.crt:ro
-      - ../fabric-config/crypto-config/peerOrganizations/farmacia-petrone.napoli.medchain.com/peers/peer0.farmacia-petrone.napoli.medchain.com/tls/ca.crt:/var/hyperledger/cli/crypto-peer/peer0.farmacia-petrone.napoli.medchain.com/tls/ca.crt:ro
-      - ../fabric-config/crypto-config/peerOrganizations/farmacia-carbone.napoli.medchain.com/peers/peer0.farmacia-carbone.napoli.medchain.com/tls/ca.crt:/var/hyperledger/cli/crypto-peer/peer0.farmacia-carbone.napoli.medchain.com/tls/ca.crt:ro
-      - ../fabric-config/crypto-config/peerOrganizations/laboratorio-analisi-cmo.medchain.com/peers/peer0.laboratorio-analisi-cmo.medchain.com/tls/ca.crt:/var/hyperledger/cli/crypto-peer/peer0.laboratorio-analisi-cmo.medchain.com/tls/ca.crt:ro
-      - ../fabric-config/crypto-config/peerOrganizations/laboratorio-analisi-sdn.medchain.com/peers/peer0.laboratorio-analisi-sdn.medchain.com/tls/ca.crt:/var/hyperledger/cli/crypto-peer/peer0.laboratorio-analisi-sdn.medchain.com/tls/ca.crt:ro
       - ../fabric-config/chaincode-packages:/var/hyperledger/cli/chaincode-packages/
-<<<<<<< HEAD
-      - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/:/var/hyperledger/cli/prescription/"
-=======
-<<<<<<< HEAD
       - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/:/var/hyperledger/cli/labresults/"
-=======
-      - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/:/var/hyperledger/cli/health-data-management/"
->>>>>>> master
->>>>>>> master
     networks:
       - basic
 
@@ -687,21 +470,17 @@ services:
       - CORE_VM_DOCKER_ATTACHSTDOUT=true
       - CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
       - GODEBUG=netdns=go
-      # enabled TLS
-      - CORE_PEER_TLS_ENABLED=true
-      - CORE_PEER_TLS_CERT_FILE=/etc/hyperledger/fabric/peer/tls/server.crt
-      - CORE_PEER_TLS_KEY_FILE=/etc/hyperledger/fabric/peer/tls/server.key
-      - CORE_PEER_TLS_ROOTCERT_FILE=/etc/hyperledger/fabric/peer/tls/ca.crt
       # CouchDB
       - CORE_LEDGER_STATE_STATEDATABASE=CouchDB
       - CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS=couchdb.peer0.ospedale-sgiuliano.aslnapoli2.medchain.com:5984
       - CORE_LEDGER_STATE_COUCHDBCONFIG_USERNAME=peer0
       - CORE_LEDGER_STATE_COUCHDBCONFIG_PASSWORD=peer0Password
     working_dir: /etc/hyperledger/fabric/peer/
-    command: peer node start
+    command: peer node start --peer-chaincodedev=true
     ports:
       - 8081:9440
       - 7081:7081
+      - 8581:7050
     volumes:
       - /var/run/docker.sock:/host/var/run/docker.sock
       - ../fabric-config/crypto-config/peerOrganizations/ospedale-sgiuliano.aslnapoli2.medchain.com/peers/peer0.ospedale-sgiuliano.aslnapoli2.medchain.com/msp:/etc/hyperledger/fabric/peer/msp
@@ -749,21 +528,17 @@ services:
       - CORE_VM_DOCKER_ATTACHSTDOUT=true
       - CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
       - GODEBUG=netdns=go
-      # enabled TLS
-      - CORE_PEER_TLS_ENABLED=true
-      - CORE_PEER_TLS_CERT_FILE=/etc/hyperledger/fabric/peer/tls/server.crt
-      - CORE_PEER_TLS_KEY_FILE=/etc/hyperledger/fabric/peer/tls/server.key
-      - CORE_PEER_TLS_ROOTCERT_FILE=/etc/hyperledger/fabric/peer/tls/ca.crt
       # CouchDB
       - CORE_LEDGER_STATE_STATEDATABASE=CouchDB
       - CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS=couchdb.peer1.ospedale-sgiuliano.aslnapoli2.medchain.com:5984
       - CORE_LEDGER_STATE_COUCHDBCONFIG_USERNAME=peer1
       - CORE_LEDGER_STATE_COUCHDBCONFIG_PASSWORD=peer1Password
     working_dir: /etc/hyperledger/fabric/peer/
-    command: peer node start
+    command: peer node start --peer-chaincodedev=true
     ports:
       - 8082:9440
       - 7082:7082
+      - 8582:7050
     volumes:
       - /var/run/docker.sock:/host/var/run/docker.sock
       - ../fabric-config/crypto-config/peerOrganizations/ospedale-sgiuliano.aslnapoli2.medchain.com/peers/peer1.ospedale-sgiuliano.aslnapoli2.medchain.com/msp:/etc/hyperledger/fabric/peer/msp
@@ -793,7 +568,6 @@ services:
       - FABRIC_CA_SERVER_CA_CERTFILE=/etc/hyperledger/fabric-ca-server/crypto/ca.medicina-generale.napoli.medchain.com-cert.pem
       - FABRIC_CA_SERVER_CA_KEYFILE=/etc/hyperledger/fabric-ca-server/crypto/priv-key.pem
       - FABRIC_LOGGING_SPEC=${LOGGING_LEVEL}
-      - FABRIC_CA_SERVER_TLS_ENABLED=true
     ports:
       - 7100:7054
     working_dir: /etc/hyperledger/fabric-ca-server
@@ -818,12 +592,6 @@ services:
       - CORE_PEER_LOCALMSPID=MedicinaGeneraleNapoliMSP
       - CORE_PEER_MSPCONFIGPATH=/var/hyperledger/cli/crypto/users/Admin@medicina-generale.napoli.medchain.com/msp
       - CORE_PEER_ADDRESS=peer0.medicina-generale.napoli.medchain.com:7101
-      # enabled TLS
-      - CORE_PEER_TLS_ENABLED=true
-      - CORE_PEER_TLS_CERT_FILE=/var/hyperledger/cli/crypto/users/Admin@medicina-generale.napoli.medchain.com/tls/client.crt
-      - CORE_PEER_TLS_KEY_FILE=/var/hyperledger/cli/crypto/users/Admin@medicina-generale.napoli.medchain.com/tls/client.key
-      - CORE_PEER_TLS_ROOTCERT_FILE=/var/hyperledger/cli/crypto/users/Admin@medicina-generale.napoli.medchain.com/tls/ca.crt
-      - TLS_CA_CERT_PATH=/var/hyperledger/cli/crypto-orderer/tlsca.orderer.medchain.com-cert.pem
     working_dir: /var/hyperledger/cli/
     command: /bin/bash
     volumes:
@@ -831,31 +599,8 @@ services:
       - ../fabric-docker/scripts/cli:/var/hyperledger/cli/scripts/
       - ../fabric-config/config:/var/hyperledger/cli/config/ # genesis.block and channel.tx's
       - ../fabric-config/crypto-config/peerOrganizations/medicina-generale.napoli.medchain.com:/var/hyperledger/cli/crypto/
-      - ../fabric-config/crypto-config/peerOrganizations/orderer.medchain.com/peers/orderer0.medchain-orderergroup.orderer.medchain.com/msp/tlscacerts/tlsca.orderer.medchain.com-cert.pem:/var/hyperledger/cli/crypto-orderer/tlsca.orderer.medchain.com-cert.pem:ro
-      - ../fabric-config/crypto-config/peerOrganizations/ospedale-maresca.aslnapoli3.medchain.com/peers/peer0.ospedale-maresca.aslnapoli3.medchain.com/tls/ca.crt:/var/hyperledger/cli/crypto-peer/peer0.ospedale-maresca.aslnapoli3.medchain.com/tls/ca.crt:ro
-      - ../fabric-config/crypto-config/peerOrganizations/ospedale-maresca.aslnapoli3.medchain.com/peers/peer1.ospedale-maresca.aslnapoli3.medchain.com/tls/ca.crt:/var/hyperledger/cli/crypto-peer/peer1.ospedale-maresca.aslnapoli3.medchain.com/tls/ca.crt:ro
-      - ../fabric-config/crypto-config/peerOrganizations/ospedale-del-mare.aslnapoli1.medchain.com/peers/peer0.ospedale-del-mare.aslnapoli1.medchain.com/tls/ca.crt:/var/hyperledger/cli/crypto-peer/peer0.ospedale-del-mare.aslnapoli1.medchain.com/tls/ca.crt:ro
-      - ../fabric-config/crypto-config/peerOrganizations/ospedale-del-mare.aslnapoli1.medchain.com/peers/peer1.ospedale-del-mare.aslnapoli1.medchain.com/tls/ca.crt:/var/hyperledger/cli/crypto-peer/peer1.ospedale-del-mare.aslnapoli1.medchain.com/tls/ca.crt:ro
-      - ../fabric-config/crypto-config/peerOrganizations/ospedale-sgiuliano.aslnapoli2.medchain.com/peers/peer0.ospedale-sgiuliano.aslnapoli2.medchain.com/tls/ca.crt:/var/hyperledger/cli/crypto-peer/peer0.ospedale-sgiuliano.aslnapoli2.medchain.com/tls/ca.crt:ro
-      - ../fabric-config/crypto-config/peerOrganizations/ospedale-sgiuliano.aslnapoli2.medchain.com/peers/peer1.ospedale-sgiuliano.aslnapoli2.medchain.com/tls/ca.crt:/var/hyperledger/cli/crypto-peer/peer1.ospedale-sgiuliano.aslnapoli2.medchain.com/tls/ca.crt:ro
-      - ../fabric-config/crypto-config/peerOrganizations/medicina-generale.napoli.medchain.com/peers/peer0.medicina-generale.napoli.medchain.com/tls/ca.crt:/var/hyperledger/cli/crypto-peer/peer0.medicina-generale.napoli.medchain.com/tls/ca.crt:ro
-      - ../fabric-config/crypto-config/peerOrganizations/medicina-generale.napoli.medchain.com/peers/peer1.medicina-generale.napoli.medchain.com/tls/ca.crt:/var/hyperledger/cli/crypto-peer/peer1.medicina-generale.napoli.medchain.com/tls/ca.crt:ro
-      - ../fabric-config/crypto-config/peerOrganizations/neurologia.napoli.medchain.com/peers/peer0.neurologia.napoli.medchain.com/tls/ca.crt:/var/hyperledger/cli/crypto-peer/peer0.neurologia.napoli.medchain.com/tls/ca.crt:ro
-      - ../fabric-config/crypto-config/peerOrganizations/neurologia.napoli.medchain.com/peers/peer1.neurologia.napoli.medchain.com/tls/ca.crt:/var/hyperledger/cli/crypto-peer/peer1.neurologia.napoli.medchain.com/tls/ca.crt:ro
-      - ../fabric-config/crypto-config/peerOrganizations/farmacia-petrone.napoli.medchain.com/peers/peer0.farmacia-petrone.napoli.medchain.com/tls/ca.crt:/var/hyperledger/cli/crypto-peer/peer0.farmacia-petrone.napoli.medchain.com/tls/ca.crt:ro
-      - ../fabric-config/crypto-config/peerOrganizations/farmacia-carbone.napoli.medchain.com/peers/peer0.farmacia-carbone.napoli.medchain.com/tls/ca.crt:/var/hyperledger/cli/crypto-peer/peer0.farmacia-carbone.napoli.medchain.com/tls/ca.crt:ro
-      - ../fabric-config/crypto-config/peerOrganizations/laboratorio-analisi-cmo.medchain.com/peers/peer0.laboratorio-analisi-cmo.medchain.com/tls/ca.crt:/var/hyperledger/cli/crypto-peer/peer0.laboratorio-analisi-cmo.medchain.com/tls/ca.crt:ro
-      - ../fabric-config/crypto-config/peerOrganizations/laboratorio-analisi-sdn.medchain.com/peers/peer0.laboratorio-analisi-sdn.medchain.com/tls/ca.crt:/var/hyperledger/cli/crypto-peer/peer0.laboratorio-analisi-sdn.medchain.com/tls/ca.crt:ro
       - ../fabric-config/chaincode-packages:/var/hyperledger/cli/chaincode-packages/
-<<<<<<< HEAD
-      - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/:/var/hyperledger/cli/prescription/"
-=======
-<<<<<<< HEAD
       - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/:/var/hyperledger/cli/labresults/"
-=======
-      - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/:/var/hyperledger/cli/health-data-management/"
->>>>>>> master
->>>>>>> master
     networks:
       - basic
 
@@ -887,21 +632,17 @@ services:
       - CORE_VM_DOCKER_ATTACHSTDOUT=true
       - CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
       - GODEBUG=netdns=go
-      # enabled TLS
-      - CORE_PEER_TLS_ENABLED=true
-      - CORE_PEER_TLS_CERT_FILE=/etc/hyperledger/fabric/peer/tls/server.crt
-      - CORE_PEER_TLS_KEY_FILE=/etc/hyperledger/fabric/peer/tls/server.key
-      - CORE_PEER_TLS_ROOTCERT_FILE=/etc/hyperledger/fabric/peer/tls/ca.crt
       # CouchDB
       - CORE_LEDGER_STATE_STATEDATABASE=CouchDB
       - CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS=couchdb.peer0.medicina-generale.napoli.medchain.com:5984
       - CORE_LEDGER_STATE_COUCHDBCONFIG_USERNAME=peer0
       - CORE_LEDGER_STATE_COUCHDBCONFIG_PASSWORD=peer0Password
     working_dir: /etc/hyperledger/fabric/peer/
-    command: peer node start
+    command: peer node start --peer-chaincodedev=true
     ports:
       - 8101:9440
       - 7101:7101
+      - 8601:7050
     volumes:
       - /var/run/docker.sock:/host/var/run/docker.sock
       - ../fabric-config/crypto-config/peerOrganizations/medicina-generale.napoli.medchain.com/peers/peer0.medicina-generale.napoli.medchain.com/msp:/etc/hyperledger/fabric/peer/msp
@@ -949,21 +690,17 @@ services:
       - CORE_VM_DOCKER_ATTACHSTDOUT=true
       - CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
       - GODEBUG=netdns=go
-      # enabled TLS
-      - CORE_PEER_TLS_ENABLED=true
-      - CORE_PEER_TLS_CERT_FILE=/etc/hyperledger/fabric/peer/tls/server.crt
-      - CORE_PEER_TLS_KEY_FILE=/etc/hyperledger/fabric/peer/tls/server.key
-      - CORE_PEER_TLS_ROOTCERT_FILE=/etc/hyperledger/fabric/peer/tls/ca.crt
       # CouchDB
       - CORE_LEDGER_STATE_STATEDATABASE=CouchDB
       - CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS=couchdb.peer1.medicina-generale.napoli.medchain.com:5984
       - CORE_LEDGER_STATE_COUCHDBCONFIG_USERNAME=peer1
       - CORE_LEDGER_STATE_COUCHDBCONFIG_PASSWORD=peer1Password
     working_dir: /etc/hyperledger/fabric/peer/
-    command: peer node start
+    command: peer node start --peer-chaincodedev=true
     ports:
       - 8102:9440
       - 7102:7102
+      - 8602:7050
     volumes:
       - /var/run/docker.sock:/host/var/run/docker.sock
       - ../fabric-config/crypto-config/peerOrganizations/medicina-generale.napoli.medchain.com/peers/peer1.medicina-generale.napoli.medchain.com/msp:/etc/hyperledger/fabric/peer/msp
@@ -993,7 +730,6 @@ services:
       - FABRIC_CA_SERVER_CA_CERTFILE=/etc/hyperledger/fabric-ca-server/crypto/ca.neurologia.napoli.medchain.com-cert.pem
       - FABRIC_CA_SERVER_CA_KEYFILE=/etc/hyperledger/fabric-ca-server/crypto/priv-key.pem
       - FABRIC_LOGGING_SPEC=${LOGGING_LEVEL}
-      - FABRIC_CA_SERVER_TLS_ENABLED=true
     ports:
       - 7120:7054
     working_dir: /etc/hyperledger/fabric-ca-server
@@ -1018,12 +754,6 @@ services:
       - CORE_PEER_LOCALMSPID=NeurologiaNapoliMSP
       - CORE_PEER_MSPCONFIGPATH=/var/hyperledger/cli/crypto/users/Admin@neurologia.napoli.medchain.com/msp
       - CORE_PEER_ADDRESS=peer0.neurologia.napoli.medchain.com:7121
-      # enabled TLS
-      - CORE_PEER_TLS_ENABLED=true
-      - CORE_PEER_TLS_CERT_FILE=/var/hyperledger/cli/crypto/users/Admin@neurologia.napoli.medchain.com/tls/client.crt
-      - CORE_PEER_TLS_KEY_FILE=/var/hyperledger/cli/crypto/users/Admin@neurologia.napoli.medchain.com/tls/client.key
-      - CORE_PEER_TLS_ROOTCERT_FILE=/var/hyperledger/cli/crypto/users/Admin@neurologia.napoli.medchain.com/tls/ca.crt
-      - TLS_CA_CERT_PATH=/var/hyperledger/cli/crypto-orderer/tlsca.orderer.medchain.com-cert.pem
     working_dir: /var/hyperledger/cli/
     command: /bin/bash
     volumes:
@@ -1031,31 +761,8 @@ services:
       - ../fabric-docker/scripts/cli:/var/hyperledger/cli/scripts/
       - ../fabric-config/config:/var/hyperledger/cli/config/ # genesis.block and channel.tx's
       - ../fabric-config/crypto-config/peerOrganizations/neurologia.napoli.medchain.com:/var/hyperledger/cli/crypto/
-      - ../fabric-config/crypto-config/peerOrganizations/orderer.medchain.com/peers/orderer0.medchain-orderergroup.orderer.medchain.com/msp/tlscacerts/tlsca.orderer.medchain.com-cert.pem:/var/hyperledger/cli/crypto-orderer/tlsca.orderer.medchain.com-cert.pem:ro
-      - ../fabric-config/crypto-config/peerOrganizations/ospedale-maresca.aslnapoli3.medchain.com/peers/peer0.ospedale-maresca.aslnapoli3.medchain.com/tls/ca.crt:/var/hyperledger/cli/crypto-peer/peer0.ospedale-maresca.aslnapoli3.medchain.com/tls/ca.crt:ro
-      - ../fabric-config/crypto-config/peerOrganizations/ospedale-maresca.aslnapoli3.medchain.com/peers/peer1.ospedale-maresca.aslnapoli3.medchain.com/tls/ca.crt:/var/hyperledger/cli/crypto-peer/peer1.ospedale-maresca.aslnapoli3.medchain.com/tls/ca.crt:ro
-      - ../fabric-config/crypto-config/peerOrganizations/ospedale-del-mare.aslnapoli1.medchain.com/peers/peer0.ospedale-del-mare.aslnapoli1.medchain.com/tls/ca.crt:/var/hyperledger/cli/crypto-peer/peer0.ospedale-del-mare.aslnapoli1.medchain.com/tls/ca.crt:ro
-      - ../fabric-config/crypto-config/peerOrganizations/ospedale-del-mare.aslnapoli1.medchain.com/peers/peer1.ospedale-del-mare.aslnapoli1.medchain.com/tls/ca.crt:/var/hyperledger/cli/crypto-peer/peer1.ospedale-del-mare.aslnapoli1.medchain.com/tls/ca.crt:ro
-      - ../fabric-config/crypto-config/peerOrganizations/ospedale-sgiuliano.aslnapoli2.medchain.com/peers/peer0.ospedale-sgiuliano.aslnapoli2.medchain.com/tls/ca.crt:/var/hyperledger/cli/crypto-peer/peer0.ospedale-sgiuliano.aslnapoli2.medchain.com/tls/ca.crt:ro
-      - ../fabric-config/crypto-config/peerOrganizations/ospedale-sgiuliano.aslnapoli2.medchain.com/peers/peer1.ospedale-sgiuliano.aslnapoli2.medchain.com/tls/ca.crt:/var/hyperledger/cli/crypto-peer/peer1.ospedale-sgiuliano.aslnapoli2.medchain.com/tls/ca.crt:ro
-      - ../fabric-config/crypto-config/peerOrganizations/medicina-generale.napoli.medchain.com/peers/peer0.medicina-generale.napoli.medchain.com/tls/ca.crt:/var/hyperledger/cli/crypto-peer/peer0.medicina-generale.napoli.medchain.com/tls/ca.crt:ro
-      - ../fabric-config/crypto-config/peerOrganizations/medicina-generale.napoli.medchain.com/peers/peer1.medicina-generale.napoli.medchain.com/tls/ca.crt:/var/hyperledger/cli/crypto-peer/peer1.medicina-generale.napoli.medchain.com/tls/ca.crt:ro
-      - ../fabric-config/crypto-config/peerOrganizations/neurologia.napoli.medchain.com/peers/peer0.neurologia.napoli.medchain.com/tls/ca.crt:/var/hyperledger/cli/crypto-peer/peer0.neurologia.napoli.medchain.com/tls/ca.crt:ro
-      - ../fabric-config/crypto-config/peerOrganizations/neurologia.napoli.medchain.com/peers/peer1.neurologia.napoli.medchain.com/tls/ca.crt:/var/hyperledger/cli/crypto-peer/peer1.neurologia.napoli.medchain.com/tls/ca.crt:ro
-      - ../fabric-config/crypto-config/peerOrganizations/farmacia-petrone.napoli.medchain.com/peers/peer0.farmacia-petrone.napoli.medchain.com/tls/ca.crt:/var/hyperledger/cli/crypto-peer/peer0.farmacia-petrone.napoli.medchain.com/tls/ca.crt:ro
-      - ../fabric-config/crypto-config/peerOrganizations/farmacia-carbone.napoli.medchain.com/peers/peer0.farmacia-carbone.napoli.medchain.com/tls/ca.crt:/var/hyperledger/cli/crypto-peer/peer0.farmacia-carbone.napoli.medchain.com/tls/ca.crt:ro
-      - ../fabric-config/crypto-config/peerOrganizations/laboratorio-analisi-cmo.medchain.com/peers/peer0.laboratorio-analisi-cmo.medchain.com/tls/ca.crt:/var/hyperledger/cli/crypto-peer/peer0.laboratorio-analisi-cmo.medchain.com/tls/ca.crt:ro
-      - ../fabric-config/crypto-config/peerOrganizations/laboratorio-analisi-sdn.medchain.com/peers/peer0.laboratorio-analisi-sdn.medchain.com/tls/ca.crt:/var/hyperledger/cli/crypto-peer/peer0.laboratorio-analisi-sdn.medchain.com/tls/ca.crt:ro
       - ../fabric-config/chaincode-packages:/var/hyperledger/cli/chaincode-packages/
-<<<<<<< HEAD
-      - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/:/var/hyperledger/cli/prescription/"
-=======
-<<<<<<< HEAD
       - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/:/var/hyperledger/cli/labresults/"
-=======
-      - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/:/var/hyperledger/cli/health-data-management/"
->>>>>>> master
->>>>>>> master
     networks:
       - basic
 
@@ -1087,21 +794,17 @@ services:
       - CORE_VM_DOCKER_ATTACHSTDOUT=true
       - CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
       - GODEBUG=netdns=go
-      # enabled TLS
-      - CORE_PEER_TLS_ENABLED=true
-      - CORE_PEER_TLS_CERT_FILE=/etc/hyperledger/fabric/peer/tls/server.crt
-      - CORE_PEER_TLS_KEY_FILE=/etc/hyperledger/fabric/peer/tls/server.key
-      - CORE_PEER_TLS_ROOTCERT_FILE=/etc/hyperledger/fabric/peer/tls/ca.crt
       # CouchDB
       - CORE_LEDGER_STATE_STATEDATABASE=CouchDB
       - CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS=couchdb.peer0.neurologia.napoli.medchain.com:5984
       - CORE_LEDGER_STATE_COUCHDBCONFIG_USERNAME=peer0
       - CORE_LEDGER_STATE_COUCHDBCONFIG_PASSWORD=peer0Password
     working_dir: /etc/hyperledger/fabric/peer/
-    command: peer node start
+    command: peer node start --peer-chaincodedev=true
     ports:
       - 8121:9440
       - 7121:7121
+      - 8621:7050
     volumes:
       - /var/run/docker.sock:/host/var/run/docker.sock
       - ../fabric-config/crypto-config/peerOrganizations/neurologia.napoli.medchain.com/peers/peer0.neurologia.napoli.medchain.com/msp:/etc/hyperledger/fabric/peer/msp
@@ -1149,21 +852,17 @@ services:
       - CORE_VM_DOCKER_ATTACHSTDOUT=true
       - CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
       - GODEBUG=netdns=go
-      # enabled TLS
-      - CORE_PEER_TLS_ENABLED=true
-      - CORE_PEER_TLS_CERT_FILE=/etc/hyperledger/fabric/peer/tls/server.crt
-      - CORE_PEER_TLS_KEY_FILE=/etc/hyperledger/fabric/peer/tls/server.key
-      - CORE_PEER_TLS_ROOTCERT_FILE=/etc/hyperledger/fabric/peer/tls/ca.crt
       # CouchDB
       - CORE_LEDGER_STATE_STATEDATABASE=CouchDB
       - CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS=couchdb.peer1.neurologia.napoli.medchain.com:5984
       - CORE_LEDGER_STATE_COUCHDBCONFIG_USERNAME=peer1
       - CORE_LEDGER_STATE_COUCHDBCONFIG_PASSWORD=peer1Password
     working_dir: /etc/hyperledger/fabric/peer/
-    command: peer node start
+    command: peer node start --peer-chaincodedev=true
     ports:
       - 8122:9440
       - 7122:7122
+      - 8622:7050
     volumes:
       - /var/run/docker.sock:/host/var/run/docker.sock
       - ../fabric-config/crypto-config/peerOrganizations/neurologia.napoli.medchain.com/peers/peer1.neurologia.napoli.medchain.com/msp:/etc/hyperledger/fabric/peer/msp
@@ -1193,7 +892,6 @@ services:
       - FABRIC_CA_SERVER_CA_CERTFILE=/etc/hyperledger/fabric-ca-server/crypto/ca.farmacia-petrone.napoli.medchain.com-cert.pem
       - FABRIC_CA_SERVER_CA_KEYFILE=/etc/hyperledger/fabric-ca-server/crypto/priv-key.pem
       - FABRIC_LOGGING_SPEC=${LOGGING_LEVEL}
-      - FABRIC_CA_SERVER_TLS_ENABLED=true
     ports:
       - 7140:7054
     working_dir: /etc/hyperledger/fabric-ca-server
@@ -1218,12 +916,6 @@ services:
       - CORE_PEER_LOCALMSPID=FarmaciaPetroneMSP
       - CORE_PEER_MSPCONFIGPATH=/var/hyperledger/cli/crypto/users/Admin@farmacia-petrone.napoli.medchain.com/msp
       - CORE_PEER_ADDRESS=peer0.farmacia-petrone.napoli.medchain.com:7141
-      # enabled TLS
-      - CORE_PEER_TLS_ENABLED=true
-      - CORE_PEER_TLS_CERT_FILE=/var/hyperledger/cli/crypto/users/Admin@farmacia-petrone.napoli.medchain.com/tls/client.crt
-      - CORE_PEER_TLS_KEY_FILE=/var/hyperledger/cli/crypto/users/Admin@farmacia-petrone.napoli.medchain.com/tls/client.key
-      - CORE_PEER_TLS_ROOTCERT_FILE=/var/hyperledger/cli/crypto/users/Admin@farmacia-petrone.napoli.medchain.com/tls/ca.crt
-      - TLS_CA_CERT_PATH=/var/hyperledger/cli/crypto-orderer/tlsca.orderer.medchain.com-cert.pem
     working_dir: /var/hyperledger/cli/
     command: /bin/bash
     volumes:
@@ -1231,31 +923,8 @@ services:
       - ../fabric-docker/scripts/cli:/var/hyperledger/cli/scripts/
       - ../fabric-config/config:/var/hyperledger/cli/config/ # genesis.block and channel.tx's
       - ../fabric-config/crypto-config/peerOrganizations/farmacia-petrone.napoli.medchain.com:/var/hyperledger/cli/crypto/
-      - ../fabric-config/crypto-config/peerOrganizations/orderer.medchain.com/peers/orderer0.medchain-orderergroup.orderer.medchain.com/msp/tlscacerts/tlsca.orderer.medchain.com-cert.pem:/var/hyperledger/cli/crypto-orderer/tlsca.orderer.medchain.com-cert.pem:ro
-      - ../fabric-config/crypto-config/peerOrganizations/ospedale-maresca.aslnapoli3.medchain.com/peers/peer0.ospedale-maresca.aslnapoli3.medchain.com/tls/ca.crt:/var/hyperledger/cli/crypto-peer/peer0.ospedale-maresca.aslnapoli3.medchain.com/tls/ca.crt:ro
-      - ../fabric-config/crypto-config/peerOrganizations/ospedale-maresca.aslnapoli3.medchain.com/peers/peer1.ospedale-maresca.aslnapoli3.medchain.com/tls/ca.crt:/var/hyperledger/cli/crypto-peer/peer1.ospedale-maresca.aslnapoli3.medchain.com/tls/ca.crt:ro
-      - ../fabric-config/crypto-config/peerOrganizations/ospedale-del-mare.aslnapoli1.medchain.com/peers/peer0.ospedale-del-mare.aslnapoli1.medchain.com/tls/ca.crt:/var/hyperledger/cli/crypto-peer/peer0.ospedale-del-mare.aslnapoli1.medchain.com/tls/ca.crt:ro
-      - ../fabric-config/crypto-config/peerOrganizations/ospedale-del-mare.aslnapoli1.medchain.com/peers/peer1.ospedale-del-mare.aslnapoli1.medchain.com/tls/ca.crt:/var/hyperledger/cli/crypto-peer/peer1.ospedale-del-mare.aslnapoli1.medchain.com/tls/ca.crt:ro
-      - ../fabric-config/crypto-config/peerOrganizations/ospedale-sgiuliano.aslnapoli2.medchain.com/peers/peer0.ospedale-sgiuliano.aslnapoli2.medchain.com/tls/ca.crt:/var/hyperledger/cli/crypto-peer/peer0.ospedale-sgiuliano.aslnapoli2.medchain.com/tls/ca.crt:ro
-      - ../fabric-config/crypto-config/peerOrganizations/ospedale-sgiuliano.aslnapoli2.medchain.com/peers/peer1.ospedale-sgiuliano.aslnapoli2.medchain.com/tls/ca.crt:/var/hyperledger/cli/crypto-peer/peer1.ospedale-sgiuliano.aslnapoli2.medchain.com/tls/ca.crt:ro
-      - ../fabric-config/crypto-config/peerOrganizations/medicina-generale.napoli.medchain.com/peers/peer0.medicina-generale.napoli.medchain.com/tls/ca.crt:/var/hyperledger/cli/crypto-peer/peer0.medicina-generale.napoli.medchain.com/tls/ca.crt:ro
-      - ../fabric-config/crypto-config/peerOrganizations/medicina-generale.napoli.medchain.com/peers/peer1.medicina-generale.napoli.medchain.com/tls/ca.crt:/var/hyperledger/cli/crypto-peer/peer1.medicina-generale.napoli.medchain.com/tls/ca.crt:ro
-      - ../fabric-config/crypto-config/peerOrganizations/neurologia.napoli.medchain.com/peers/peer0.neurologia.napoli.medchain.com/tls/ca.crt:/var/hyperledger/cli/crypto-peer/peer0.neurologia.napoli.medchain.com/tls/ca.crt:ro
-      - ../fabric-config/crypto-config/peerOrganizations/neurologia.napoli.medchain.com/peers/peer1.neurologia.napoli.medchain.com/tls/ca.crt:/var/hyperledger/cli/crypto-peer/peer1.neurologia.napoli.medchain.com/tls/ca.crt:ro
-      - ../fabric-config/crypto-config/peerOrganizations/farmacia-petrone.napoli.medchain.com/peers/peer0.farmacia-petrone.napoli.medchain.com/tls/ca.crt:/var/hyperledger/cli/crypto-peer/peer0.farmacia-petrone.napoli.medchain.com/tls/ca.crt:ro
-      - ../fabric-config/crypto-config/peerOrganizations/farmacia-carbone.napoli.medchain.com/peers/peer0.farmacia-carbone.napoli.medchain.com/tls/ca.crt:/var/hyperledger/cli/crypto-peer/peer0.farmacia-carbone.napoli.medchain.com/tls/ca.crt:ro
-      - ../fabric-config/crypto-config/peerOrganizations/laboratorio-analisi-cmo.medchain.com/peers/peer0.laboratorio-analisi-cmo.medchain.com/tls/ca.crt:/var/hyperledger/cli/crypto-peer/peer0.laboratorio-analisi-cmo.medchain.com/tls/ca.crt:ro
-      - ../fabric-config/crypto-config/peerOrganizations/laboratorio-analisi-sdn.medchain.com/peers/peer0.laboratorio-analisi-sdn.medchain.com/tls/ca.crt:/var/hyperledger/cli/crypto-peer/peer0.laboratorio-analisi-sdn.medchain.com/tls/ca.crt:ro
       - ../fabric-config/chaincode-packages:/var/hyperledger/cli/chaincode-packages/
-<<<<<<< HEAD
-      - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/:/var/hyperledger/cli/prescription/"
-=======
-<<<<<<< HEAD
       - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/:/var/hyperledger/cli/labresults/"
-=======
-      - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/:/var/hyperledger/cli/health-data-management/"
->>>>>>> master
->>>>>>> master
     networks:
       - basic
 
@@ -1287,21 +956,17 @@ services:
       - CORE_VM_DOCKER_ATTACHSTDOUT=true
       - CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
       - GODEBUG=netdns=go
-      # enabled TLS
-      - CORE_PEER_TLS_ENABLED=true
-      - CORE_PEER_TLS_CERT_FILE=/etc/hyperledger/fabric/peer/tls/server.crt
-      - CORE_PEER_TLS_KEY_FILE=/etc/hyperledger/fabric/peer/tls/server.key
-      - CORE_PEER_TLS_ROOTCERT_FILE=/etc/hyperledger/fabric/peer/tls/ca.crt
       # CouchDB
       - CORE_LEDGER_STATE_STATEDATABASE=CouchDB
       - CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS=couchdb.peer0.farmacia-petrone.napoli.medchain.com:5984
       - CORE_LEDGER_STATE_COUCHDBCONFIG_USERNAME=peer0
       - CORE_LEDGER_STATE_COUCHDBCONFIG_PASSWORD=peer0Password
     working_dir: /etc/hyperledger/fabric/peer/
-    command: peer node start
+    command: peer node start --peer-chaincodedev=true
     ports:
       - 8141:9440
       - 7141:7141
+      - 8641:7050
     volumes:
       - /var/run/docker.sock:/host/var/run/docker.sock
       - ../fabric-config/crypto-config/peerOrganizations/farmacia-petrone.napoli.medchain.com/peers/peer0.farmacia-petrone.napoli.medchain.com/msp:/etc/hyperledger/fabric/peer/msp
@@ -1331,7 +996,6 @@ services:
       - FABRIC_CA_SERVER_CA_CERTFILE=/etc/hyperledger/fabric-ca-server/crypto/ca.farmacia-carbone.napoli.medchain.com-cert.pem
       - FABRIC_CA_SERVER_CA_KEYFILE=/etc/hyperledger/fabric-ca-server/crypto/priv-key.pem
       - FABRIC_LOGGING_SPEC=${LOGGING_LEVEL}
-      - FABRIC_CA_SERVER_TLS_ENABLED=true
     ports:
       - 7160:7054
     working_dir: /etc/hyperledger/fabric-ca-server
@@ -1356,12 +1020,6 @@ services:
       - CORE_PEER_LOCALMSPID=FarmaciaCarboneMSP
       - CORE_PEER_MSPCONFIGPATH=/var/hyperledger/cli/crypto/users/Admin@farmacia-carbone.napoli.medchain.com/msp
       - CORE_PEER_ADDRESS=peer0.farmacia-carbone.napoli.medchain.com:7161
-      # enabled TLS
-      - CORE_PEER_TLS_ENABLED=true
-      - CORE_PEER_TLS_CERT_FILE=/var/hyperledger/cli/crypto/users/Admin@farmacia-carbone.napoli.medchain.com/tls/client.crt
-      - CORE_PEER_TLS_KEY_FILE=/var/hyperledger/cli/crypto/users/Admin@farmacia-carbone.napoli.medchain.com/tls/client.key
-      - CORE_PEER_TLS_ROOTCERT_FILE=/var/hyperledger/cli/crypto/users/Admin@farmacia-carbone.napoli.medchain.com/tls/ca.crt
-      - TLS_CA_CERT_PATH=/var/hyperledger/cli/crypto-orderer/tlsca.orderer.medchain.com-cert.pem
     working_dir: /var/hyperledger/cli/
     command: /bin/bash
     volumes:
@@ -1369,31 +1027,8 @@ services:
       - ../fabric-docker/scripts/cli:/var/hyperledger/cli/scripts/
       - ../fabric-config/config:/var/hyperledger/cli/config/ # genesis.block and channel.tx's
       - ../fabric-config/crypto-config/peerOrganizations/farmacia-carbone.napoli.medchain.com:/var/hyperledger/cli/crypto/
-      - ../fabric-config/crypto-config/peerOrganizations/orderer.medchain.com/peers/orderer0.medchain-orderergroup.orderer.medchain.com/msp/tlscacerts/tlsca.orderer.medchain.com-cert.pem:/var/hyperledger/cli/crypto-orderer/tlsca.orderer.medchain.com-cert.pem:ro
-      - ../fabric-config/crypto-config/peerOrganizations/ospedale-maresca.aslnapoli3.medchain.com/peers/peer0.ospedale-maresca.aslnapoli3.medchain.com/tls/ca.crt:/var/hyperledger/cli/crypto-peer/peer0.ospedale-maresca.aslnapoli3.medchain.com/tls/ca.crt:ro
-      - ../fabric-config/crypto-config/peerOrganizations/ospedale-maresca.aslnapoli3.medchain.com/peers/peer1.ospedale-maresca.aslnapoli3.medchain.com/tls/ca.crt:/var/hyperledger/cli/crypto-peer/peer1.ospedale-maresca.aslnapoli3.medchain.com/tls/ca.crt:ro
-      - ../fabric-config/crypto-config/peerOrganizations/ospedale-del-mare.aslnapoli1.medchain.com/peers/peer0.ospedale-del-mare.aslnapoli1.medchain.com/tls/ca.crt:/var/hyperledger/cli/crypto-peer/peer0.ospedale-del-mare.aslnapoli1.medchain.com/tls/ca.crt:ro
-      - ../fabric-config/crypto-config/peerOrganizations/ospedale-del-mare.aslnapoli1.medchain.com/peers/peer1.ospedale-del-mare.aslnapoli1.medchain.com/tls/ca.crt:/var/hyperledger/cli/crypto-peer/peer1.ospedale-del-mare.aslnapoli1.medchain.com/tls/ca.crt:ro
-      - ../fabric-config/crypto-config/peerOrganizations/ospedale-sgiuliano.aslnapoli2.medchain.com/peers/peer0.ospedale-sgiuliano.aslnapoli2.medchain.com/tls/ca.crt:/var/hyperledger/cli/crypto-peer/peer0.ospedale-sgiuliano.aslnapoli2.medchain.com/tls/ca.crt:ro
-      - ../fabric-config/crypto-config/peerOrganizations/ospedale-sgiuliano.aslnapoli2.medchain.com/peers/peer1.ospedale-sgiuliano.aslnapoli2.medchain.com/tls/ca.crt:/var/hyperledger/cli/crypto-peer/peer1.ospedale-sgiuliano.aslnapoli2.medchain.com/tls/ca.crt:ro
-      - ../fabric-config/crypto-config/peerOrganizations/medicina-generale.napoli.medchain.com/peers/peer0.medicina-generale.napoli.medchain.com/tls/ca.crt:/var/hyperledger/cli/crypto-peer/peer0.medicina-generale.napoli.medchain.com/tls/ca.crt:ro
-      - ../fabric-config/crypto-config/peerOrganizations/medicina-generale.napoli.medchain.com/peers/peer1.medicina-generale.napoli.medchain.com/tls/ca.crt:/var/hyperledger/cli/crypto-peer/peer1.medicina-generale.napoli.medchain.com/tls/ca.crt:ro
-      - ../fabric-config/crypto-config/peerOrganizations/neurologia.napoli.medchain.com/peers/peer0.neurologia.napoli.medchain.com/tls/ca.crt:/var/hyperledger/cli/crypto-peer/peer0.neurologia.napoli.medchain.com/tls/ca.crt:ro
-      - ../fabric-config/crypto-config/peerOrganizations/neurologia.napoli.medchain.com/peers/peer1.neurologia.napoli.medchain.com/tls/ca.crt:/var/hyperledger/cli/crypto-peer/peer1.neurologia.napoli.medchain.com/tls/ca.crt:ro
-      - ../fabric-config/crypto-config/peerOrganizations/farmacia-petrone.napoli.medchain.com/peers/peer0.farmacia-petrone.napoli.medchain.com/tls/ca.crt:/var/hyperledger/cli/crypto-peer/peer0.farmacia-petrone.napoli.medchain.com/tls/ca.crt:ro
-      - ../fabric-config/crypto-config/peerOrganizations/farmacia-carbone.napoli.medchain.com/peers/peer0.farmacia-carbone.napoli.medchain.com/tls/ca.crt:/var/hyperledger/cli/crypto-peer/peer0.farmacia-carbone.napoli.medchain.com/tls/ca.crt:ro
-      - ../fabric-config/crypto-config/peerOrganizations/laboratorio-analisi-cmo.medchain.com/peers/peer0.laboratorio-analisi-cmo.medchain.com/tls/ca.crt:/var/hyperledger/cli/crypto-peer/peer0.laboratorio-analisi-cmo.medchain.com/tls/ca.crt:ro
-      - ../fabric-config/crypto-config/peerOrganizations/laboratorio-analisi-sdn.medchain.com/peers/peer0.laboratorio-analisi-sdn.medchain.com/tls/ca.crt:/var/hyperledger/cli/crypto-peer/peer0.laboratorio-analisi-sdn.medchain.com/tls/ca.crt:ro
       - ../fabric-config/chaincode-packages:/var/hyperledger/cli/chaincode-packages/
-<<<<<<< HEAD
-      - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/:/var/hyperledger/cli/prescription/"
-=======
-<<<<<<< HEAD
       - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/:/var/hyperledger/cli/labresults/"
-=======
-      - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/:/var/hyperledger/cli/health-data-management/"
->>>>>>> master
->>>>>>> master
     networks:
       - basic
 
@@ -1425,21 +1060,17 @@ services:
       - CORE_VM_DOCKER_ATTACHSTDOUT=true
       - CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
       - GODEBUG=netdns=go
-      # enabled TLS
-      - CORE_PEER_TLS_ENABLED=true
-      - CORE_PEER_TLS_CERT_FILE=/etc/hyperledger/fabric/peer/tls/server.crt
-      - CORE_PEER_TLS_KEY_FILE=/etc/hyperledger/fabric/peer/tls/server.key
-      - CORE_PEER_TLS_ROOTCERT_FILE=/etc/hyperledger/fabric/peer/tls/ca.crt
       # CouchDB
       - CORE_LEDGER_STATE_STATEDATABASE=CouchDB
       - CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS=couchdb.peer0.farmacia-carbone.napoli.medchain.com:5984
       - CORE_LEDGER_STATE_COUCHDBCONFIG_USERNAME=peer0
       - CORE_LEDGER_STATE_COUCHDBCONFIG_PASSWORD=peer0Password
     working_dir: /etc/hyperledger/fabric/peer/
-    command: peer node start
+    command: peer node start --peer-chaincodedev=true
     ports:
       - 8161:9440
       - 7161:7161
+      - 8661:7050
     volumes:
       - /var/run/docker.sock:/host/var/run/docker.sock
       - ../fabric-config/crypto-config/peerOrganizations/farmacia-carbone.napoli.medchain.com/peers/peer0.farmacia-carbone.napoli.medchain.com/msp:/etc/hyperledger/fabric/peer/msp
@@ -1469,7 +1100,6 @@ services:
       - FABRIC_CA_SERVER_CA_CERTFILE=/etc/hyperledger/fabric-ca-server/crypto/ca.laboratorio-analisi-cmo.medchain.com-cert.pem
       - FABRIC_CA_SERVER_CA_KEYFILE=/etc/hyperledger/fabric-ca-server/crypto/priv-key.pem
       - FABRIC_LOGGING_SPEC=${LOGGING_LEVEL}
-      - FABRIC_CA_SERVER_TLS_ENABLED=true
     ports:
       - 7180:7054
     working_dir: /etc/hyperledger/fabric-ca-server
@@ -1494,12 +1124,6 @@ services:
       - CORE_PEER_LOCALMSPID=LaboratorioAnalisiCMOMSP
       - CORE_PEER_MSPCONFIGPATH=/var/hyperledger/cli/crypto/users/Admin@laboratorio-analisi-cmo.medchain.com/msp
       - CORE_PEER_ADDRESS=peer0.laboratorio-analisi-cmo.medchain.com:7181
-      # enabled TLS
-      - CORE_PEER_TLS_ENABLED=true
-      - CORE_PEER_TLS_CERT_FILE=/var/hyperledger/cli/crypto/users/Admin@laboratorio-analisi-cmo.medchain.com/tls/client.crt
-      - CORE_PEER_TLS_KEY_FILE=/var/hyperledger/cli/crypto/users/Admin@laboratorio-analisi-cmo.medchain.com/tls/client.key
-      - CORE_PEER_TLS_ROOTCERT_FILE=/var/hyperledger/cli/crypto/users/Admin@laboratorio-analisi-cmo.medchain.com/tls/ca.crt
-      - TLS_CA_CERT_PATH=/var/hyperledger/cli/crypto-orderer/tlsca.orderer.medchain.com-cert.pem
     working_dir: /var/hyperledger/cli/
     command: /bin/bash
     volumes:
@@ -1507,31 +1131,8 @@ services:
       - ../fabric-docker/scripts/cli:/var/hyperledger/cli/scripts/
       - ../fabric-config/config:/var/hyperledger/cli/config/ # genesis.block and channel.tx's
       - ../fabric-config/crypto-config/peerOrganizations/laboratorio-analisi-cmo.medchain.com:/var/hyperledger/cli/crypto/
-      - ../fabric-config/crypto-config/peerOrganizations/orderer.medchain.com/peers/orderer0.medchain-orderergroup.orderer.medchain.com/msp/tlscacerts/tlsca.orderer.medchain.com-cert.pem:/var/hyperledger/cli/crypto-orderer/tlsca.orderer.medchain.com-cert.pem:ro
-      - ../fabric-config/crypto-config/peerOrganizations/ospedale-maresca.aslnapoli3.medchain.com/peers/peer0.ospedale-maresca.aslnapoli3.medchain.com/tls/ca.crt:/var/hyperledger/cli/crypto-peer/peer0.ospedale-maresca.aslnapoli3.medchain.com/tls/ca.crt:ro
-      - ../fabric-config/crypto-config/peerOrganizations/ospedale-maresca.aslnapoli3.medchain.com/peers/peer1.ospedale-maresca.aslnapoli3.medchain.com/tls/ca.crt:/var/hyperledger/cli/crypto-peer/peer1.ospedale-maresca.aslnapoli3.medchain.com/tls/ca.crt:ro
-      - ../fabric-config/crypto-config/peerOrganizations/ospedale-del-mare.aslnapoli1.medchain.com/peers/peer0.ospedale-del-mare.aslnapoli1.medchain.com/tls/ca.crt:/var/hyperledger/cli/crypto-peer/peer0.ospedale-del-mare.aslnapoli1.medchain.com/tls/ca.crt:ro
-      - ../fabric-config/crypto-config/peerOrganizations/ospedale-del-mare.aslnapoli1.medchain.com/peers/peer1.ospedale-del-mare.aslnapoli1.medchain.com/tls/ca.crt:/var/hyperledger/cli/crypto-peer/peer1.ospedale-del-mare.aslnapoli1.medchain.com/tls/ca.crt:ro
-      - ../fabric-config/crypto-config/peerOrganizations/ospedale-sgiuliano.aslnapoli2.medchain.com/peers/peer0.ospedale-sgiuliano.aslnapoli2.medchain.com/tls/ca.crt:/var/hyperledger/cli/crypto-peer/peer0.ospedale-sgiuliano.aslnapoli2.medchain.com/tls/ca.crt:ro
-      - ../fabric-config/crypto-config/peerOrganizations/ospedale-sgiuliano.aslnapoli2.medchain.com/peers/peer1.ospedale-sgiuliano.aslnapoli2.medchain.com/tls/ca.crt:/var/hyperledger/cli/crypto-peer/peer1.ospedale-sgiuliano.aslnapoli2.medchain.com/tls/ca.crt:ro
-      - ../fabric-config/crypto-config/peerOrganizations/medicina-generale.napoli.medchain.com/peers/peer0.medicina-generale.napoli.medchain.com/tls/ca.crt:/var/hyperledger/cli/crypto-peer/peer0.medicina-generale.napoli.medchain.com/tls/ca.crt:ro
-      - ../fabric-config/crypto-config/peerOrganizations/medicina-generale.napoli.medchain.com/peers/peer1.medicina-generale.napoli.medchain.com/tls/ca.crt:/var/hyperledger/cli/crypto-peer/peer1.medicina-generale.napoli.medchain.com/tls/ca.crt:ro
-      - ../fabric-config/crypto-config/peerOrganizations/neurologia.napoli.medchain.com/peers/peer0.neurologia.napoli.medchain.com/tls/ca.crt:/var/hyperledger/cli/crypto-peer/peer0.neurologia.napoli.medchain.com/tls/ca.crt:ro
-      - ../fabric-config/crypto-config/peerOrganizations/neurologia.napoli.medchain.com/peers/peer1.neurologia.napoli.medchain.com/tls/ca.crt:/var/hyperledger/cli/crypto-peer/peer1.neurologia.napoli.medchain.com/tls/ca.crt:ro
-      - ../fabric-config/crypto-config/peerOrganizations/farmacia-petrone.napoli.medchain.com/peers/peer0.farmacia-petrone.napoli.medchain.com/tls/ca.crt:/var/hyperledger/cli/crypto-peer/peer0.farmacia-petrone.napoli.medchain.com/tls/ca.crt:ro
-      - ../fabric-config/crypto-config/peerOrganizations/farmacia-carbone.napoli.medchain.com/peers/peer0.farmacia-carbone.napoli.medchain.com/tls/ca.crt:/var/hyperledger/cli/crypto-peer/peer0.farmacia-carbone.napoli.medchain.com/tls/ca.crt:ro
-      - ../fabric-config/crypto-config/peerOrganizations/laboratorio-analisi-cmo.medchain.com/peers/peer0.laboratorio-analisi-cmo.medchain.com/tls/ca.crt:/var/hyperledger/cli/crypto-peer/peer0.laboratorio-analisi-cmo.medchain.com/tls/ca.crt:ro
-      - ../fabric-config/crypto-config/peerOrganizations/laboratorio-analisi-sdn.medchain.com/peers/peer0.laboratorio-analisi-sdn.medchain.com/tls/ca.crt:/var/hyperledger/cli/crypto-peer/peer0.laboratorio-analisi-sdn.medchain.com/tls/ca.crt:ro
       - ../fabric-config/chaincode-packages:/var/hyperledger/cli/chaincode-packages/
-<<<<<<< HEAD
-      - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/:/var/hyperledger/cli/prescription/"
-=======
-<<<<<<< HEAD
       - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/:/var/hyperledger/cli/labresults/"
-=======
-      - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/:/var/hyperledger/cli/health-data-management/"
->>>>>>> master
->>>>>>> master
     networks:
       - basic
 
@@ -1563,21 +1164,17 @@ services:
       - CORE_VM_DOCKER_ATTACHSTDOUT=true
       - CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
       - GODEBUG=netdns=go
-      # enabled TLS
-      - CORE_PEER_TLS_ENABLED=true
-      - CORE_PEER_TLS_CERT_FILE=/etc/hyperledger/fabric/peer/tls/server.crt
-      - CORE_PEER_TLS_KEY_FILE=/etc/hyperledger/fabric/peer/tls/server.key
-      - CORE_PEER_TLS_ROOTCERT_FILE=/etc/hyperledger/fabric/peer/tls/ca.crt
       # CouchDB
       - CORE_LEDGER_STATE_STATEDATABASE=CouchDB
       - CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS=couchdb.peer0.laboratorio-analisi-cmo.medchain.com:5984
       - CORE_LEDGER_STATE_COUCHDBCONFIG_USERNAME=peer0
       - CORE_LEDGER_STATE_COUCHDBCONFIG_PASSWORD=peer0Password
     working_dir: /etc/hyperledger/fabric/peer/
-    command: peer node start
+    command: peer node start --peer-chaincodedev=true
     ports:
       - 8181:9440
       - 7181:7181
+      - 8681:7050
     volumes:
       - /var/run/docker.sock:/host/var/run/docker.sock
       - ../fabric-config/crypto-config/peerOrganizations/laboratorio-analisi-cmo.medchain.com/peers/peer0.laboratorio-analisi-cmo.medchain.com/msp:/etc/hyperledger/fabric/peer/msp
@@ -1607,7 +1204,6 @@ services:
       - FABRIC_CA_SERVER_CA_CERTFILE=/etc/hyperledger/fabric-ca-server/crypto/ca.laboratorio-analisi-sdn.medchain.com-cert.pem
       - FABRIC_CA_SERVER_CA_KEYFILE=/etc/hyperledger/fabric-ca-server/crypto/priv-key.pem
       - FABRIC_LOGGING_SPEC=${LOGGING_LEVEL}
-      - FABRIC_CA_SERVER_TLS_ENABLED=true
     ports:
       - 7200:7054
     working_dir: /etc/hyperledger/fabric-ca-server
@@ -1632,12 +1228,6 @@ services:
       - CORE_PEER_LOCALMSPID=LaboratorioAnalisiSDNMSP
       - CORE_PEER_MSPCONFIGPATH=/var/hyperledger/cli/crypto/users/Admin@laboratorio-analisi-sdn.medchain.com/msp
       - CORE_PEER_ADDRESS=peer0.laboratorio-analisi-sdn.medchain.com:7201
-      # enabled TLS
-      - CORE_PEER_TLS_ENABLED=true
-      - CORE_PEER_TLS_CERT_FILE=/var/hyperledger/cli/crypto/users/Admin@laboratorio-analisi-sdn.medchain.com/tls/client.crt
-      - CORE_PEER_TLS_KEY_FILE=/var/hyperledger/cli/crypto/users/Admin@laboratorio-analisi-sdn.medchain.com/tls/client.key
-      - CORE_PEER_TLS_ROOTCERT_FILE=/var/hyperledger/cli/crypto/users/Admin@laboratorio-analisi-sdn.medchain.com/tls/ca.crt
-      - TLS_CA_CERT_PATH=/var/hyperledger/cli/crypto-orderer/tlsca.orderer.medchain.com-cert.pem
     working_dir: /var/hyperledger/cli/
     command: /bin/bash
     volumes:
@@ -1645,31 +1235,8 @@ services:
       - ../fabric-docker/scripts/cli:/var/hyperledger/cli/scripts/
       - ../fabric-config/config:/var/hyperledger/cli/config/ # genesis.block and channel.tx's
       - ../fabric-config/crypto-config/peerOrganizations/laboratorio-analisi-sdn.medchain.com:/var/hyperledger/cli/crypto/
-      - ../fabric-config/crypto-config/peerOrganizations/orderer.medchain.com/peers/orderer0.medchain-orderergroup.orderer.medchain.com/msp/tlscacerts/tlsca.orderer.medchain.com-cert.pem:/var/hyperledger/cli/crypto-orderer/tlsca.orderer.medchain.com-cert.pem:ro
-      - ../fabric-config/crypto-config/peerOrganizations/ospedale-maresca.aslnapoli3.medchain.com/peers/peer0.ospedale-maresca.aslnapoli3.medchain.com/tls/ca.crt:/var/hyperledger/cli/crypto-peer/peer0.ospedale-maresca.aslnapoli3.medchain.com/tls/ca.crt:ro
-      - ../fabric-config/crypto-config/peerOrganizations/ospedale-maresca.aslnapoli3.medchain.com/peers/peer1.ospedale-maresca.aslnapoli3.medchain.com/tls/ca.crt:/var/hyperledger/cli/crypto-peer/peer1.ospedale-maresca.aslnapoli3.medchain.com/tls/ca.crt:ro
-      - ../fabric-config/crypto-config/peerOrganizations/ospedale-del-mare.aslnapoli1.medchain.com/peers/peer0.ospedale-del-mare.aslnapoli1.medchain.com/tls/ca.crt:/var/hyperledger/cli/crypto-peer/peer0.ospedale-del-mare.aslnapoli1.medchain.com/tls/ca.crt:ro
-      - ../fabric-config/crypto-config/peerOrganizations/ospedale-del-mare.aslnapoli1.medchain.com/peers/peer1.ospedale-del-mare.aslnapoli1.medchain.com/tls/ca.crt:/var/hyperledger/cli/crypto-peer/peer1.ospedale-del-mare.aslnapoli1.medchain.com/tls/ca.crt:ro
-      - ../fabric-config/crypto-config/peerOrganizations/ospedale-sgiuliano.aslnapoli2.medchain.com/peers/peer0.ospedale-sgiuliano.aslnapoli2.medchain.com/tls/ca.crt:/var/hyperledger/cli/crypto-peer/peer0.ospedale-sgiuliano.aslnapoli2.medchain.com/tls/ca.crt:ro
-      - ../fabric-config/crypto-config/peerOrganizations/ospedale-sgiuliano.aslnapoli2.medchain.com/peers/peer1.ospedale-sgiuliano.aslnapoli2.medchain.com/tls/ca.crt:/var/hyperledger/cli/crypto-peer/peer1.ospedale-sgiuliano.aslnapoli2.medchain.com/tls/ca.crt:ro
-      - ../fabric-config/crypto-config/peerOrganizations/medicina-generale.napoli.medchain.com/peers/peer0.medicina-generale.napoli.medchain.com/tls/ca.crt:/var/hyperledger/cli/crypto-peer/peer0.medicina-generale.napoli.medchain.com/tls/ca.crt:ro
-      - ../fabric-config/crypto-config/peerOrganizations/medicina-generale.napoli.medchain.com/peers/peer1.medicina-generale.napoli.medchain.com/tls/ca.crt:/var/hyperledger/cli/crypto-peer/peer1.medicina-generale.napoli.medchain.com/tls/ca.crt:ro
-      - ../fabric-config/crypto-config/peerOrganizations/neurologia.napoli.medchain.com/peers/peer0.neurologia.napoli.medchain.com/tls/ca.crt:/var/hyperledger/cli/crypto-peer/peer0.neurologia.napoli.medchain.com/tls/ca.crt:ro
-      - ../fabric-config/crypto-config/peerOrganizations/neurologia.napoli.medchain.com/peers/peer1.neurologia.napoli.medchain.com/tls/ca.crt:/var/hyperledger/cli/crypto-peer/peer1.neurologia.napoli.medchain.com/tls/ca.crt:ro
-      - ../fabric-config/crypto-config/peerOrganizations/farmacia-petrone.napoli.medchain.com/peers/peer0.farmacia-petrone.napoli.medchain.com/tls/ca.crt:/var/hyperledger/cli/crypto-peer/peer0.farmacia-petrone.napoli.medchain.com/tls/ca.crt:ro
-      - ../fabric-config/crypto-config/peerOrganizations/farmacia-carbone.napoli.medchain.com/peers/peer0.farmacia-carbone.napoli.medchain.com/tls/ca.crt:/var/hyperledger/cli/crypto-peer/peer0.farmacia-carbone.napoli.medchain.com/tls/ca.crt:ro
-      - ../fabric-config/crypto-config/peerOrganizations/laboratorio-analisi-cmo.medchain.com/peers/peer0.laboratorio-analisi-cmo.medchain.com/tls/ca.crt:/var/hyperledger/cli/crypto-peer/peer0.laboratorio-analisi-cmo.medchain.com/tls/ca.crt:ro
-      - ../fabric-config/crypto-config/peerOrganizations/laboratorio-analisi-sdn.medchain.com/peers/peer0.laboratorio-analisi-sdn.medchain.com/tls/ca.crt:/var/hyperledger/cli/crypto-peer/peer0.laboratorio-analisi-sdn.medchain.com/tls/ca.crt:ro
       - ../fabric-config/chaincode-packages:/var/hyperledger/cli/chaincode-packages/
-<<<<<<< HEAD
-      - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/:/var/hyperledger/cli/prescription/"
-=======
-<<<<<<< HEAD
       - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/:/var/hyperledger/cli/labresults/"
-=======
-      - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/:/var/hyperledger/cli/health-data-management/"
->>>>>>> master
->>>>>>> master
     networks:
       - basic
 
@@ -1701,21 +1268,17 @@ services:
       - CORE_VM_DOCKER_ATTACHSTDOUT=true
       - CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
       - GODEBUG=netdns=go
-      # enabled TLS
-      - CORE_PEER_TLS_ENABLED=true
-      - CORE_PEER_TLS_CERT_FILE=/etc/hyperledger/fabric/peer/tls/server.crt
-      - CORE_PEER_TLS_KEY_FILE=/etc/hyperledger/fabric/peer/tls/server.key
-      - CORE_PEER_TLS_ROOTCERT_FILE=/etc/hyperledger/fabric/peer/tls/ca.crt
       # CouchDB
       - CORE_LEDGER_STATE_STATEDATABASE=CouchDB
       - CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS=couchdb.peer0.laboratorio-analisi-sdn.medchain.com:5984
       - CORE_LEDGER_STATE_COUCHDBCONFIG_USERNAME=peer0
       - CORE_LEDGER_STATE_COUCHDBCONFIG_PASSWORD=peer0Password
     working_dir: /etc/hyperledger/fabric/peer/
-    command: peer node start
+    command: peer node start --peer-chaincodedev=true
     ports:
       - 8201:9440
       - 7201:7201
+      - 8701:7050
     volumes:
       - /var/run/docker.sock:/host/var/run/docker.sock
       - ../fabric-config/crypto-config/peerOrganizations/laboratorio-analisi-sdn.medchain.com/peers/peer0.laboratorio-analisi-sdn.medchain.com/msp:/etc/hyperledger/fabric/peer/msp

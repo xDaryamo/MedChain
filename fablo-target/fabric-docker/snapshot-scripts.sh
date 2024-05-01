@@ -3,8 +3,6 @@
 __getOrdererAndPeerNodes() {
   echo "
       orderer0.medchain-orderergroup.orderer.medchain.com
-      orderer1.medchain-orderergroup.orderer.medchain.com
-      orderer2.medchain-orderergroup.orderer.medchain.com
       peer0.ospedale-maresca.aslnapoli3.medchain.com
       peer1.ospedale-maresca.aslnapoli3.medchain.com
       peer0.ospedale-del-mare.aslnapoli1.medchain.com

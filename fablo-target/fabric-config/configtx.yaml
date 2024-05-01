@@ -301,28 +301,9 @@ Application: &ApplicationDefaults
 #   SECTION: Orderer
 ################################################################################
 Orderer: &Medchain-orderergroupDefaults
-    OrdererType: etcdraft
+    OrdererType: solo
     Addresses:
         - orderer0.medchain-orderergroup.orderer.medchain.com:7030
-        - orderer1.medchain-orderergroup.orderer.medchain.com:7031
-        - orderer2.medchain-orderergroup.orderer.medchain.com:7032
-    EtcdRaft:
-        Consenters:
-            - Host: orderer0.medchain-orderergroup.orderer.medchain.com
-              Port: 7030
-              ClientTLSCert: crypto-config/peerOrganizations/orderer.medchain.com/peers/orderer0.medchain-orderergroup.orderer.medchain.com/tls/server.crt
-              ServerTLSCert: crypto-config/peerOrganizations/orderer.medchain.com/peers/orderer0.medchain-orderergroup.orderer.medchain.com/tls/server.crt
-
-            - Host: orderer1.medchain-orderergroup.orderer.medchain.com
-              Port: 7031
-              ClientTLSCert: crypto-config/peerOrganizations/orderer.medchain.com/peers/orderer1.medchain-orderergroup.orderer.medchain.com/tls/server.crt
-              ServerTLSCert: crypto-config/peerOrganizations/orderer.medchain.com/peers/orderer1.medchain-orderergroup.orderer.medchain.com/tls/server.crt
-
-            - Host: orderer2.medchain-orderergroup.orderer.medchain.com
-              Port: 7032
-              ClientTLSCert: crypto-config/peerOrganizations/orderer.medchain.com/peers/orderer2.medchain-orderergroup.orderer.medchain.com/tls/server.crt
-              ServerTLSCert: crypto-config/peerOrganizations/orderer.medchain.com/peers/orderer2.medchain-orderergroup.orderer.medchain.com/tls/server.crt
-
     BatchTimeout: 2s
     BatchSize:
         MaxMessageCount: 10
