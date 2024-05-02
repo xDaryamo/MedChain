@@ -1,12 +1,15 @@
-const { connectToNetwork } = require("../network");
+const { connectToOrg, enrollAdmin} = require("../network");
+const path = require("path");
 
-async function addPatient(org, patientData) {
-  const gateway = await connectToNetwork(org);
+async function addPatient(org, patientID, patientData) {
+  const walletPath = path.resolve(__dirname,"..", "wallet");
+  await enrollAdmin(org, walletPath);
+  const gateway = await connectToOrg(org);
   const network = await gateway.getNetwork("patient-records-channel");
-  const contract = network.getContract("patientContract");
+  const contract = network.getContract("patient");
 
   try {
-    await contract.submitTransaction("addPatient", JSON.stringify(patientData));
+    await contract.submitTransaction("CreatePatient", patientID, JSON.stringify(patientData));
     console.log("Patient added successfully.");
   } finally {
     gateway.disconnect();
@@ -25,6 +28,34 @@ async function getPatient(org, patientId) {
     gateway.disconnect();
   }
 }
+
+const patient = {
+  resourceType: "Patient",
+  id: {
+    value: "1234" 
+  },
+  name: [
+    {
+      family: "Smith",
+      given: ["John"]
+    }
+  ],
+  gender: {
+    coding: [
+      {
+        system: "http://hl7.org/fhir/ValueSet/administrative-gender",
+        code: "male",
+        display: "Male" 
+      }
+    ]
+  },
+  birthDate: new Date(1980, 1, 1).toISOString()
+};
+
+
+addPatient('ospedale-maresca.aslnapoli3.medchain.com', '1234', patient)
+
+
 
 // async function updatePatient(patientID, patientData) {
 //   try {

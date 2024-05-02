@@ -3,6 +3,13 @@ const FabricCAServices = require("fabric-ca-client");
 const fs = require("fs");
 const path = require("path");
 
+
+function domainToCamelCase(domain) {
+  let subdomain = domain.split('.')[0];
+  return subdomain.split('-').map(part => part.charAt(0).toUpperCase() + part.slice(1).toLowerCase()).join('');
+}
+
+
 // Funzione per connettersi a una specifica organizzazione
 async function connectToOrg(orgName) {
   const profileName = orgName.split(".")[0].replace(/-/g, "");
@@ -48,7 +55,7 @@ async function enrollAdmin(org, walletPath) {
   const adminId = `Admin@${org}`; 
   const enrollmentID = "admin"; 
   const adminSecret = "adminpw"; 
-  const mspId = `${org.replace(/[^a-zA-Z0-9]+/g, "")}MSP`;
+  const mspId = domainToCamelCase(org) + "MSP";
   const caName = `ca.${org}`;
   const profileName = org.split(".")[0].replace(/-/g, "");
   const ccpPath = path.resolve(
@@ -184,7 +191,7 @@ async function initializeAdmins() {
   }
 }
 
-initializeAdmins();
+// initializeAdmins();
 // createUser("farmacia-carbone.napoli.medchain.com", "user2", "userpw", "*" )
 
-module.exports = { connectToOrg, enrollAdmin, initializeAdmins, createUser };
+module.exports = { connectToOrg, enrollAdmin, initializeAdmins };
