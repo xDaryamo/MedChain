@@ -1,4 +1,4 @@
-package prescription
+package main
 
 import (
 	"encoding/base64"

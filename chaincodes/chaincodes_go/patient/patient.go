@@ -1,8 +1,9 @@
-package patient
+package main
 
 import (
 	"encoding/json"
 	"errors"
+	"log"
 
 	"github.com/hyperledger/fabric-contract-api-go/contractapi"
 )
@@ -89,4 +90,15 @@ func (c *PatientContract) DeletePatient(ctx contractapi.TransactionContextInterf
 
 	// Remove the patient record
 	return ctx.GetStub().DelState(patientID)
+}
+
+func main() {
+	chaincode, err := contractapi.NewChaincode(new(PatientContract))
+	if err != nil {
+		log.Panic(errors.New("Error creating patient chaincode: " + err.Error()))
+	}
+
+	if err := chaincode.Start(); err != nil {
+		log.Panic(errors.New("Error starting patient chaincode: " + err.Error()))
+	}
 }

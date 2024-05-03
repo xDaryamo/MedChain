@@ -1,4 +1,4 @@
-package labresults
+package main
 
 import (
 	"encoding/base64"

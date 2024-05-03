@@ -1,4 +1,4 @@
-package organization
+package main
 
 import (
 	"encoding/base64"

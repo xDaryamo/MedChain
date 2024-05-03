@@ -1,4 +1,4 @@
-package encounter
+package main
 
 import (
 	"encoding/base64"
