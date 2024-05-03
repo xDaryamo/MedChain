@@ -1,10 +1,6 @@
-module github.com/xDaryamo/MedChain
+module github.com/xDaryamo/MedChain/organization
 
 go 1.20
-
-replace github.com/xDaryamo/MedChain/fhir => ./fhir
-
-replace github.com/xDaryamo/MedChain => ./
 
 require (
 	github.com/golang/protobuf v1.5.4

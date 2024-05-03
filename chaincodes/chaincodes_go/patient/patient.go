@@ -5,7 +5,6 @@ import (
 	"errors"
 
 	"github.com/hyperledger/fabric-contract-api-go/contractapi"
-	"github.com/xDaryamo/MedChain/fhir"
 )
 
 type PatientContract struct {
@@ -23,7 +22,7 @@ func (c *PatientContract) CreatePatient(ctx contractapi.TransactionContextInterf
 		return errors.New("patient already exists: " + patientID)
 	}
 
-	var patient fhir.Patient
+	var patient Patient
 	err = json.Unmarshal([]byte(patientJSON), &patient)
 	if err != nil {
 		return errors.New("failed to unmarshal patient: " + err.Error())
@@ -39,7 +38,7 @@ func (c *PatientContract) CreatePatient(ctx contractapi.TransactionContextInterf
 }
 
 // ReadPatient retrieves a patient record from the ledger
-func (c *PatientContract) ReadPatient(ctx contractapi.TransactionContextInterface, patientID string) (*fhir.Patient, error) {
+func (c *PatientContract) ReadPatient(ctx contractapi.TransactionContextInterface, patientID string) (*Patient, error) {
 	patientJSON, err := ctx.GetStub().GetState(patientID)
 	if err != nil {
 		return nil, errors.New("failed to read patient: " + err.Error())
@@ -48,7 +47,7 @@ func (c *PatientContract) ReadPatient(ctx contractapi.TransactionContextInterfac
 		return nil, errors.New("patient does not exist: " + patientID)
 	}
 
-	var patient fhir.Patient
+	var patient Patient
 	err = json.Unmarshal(patientJSON, &patient)
 	if err != nil {
 		return nil, errors.New("failed to unmarshal patient: " + err.Error())
@@ -67,7 +66,7 @@ func (c *PatientContract) UpdatePatient(ctx contractapi.TransactionContextInterf
 		return errors.New("patient does not exist: " + patientID)
 	}
 
-	var patient fhir.Patient
+	var patient Patient
 	if err := json.Unmarshal([]byte(patientJSON), &patient); err != nil {
 		return errors.New("failed to unmarshal patient: " + err.Error())
 	}

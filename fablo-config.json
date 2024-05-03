@@ -4,7 +4,7 @@
     "fabricVersion": "2.2.13",
     "tls": false,
     "engine": "docker",
-    "peerDevMode": true
+    "peerDevMode": false
   },
   "orgs": [
     {
@@ -249,7 +249,42 @@
       "version": "1.0",
       "lang": "golang",
       "channel": "lab-results-channel",
-      "directory": "./chaincodes/chaincodes_go"
+      "directory": "./chaincodes/chaincodes_go/labresults"
+    },
+    {
+      "name": "encounter",
+      "version": "1.0",
+      "lang": "golang",
+      "channel": "patient-records-channel",
+      "directory": "./chaincodes/chaincodes_go/encounter"
+    },
+    {
+      "name": "organization",
+      "version": "1.0",
+      "lang": "golang",
+      "channel": "emergency-channel",
+      "directory": "./chaincodes/chaincodes_go/organization"
+    },
+    {
+      "name": "patient",
+      "version": "1.0",
+      "lang": "golang",
+      "channel": "patient-records-channel",
+      "directory": "./chaincodes/chaincodes_go/patient"
+    },
+    {
+      "name": "prescriptions",
+      "version": "1.0",
+      "lang": "golang",
+      "channel": "prescriptions-channel",
+      "directory": "./chaincodes/chaincodes_go/prescriptions"
+    },
+    {
+      "name": "records",
+      "version": "1.0",
+      "lang": "golang",
+      "channel": "patient-records-channel",
+      "directory": "./chaincodes/chaincodes_go/records"
     }
   ]
 }

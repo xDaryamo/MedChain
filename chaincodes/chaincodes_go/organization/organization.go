@@ -7,7 +7,6 @@ import (
 	"strings"
 
 	"github.com/hyperledger/fabric-contract-api-go/contractapi"
-	"github.com/xDaryamo/MedChain/fhir"
 )
 
 // OrganizationChaincode represents the contract for managing organizations on the blockchain
@@ -18,7 +17,7 @@ type OrganizationChaincode struct {
 // CreateOrganization creates a new organization
 func (oc *OrganizationChaincode) CreateOrganization(ctx contractapi.TransactionContextInterface, organizationID string, organizationJSON string) error {
 	// Deserialize JSON data into a Go data structure
-	var organization fhir.Organization
+	var organization Organization
 	if err := json.Unmarshal([]byte(organizationJSON), &organization); err != nil {
 		return err
 	}
@@ -41,7 +40,7 @@ func (oc *OrganizationChaincode) CreateOrganization(ctx contractapi.TransactionC
 }
 
 // GetOrganization retrieves an organization from the blockchain
-func (oc *OrganizationChaincode) GetOrganization(ctx contractapi.TransactionContextInterface, organizationID string) (*fhir.Organization, error) {
+func (oc *OrganizationChaincode) GetOrganization(ctx contractapi.TransactionContextInterface, organizationID string) (*Organization, error) {
 	// Retrieve the organization from the blockchain
 	organizationJSON, err := ctx.GetStub().GetState(organizationID)
 	if err != nil {
@@ -52,7 +51,7 @@ func (oc *OrganizationChaincode) GetOrganization(ctx contractapi.TransactionCont
 	}
 
 	// Deserialize the organization
-	var organization fhir.Organization
+	var organization Organization
 	err = json.Unmarshal(organizationJSON, &organization)
 	if err != nil {
 		return nil, err
@@ -73,7 +72,7 @@ func (oc *OrganizationChaincode) UpdateOrganization(ctx contractapi.TransactionC
 	}
 
 	// Deserialize the updated JSON data into a Go data structure
-	var updatedOrganization fhir.Organization
+	var updatedOrganization Organization
 	if err := json.Unmarshal([]byte(updatedOrganizationJSON), &updatedOrganization); err != nil {
 		return err
 	}
@@ -105,8 +104,8 @@ func (oc *OrganizationChaincode) DeleteOrganization(ctx contractapi.TransactionC
 }
 
 // SearchOrganizationsByType allows searching for organizations based on type
-func (oc *OrganizationChaincode) SearchOrganizationsByType(ctx contractapi.TransactionContextInterface, query string) ([]*fhir.Organization, error) {
-	var results []*fhir.Organization
+func (oc *OrganizationChaincode) SearchOrganizationsByType(ctx contractapi.TransactionContextInterface, query string) ([]*Organization, error) {
+	var results []*Organization
 
 	// Retrieve all organizations stored on the blockchain
 	iterator, err := ctx.GetStub().GetStateByRange("", "")
@@ -121,7 +120,7 @@ func (oc *OrganizationChaincode) SearchOrganizationsByType(ctx contractapi.Trans
 		if err != nil {
 			return nil, err
 		}
-		var organization fhir.Organization
+		var organization Organization
 		err = json.Unmarshal(result.Value, &organization)
 		if err != nil {
 			return nil, err
@@ -137,8 +136,8 @@ func (oc *OrganizationChaincode) SearchOrganizationsByType(ctx contractapi.Trans
 }
 
 // SearchOrganizationByName allows searching for an organization based on name
-func (oc *OrganizationChaincode) SearchOrganizationByName(ctx contractapi.TransactionContextInterface, query string) (*fhir.Organization, error) {
-	var result *fhir.Organization
+func (oc *OrganizationChaincode) SearchOrganizationByName(ctx contractapi.TransactionContextInterface, query string) (*Organization, error) {
+	var result *Organization
 
 	// Retrieve all organizations stored on the blockchain
 	iterator, err := ctx.GetStub().GetStateByRange("", "")
@@ -153,7 +152,7 @@ func (oc *OrganizationChaincode) SearchOrganizationByName(ctx contractapi.Transa
 		if err != nil {
 			return nil, err
 		}
-		var organization fhir.Organization
+		var organization Organization
 		err = json.Unmarshal(record.Value, &organization)
 		if err != nil {
 			return nil, err
@@ -170,7 +169,7 @@ func (oc *OrganizationChaincode) SearchOrganizationByName(ctx contractapi.Transa
 }
 
 // AddEndpoint adds a technical endpoint to the organization
-func (oc *OrganizationChaincode) AddEndpoint(ctx contractapi.TransactionContextInterface, organizationID string, endpoint fhir.Reference) error {
+func (oc *OrganizationChaincode) AddEndpoint(ctx contractapi.TransactionContextInterface, organizationID string, endpoint Reference) error {
 	organization, err := oc.GetOrganization(ctx, organizationID)
 	if err != nil {
 		return err
@@ -191,7 +190,7 @@ func (oc *OrganizationChaincode) AddEndpoint(ctx contractapi.TransactionContextI
 }
 
 // AddQualification adds a qualification to the organization
-func (oc *OrganizationChaincode) AddQualification(ctx contractapi.TransactionContextInterface, organizationID string, qualification fhir.Qualification) error {
+func (oc *OrganizationChaincode) AddQualification(ctx contractapi.TransactionContextInterface, organizationID string, qualification Qualification) error {
 	organization, err := oc.GetOrganization(ctx, organizationID)
 	if err != nil {
 		return err
@@ -257,7 +256,7 @@ func (oc *OrganizationChaincode) RemoveQualification(ctx contractapi.Transaction
 }
 
 // UpdateEndpoint updates a technical endpoint of the organization
-func (oc *OrganizationChaincode) UpdateEndpoint(ctx contractapi.TransactionContextInterface, organizationID string, updatedEndpoint fhir.Reference) error {
+func (oc *OrganizationChaincode) UpdateEndpoint(ctx contractapi.TransactionContextInterface, organizationID string, updatedEndpoint Reference) error {
 	organization, err := oc.GetOrganization(ctx, organizationID)
 	if err != nil {
 		return err
@@ -278,7 +277,7 @@ func (oc *OrganizationChaincode) UpdateEndpoint(ctx contractapi.TransactionConte
 }
 
 // UpdateContact updates contact details of the organization
-func (oc *OrganizationChaincode) UpdateContact(ctx contractapi.TransactionContextInterface, organizationID string, updatedContact fhir.ExtendedContactDetail) error {
+func (oc *OrganizationChaincode) UpdateContact(ctx contractapi.TransactionContextInterface, organizationID string, updatedContact ExtendedContactDetail) error {
 	organization, err := oc.GetOrganization(ctx, organizationID)
 	if err != nil {
 		return err
@@ -299,7 +298,7 @@ func (oc *OrganizationChaincode) UpdateContact(ctx contractapi.TransactionContex
 }
 
 // UpdateQualification updates a qualification of the organization
-func (oc *OrganizationChaincode) UpdateQualification(ctx contractapi.TransactionContextInterface, organizationID string, updatedQualification fhir.Qualification, qualificationIndex int) error {
+func (oc *OrganizationChaincode) UpdateQualification(ctx contractapi.TransactionContextInterface, organizationID string, updatedQualification Qualification, qualificationIndex int) error {
 	organization, err := oc.GetOrganization(ctx, organizationID)
 	if err != nil {
 		return err
@@ -323,7 +322,7 @@ func (oc *OrganizationChaincode) UpdateQualification(ctx contractapi.Transaction
 }
 
 // GetParentOrganization retrieves the parent organization of the current organization, if any.
-func (oc *OrganizationChaincode) GetParentOrganization(ctx contractapi.TransactionContextInterface, organizationID string) (*fhir.Reference, error) {
+func (oc *OrganizationChaincode) GetParentOrganization(ctx contractapi.TransactionContextInterface, organizationID string) (*Reference, error) {
 	// Retrieve the organization from the blockchain
 	organization, err := oc.GetOrganization(ctx, organizationID)
 	if err != nil {
@@ -338,7 +337,7 @@ func (oc *OrganizationChaincode) GetParentOrganization(ctx contractapi.Transacti
 }
 
 // UpdateParentOrganization updates the parent organization of the current organization.
-func (oc *OrganizationChaincode) UpdateParentOrganization(ctx contractapi.TransactionContextInterface, organizationID string, parentOrganization fhir.Reference) error {
+func (oc *OrganizationChaincode) UpdateParentOrganization(ctx contractapi.TransactionContextInterface, organizationID string, parentOrganization Reference) error {
 	// Retrieve the organization from the blockchain
 	organization, err := oc.GetOrganization(ctx, organizationID)
 	if err != nil {

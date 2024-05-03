@@ -45,7 +45,12 @@ services:
       - ../fabric-config/config:/var/hyperledger/cli/config/ # genesis.block and channel.tx's
       - ../fabric-config/crypto-config/peerOrganizations/orderer.medchain.com:/var/hyperledger/cli/crypto/
       - ../fabric-config/chaincode-packages:/var/hyperledger/cli/chaincode-packages/
-      - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/:/var/hyperledger/cli/labresults/"
+      - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/labresults/:/var/hyperledger/cli/labresults/"
+      - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/encounter/:/var/hyperledger/cli/encounter/"
+      - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/organization/:/var/hyperledger/cli/organization/"
+      - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/patient/:/var/hyperledger/cli/patient/"
+      - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/prescriptions/:/var/hyperledger/cli/prescriptions/"
+      - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/records/:/var/hyperledger/cli/records/"
     networks:
       - basic
 
@@ -114,7 +119,12 @@ services:
       - ../fabric-config/config:/var/hyperledger/cli/config/ # genesis.block and channel.tx's
       - ../fabric-config/crypto-config/peerOrganizations/ospedale-maresca.aslnapoli3.medchain.com:/var/hyperledger/cli/crypto/
       - ../fabric-config/chaincode-packages:/var/hyperledger/cli/chaincode-packages/
-      - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/:/var/hyperledger/cli/labresults/"
+      - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/labresults/:/var/hyperledger/cli/labresults/"
+      - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/encounter/:/var/hyperledger/cli/encounter/"
+      - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/organization/:/var/hyperledger/cli/organization/"
+      - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/patient/:/var/hyperledger/cli/patient/"
+      - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/prescriptions/:/var/hyperledger/cli/prescriptions/"
+      - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/records/:/var/hyperledger/cli/records/"
     networks:
       - basic
 
@@ -152,11 +162,10 @@ services:
       - CORE_LEDGER_STATE_COUCHDBCONFIG_USERNAME=peer0
       - CORE_LEDGER_STATE_COUCHDBCONFIG_PASSWORD=peer0Password
     working_dir: /etc/hyperledger/fabric/peer/
-    command: peer node start --peer-chaincodedev=true
+    command: peer node start
     ports:
       - 8041:9440
       - 7041:7041
-      - 8541:7050
     volumes:
       - /var/run/docker.sock:/host/var/run/docker.sock
       - ../fabric-config/crypto-config/peerOrganizations/ospedale-maresca.aslnapoli3.medchain.com/peers/peer0.ospedale-maresca.aslnapoli3.medchain.com/msp:/etc/hyperledger/fabric/peer/msp
@@ -210,11 +219,10 @@ services:
       - CORE_LEDGER_STATE_COUCHDBCONFIG_USERNAME=peer1
       - CORE_LEDGER_STATE_COUCHDBCONFIG_PASSWORD=peer1Password
     working_dir: /etc/hyperledger/fabric/peer/
-    command: peer node start --peer-chaincodedev=true
+    command: peer node start
     ports:
       - 8042:9440
       - 7042:7042
-      - 8542:7050
     volumes:
       - /var/run/docker.sock:/host/var/run/docker.sock
       - ../fabric-config/crypto-config/peerOrganizations/ospedale-maresca.aslnapoli3.medchain.com/peers/peer1.ospedale-maresca.aslnapoli3.medchain.com/msp:/etc/hyperledger/fabric/peer/msp
@@ -276,7 +284,12 @@ services:
       - ../fabric-config/config:/var/hyperledger/cli/config/ # genesis.block and channel.tx's
       - ../fabric-config/crypto-config/peerOrganizations/ospedale-del-mare.aslnapoli1.medchain.com:/var/hyperledger/cli/crypto/
       - ../fabric-config/chaincode-packages:/var/hyperledger/cli/chaincode-packages/
-      - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/:/var/hyperledger/cli/labresults/"
+      - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/labresults/:/var/hyperledger/cli/labresults/"
+      - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/encounter/:/var/hyperledger/cli/encounter/"
+      - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/organization/:/var/hyperledger/cli/organization/"
+      - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/patient/:/var/hyperledger/cli/patient/"
+      - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/prescriptions/:/var/hyperledger/cli/prescriptions/"
+      - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/records/:/var/hyperledger/cli/records/"
     networks:
       - basic
 
@@ -314,11 +327,10 @@ services:
       - CORE_LEDGER_STATE_COUCHDBCONFIG_USERNAME=peer0
       - CORE_LEDGER_STATE_COUCHDBCONFIG_PASSWORD=peer0Password
     working_dir: /etc/hyperledger/fabric/peer/
-    command: peer node start --peer-chaincodedev=true
+    command: peer node start
     ports:
       - 8061:9440
       - 7061:7061
-      - 8561:7050
     volumes:
       - /var/run/docker.sock:/host/var/run/docker.sock
       - ../fabric-config/crypto-config/peerOrganizations/ospedale-del-mare.aslnapoli1.medchain.com/peers/peer0.ospedale-del-mare.aslnapoli1.medchain.com/msp:/etc/hyperledger/fabric/peer/msp
@@ -372,11 +384,10 @@ services:
       - CORE_LEDGER_STATE_COUCHDBCONFIG_USERNAME=peer1
       - CORE_LEDGER_STATE_COUCHDBCONFIG_PASSWORD=peer1Password
     working_dir: /etc/hyperledger/fabric/peer/
-    command: peer node start --peer-chaincodedev=true
+    command: peer node start
     ports:
       - 8062:9440
       - 7062:7062
-      - 8562:7050
     volumes:
       - /var/run/docker.sock:/host/var/run/docker.sock
       - ../fabric-config/crypto-config/peerOrganizations/ospedale-del-mare.aslnapoli1.medchain.com/peers/peer1.ospedale-del-mare.aslnapoli1.medchain.com/msp:/etc/hyperledger/fabric/peer/msp
@@ -438,7 +449,12 @@ services:
       - ../fabric-config/config:/var/hyperledger/cli/config/ # genesis.block and channel.tx's
       - ../fabric-config/crypto-config/peerOrganizations/ospedale-sgiuliano.aslnapoli2.medchain.com:/var/hyperledger/cli/crypto/
       - ../fabric-config/chaincode-packages:/var/hyperledger/cli/chaincode-packages/
-      - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/:/var/hyperledger/cli/labresults/"
+      - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/labresults/:/var/hyperledger/cli/labresults/"
+      - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/encounter/:/var/hyperledger/cli/encounter/"
+      - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/organization/:/var/hyperledger/cli/organization/"
+      - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/patient/:/var/hyperledger/cli/patient/"
+      - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/prescriptions/:/var/hyperledger/cli/prescriptions/"
+      - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/records/:/var/hyperledger/cli/records/"
     networks:
       - basic
 
@@ -476,11 +492,10 @@ services:
       - CORE_LEDGER_STATE_COUCHDBCONFIG_USERNAME=peer0
       - CORE_LEDGER_STATE_COUCHDBCONFIG_PASSWORD=peer0Password
     working_dir: /etc/hyperledger/fabric/peer/
-    command: peer node start --peer-chaincodedev=true
+    command: peer node start
     ports:
       - 8081:9440
       - 7081:7081
-      - 8581:7050
     volumes:
       - /var/run/docker.sock:/host/var/run/docker.sock
       - ../fabric-config/crypto-config/peerOrganizations/ospedale-sgiuliano.aslnapoli2.medchain.com/peers/peer0.ospedale-sgiuliano.aslnapoli2.medchain.com/msp:/etc/hyperledger/fabric/peer/msp
@@ -534,11 +549,10 @@ services:
       - CORE_LEDGER_STATE_COUCHDBCONFIG_USERNAME=peer1
       - CORE_LEDGER_STATE_COUCHDBCONFIG_PASSWORD=peer1Password
     working_dir: /etc/hyperledger/fabric/peer/
-    command: peer node start --peer-chaincodedev=true
+    command: peer node start
     ports:
       - 8082:9440
       - 7082:7082
-      - 8582:7050
     volumes:
       - /var/run/docker.sock:/host/var/run/docker.sock
       - ../fabric-config/crypto-config/peerOrganizations/ospedale-sgiuliano.aslnapoli2.medchain.com/peers/peer1.ospedale-sgiuliano.aslnapoli2.medchain.com/msp:/etc/hyperledger/fabric/peer/msp
@@ -600,7 +614,12 @@ services:
       - ../fabric-config/config:/var/hyperledger/cli/config/ # genesis.block and channel.tx's
       - ../fabric-config/crypto-config/peerOrganizations/medicina-generale.napoli.medchain.com:/var/hyperledger/cli/crypto/
       - ../fabric-config/chaincode-packages:/var/hyperledger/cli/chaincode-packages/
-      - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/:/var/hyperledger/cli/labresults/"
+      - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/labresults/:/var/hyperledger/cli/labresults/"
+      - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/encounter/:/var/hyperledger/cli/encounter/"
+      - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/organization/:/var/hyperledger/cli/organization/"
+      - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/patient/:/var/hyperledger/cli/patient/"
+      - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/prescriptions/:/var/hyperledger/cli/prescriptions/"
+      - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/records/:/var/hyperledger/cli/records/"
     networks:
       - basic
 
@@ -638,11 +657,10 @@ services:
       - CORE_LEDGER_STATE_COUCHDBCONFIG_USERNAME=peer0
       - CORE_LEDGER_STATE_COUCHDBCONFIG_PASSWORD=peer0Password
     working_dir: /etc/hyperledger/fabric/peer/
-    command: peer node start --peer-chaincodedev=true
+    command: peer node start
     ports:
       - 8101:9440
       - 7101:7101
-      - 8601:7050
     volumes:
       - /var/run/docker.sock:/host/var/run/docker.sock
       - ../fabric-config/crypto-config/peerOrganizations/medicina-generale.napoli.medchain.com/peers/peer0.medicina-generale.napoli.medchain.com/msp:/etc/hyperledger/fabric/peer/msp
@@ -696,11 +714,10 @@ services:
       - CORE_LEDGER_STATE_COUCHDBCONFIG_USERNAME=peer1
       - CORE_LEDGER_STATE_COUCHDBCONFIG_PASSWORD=peer1Password
     working_dir: /etc/hyperledger/fabric/peer/
-    command: peer node start --peer-chaincodedev=true
+    command: peer node start
     ports:
       - 8102:9440
       - 7102:7102
-      - 8602:7050
     volumes:
       - /var/run/docker.sock:/host/var/run/docker.sock
       - ../fabric-config/crypto-config/peerOrganizations/medicina-generale.napoli.medchain.com/peers/peer1.medicina-generale.napoli.medchain.com/msp:/etc/hyperledger/fabric/peer/msp
@@ -762,7 +779,12 @@ services:
       - ../fabric-config/config:/var/hyperledger/cli/config/ # genesis.block and channel.tx's
       - ../fabric-config/crypto-config/peerOrganizations/neurologia.napoli.medchain.com:/var/hyperledger/cli/crypto/
       - ../fabric-config/chaincode-packages:/var/hyperledger/cli/chaincode-packages/
-      - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/:/var/hyperledger/cli/labresults/"
+      - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/labresults/:/var/hyperledger/cli/labresults/"
+      - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/encounter/:/var/hyperledger/cli/encounter/"
+      - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/organization/:/var/hyperledger/cli/organization/"
+      - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/patient/:/var/hyperledger/cli/patient/"
+      - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/prescriptions/:/var/hyperledger/cli/prescriptions/"
+      - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/records/:/var/hyperledger/cli/records/"
     networks:
       - basic
 
@@ -800,11 +822,10 @@ services:
       - CORE_LEDGER_STATE_COUCHDBCONFIG_USERNAME=peer0
       - CORE_LEDGER_STATE_COUCHDBCONFIG_PASSWORD=peer0Password
     working_dir: /etc/hyperledger/fabric/peer/
-    command: peer node start --peer-chaincodedev=true
+    command: peer node start
     ports:
       - 8121:9440
       - 7121:7121
-      - 8621:7050
     volumes:
       - /var/run/docker.sock:/host/var/run/docker.sock
       - ../fabric-config/crypto-config/peerOrganizations/neurologia.napoli.medchain.com/peers/peer0.neurologia.napoli.medchain.com/msp:/etc/hyperledger/fabric/peer/msp
@@ -858,11 +879,10 @@ services:
       - CORE_LEDGER_STATE_COUCHDBCONFIG_USERNAME=peer1
       - CORE_LEDGER_STATE_COUCHDBCONFIG_PASSWORD=peer1Password
     working_dir: /etc/hyperledger/fabric/peer/
-    command: peer node start --peer-chaincodedev=true
+    command: peer node start
     ports:
       - 8122:9440
       - 7122:7122
-      - 8622:7050
     volumes:
       - /var/run/docker.sock:/host/var/run/docker.sock
       - ../fabric-config/crypto-config/peerOrganizations/neurologia.napoli.medchain.com/peers/peer1.neurologia.napoli.medchain.com/msp:/etc/hyperledger/fabric/peer/msp
@@ -924,7 +944,12 @@ services:
       - ../fabric-config/config:/var/hyperledger/cli/config/ # genesis.block and channel.tx's
       - ../fabric-config/crypto-config/peerOrganizations/farmacia-petrone.napoli.medchain.com:/var/hyperledger/cli/crypto/
       - ../fabric-config/chaincode-packages:/var/hyperledger/cli/chaincode-packages/
-      - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/:/var/hyperledger/cli/labresults/"
+      - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/labresults/:/var/hyperledger/cli/labresults/"
+      - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/encounter/:/var/hyperledger/cli/encounter/"
+      - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/organization/:/var/hyperledger/cli/organization/"
+      - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/patient/:/var/hyperledger/cli/patient/"
+      - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/prescriptions/:/var/hyperledger/cli/prescriptions/"
+      - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/records/:/var/hyperledger/cli/records/"
     networks:
       - basic
 
@@ -962,11 +987,10 @@ services:
       - CORE_LEDGER_STATE_COUCHDBCONFIG_USERNAME=peer0
       - CORE_LEDGER_STATE_COUCHDBCONFIG_PASSWORD=peer0Password
     working_dir: /etc/hyperledger/fabric/peer/
-    command: peer node start --peer-chaincodedev=true
+    command: peer node start
     ports:
       - 8141:9440
       - 7141:7141
-      - 8641:7050
     volumes:
       - /var/run/docker.sock:/host/var/run/docker.sock
       - ../fabric-config/crypto-config/peerOrganizations/farmacia-petrone.napoli.medchain.com/peers/peer0.farmacia-petrone.napoli.medchain.com/msp:/etc/hyperledger/fabric/peer/msp
@@ -1028,7 +1052,12 @@ services:
       - ../fabric-config/config:/var/hyperledger/cli/config/ # genesis.block and channel.tx's
       - ../fabric-config/crypto-config/peerOrganizations/farmacia-carbone.napoli.medchain.com:/var/hyperledger/cli/crypto/
       - ../fabric-config/chaincode-packages:/var/hyperledger/cli/chaincode-packages/
-      - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/:/var/hyperledger/cli/labresults/"
+      - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/labresults/:/var/hyperledger/cli/labresults/"
+      - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/encounter/:/var/hyperledger/cli/encounter/"
+      - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/organization/:/var/hyperledger/cli/organization/"
+      - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/patient/:/var/hyperledger/cli/patient/"
+      - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/prescriptions/:/var/hyperledger/cli/prescriptions/"
+      - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/records/:/var/hyperledger/cli/records/"
     networks:
       - basic
 
@@ -1066,11 +1095,10 @@ services:
       - CORE_LEDGER_STATE_COUCHDBCONFIG_USERNAME=peer0
       - CORE_LEDGER_STATE_COUCHDBCONFIG_PASSWORD=peer0Password
     working_dir: /etc/hyperledger/fabric/peer/
-    command: peer node start --peer-chaincodedev=true
+    command: peer node start
     ports:
       - 8161:9440
       - 7161:7161
-      - 8661:7050
     volumes:
       - /var/run/docker.sock:/host/var/run/docker.sock
       - ../fabric-config/crypto-config/peerOrganizations/farmacia-carbone.napoli.medchain.com/peers/peer0.farmacia-carbone.napoli.medchain.com/msp:/etc/hyperledger/fabric/peer/msp
@@ -1132,7 +1160,12 @@ services:
       - ../fabric-config/config:/var/hyperledger/cli/config/ # genesis.block and channel.tx's
       - ../fabric-config/crypto-config/peerOrganizations/laboratorio-analisi-cmo.medchain.com:/var/hyperledger/cli/crypto/
       - ../fabric-config/chaincode-packages:/var/hyperledger/cli/chaincode-packages/
-      - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/:/var/hyperledger/cli/labresults/"
+      - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/labresults/:/var/hyperledger/cli/labresults/"
+      - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/encounter/:/var/hyperledger/cli/encounter/"
+      - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/organization/:/var/hyperledger/cli/organization/"
+      - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/patient/:/var/hyperledger/cli/patient/"
+      - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/prescriptions/:/var/hyperledger/cli/prescriptions/"
+      - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/records/:/var/hyperledger/cli/records/"
     networks:
       - basic
 
@@ -1170,11 +1203,10 @@ services:
       - CORE_LEDGER_STATE_COUCHDBCONFIG_USERNAME=peer0
       - CORE_LEDGER_STATE_COUCHDBCONFIG_PASSWORD=peer0Password
     working_dir: /etc/hyperledger/fabric/peer/
-    command: peer node start --peer-chaincodedev=true
+    command: peer node start
     ports:
       - 8181:9440
       - 7181:7181
-      - 8681:7050
     volumes:
       - /var/run/docker.sock:/host/var/run/docker.sock
       - ../fabric-config/crypto-config/peerOrganizations/laboratorio-analisi-cmo.medchain.com/peers/peer0.laboratorio-analisi-cmo.medchain.com/msp:/etc/hyperledger/fabric/peer/msp
@@ -1236,7 +1268,12 @@ services:
       - ../fabric-config/config:/var/hyperledger/cli/config/ # genesis.block and channel.tx's
       - ../fabric-config/crypto-config/peerOrganizations/laboratorio-analisi-sdn.medchain.com:/var/hyperledger/cli/crypto/
       - ../fabric-config/chaincode-packages:/var/hyperledger/cli/chaincode-packages/
-      - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/:/var/hyperledger/cli/labresults/"
+      - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/labresults/:/var/hyperledger/cli/labresults/"
+      - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/encounter/:/var/hyperledger/cli/encounter/"
+      - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/organization/:/var/hyperledger/cli/organization/"
+      - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/patient/:/var/hyperledger/cli/patient/"
+      - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/prescriptions/:/var/hyperledger/cli/prescriptions/"
+      - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/records/:/var/hyperledger/cli/records/"
     networks:
       - basic
 
@@ -1274,11 +1311,10 @@ services:
       - CORE_LEDGER_STATE_COUCHDBCONFIG_USERNAME=peer0
       - CORE_LEDGER_STATE_COUCHDBCONFIG_PASSWORD=peer0Password
     working_dir: /etc/hyperledger/fabric/peer/
-    command: peer node start --peer-chaincodedev=true
+    command: peer node start
     ports:
       - 8201:9440
       - 7201:7201
-      - 8701:7050
     volumes:
       - /var/run/docker.sock:/host/var/run/docker.sock
       - ../fabric-config/crypto-config/peerOrganizations/laboratorio-analisi-sdn.medchain.com/peers/peer0.laboratorio-analisi-sdn.medchain.com/msp:/etc/hyperledger/fabric/peer/msp

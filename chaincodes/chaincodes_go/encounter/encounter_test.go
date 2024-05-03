@@ -1,16 +1,281 @@
-package test
+package encounter
 
 import (
 	"encoding/json"
 	"testing"
 	"time"
 
-	"github.com/stretchr/testify/mock"
-	"github.com/xDaryamo/MedChain/encounter"
-	"github.com/xDaryamo/MedChain/fhir"
-
+	"github.com/golang/protobuf/ptypes/timestamp"
+	"github.com/hyperledger/fabric-chaincode-go/pkg/cid"
+	"github.com/hyperledger/fabric-chaincode-go/shim"
+	"github.com/hyperledger/fabric-protos-go/ledger/queryresult"
+	"github.com/hyperledger/fabric-protos-go/peer"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/mock"
 )
+
+// MockStub is a mock implementation of the ChaincodeStubInterface
+type MockStub struct {
+	mock.Mock
+}
+
+func (m *MockStub) CreateCompositeKey(objectType string, attributes []string) (string, error) {
+	args := m.Called(objectType, attributes)
+	return args.String(0), args.Error(1)
+}
+
+func (m *MockStub) DelPrivateData(collection string, key string) error {
+	args := m.Called(collection, key)
+	return args.Error(0)
+}
+
+func (m *MockStub) DelState(key string) error {
+	args := m.Called(key)
+	return args.Error(0)
+}
+
+func (m *MockStub) GetArgs() [][]byte {
+	args := m.Called()
+	return args.Get(0).([][]byte)
+}
+
+func (m *MockStub) GetArgsSlice() ([]byte, error) {
+	args := m.Called()
+	return args.Get(0).([]byte), args.Error(1)
+}
+
+func (m *MockStub) GetBinding() ([]byte, error) {
+	args := m.Called()
+	return args.Get(0).([]byte), args.Error(1)
+}
+
+func (m *MockStub) GetChannelID() string {
+	args := m.Called()
+	return args.String(0)
+}
+
+func (m *MockStub) GetCreator() ([]byte, error) {
+	args := m.Called()
+	return args.Get(0).([]byte), args.Error(1)
+}
+
+func (m *MockStub) GetDecorations() map[string][]byte {
+	args := m.Called()
+	return args.Get(0).(map[string][]byte)
+}
+
+func (m *MockStub) GetFunctionAndParameters() (string, []string) {
+	args := m.Called()
+	return args.String(0), args.Get(1).([]string)
+}
+
+func (m *MockStub) GetHistoryForKey(key string) (shim.HistoryQueryIteratorInterface, error) {
+	args := m.Called(key)
+	return args.Get(0).(shim.HistoryQueryIteratorInterface), args.Error(1)
+}
+
+func (m *MockStub) GetPrivateData(collection string, key string) ([]byte, error) {
+	args := m.Called(collection, key)
+	return args.Get(0).([]byte), args.Error(1)
+}
+
+func (m *MockStub) GetPrivateDataByPartialCompositeKey(collection, objectType string, attributes []string) (shim.StateQueryIteratorInterface, error) {
+	args := m.Called(collection, objectType, attributes)
+	return args.Get(0).(shim.StateQueryIteratorInterface), args.Error(1)
+}
+
+func (m *MockStub) GetPrivateDataByRange(collection, startKey, endKey string) (shim.StateQueryIteratorInterface, error) {
+	args := m.Called(collection, startKey, endKey)
+	return args.Get(0).(shim.StateQueryIteratorInterface), args.Error(1)
+}
+
+func (m *MockStub) GetPrivateDataHash(collection string, key string) ([]byte, error) {
+	args := m.Called(collection, key)
+	return args.Get(0).([]byte), args.Error(1)
+}
+
+func (m *MockStub) GetPrivateDataQueryResult(collection, query string) (shim.StateQueryIteratorInterface, error) {
+	args := m.Called(collection, query)
+	return args.Get(0).(shim.StateQueryIteratorInterface), args.Error(1)
+}
+
+func (m *MockStub) GetPrivateDataValidationParameter(collection, key string) ([]byte, error) {
+	args := m.Called(collection, key)
+	return args.Get(0).([]byte), args.Error(1)
+}
+
+func (m *MockStub) GetQueryResult(query string) (shim.StateQueryIteratorInterface, error) {
+	args := m.Called(query)
+	// Check if the first argument is nil
+	if args.Get(0) == nil {
+		// Return a properly initialized MockIterator along with a nil error
+		return new(MockIterator), args.Error(1)
+	}
+	// Otherwise, return the mock iterator and the error as usual
+	return args.Get(0).(shim.StateQueryIteratorInterface), args.Error(1)
+}
+
+func (m *MockStub) GetQueryResultWithPagination(query string, pageSize int32, bookmark string) (shim.StateQueryIteratorInterface, *peer.QueryResponseMetadata, error) {
+	args := m.Called(query, pageSize, bookmark)
+	return args.Get(0).(shim.StateQueryIteratorInterface), args.Get(1).(*peer.QueryResponseMetadata), args.Error(2)
+}
+
+func (m *MockStub) GetSignedProposal() (*peer.SignedProposal, error) {
+	args := m.Called()
+	return args.Get(0).(*peer.SignedProposal), args.Error(1)
+}
+
+func (m *MockStub) GetState(key string) ([]byte, error) {
+	args := m.Called(key)
+	// Check if the first argument is nil
+	if args.Get(0) == nil {
+		// Return nil along with the error
+		return nil, args.Error(1)
+	}
+	// Otherwise, return the byte slice and the error as usual
+	return args.Get(0).([]byte), args.Error(1)
+}
+
+func (m *MockStub) GetStateByPartialCompositeKey(objectType string, attributes []string) (shim.StateQueryIteratorInterface, error) {
+	args := m.Called(objectType, attributes)
+	return args.Get(0).(shim.StateQueryIteratorInterface), args.Error(1)
+}
+
+func (m *MockStub) GetStateByPartialCompositeKeyWithPagination(objectType string, keys []string, pageSize int32, bookmark string) (shim.StateQueryIteratorInterface, *peer.QueryResponseMetadata, error) {
+	args := m.Called(objectType, keys, pageSize, bookmark)
+	return args.Get(0).(shim.StateQueryIteratorInterface), args.Get(1).(*peer.QueryResponseMetadata), args.Error(2)
+}
+
+func (m *MockStub) GetStateByRange(startKey, endKey string) (shim.StateQueryIteratorInterface, error) {
+	args := m.Called(startKey, endKey)
+	return args.Get(0).(shim.StateQueryIteratorInterface), args.Error(1)
+}
+
+func (m *MockStub) GetStateByRangeWithPagination(startKey, endKey string, pageSize int32, bookmark string) (shim.StateQueryIteratorInterface, *peer.QueryResponseMetadata, error) {
+	args := m.Called(startKey, endKey, pageSize, bookmark)
+	return args.Get(0).(shim.StateQueryIteratorInterface), args.Get(1).(*peer.QueryResponseMetadata), args.Error(2)
+}
+
+func (m *MockStub) GetStateValidationParameter(key string) ([]byte, error) {
+	args := m.Called(key)
+	return args.Get(0).([]byte), args.Error(1)
+}
+
+func (m *MockStub) GetStringArgs() []string {
+	args := m.Called()
+	return args.Get(0).([]string)
+}
+
+func (m *MockStub) GetTransient() (map[string][]byte, error) {
+	args := m.Called()
+	return args.Get(0).(map[string][]byte), args.Error(1)
+}
+
+func (m *MockStub) GetTxID() string {
+	args := m.Called()
+	return args.String(0)
+}
+
+func (m *MockStub) GetTxTimestamp() (*timestamp.Timestamp, error) {
+	args := m.Called()
+	return args.Get(0).(*timestamp.Timestamp), args.Error(1)
+}
+
+func (m *MockStub) InvokeChaincode(chaincodeName string, args [][]byte, channel string) peer.Response {
+	callArgs := m.Called(chaincodeName, args, channel)
+	return callArgs.Get(0).(peer.Response)
+}
+
+func (m *MockStub) PurgePrivateData(collection string, key string) error {
+	args := m.Called(collection, key)
+	return args.Error(0)
+}
+
+func (m *MockStub) PutPrivateData(collection string, key string, value []byte) error {
+	args := m.Called(collection, key, value)
+	return args.Error(0)
+}
+
+func (m *MockStub) PutState(key string, value []byte) error {
+	args := m.Called(key, value)
+	return args.Error(0)
+}
+
+func (m *MockStub) SetEvent(name string, payload []byte) error {
+	args := m.Called(name, payload)
+	return args.Error(0)
+}
+
+func (m *MockStub) SetPrivateDataValidationParameter(collection, key string, ep []byte) error {
+	args := m.Called(collection, key, ep)
+	return args.Error(0)
+}
+
+func (m *MockStub) SetStateValidationParameter(key string, ep []byte) error {
+	args := m.Called(key, ep)
+	return args.Error(0)
+}
+
+func (m *MockStub) SplitCompositeKey(compositeKey string) (string, []string, error) {
+	args := m.Called(compositeKey)
+	return args.String(0), args.Get(1).([]string), args.Error(2)
+}
+
+type MockTransactionContext struct {
+	mock.Mock
+}
+
+func (m *MockTransactionContext) GetStub() shim.ChaincodeStubInterface {
+	args := m.Called()
+	return args.Get(0).(shim.ChaincodeStubInterface)
+}
+
+func (m *MockTransactionContext) GetClientIdentity() cid.ClientIdentity {
+	args := m.Called()
+	return args.Get(0).(cid.ClientIdentity)
+}
+
+// KVPair represents a key-value pair for testing purposes
+type KVPair struct {
+	Key   string
+	Value []byte
+}
+
+// MockIterator is a mock implementation of the StateQueryIteratorInterface
+type MockIterator struct {
+	Records      []KVPair // Slice to hold the records for iteration
+	CurrentIndex int      // Index to keep track of the current position
+}
+
+// HasNext returns true if the iterator has more items to iterate over
+func (m *MockIterator) HasNext() bool {
+	return m.CurrentIndex < len(m.Records)
+}
+
+// Next returns the next key and value in the iterator
+func (m *MockIterator) Next() (*queryresult.KV, error) {
+	if m.CurrentIndex >= len(m.Records) {
+		return nil, nil
+	}
+	result := m.Records[m.CurrentIndex]
+	m.CurrentIndex++
+	kv := &queryresult.KV{
+		Key:   result.Key,
+		Value: result.Value,
+	}
+	return kv, nil
+}
+
+// AddRecord adds a key-value pair to the mock iterator
+func (m *MockIterator) AddRecord(key string, value []byte) {
+	m.Records = append(m.Records, KVPair{Key: key, Value: value})
+}
+
+// Close closes the mock iterator (implements shim.StateQueryIteratorInterface)
+func (m *MockIterator) Close() error {
+	// No action needed for a mock iterator, return nil
+	return nil
+}
 
 func TestCreateEncounter(t *testing.T) {
 
@@ -22,7 +287,7 @@ func TestCreateEncounter(t *testing.T) {
 	mockStub = new(MockStub)
 
 	// Creating an instance of EncounterChaincode
-	ec := new(encounter.EncounterChaincode)
+	ec := new(EncounterChaincode)
 
 	// Ensure GetStub returns the same instance of mockStub
 	mockCtx.On("GetStub").Return(mockStub)
@@ -60,7 +325,7 @@ func TestGetEncounter(t *testing.T) {
 	mockCtx := new(MockTransactionContext)
 
 	// Creating an instance of EncounterChaincode
-	ec := new(encounter.EncounterChaincode)
+	ec := new(EncounterChaincode)
 
 	mockStub = new(MockStub)
 
@@ -91,7 +356,7 @@ func TestGetEncounter(t *testing.T) {
 	assert.NotNil(t, resultEncounter)
 
 	// Deserialize the expected encounter JSON
-	var expectedEncounter fhir.Encounter
+	var expectedEncounter Encounter
 	err = json.Unmarshal([]byte(encounterJSON), &expectedEncounter)
 	assert.NoError(t, err)
 
@@ -107,7 +372,7 @@ func TestSearchEncounter(t *testing.T) {
 	mockCtx := new(MockTransactionContext)
 
 	// Creating an instance of EncounterChaincode
-	ec := new(encounter.EncounterChaincode)
+	ec := new(EncounterChaincode)
 
 	mockStub = new(MockStub)
 
@@ -115,9 +380,9 @@ func TestSearchEncounter(t *testing.T) {
 	mockCtx.On("GetStub").Return(mockStub)
 
 	// Define sample encounter data
-	encounter1 := fhir.Encounter{ID: fhir.Identifier{System: "http://example.com/enc1", Value: "123456"}}
-	encounter2 := fhir.Encounter{ID: fhir.Identifier{System: "http://example.com/enc2", Value: "789012"}}
-	encounter3 := fhir.Encounter{ID: fhir.Identifier{System: "http://example.com/enc3", Value: "345678"}}
+	encounter1 := Encounter{ID: Identifier{System: "http://example.com/enc1", Value: "123456"}}
+	encounter2 := Encounter{ID: Identifier{System: "http://example.com/enc2", Value: "789012"}}
+	encounter3 := Encounter{ID: Identifier{System: "http://example.com/enc3", Value: "345678"}}
 
 	// Serialize sample encounters to JSON
 	encounter1JSON, _ := json.Marshal(encounter1)
@@ -154,7 +419,7 @@ func TestUpdateEncounter(t *testing.T) {
 	mockCtx := new(MockTransactionContext)
 
 	// Creating an instance of EncounterChaincode
-	ec := new(encounter.EncounterChaincode)
+	ec := new(EncounterChaincode)
 
 	mockStub = new(MockStub)
 
@@ -162,8 +427,8 @@ func TestUpdateEncounter(t *testing.T) {
 	mockCtx.On("GetStub").Return(mockStub)
 
 	// Define sample encounter data
-	existingEncounter := fhir.Encounter{ID: fhir.Identifier{System: "http://example.com/enc1", Value: "123456"}}
-	updatedEncounter := fhir.Encounter{ID: fhir.Identifier{System: "http://example.com/enc1", Value: "123456"} /* Add any updates */}
+	existingEncounter := Encounter{ID: Identifier{System: "http://example.com/enc1", Value: "123456"}}
+	updatedEncounter := Encounter{ID: Identifier{System: "http://example.com/enc1", Value: "123456"} /* Add any updates */}
 
 	// Serialize sample encounters to JSON
 	existingEncounterJSON, _ := json.Marshal(existingEncounter)
@@ -190,7 +455,7 @@ func TestDeleteEncounter(t *testing.T) {
 	mockCtx := new(MockTransactionContext)
 
 	// Creating an instance of EncounterChaincode
-	ec := new(encounter.EncounterChaincode)
+	ec := new(EncounterChaincode)
 
 	mockStub = new(MockStub)
 
@@ -198,7 +463,7 @@ func TestDeleteEncounter(t *testing.T) {
 	mockCtx.On("GetStub").Return(mockStub)
 
 	// Define sample encounter data
-	existingEncounter := fhir.Encounter{ID: fhir.Identifier{System: "http://example.com/enc1", Value: "123456"}}
+	existingEncounter := Encounter{ID: Identifier{System: "http://example.com/enc1", Value: "123456"}}
 
 	// Serialize sample encounter to JSON
 	existingEncounterJSON, _ := json.Marshal(existingEncounter)
@@ -224,7 +489,7 @@ func TestGetEncountersByPatientID(t *testing.T) {
 	mockCtx := new(MockTransactionContext)
 
 	// Creating an instance of EncounterChaincode
-	ec := new(encounter.EncounterChaincode)
+	ec := new(EncounterChaincode)
 
 	mockStub = new(MockStub)
 
@@ -250,7 +515,7 @@ func TestGetEncountersByDateRange(t *testing.T) {
 	mockCtx := new(MockTransactionContext)
 
 	// Creating an instance of EncounterChaincode
-	ec := new(encounter.EncounterChaincode)
+	ec := new(EncounterChaincode)
 
 	mockStub = new(MockStub)
 
@@ -280,7 +545,7 @@ func TestGetEncountersByType(t *testing.T) {
 	mockCtx := new(MockTransactionContext)
 
 	// Creating an instance of EncounterChaincode
-	ec := new(encounter.EncounterChaincode)
+	ec := new(EncounterChaincode)
 
 	mockStub = new(MockStub)
 
@@ -306,7 +571,7 @@ func TestGetEncountersByLocation(t *testing.T) {
 	mockCtx := new(MockTransactionContext)
 
 	// Creating an instance of EncounterChaincode
-	ec := new(encounter.EncounterChaincode)
+	ec := new(EncounterChaincode)
 
 	mockStub = new(MockStub)
 
@@ -332,7 +597,7 @@ func TestGetEncountersByPractitioner(t *testing.T) {
 	mockCtx := new(MockTransactionContext)
 
 	// Creating an instance of EncounterChaincode
-	ec := new(encounter.EncounterChaincode)
+	ec := new(EncounterChaincode)
 
 	mockStub = new(MockStub)
 
@@ -358,12 +623,12 @@ func TestUpdateEncounterStatus(t *testing.T) {
 	mockCtx := new(MockTransactionContext)
 
 	// Creating an instance of EncounterChaincode
-	ec := new(encounter.EncounterChaincode)
+	ec := new(EncounterChaincode)
 
 	mockStub = new(MockStub)
 
 	// Define sample encounter data
-	encounter := fhir.Encounter{ID: fhir.Identifier{System: "http://example.com/enc1", Value: "123456"}}
+	encounter := Encounter{ID: Identifier{System: "http://example.com/enc1", Value: "123456"}}
 
 	// Serialize sample encounters to JSON
 	encounterJSON, _ := json.Marshal(encounter)
@@ -384,15 +649,15 @@ func TestUpdateEncounterStatus(t *testing.T) {
 
 	mockStub.On("PutState", mock.Anything, mock.Anything).Return(nil)
 
-	// Create a sample fhir.Coding struct
-	coding := fhir.Coding{
+	// Create a sample Coding struct
+	coding := Coding{
 		System:  "http://example.com/coding/system",
 		Code:    "12345",
 		Display: "Sample Coding",
 	}
 
-	// Create a sample fhir.Code struct with the coding
-	statusCode := fhir.Code{Coding: []fhir.Coding{coding}}
+	// Create a sample Code struct with the coding
+	statusCode := Code{Coding: []Coding{coding}}
 
 	// Call the function under test
 	err := ec.UpdateEncounterStatus(mockCtx, "encounterID", statusCode)
@@ -409,7 +674,7 @@ func TestAddDiagnosisToEncounter(t *testing.T) {
 	mockCtx := new(MockTransactionContext)
 
 	// Creating an instance of EncounterChaincode
-	ec := new(encounter.EncounterChaincode)
+	ec := new(EncounterChaincode)
 
 	mockStub = new(MockStub)
 
@@ -422,7 +687,7 @@ func TestAddDiagnosisToEncounter(t *testing.T) {
 	mockStub.On("PutState", mock.Anything, mock.Anything).Return(nil)
 
 	// Call the function under test
-	err := ec.AddDiagnosisToEncounter(mockCtx, "encounterID", fhir.EncounterDiagnosis{})
+	err := ec.AddDiagnosisToEncounter(mockCtx, "encounterID", EncounterDiagnosis{})
 
 	// Verify that the result is as expected
 	assert.NoError(t, err, "AddDiagnosisToEncounter should not return an error")
@@ -436,7 +701,7 @@ func TestAddParticipantToEncounter(t *testing.T) {
 	mockCtx := new(MockTransactionContext)
 
 	// Creating an instance of EncounterChaincode
-	ec := new(encounter.EncounterChaincode)
+	ec := new(EncounterChaincode)
 
 	mockStub = new(MockStub)
 
@@ -449,7 +714,7 @@ func TestAddParticipantToEncounter(t *testing.T) {
 	mockStub.On("PutState", mock.Anything, mock.Anything).Return(nil)
 
 	// Call the function under test
-	err := ec.AddParticipantToEncounter(mockCtx, "encounterID", fhir.EncounterParticipant{})
+	err := ec.AddParticipantToEncounter(mockCtx, "encounterID", EncounterParticipant{})
 
 	// Verify that the result is as expected
 	assert.NoError(t, err, "AddParticipantToEncounter should not return an error")
@@ -463,7 +728,7 @@ func TestRemoveParticipantFromEncounter(t *testing.T) {
 	mockCtx := new(MockTransactionContext)
 
 	// Creating an instance of EncounterChaincode
-	ec := new(encounter.EncounterChaincode)
+	ec := new(EncounterChaincode)
 
 	mockStub = new(MockStub)
 
@@ -493,7 +758,7 @@ func TestAddLocationToEncounter(t *testing.T) {
 	mockCtx := new(MockTransactionContext)
 
 	// Creating an instance of EncounterChaincode
-	ec := new(encounter.EncounterChaincode)
+	ec := new(EncounterChaincode)
 
 	mockStub = new(MockStub)
 
@@ -506,7 +771,7 @@ func TestAddLocationToEncounter(t *testing.T) {
 	mockStub.On("PutState", mock.Anything, mock.Anything).Return(nil)
 
 	// Call the function under test
-	err := ec.AddLocationToEncounter(mockCtx, "encounterID", fhir.Location{})
+	err := ec.AddLocationToEncounter(mockCtx, "encounterID", Location{})
 
 	// Verify that the result is as expected
 	assert.NoError(t, err, "AddLocationToEncounter should not return an error")
@@ -520,7 +785,7 @@ func TestRemoveLocationFromEncounter(t *testing.T) {
 	mockCtx := new(MockTransactionContext)
 
 	// Creating an instance of EncounterChaincode
-	ec := new(encounter.EncounterChaincode)
+	ec := new(EncounterChaincode)
 
 	mockStub = new(MockStub)
 
@@ -547,7 +812,7 @@ func TestGetEncountersByReason(t *testing.T) {
 	mockCtx := new(MockTransactionContext)
 
 	// Creating an instance of EncounterChaincode
-	ec := new(encounter.EncounterChaincode)
+	ec := new(EncounterChaincode)
 
 	mockStub = new(MockStub)
 
@@ -573,7 +838,7 @@ func TestGetEncountersByServiceProvider(t *testing.T) {
 	mockCtx := new(MockTransactionContext)
 
 	// Creating an instance of EncounterChaincode
-	ec := new(encounter.EncounterChaincode)
+	ec := new(EncounterChaincode)
 
 	mockStub = new(MockStub)
 

@@ -6,7 +6,6 @@ import (
 	"log"
 
 	"github.com/hyperledger/fabric-contract-api-go/contractapi"
-	"github.com/xDaryamo/MedChain/fhir"
 )
 
 type PrescriptionChaincode struct {
@@ -15,7 +14,7 @@ type PrescriptionChaincode struct {
 
 // CreateMedicationRequest creates a new medication request on the blockchain
 func (t *PrescriptionChaincode) CreateMedicationRequest(ctx contractapi.TransactionContextInterface, medicationRequestJSON string) error {
-	var medicationRequest fhir.MedicationRequest
+	var medicationRequest MedicationRequest
 	err := json.Unmarshal([]byte(medicationRequestJSON), &medicationRequest)
 	if err != nil {
 		return errors.New("failed to decode JSON")
@@ -47,7 +46,7 @@ func (t *PrescriptionChaincode) VerifyPrescription(ctx contractapi.TransactionCo
 		return errors.New("the prescription does not exist")
 	}
 
-	var prescription fhir.MedicationRequest
+	var prescription MedicationRequest
 	err = json.Unmarshal(prescriptionAsBytes, &prescription)
 	if err != nil {
 		return errors.New("failed to unmarshal prescription")
@@ -60,7 +59,7 @@ func (t *PrescriptionChaincode) VerifyPrescription(ctx contractapi.TransactionCo
 
 	// Change the status to 'completed'
 	prescription.Status.Coding[0].Code = "completed"
-	prescription.DispenseRequest.Performer = &fhir.Reference{Reference: pharmacyID}
+	prescription.DispenseRequest.Performer = &Reference{Reference: pharmacyID}
 	updatedPrescriptionAsBytes, _ := json.Marshal(prescription)
 
 	return ctx.GetStub().PutState(prescriptionID, updatedPrescriptionAsBytes)
