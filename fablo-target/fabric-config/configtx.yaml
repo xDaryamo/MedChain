@@ -1,0 +1,173 @@
+################################################################################
+#   SECTION: Capabilities
+################################################################################
+Capabilities:
+    Channel: &ChannelCapabilities
+        V2_0: true
+    Orderer: &OrdererCapabilities
+        V2_0: true
+    Application: &ApplicationCapabilities
+        V2_0: true
+
+################################################################################
+#   CHANNEL Defaults
+################################################################################
+Channel: &ChannelDefaults
+    Policies:
+        Readers:
+            Type: ImplicitMeta
+            Rule: "ANY Readers"
+        Writers:
+            Type: ImplicitMeta
+            Rule: "ANY Writers"
+        Admins:
+            Type: ImplicitMeta
+            Rule: "MAJORITY Admins"
+    Capabilities:
+        <<: *ChannelCapabilities
+
+################################################################################
+#   Section: Organizations
+################################################################################
+Organizations:
+    - &Orderer
+      Name: OrdererMSP
+      ID: OrdererMSP
+      MSPDir: crypto-config/peerOrganizations/orderer.medchain.com/msp
+
+      Policies:
+          Readers:
+              Type: Signature
+              Rule: "OR('OrdererMSP.member')"
+          Writers:
+              Type: Signature
+              Rule: "OR('OrdererMSP.member')"
+          Admins:
+              Type: Signature
+              Rule: "OR('OrdererMSP.admin')"
+          Endorsement:
+              Type: Signature
+              Rule: "OR('OrdererMSP.member')"
+
+      AnchorPeers:
+
+    - &OspedaleMaresca
+      Name: OspedaleMarescaMSP
+      ID: OspedaleMarescaMSP
+      MSPDir: crypto-config/peerOrganizations/ospedale-maresca.aslnapoli3.medchain.com/msp
+
+      Policies:
+          Readers:
+              Type: Signature
+              Rule: "OR('OspedaleMarescaMSP.member')"
+          Writers:
+              Type: Signature
+              Rule: "OR('OspedaleMarescaMSP.member')"
+          Admins:
+              Type: Signature
+              Rule: "OR('OspedaleMarescaMSP.admin')"
+          Endorsement:
+              Type: Signature
+              Rule: "OR('OspedaleMarescaMSP.member')"
+
+      AnchorPeers:
+          - Host: peer0.ospedale-maresca.aslnapoli3.medchain.com
+            Port: 7041
+
+################################################################################
+#   SECTION: Application
+################################################################################
+Application: &ApplicationDefaults
+    Organizations:
+    # Policies defines the set of policies at this level of the config tree
+    # For Application policies, their canonical path is
+    #   /Channel/Application/<PolicyName>
+    Policies:
+        Readers:
+            Type: ImplicitMeta
+            Rule: "ANY Readers"
+        Writers:
+            Type: ImplicitMeta
+            Rule: "ANY Writers"
+        Admins:
+            Type: ImplicitMeta
+            Rule: "MAJORITY Admins"
+        Endorsement:
+            Type: ImplicitMeta
+            Rule: "MAJORITY Endorsement"
+    Capabilities:
+        <<: *ApplicationCapabilities
+
+################################################################################
+#   SECTION: Orderer
+################################################################################
+Orderer: &Medchain-orderergroupDefaults
+    OrdererType: solo
+    Addresses:
+        - orderer0.medchain-orderergroup.orderer.medchain.com:7030
+    BatchTimeout: 2s
+    BatchSize:
+        MaxMessageCount: 10
+        AbsoluteMaxBytes: 99 MB
+        PreferredMaxBytes: 512 KB
+    Organizations:
+    # Policies defines the set of policies at this level of the config tree
+    # For Orderer policies, their canonical path is
+    #   /Channel/Orderer/<PolicyName>
+    Policies:
+        Readers:
+            Type: ImplicitMeta
+            Rule: "ANY Readers"
+        Writers:
+            Type: ImplicitMeta
+            Rule: "ANY Writers"
+        Admins:
+            Type: ImplicitMeta
+            Rule: "MAJORITY Admins"
+        # BlockValidation specifies what signatures must be included in the block
+        # from the orderer for the peer to validate it.
+        BlockValidation:
+            Type: ImplicitMeta
+            Rule: "ANY Writers"
+    Capabilities:
+        <<: *OrdererCapabilities
+
+################################################################################
+#   Profile
+################################################################################
+# https://github:com/hyperledger/fabric/blob/master/sampleconfig/configtx.yaml
+
+Profiles:
+    # Profile used to create Genesis block for group medchain-orderergroup #
+    Medchain-orderergroupGenesis:
+        <<: *ChannelDefaults
+        Orderer:
+            <<: *Medchain-orderergroupDefaults
+            Organizations:
+                - *Orderer
+            Capabilities:
+                <<: *OrdererCapabilities
+        Consortiums:
+            SampleConsortium:
+                Organizations:
+                    - *Orderer
+                    - *OspedaleMaresca
+
+    # Profile used to create channeltx for patient-records-channel #
+    PatientRecordsChannel:
+        <<: *ChannelDefaults
+        Orderer:
+            <<: *Medchain-orderergroupDefaults
+            Organizations:
+                - *Orderer
+            Capabilities:
+                <<: *ApplicationCapabilities
+        Consortium: SampleConsortium
+        Consortiums:
+            SampleConsortium:
+                Organizations:
+                    - *OspedaleMaresca
+        Application:
+            <<: *ApplicationDefaults
+            Organizations:
+                - *OspedaleMaresca

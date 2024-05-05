@@ -1,0 +1,8 @@
+PeerOrgs:
+  - Name: OspedaleMaresca
+    Domain: ospedale-maresca.aslnapoli3.medchain.com
+    Specs:
+    Template:
+      Count: 1
+    Users:
+      Count: 1

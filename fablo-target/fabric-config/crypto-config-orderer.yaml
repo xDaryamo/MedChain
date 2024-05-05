@@ -1,0 +1,9 @@
+PeerOrgs:
+  - Name: Orderer
+    Domain: orderer.medchain.com
+    Specs:
+      - Hostname: orderer0.medchain-orderergroup
+    Template:
+      Count: 0
+    Users:
+      Count: 1

@@ -2,13 +2,11 @@ const express = require("express");
 const bodyParser = require('body-parser');
 
 
-
-
-const patientRoutes = require('./api/routes/patientRoutes');
+const patientRoutes = require('./api/routes/patient');
 
 const app = express();
 
-app.use('/api/patients', patientRoutes);
+app.use(patientRoutes);
 
 
 app.use((req, res, next) => {
