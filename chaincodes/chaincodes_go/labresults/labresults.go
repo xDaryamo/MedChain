@@ -1,4 +1,4 @@
-package labresults
+package main
 
 import (
 	"encoding/json"
@@ -7,7 +7,6 @@ import (
 	"log"
 
 	"github.com/hyperledger/fabric-contract-api-go/contractapi"
-	"github.com/xDaryamo/MedChain/fhir"
 )
 
 type LabResultsChaincode struct {
@@ -16,7 +15,7 @@ type LabResultsChaincode struct {
 
 // CreateLabResult creates a new laboratory result on the blockchain
 func (t *LabResultsChaincode) CreateLabResult(ctx contractapi.TransactionContextInterface, labResultJSON string) error {
-	var labResult fhir.Observation
+	var labResult Observation
 	err := json.Unmarshal([]byte(labResultJSON), &labResult)
 	if err != nil {
 		return errors.New("failed to decode JSON")
@@ -47,7 +46,7 @@ func (t *LabResultsChaincode) UpdateLabResult(ctx contractapi.TransactionContext
 		return errors.New("the lab result does not exist")
 	}
 
-	var labResult fhir.Observation
+	var labResult Observation
 	err = json.Unmarshal([]byte(labResultJSON), &labResult)
 	if err != nil {
 		return errors.New("failed to decode JSON")
@@ -80,7 +79,7 @@ func (t *LabResultsChaincode) LabResultExists(ctx contractapi.TransactionContext
 }
 
 // QueryLabResults retrieves lab results for a specific patient using the Observation struct
-func (t *LabResultsChaincode) QueryLabResults(ctx contractapi.TransactionContextInterface, patientID string) ([]fhir.Observation, error) {
+func (t *LabResultsChaincode) QueryLabResults(ctx contractapi.TransactionContextInterface, patientID string) ([]Observation, error) {
 	queryString := fmt.Sprintf(`{"selector":{"subject.reference":"%s", "category.text":"Laboratory"}}`, patientID)
 	resultsIterator, err := ctx.GetStub().GetQueryResult(queryString)
 	if err != nil {
@@ -88,14 +87,14 @@ func (t *LabResultsChaincode) QueryLabResults(ctx contractapi.TransactionContext
 	}
 	defer resultsIterator.Close()
 
-	var results []fhir.Observation
+	var results []Observation
 	for resultsIterator.HasNext() {
 		queryResponse, err := resultsIterator.Next()
 		if err != nil {
 			return nil, err
 		}
 
-		var observation fhir.Observation
+		var observation Observation
 		if err := json.Unmarshal(queryResponse.Value, &observation); err != nil {
 			return nil, err
 		}
