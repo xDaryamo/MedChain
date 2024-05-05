@@ -70,6 +70,13 @@
       "lang": "golang",
       "channel": "patient-records-channel",
       "directory": "./chaincodes/chaincodes_go/patient"
+    },
+    {
+      "name": "organization",
+      "version": "0.1",
+      "lang": "golang",
+      "channel": "patient-records-channel",
+      "directory": "./chaincodes/chaincodes_go/organization"
     }
   ]
 }
