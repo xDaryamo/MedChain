@@ -1,7 +1,6 @@
 package main
 
 import (
-	"encoding/base64"
 	"time"
 )
 
@@ -49,7 +48,7 @@ type Patient struct {
 	MultipleBirth        []int           `json:"multiplebirth,omitempty"`        // Indicates if the patient is part of a multiple birth
 	Photo                Attachment      `json:"photo,omitempty"`                // Image of the patient
 	Contact              []Contact       `json:"contact,omitempty"`              // A contact party (e.g., guardian, partner, friend) for the patient
-	Communication        []Communication `json:"commutication,omitempty"`        // A list of Languages which may be used to communicate with the patient
+	Communication        []Communication `json:"communication,omitempty"`        // A list of Languages which may be used to communicate with the patient
 	GeneralPractitioner  *Reference      `json:"generalpractitioner,omitempty"`  // Patient's primary care provider
 	ManagingOrganization *Reference      `json:"managingorganization,omitempty"` // Organization that is the custodian of the patient record
 }
@@ -77,20 +76,20 @@ type Address struct {
 
 // Attachment holds content in a variety of formats
 type Attachment struct {
-	ContentType Code            `json:"type,omitempty"`     // Mime type of the content
-	Language    Code            `json:"language,omitempty"` // Human language of the content
-	Data        base64.Encoding `json:"data,omitempty"`     // Data package (base64 encoded)
-	Url         string          `json:"url,omitempty"`      // URL where the data can be found
-	Size        int64           `json:"size,omitempty"`     // Number of bytes of content
-	Hash        base64.Encoding `json:"hash,omitempty"`     // Hash of the data (SHA-1)
-	IPFSHash    string          `json:"ipfsHash,omitempty"` // The IPFS CID for the content
-	Title       string          `json:"title,omitempty"`    // Label to display in place of the data
-	Creation    time.Time       `json:"creation,omitempty"` // Date attachment was first created
-	Height      uint64          `json:"height,omitempty"`   // Height in pixels for images
-	Width       uint64          `json:"width,omitempty"`    // Width in pixels for images
-	Frames      uint64          `json:"frames,omitempty"`   // Number of frames for videos
-	Duration    Duration        `json:"duration,omitempty"` // Length in seconds for audio/video
-	Pages       uint64          `json:"pages,omitempty"`    // Number of pages for documents
+	ContentType Code      `json:"type,omitempty"`     // Mime type of the content
+	Language    Code      `json:"language,omitempty"` // Human language of the content
+	Data        string    `json:"data,omitempty"`     // Data package
+	Url         string    `json:"url,omitempty"`      // URL where the data can be found
+	Size        int64     `json:"size,omitempty"`     // Number of bytes of content
+	Hash        string    `json:"hash,omitempty"`     // Hash of the data (SHA-1)
+	IPFSHash    string    `json:"ipfsHash,omitempty"` // The IPFS CID for the content
+	Title       string    `json:"title,omitempty"`    // Label to display in place of the data
+	Creation    time.Time `json:"creation,omitempty"` // Date attachment was first created
+	Height      uint64    `json:"height,omitempty"`   // Height in pixels for images
+	Width       uint64    `json:"width,omitempty"`    // Width in pixels for images
+	Frames      uint64    `json:"frames,omitempty"`   // Number of frames for videos
+	Duration    Duration  `json:"duration,omitempty"` // Length in seconds for audio/video
+	Pages       uint64    `json:"pages,omitempty"`    // Number of pages for documents
 }
 
 // Contact details for a person or organization associated with the patient
