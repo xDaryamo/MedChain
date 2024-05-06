@@ -32,6 +32,96 @@
         "instances": 1,
         "db": "CouchDb"
       }
+    },
+    {
+      "organization": {
+        "name": "OspedaleDelMare",
+        "domain": "ospedale-del-mare.aslnapoli1.medchain.com"
+      },
+      "peer": {
+        "instances": 1,
+        "db": "CouchDb"
+      }
+    },
+    {
+      "organization": {
+        "name": "OspedaleSGiuliano",
+        "domain": "ospedale-sgiuliano.aslnapoli2.medchain.com"
+      },
+      "peer": {
+        "instances": 1,
+        "db": "CouchDb"
+      }
+    },
+    {
+      "organization": {
+        "name": "MedicinaGeneraleNapoli",
+        "domain": "medicina-generale.napoli.medchain.com"
+      },
+      "peer": {
+        "instances": 1,
+        "db": "CouchDb"
+      }
+    },
+    {
+      "organization": {
+        "name": "NeurologiaNapoli",
+        "domain": "neurologia.napoli.medchain.com"
+      },
+      "peer": {
+        "instances": 1,
+        "db": "CouchDb"
+      }
+    },
+    {
+      "organization": {
+        "name": "FarmaciaPetrone",
+        "domain": "farmacia-petrone.napoli.medchain.com"
+      },
+      "peer": {
+        "instances": 1,
+        "db": "CouchDb"
+      }
+    },
+    {
+      "organization": {
+        "name": "FarmaciaCarbone",
+        "domain": "farmacia-carbone.napoli.medchain.com"
+      },
+      "peer": {
+        "instances": 1,
+        "db": "CouchDb"
+      }
+    },
+    {
+      "organization": {
+        "name": "LaboratorioAnalisiCMO",
+        "domain": "laboratorio-analisi-cmo.medchain.com"
+      },
+      "peer": {
+        "instances": 1,
+        "db": "CouchDb"
+      }
+    },
+    {
+      "organization": {
+        "name": "LaboratorioAnalisiSDN",
+        "domain": "laboratorio-analisi-sdn.medchain.com"
+      },
+      "peer": {
+        "instances": 1,
+        "db": "CouchDb"
+      }
+    },
+    {
+      "organization": {
+        "name": "Patient",
+        "domain": "patients.medchain.com"
+      },
+      "peer": {
+        "instances": 1,
+        "db": "CouchDb"
+      }
     }
   ],
   "channels": [
@@ -40,29 +130,131 @@
       "orgs": [
         {
           "name": "OspedaleMaresca",
-          "peers": ["peer0", "peer1"]
+          "peers": ["peer0"]
         },
         {
           "name": "OspedaleDelMare",
-          "peers": ["peer0", "peer1"]
+          "peers": ["peer0"]
         },
         {
           "name": "OspedaleSGiuliano",
-          "peers": ["peer0", "peer1"]
+          "peers": ["peer0"]
         },
         {
           "name": "MedicinaGeneraleNapoli",
-          "peers": ["peer0", "peer1"]
+          "peers": ["peer0"]
         },
         {
           "name": "NeurologiaNapoli",
-          "peers": ["peer0", "peer1"]
+          "peers": ["peer0"]
+        }
+      ]
+    },
+    {
+      "name": "prescriptions-channel",
+      "orgs": [
+        {
+          "name": "MedicinaGeneraleNapoli",
+          "peers": ["peer0"]
+        },
+        {
+          "name": "NeurologiaNapoli",
+          "peers": ["peer0"]
+        },
+        {
+          "name": "FarmaciaPetrone",
+          "peers": ["peer0"]
+        },
+        {
+          "name": "FarmaciaCarbone",
+          "peers": ["peer0"]
+        }
+      ]
+    },
+    {
+      "name": "lab-results-channel",
+      "orgs": [
+        {
+          "name": "OspedaleMaresca",
+          "peers": ["peer0"]
+        },
+        {
+          "name": "MedicinaGeneraleNapoli",
+          "peers": ["peer0"]
+        },
+        {
+          "name": "NeurologiaNapoli",
+          "peers": ["peer0"]
+        },
+        {
+          "name": "LaboratorioAnalisiCMO",
+          "peers": ["peer0"]
+        },
+        {
+          "name": "LaboratorioAnalisiSDN",
+          "peers": ["peer0"]
+        }
+      ]
+    },
+    {
+      "name": "emergency-channel",
+      "orgs": [
+        {
+          "name": "OspedaleMaresca",
+          "peers": ["peer0"]
+        },
+        {
+          "name": "OspedaleDelMare",
+          "peers": ["peer0"]
+        },
+        {
+          "name": "OspedaleSGiuliano",
+          "peers": ["peer0"]
+        }
+      ]
+    },
+    {
+      "name": "public-health-channel",
+      "orgs": [
+        {
+          "name": "OspedaleMaresca",
+          "peers": ["peer0"]
+        },
+        {
+          "name": "OspedaleDelMare",
+          "peers": ["peer0"]
+        },
+        {
+          "name": "OspedaleSGiuliano",
+          "peers": ["peer0"]
+        },
+        {
+          "name": "MedicinaGeneraleNapoli",
+          "peers": ["peer0"]
+        },
+        {
+          "name": "NeurologiaNapoli",
+          "peers": ["peer0"]
+        },
+        {
+          "name": "FarmaciaPetrone",
+          "peers": ["peer0"]
+        },
+        {
+          "name": "FarmaciaCarbone",
+          "peers": ["peer0"]
+        },
+        {
+          "name": "LaboratorioAnalisiCMO",
+          "peers": ["peer0"]
+        },
+        {
+          "name": "LaboratorioAnalisiSDN",
+          "peers": ["peer0"]
         }
       ]
     }
- 
-  ]
-  ,
+  ],
   "chaincodes": [
     {
       "name": "patient",
