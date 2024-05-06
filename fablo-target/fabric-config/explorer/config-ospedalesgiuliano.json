@@ -1,0 +1,9 @@
+{
+  "network-configs": {
+    "network-ospedalesgiuliano": {
+      "name": "Network of OspedaleSGiuliano",
+      "profile": "/opt/explorer/app/platform/fabric/connection-profile/connection-profile-ospedalesgiuliano.json"
+    }
+  },
+  "license": "Apache-2.0"
+}
