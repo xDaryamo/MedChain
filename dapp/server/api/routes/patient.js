@@ -1,24 +1,23 @@
 const express = require('express');
+
 const router = express.Router();
-const { addPatient, getPatient } = require('../../blockchain/contracts/patient');
 
-router.post('/patients', async (req, res) => {
-    try {
-        await addPatient(req.body.org, req.body.patientData);
-        console.log("Aggiunto")
-        res.status(201).send('Patient added successfully.');
-    } catch (error) {
-        res.status(500).send(error.toString());
-    }
-});
+const patientController = require('../controllers/patient');
 
-router.get('/patients/:id', async (req, res) => {
-    try {
-        const patient = await getPatient(req.query.org, req.params.id);
-        res.status(200).json(patient);
-    } catch (error) {
-        res.status(500).send(error.toString());
-    }
-});
+// GET List of Patients
+router.get('/patients', patientController.getPatients);
 
-module.exports = router;
+// GET Patient Details
+router.get('/patient/:id', patientController.getPatientDetails);
+
+// POST Register a new Patient
+router.post('/patient', patientController.createPatient)
+
+// PUT Update Exisisting Patient information
+router.put('/patient/:id', patientController.updatePatient)
+
+// DELETE Remove a Patient
+router.delete('/patient/:id', patientController.deletePatient)
+
+
+module.exports = router

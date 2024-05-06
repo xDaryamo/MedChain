@@ -101,4 +101,5 @@ func main() {
 	if err := chaincode.Start(); err != nil {
 		log.Panic(errors.New("Error starting patient chaincode: " + err.Error()))
 	}
+
 }
