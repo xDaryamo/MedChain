@@ -499,14 +499,17 @@ func TestDeletePatient_Success(t *testing.T) {
 	mockCtx.On("GetStub").Return(mockStub)
 
 	patientID := "12345"
+	entityID := "mockentity"
 
 	// Simulate that the patient exists
 	mockStub.On("GetState", patientID).Return([]byte("existing patient data"), nil)
+	mockStub.On("ReadPatient", patientID).Return([]byte("existing patient data"), nil)
+	mockStub.On("ReadPatientAsEntity", patientID, entityID).Return([]byte("existing patient data"), nil)
 	// Expect the delete to succeed
 	mockStub.On("DelState", patientID).Return(nil)
 
 	contract := PatientContract{}
-	err := contract.DeletePatient(mockCtx, patientID)
+	err := contract.DeletePatient(mockCtx, patientID, entityID)
 
 	assert.Nil(t, err)
 	mockStub.AssertExpectations(t)
@@ -518,12 +521,15 @@ func TestDeletePatient_NotFound(t *testing.T) {
 	mockCtx.On("GetStub").Return(mockStub)
 
 	patientID := "nonexistent"
+	entityID := "mockentity"
 
 	// Simulate that the patient does not exist
 	mockStub.On("GetState", patientID).Return(nil, nil)
+	mockStub.On("ReadPatient", patientID).Return(nil, nil)
+	mockStub.On("ReadPatientAsEntity", patientID, entityID).Return(nil, nil)
 
 	contract := PatientContract{}
-	err := contract.DeletePatient(mockCtx, patientID)
+	err := contract.DeletePatient(mockCtx, patientID, entityID)
 
 	assert.NotNil(t, err)
 	assert.Equal(t, "patient does not exist: "+patientID, err.Error())
@@ -536,12 +542,15 @@ func TestDeletePatient_StubFailure(t *testing.T) {
 	mockCtx.On("GetStub").Return(mockStub)
 
 	patientID := "12345"
+	entityID := "mockentity"
 
 	// Simulate a ledger error when checking if the patient exists
 	mockStub.On("GetState", patientID).Return(nil, errors.New("ledger error"))
+	mockStub.On("ReadPatient", patientID).Return(nil, errors.New("ledger error"))
+	mockStub.On("ReadPatientAsEntity", patientID, entityID).Return(nil, errors.New("ledger error"))
 
 	contract := PatientContract{}
-	err := contract.DeletePatient(mockCtx, patientID)
+	err := contract.DeletePatient(mockCtx, patientID, entityID)
 
 	assert.NotNil(t, err)
 	assert.Equal(t, "failed to get patient: ledger error", err.Error())
