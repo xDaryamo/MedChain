@@ -133,27 +133,18 @@ func (c *PatientContract) UpdatePatient(ctx contractapi.TransactionContextInterf
 	return nil
 }
 
-// isAuthorized verifica se un ente è autorizzato ad accedere al record del paziente
-func (c *PatientContract) isAuthorized(ctx contractapi.TransactionContextInterface, patientID string, clientID string) (bool, error) {
-	authAsBytes, err := ctx.GetStub().GetState("auth_" + patientID)
+// DeletePatient removes a patient record from the ledger
+func (c *PatientContract) DeletePatient(ctx contractapi.TransactionContextInterface, patientID string) error {
+	exists, err := ctx.GetStub().GetState(patientID)
 	if err != nil {
-		return false, errors.New("failed to get authorization data: " + err.Error())
+		return errors.New("failed to get patient: " + err.Error())
 	}
-	if authAsBytes == nil {
-		return false, nil // Nessun dato di autorizzazione trovato, nessun accesso consentito
+	if exists == nil {
+		return errors.New("patient does not exist: " + patientID)
 	}
 
-	var auth Authorization
-	err = json.Unmarshal(authAsBytes, &auth)
-	if err != nil {
-		return false, errors.New("failed to unmarshal authorization data: " + err.Error())
-	}
-
-	// Verifica se il clientID è presente nella lista degli autorizzati e se l'accesso è stato concesso
-	if authorized, ok := auth.Authorized[clientID]; ok && authorized {
-		return true, nil
-	}
-	return false, nil
+	// Remove the patient record
+	return ctx.GetStub().DelState(patientID)
 }
 
 /*
