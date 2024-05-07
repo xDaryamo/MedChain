@@ -63,15 +63,16 @@ class FabricNetwork {
         }
     }
 
-
     async registerAndEnrollUser(userId, userAffiliation, organization) {
-        const walletPath = path.join(__dirname, 'wallet');
+
+        const adminIdWallet = `Admin@${organization}`; 
+        const walletPath = path.join(__dirname, 'wallet', organization, adminIdWallet); 
         const wallet = await Wallets.newFileSystemWallet(walletPath);
         
         const profileName = organization.split(".")[0].replace(/-/g, "");
         const caName = `ca.${organization}`;
-        const MSPName = getMSPName(organization)
-
+        const MSPName = getMSPName(organization);
+    
         const ccpPath = path.resolve(
             __dirname,
             "..",
@@ -82,7 +83,7 @@ class FabricNetwork {
             "connection-profiles",
             `connection-profile-${profileName}.json`
         );
-
+    
         if (!fs.existsSync(ccpPath)) {
             console.error(`Connection profile for ${organization} not found.`);
             return;
@@ -92,17 +93,18 @@ class FabricNetwork {
         const caClient = buildCAClient(FabricCAServices, ccp, caName); 
         
         // Presume che un admin sia già arruolato e presente nel wallet
-        await registerAndEnrollUser(caClient, wallet, userId, userAffiliation, MSPName, organization);
+        await registerAndEnrollUser(caClient, wallet, walletPath, userId, userAffiliation, MSPName, organization);
     }
 
     async enrollAdmin(organization) {
-        const walletPath = path.join(__dirname, 'wallet');
+        const adminIdWallet = `Admin@${organization}`; 
+        const walletPath = path.join(__dirname, 'wallet', organization, adminIdWallet); 
         const wallet = await Wallets.newFileSystemWallet(walletPath);
         
         const profileName = organization.split(".")[0].replace(/-/g, "");
         const caName = `ca.${organization}`;
         const MSPName = getMSPName(organization)
-
+    
         const ccpPath = path.resolve(
             __dirname,
             "..",
@@ -113,7 +115,7 @@ class FabricNetwork {
             "connection-profiles",
             `connection-profile-${profileName}.json`
         );
-
+    
         if (!fs.existsSync(ccpPath)) {
             console.error(`Connection profile for ${organization} not found.`);
             return;
@@ -122,12 +124,9 @@ class FabricNetwork {
         
         const caClient = buildCAClient(FabricCAServices, ccp, caName); 
         
-        await enrollAdmin(caClient, wallet, MSPName, organization)
+        await enrollAdmin(caClient, walletPath, MSPName, organization)
     }
-
     
-
-
     // Evaluate a transaction (query the ledger)
     async evaluateTransaction(functionName, ...args) {
         try {
@@ -177,4 +176,3 @@ class FabricNetwork {
 }
 
 module.exports = FabricNetwork;
-

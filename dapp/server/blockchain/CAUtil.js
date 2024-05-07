@@ -1,6 +1,7 @@
-const { FabricCAServices, X509WalletMixin } = require('fabric-network');
+const { FabricCAServices, X509WalletMixin} = require('fabric-network');
 const path = require('path');
 const fs = require('fs');
+const crypto = require('crypto');
 
 function buildCAClient(FabricCAServices, ccp, caHostName) {
     // Create a new CA client for interacting with the CA.
@@ -25,79 +26,89 @@ function buildCAClient(FabricCAServices, ccp, caHostName) {
     return caClient;
 }
 
-async function enrollAdmin(caClient, wallet, orgMspId, organization) {
-    const adminIdWallet = `Admin@${organization}`
-    const adminId = 'admin'
-    const adminSecret = 'adminpw'
+async function enrollAdmin(caClient, parentWalletPath, orgMspId, organization) {
+    const orgNameWithoutSuffix = organization.replace('.medchain.com', '');
+    const adminIdWallet = `Admin@${orgNameWithoutSuffix}`;
+    const adminId = 'admin';
+    const adminSecret = 'adminpw';
 
+    if (!fs.existsSync(parentWalletPath)) {
+        fs.mkdirSync(parentWalletPath, { recursive: true });
+    }
 
-    // Check to see if we've already enrolled the admin user.
-    const identity = await wallet.get(adminIdWallet);
-    if (identity) {
+    const walletPath = path.join(parentWalletPath, adminIdWallet);
+    if (!fs.existsSync(walletPath)) {
+        fs.mkdirSync(walletPath, { recursive: true });
+    }
+
+    if (fs.existsSync(path.join(walletPath, 'privateKey')) && fs.existsSync(path.join(walletPath, 'certificate.pem'))) {
         console.log(`An identity for the admin user ${adminIdWallet} already exists in the wallet!`);
         return;
     }
-    // Enroll the admin user, and import the new identity into the wallet.
+
     const enrollment = await caClient.enroll({ enrollmentID: adminId, enrollmentSecret: adminSecret });
 
-    const x509Identity = {
-        credentials: {
-            certificate: enrollment.certificate,
-            privateKey: enrollment.key.toBytes(),
-        },
-        mspId: orgMspId,
-        type: 'X.509',
-    };
-    await wallet.put(adminIdWallet, x509Identity);
+    fs.writeFileSync(path.join(walletPath, 'privateKey'), enrollment.key.toBytes());
+    fs.writeFileSync(path.join(walletPath, 'certificate.pem'), enrollment.certificate);
+
     console.log(`Successfully enrolled admin user ${adminIdWallet} and imported it into the wallet`);
 }
 
-async function registerAndEnrollUser(caClient, wallet, user, userAffiliation, orgMspId, organization) {
+async function registerAndEnrollUser(caClient, wallet, parentWalletPath, user, userAffiliation, orgMspId, organization) {
+    const orgNameWithoutSuffix = organization.replace('.medchain.com', '');
+    const adminId = `Admin@${orgNameWithoutSuffix}`;
+    const userId = `${user}`;
 
-    const adminId = `Admin@${organization}`
-    const userId = `${user}@${organization}`
-    
+    if (!fs.existsSync(parentWalletPath)) {
+        fs.mkdirSync(parentWalletPath, { recursive: true });
+    }
 
-    // Check if the user already exists
-    const userIdentity = await wallet.get(userId);
-    if (userIdentity) {
+    const hashedUserId = crypto.createHash('sha256').update(userId).digest('hex');
+    const walletPath = path.join(parentWalletPath, hashedUserId);
+
+    if (!fs.existsSync(walletPath)) {
+        fs.mkdirSync(walletPath, { recursive: true });
+    }
+
+    if (fs.existsSync(path.join(walletPath, 'privateKey')) && fs.existsSync(path.join(walletPath, 'certificate.pem'))) {
         console.log(`An identity for the user ${userId} already exists in the wallet`);
         return;
     }
 
-    // Must use an admin to register a new user
-    const adminIdentity = await wallet.get(adminId);
-    if (!adminIdentity) {
-        console.error('An identity for the admin user "admin" does not exist in the wallet');
+    if (!fs.existsSync(path.join(parentWalletPath, adminId))) {
+        console.error(`An identity for the admin user ${adminId} does not exist in the wallet`);
         return;
     }
 
-    // Build a User object for the admin
-    const provider = wallet.getProviderRegistry().getProvider(adminIdentity.type);
+    const adminPrivateKey = fs.readFileSync(path.join(parentWalletPath, adminId, 'privateKey'));
+    const adminCertificate = fs.readFileSync(path.join(parentWalletPath, adminId, 'certificate.pem'));
 
-
-    const adminUser = await provider.getUserContext(adminIdentity, adminId);
-    console.log(adminUser)
-    
-    // Register the new user and enroll the user
-    const secret = await caClient.register({
-        affiliation: userAffiliation,
-        enrollmentID: userId,
-        role: 'client'
-    }, adminUser);
-    const enrollment = await caClient.enroll({
-        enrollmentID: userId,
-        enrollmentSecret: secret,
-    });
-    const x509Identity = {
+    const adminIdentity = {
         credentials: {
-            certificate: enrollment.certificate,
-            privateKey: enrollment.key.toBytes(),
+            certificate: adminCertificate,
+            privateKey: adminPrivateKey,
         },
         mspId: orgMspId,
         type: 'X.509',
     };
-    await wallet.put(userId, x509Identity);
+
+    const provider = wallet.getProviderRegistry().getProvider(adminIdentity.type);
+    const registrar = await provider.getUserContext(adminIdentity, adminId);
+
+    const secret = await caClient.register({
+        affiliation: userAffiliation,
+        enrollmentID: userId,
+        role: 'client'
+    }, registrar);
+
+    const enrollment = await caClient.enroll({
+        enrollmentID: userId,
+        enrollmentSecret: secret,
+    });
+
+    fs.writeFileSync(path.join(walletPath, 'privateKey'), enrollment.key.toBytes());
+    fs.writeFileSync(path.join(walletPath, 'certificate.pem'), enrollment.certificate);
+
     console.log(`Successfully registered and enrolled user ${userId} and imported it into the wallet`);
 }
 
