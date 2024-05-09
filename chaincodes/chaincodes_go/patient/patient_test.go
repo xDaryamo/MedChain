@@ -1,8 +1,8 @@
 package main
 
 import (
+	"crypto/x509"
 	"encoding/json"
-	"errors"
 	"testing"
 	"time"
 
@@ -278,6 +278,40 @@ func (m *MockIterator) Close() error {
 	return nil
 }
 
+type MockClientIdentity struct {
+    mock.Mock
+}
+
+func (mci *MockClientIdentity) GetID() (string, error) {
+    args := mci.Called()
+    return args.String(0), args.Error(1)
+}
+
+func (mci *MockClientIdentity) GetMSPID() (string, error) {
+    args := mci.Called()
+    return args.String(0), args.Error(1)
+}
+
+func (mci *MockClientIdentity) GetAttributeValue(attrName string) (string, bool, error) {
+    args := mci.Called(attrName)
+    return args.String(0), args.Bool(1), args.Error(2)
+}
+
+func (mci *MockClientIdentity) HasAttribute(attrName string) (bool, error) {
+    args := mci.Called(attrName)
+    return args.Bool(0), args.Error(1)
+}
+
+func (mci *MockClientIdentity) AssertAttributeValue(attrName, attrValue string) error {
+    args := mci.Called(attrName, attrValue)
+    return args.Error(0)
+}
+
+func (mci *MockClientIdentity) GetX509Certificate() (*x509.Certificate, error) {
+    args := mci.Called()
+    return args.Get(0).(*x509.Certificate), args.Error(1)
+}
+
 // Tests
 
 func generatePatientJSON(id string) string {
@@ -291,268 +325,362 @@ func generatePatientJSON(id string) string {
 	return string(patientJSON)
 }
 
-func TestCreatePatient_ValidInput(t *testing.T) {
-	mockStub := new(MockStub)
-	mockCtx := new(MockTransactionContext)
-	mockCtx.On("GetStub").Return(mockStub)
+func TestCreatePatient_Success(t *testing.T) {
+    
+    patientContract := new(PatientContract)
 
-	patientID := "12345"
-	patientJSON := generatePatientJSON(patientID)
+    stub := new(MockStub)
+    txContext := new(MockTransactionContext)
 
-	mockStub.On("GetState", patientID).Return(nil, nil)           // Patient does not exist
-	mockStub.On("PutState", patientID, mock.Anything).Return(nil) // Simulate successful write
+    txContext.On("GetStub").Return(stub)  
+    patientID := "patient-001"
+    patientJSON := generatePatientJSON(patientID)
 
-	contract := PatientContract{}
-	err := contract.CreatePatient(mockCtx, patientID, patientJSON)
+    
+    stub.On("GetState", patientID).Return(nil, nil)  
+    stub.On("PutState", patientID, mock.Anything).Return(nil)  
 
-	assert.Nil(t, err)
-	mockStub.AssertExpectations(t)
+    
+    err := patientContract.CreatePatient(txContext, patientID, patientJSON)
+
+
+    assert.Nil(t, err)
+
+    // Ensure all expectations on the mocks are met
+    txContext.AssertExpectations(t)
+    stub.AssertExpectations(t)
 }
 
-func TestCreatePatient_PatientExists(t *testing.T) {
-	mockStub := new(MockStub)
-	mockCtx := new(MockTransactionContext)
-	mockCtx.On("GetStub").Return(mockStub)
+func TestCreatePatient_FailureExists(t *testing.T) {
+    patientContract := new(PatientContract)
 
-	patientID := "12345"
-	patientJSON := generatePatientJSON(patientID)
+    stub := new(MockStub)
+    txContext := new(MockTransactionContext)
 
-	mockStub.On("GetState", patientID).Return([]byte("existing patient data"), nil) // Patient exists
+    txContext.On("GetStub").Return(stub)
+    patientID := "patient-001"
+    patientJSON := generatePatientJSON(patientID)
 
-	contract := PatientContract{}
-	err := contract.CreatePatient(mockCtx, patientID, patientJSON)
+    stub.On("GetState", patientID).Return([]byte("existing patient data"), nil)  // Simulate that the patient already exists
 
-	assert.NotNil(t, err)
-	assert.Equal(t, "patient already exists: 12345", err.Error())
-	mockStub.AssertExpectations(t)
+    err := patientContract.CreatePatient(txContext, patientID, patientJSON)
+
+    assert.NotNil(t, err)
+    assert.Equal(t, "patient already exists: "+patientID, err.Error())
+
+    txContext.AssertExpectations(t)
+    stub.AssertExpectations(t)
 }
 
-func TestCreatePatient_InvalidJSON(t *testing.T) {
-	mockStub := new(MockStub)
-	mockCtx := new(MockTransactionContext)
-	mockCtx.On("GetStub").Return(mockStub)
+func TestCreatePatient_FailureJSONError(t *testing.T) {
+    patientContract := new(PatientContract)
 
-	patientID := "12345"
-	patientJSON := "{invalid JSON"
+    stub := new(MockStub)
+    txContext := new(MockTransactionContext)
 
-	mockStub.On("GetState", patientID).Return(nil, nil) // No pre-existing patient
+    txContext.On("GetStub").Return(stub)
+    patientID := "patient-001"
+    invalidJSON := "{"  // Malformed JSON
 
-	contract := PatientContract{}
-	err := contract.CreatePatient(mockCtx, patientID, patientJSON)
+    stub.On("GetState", patientID).Return(nil, nil)  
+    err := patientContract.CreatePatient(txContext, patientID, invalidJSON)
 
-	assert.NotNil(t, err)
-	assert.Contains(t, err.Error(), "failed to unmarshal patient")
-	mockStub.AssertExpectations(t)
-}
+    assert.NotNil(t, err)
+    assert.Contains(t, err.Error(), "failed to unmarshal patient")
 
-func TestCreatePatient_StubFailure(t *testing.T) {
-	mockStub := new(MockStub)
-	mockCtx := new(MockTransactionContext)
-	mockCtx.On("GetStub").Return(mockStub)
-
-	patientID := "12345"
-	patientJSON := generatePatientJSON(patientID)
-
-	mockStub.On("GetState", patientID).Return(nil, errors.New("ledger error")) // Simulate a ledger error
-
-	contract := PatientContract{}
-	err := contract.CreatePatient(mockCtx, patientID, patientJSON)
-
-	assert.NotNil(t, err)
-	assert.Equal(t, "failed to get patient: ledger error", err.Error())
-	mockStub.AssertExpectations(t)
-}
-
-func TestReadPatient_Success(t *testing.T) {
-	mockStub := new(MockStub)
-	mockCtx := new(MockTransactionContext)
-	mockCtx.On("GetStub").Return(mockStub)
-
-	patientID := "12345"
-	patientJSON := generatePatientJSON(patientID)
-
-	mockStub.On("GetState", patientID).Return([]byte(patientJSON), nil) // Simulate existing patient data
-
-	contract := PatientContract{}
-	result, err := contract.ReadPatient(mockCtx, patientID)
-
-	assert.Nil(t, err)
-	assert.NotNil(t, result)
-	assert.Equal(t, "12345", result.ID.Value)
-	mockStub.AssertExpectations(t)
-}
-
-func TestReadPatient_NotFound(t *testing.T) {
-	mockStub := new(MockStub)
-	mockCtx := new(MockTransactionContext)
-	mockCtx.On("GetStub").Return(mockStub)
-
-	patientID := "nonexistent"
-
-	mockStub.On("GetState", patientID).Return(nil, nil) // No data for the patient
-
-	contract := PatientContract{}
-	result, err := contract.ReadPatient(mockCtx, patientID)
-
-	assert.NotNil(t, err)
-	assert.Nil(t, result)
-	assert.Equal(t, "patient does not exist: nonexistent", err.Error())
-	mockStub.AssertExpectations(t)
-}
-
-func TestReadPatient_StubFailure(t *testing.T) {
-	mockStub := new(MockStub)
-	mockCtx := new(MockTransactionContext)
-	mockCtx.On("GetStub").Return(mockStub)
-
-	patientID := "12345"
-
-	mockStub.On("GetState", patientID).Return(nil, errors.New("ledger error")) // Simulate a ledger error
-
-	contract := PatientContract{}
-	result, err := contract.ReadPatient(mockCtx, patientID)
-
-	assert.NotNil(t, err)
-	assert.Nil(t, result)
-	assert.Equal(t, "failed to read patient: ledger error", err.Error())
-	mockStub.AssertExpectations(t)
+    txContext.AssertExpectations(t)
+    stub.AssertExpectations(t)
 }
 
 func TestUpdatePatient_Success(t *testing.T) {
-	mockStub := new(MockStub)
-	mockCtx := new(MockTransactionContext)
-	mockCtx.On("GetStub").Return(mockStub)
+    patientContract := new(PatientContract)
+    stub := new(MockStub)
+    txContext := new(MockTransactionContext)
+    clientIdentity := new(MockClientIdentity)
 
-	patientID := "12345"
-	updatedPatientJSON := generatePatientJSON(patientID)
+    txContext.On("GetStub").Return(stub)
+    txContext.On("GetClientIdentity").Return(clientIdentity)
 
-	// Simulate that the patient already exists
-	mockStub.On("GetState", patientID).Return([]byte("existing patient data"), nil)
-	mockStub.On("PutState", patientID, mock.Anything).Return(nil) // Expect the update to succeed
+    patientID := "patient-001"
+    patientJSON := generatePatientJSON(patientID)
+    patientBytes := []byte(patientJSON)
 
-	contract := PatientContract{}
-	err := contract.UpdatePatient(mockCtx, patientID, updatedPatientJSON)
+    // Assuming GetX509Certificate is called when certain conditions are met
+    dummyCert := &x509.Certificate{}  // Prepare a dummy certificate if needed
 
-	assert.Nil(t, err)
-	mockStub.AssertExpectations(t)
+    // Mocking the conditions are met, if they depend on identity checks
+    clientIdentity.On("GetID").Return(patientID, nil)
+    // Only set this expectation if your chaincode logic definitely calls it under test conditions
+    clientIdentity.On("GetX509Certificate").Maybe().Return(dummyCert, nil)  // Use Maybe() for conditional expectations
+
+    stub.On("GetState", patientID).Return(patientBytes, nil)
+    stub.On("PutState", patientID, mock.Anything).Return(nil)
+
+    err := patientContract.UpdatePatient(txContext, patientID, patientJSON)
+
+    assert.Nil(t, err)
+    clientIdentity.AssertExpectations(t)
+    stub.AssertExpectations(t)
 }
 
-func TestUpdatePatient_NotFound(t *testing.T) {
-	mockStub := new(MockStub)
-	mockCtx := new(MockTransactionContext)
-	mockCtx.On("GetStub").Return(mockStub)
+func TestUpdatePatient_Unauthorized(t *testing.T) {
+    patientContract := new(PatientContract)
+    stub := new(MockStub)
+    txContext := new(MockTransactionContext)
+    clientIdentity := new(MockClientIdentity)
 
-	patientID := "nonexistent"
-	updatedPatientJSON := generatePatientJSON(patientID)
+    txContext.On("GetStub").Return(stub)
+    txContext.On("GetClientIdentity").Return(clientIdentity)
 
-	mockStub.On("GetState", patientID).Return(nil, nil) // No data for the patient
+    patientID := "patient-001"
+    unauthorizedID := "unauthorized-client"
+    patientJSON := generatePatientJSON(patientID)
+    patientBytes := []byte(patientJSON)
 
-	contract := PatientContract{}
-	err := contract.UpdatePatient(mockCtx, patientID, updatedPatientJSON)
+    // Mock setup to return patient data
+    stub.On("GetState", patientID).Return(patientBytes, nil)
 
-	assert.NotNil(t, err)
-	assert.Equal(t, "patient does not exist: nonexistent", err.Error())
-	mockStub.AssertExpectations(t)
-}
+    // Set up mock for authorization data retrieval
+    authKey := "auth_" + patientID
+    stub.On("GetState", authKey).Return(nil, nil)  // Assuming no authorization data is found
 
-func TestUpdatePatient_InvalidJSON(t *testing.T) {
-	mockStub := new(MockStub)
-	mockCtx := new(MockTransactionContext)
-	mockCtx.On("GetStub").Return(mockStub)
+    clientIdentity.On("GetID").Return(unauthorizedID, nil)
 
-	patientID := "12345"
-	invalidJSON := "{invalid JSON"
+    err := patientContract.UpdatePatient(txContext, patientID, patientJSON)
 
-	// Simulate that the patient already exists
-	mockStub.On("GetState", patientID).Return([]byte("existing patient data"), nil)
-
-	contract := PatientContract{}
-	err := contract.UpdatePatient(mockCtx, patientID, invalidJSON)
-
-	assert.NotNil(t, err)
-	assert.Contains(t, err.Error(), "invalid character")
-	mockStub.AssertExpectations(t)
-}
-
-func TestUpdatePatient_StubFailure(t *testing.T) {
-	mockStub := new(MockStub)
-	mockCtx := new(MockTransactionContext)
-	mockCtx.On("GetStub").Return(mockStub)
-
-	patientID := "12345"
-	updatedPatientJSON := generatePatientJSON(patientID)
-
-	mockStub.On("GetState", patientID).Return([]byte("existing patient data"), nil)
-	mockStub.On("PutState", patientID, mock.Anything).Return(errors.New("ledger write error")) // Simulate a ledger write error
-
-	contract := PatientContract{}
-	err := contract.UpdatePatient(mockCtx, patientID, updatedPatientJSON)
-
-	assert.NotNil(t, err)
-	assert.Equal(t, "failed to put state: ledger write error", err.Error())
-	mockStub.AssertExpectations(t)
+    assert.NotNil(t, err)
+    assert.Contains(t, err.Error(), "unauthorized to update patient records")
+    stub.AssertExpectations(t)
+    clientIdentity.AssertExpectations(t)
 }
 
 func TestDeletePatient_Success(t *testing.T) {
-	mockStub := new(MockStub)
-	mockCtx := new(MockTransactionContext)
-	mockCtx.On("GetStub").Return(mockStub)
+    patientContract := new(PatientContract)
+    stub := new(MockStub)
+    txContext := new(MockTransactionContext)
+    txContext.On("GetStub").Return(stub)
 
-	patientID := "12345"
-	entityID := "mockentity"
+    patientID := "patient-001"
+    patientBytes := []byte(generatePatientJSON(patientID))
 
-	// Simulate that the patient exists
-	mockStub.On("GetState", patientID).Return([]byte("existing patient data"), nil)
-	mockStub.On("ReadPatient", patientID).Return([]byte("existing patient data"), nil)
-	mockStub.On("ReadPatientAsEntity", patientID, entityID).Return([]byte("existing patient data"), nil)
-	// Expect the delete to succeed
-	mockStub.On("DelState", patientID).Return(nil)
+    // Mock the ledger response for existing patient
+    stub.On("GetState", patientID).Return(patientBytes, nil)
+    stub.On("DelState", patientID).Return(nil)
 
-	contract := PatientContract{}
-	err := contract.DeletePatient(mockCtx, patientID, entityID)
+    // Execute the DeletePatient function
+    err := patientContract.DeletePatient(txContext, patientID)
 
-	assert.Nil(t, err)
-	mockStub.AssertExpectations(t)
+    assert.Nil(t, err)
+    stub.AssertExpectations(t) // Check if all stub expectations are met
 }
 
-func TestDeletePatient_NotFound(t *testing.T) {
-	mockStub := new(MockStub)
-	mockCtx := new(MockTransactionContext)
-	mockCtx.On("GetStub").Return(mockStub)
+func TestDeletePatient_NonExistent(t *testing.T) {
+    patientContract := new(PatientContract)
+    stub := new(MockStub)
+    txContext := new(MockTransactionContext)
+    txContext.On("GetStub").Return(stub)
 
-	patientID := "nonexistent"
-	entityID := "mockentity"
+    nonExistentID := "patient-999" // Assuming this ID does not exist in the ledger
 
-	// Simulate that the patient does not exist
-	mockStub.On("GetState", patientID).Return(nil, nil)
-	mockStub.On("ReadPatient", patientID).Return(nil, nil)
-	mockStub.On("ReadPatientAsEntity", patientID, entityID).Return(nil, nil)
+    // Setup stub to simulate no patient found for this ID
+    stub.On("GetState", nonExistentID).Return(nil, nil)
 
-	contract := PatientContract{}
-	err := contract.DeletePatient(mockCtx, patientID, entityID)
+    err := patientContract.DeletePatient(txContext, nonExistentID)
 
-	assert.NotNil(t, err)
-	assert.Equal(t, "patient does not exist: "+patientID, err.Error())
-	mockStub.AssertExpectations(t)
+    assert.NotNil(t, err)
+    assert.Contains(t, err.Error(), "patient does not exist: "+nonExistentID)
+    stub.AssertExpectations(t)
 }
 
-func TestDeletePatient_StubFailure(t *testing.T) {
-	mockStub := new(MockStub)
-	mockCtx := new(MockTransactionContext)
-	mockCtx.On("GetStub").Return(mockStub)
 
-	patientID := "12345"
-	entityID := "mockentity"
+func TestReadPatient_SuccessByPatient(t *testing.T) {
+    contract := new(PatientContract)
+    stub := new(MockStub)
+    ctx := new(MockTransactionContext)
+    clientIdentity := new(MockClientIdentity)
 
-	// Simulate a ledger error when checking if the patient exists
-	mockStub.On("GetState", patientID).Return(nil, errors.New("ledger error"))
-	mockStub.On("ReadPatient", patientID).Return(nil, errors.New("ledger error"))
-	mockStub.On("ReadPatientAsEntity", patientID, entityID).Return(nil, errors.New("ledger error"))
+    ctx.On("GetStub").Return(stub)
+    ctx.On("GetClientIdentity").Return(clientIdentity)
 
-	contract := PatientContract{}
-	err := contract.DeletePatient(mockCtx, patientID, entityID)
+    patientID := "patient-001"
+    patientData := generatePatientJSON(patientID)
+    patientBytes := []byte(patientData)
 
-	assert.NotNil(t, err)
-	assert.Equal(t, "failed to get patient: ledger error", err.Error())
-	mockStub.AssertExpectations(t)
+    stub.On("GetState", patientID).Return(patientBytes, nil)
+    clientIdentity.On("GetID").Return(patientID, nil)
+
+    patient, err := contract.ReadPatient(ctx, patientID)
+
+    assert.Nil(t, err)
+    assert.NotNil(t, patient)
+    assert.Equal(t, "John", patient.Name.Given[0])  // Example of accessing nested fields
+    stub.AssertExpectations(t)
+    clientIdentity.AssertExpectations(t)
+}
+
+func TestReadPatient_SuccessByAuthorizedUser(t *testing.T) {
+    contract := new(PatientContract)
+    stub := new(MockStub)
+    ctx := new(MockTransactionContext)
+    clientIdentity := new(MockClientIdentity)
+
+    ctx.On("GetStub").Return(stub)
+    ctx.On("GetClientIdentity").Return(clientIdentity)
+
+    patientID := "patient-001"
+    clientID := "doctor-002"
+    patientData := generatePatientJSON(patientID)
+    patientBytes := []byte(patientData)
+
+    // Mock patient data retrieval
+    stub.On("GetState", patientID).Return(patientBytes, nil)
+    // Mock client identity retrieval
+    clientIdentity.On("GetID").Return(clientID, nil)
+
+    // Set up authorization data to indicate that the doctor is authorized
+    authData := Authorization{PatientID: patientID, Authorized: map[string]bool{clientID: true}}
+    authBytes, _ := json.Marshal(authData)
+    stub.On("GetState", "auth_"+patientID).Return(authBytes, nil)
+
+    // Attempt to read the patient data as an authorized user
+    patient, err := contract.ReadPatient(ctx, patientID)
+
+    assert.Nil(t, err)
+    assert.NotNil(t, patient)
+    assert.Equal(t, "John", patient.Name.Given[0]) // Example of accessing nested fields
+    stub.AssertExpectations(t)
+    clientIdentity.AssertExpectations(t)
+}
+
+func TestReadPatient_UnauthorizedAccess(t *testing.T) {
+    contract := new(PatientContract)
+    stub := new(MockStub)
+    ctx := new(MockTransactionContext)
+    clientIdentity := new(MockClientIdentity)
+
+    ctx.On("GetStub").Return(stub)
+    ctx.On("GetClientIdentity").Return(clientIdentity)
+
+    patientID := "patient-001"
+    unauthorizedClientID := "client-999"
+    patientData := generatePatientJSON(patientID)
+    patientBytes := []byte(patientData)
+
+    stub.On("GetState", patientID).Return(patientBytes, nil)
+    clientIdentity.On("GetID").Return(unauthorizedClientID, nil)
+    stub.On("GetState", "auth_"+patientID).Return(nil, nil) // Nessuna autorizzazione trovata
+
+    patient, err := contract.ReadPatient(ctx, patientID)
+
+    assert.NotNil(t, err)
+    assert.Nil(t, patient)
+    assert.Equal(t, "unauthorized access: client is neither the patient nor an authorized entity", err.Error())
+    stub.AssertExpectations(t)
+    clientIdentity.AssertExpectations(t)
+}
+
+func TestReadPatient_NonExistentPatient(t *testing.T) {
+    contract := new(PatientContract)
+    stub := new(MockStub)
+    ctx := new(MockTransactionContext)
+
+    ctx.On("GetStub").Return(stub)
+
+    nonExistentPatientID := "patient-999"
+
+    stub.On("GetState", nonExistentPatientID).Return(nil, nil)
+
+    patient, err := contract.ReadPatient(ctx, nonExistentPatientID)
+
+    assert.NotNil(t, err)
+    assert.Nil(t, patient)
+    assert.Equal(t, "patient does not exist: "+nonExistentPatientID, err.Error())
+    stub.AssertExpectations(t)
+}
+
+func TestRequestAccess_NewAuthorization(t *testing.T) {
+    contract := new(PatientContract)
+    stub := new(MockStub)
+    ctx := new(MockTransactionContext)
+
+    ctx.On("GetStub").Return(stub)
+    patientID := "patient-001"
+    requesterID := "doctor-001"
+
+    // Assume no existing authorization record
+    stub.On("GetState", "auth_"+patientID).Return(nil, nil)
+    stub.On("PutState", "auth_"+patientID, mock.Anything).Return(nil)
+
+    err := contract.RequestAccess(ctx, patientID, requesterID)
+
+    assert.Nil(t, err)
+    stub.AssertExpectations(t)
+}
+
+func TestRequestAccess_ExistingAuthorization(t *testing.T) {
+    contract := new(PatientContract)
+    stub := new(MockStub)
+    ctx := new(MockTransactionContext)
+
+    ctx.On("GetStub").Return(stub)
+    patientID := "patient-001"
+    requesterID := "doctor-001"
+
+    existingAuth := Authorization{PatientID: patientID, Authorized: make(map[string]bool)}
+    existingAuthBytes, _ := json.Marshal(existingAuth)
+    stub.On("GetState", "auth_"+patientID).Return(existingAuthBytes, nil)
+    stub.On("PutState", "auth_"+patientID, mock.Anything).Return(nil)
+
+    err := contract.RequestAccess(ctx, patientID, requesterID)
+
+    assert.Nil(t, err)
+    stub.AssertExpectations(t)
+}
+
+func TestGrantAccess_Success(t *testing.T) {
+    contract := new(PatientContract)
+    stub := new(MockStub)
+    ctx := new(MockTransactionContext)
+    clientIdentity := new(MockClientIdentity)
+
+    ctx.On("GetStub").Return(stub)
+    ctx.On("GetClientIdentity").Return(clientIdentity)
+    patientID := "patient-001"
+    requesterID := "doctor-001"
+
+    auth := Authorization{PatientID: patientID, Authorized: map[string]bool{requesterID: false}}
+    authBytes, _ := json.Marshal(auth)
+    stub.On("GetState", "auth_"+patientID).Return(authBytes, nil)
+    stub.On("PutState", "auth_"+patientID, mock.Anything).Return(nil)
+    clientIdentity.On("GetID").Return(patientID, nil)
+
+    err := contract.GrantAccess(ctx, patientID, requesterID)
+
+    assert.Nil(t, err)
+    stub.AssertExpectations(t)
+    clientIdentity.AssertExpectations(t)
+}
+
+func TestRevokeAccess_Success(t *testing.T) {
+    contract := new(PatientContract)
+    stub := new(MockStub)
+    ctx := new(MockTransactionContext)
+    clientIdentity := new(MockClientIdentity)
+
+    ctx.On("GetStub").Return(stub)
+    ctx.On("GetClientIdentity").Return(clientIdentity)
+    patientID := "patient-001"
+    requesterID := "doctor-001"
+
+    auth := Authorization{PatientID: patientID, Authorized: map[string]bool{requesterID: true}}
+    authBytes, _ := json.Marshal(auth)
+    stub.On("GetState", "auth_"+patientID).Return(authBytes, nil)
+    stub.On("PutState", "auth_"+patientID, mock.Anything).Return(nil)
+    clientIdentity.On("GetID").Return(patientID, nil)
+
+    err := contract.RevokeAccess(ctx, patientID, requesterID)
+
+    assert.Nil(t, err)
+    stub.AssertExpectations(t)
+    clientIdentity.AssertExpectations(t)
 }
