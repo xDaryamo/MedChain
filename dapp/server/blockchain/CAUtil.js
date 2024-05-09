@@ -19,7 +19,7 @@ function buildCAClient(FabricCAServices, ccp, caHostName) {
 }
 
 async function enrollAdmin(caClient, walletPath, orgMspId, organization) {
-  const adminId = `Admin@${organization.replace(".medchain.com", "")}`;
+  const adminId = "admin";
   const adminSecret = "adminpw";
 
   try {

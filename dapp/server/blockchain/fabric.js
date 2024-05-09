@@ -59,7 +59,7 @@ class FabricNetwork {
 
   async configureWallet(userId, organization, ccp) {
     const walletPath = path.join(__dirname, "wallet", organization, userId);
-    const wallet = await Wallets.newFileSystemWallet(walletPath);
+    const wallet = await Wallets.newInMemoryWallet(walletPath);
     const identity = await this.loadIdentity(
       walletPath,
       getMSPName(organization)
