@@ -2,8 +2,6 @@ module github.com/xDaryamo/MedChain/records
 
 go 1.21
 
-toolchain go1.21.0
-
 require (
 	github.com/golang/protobuf v1.5.4
 	github.com/hyperledger/fabric-chaincode-go v0.0.0-20240425200701-0431f709af2c
