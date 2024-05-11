@@ -120,12 +120,26 @@ exports.updateCondition = async (req, res, next) => {
 
 exports.createAnnotation = async (req, res, next) => {
     const procedureID = req.params.id;
-    // ToDo
+    const annotationJSON = req.body;
+
+    try {
+        const annotation = await fabric.evaluateTransaction('CreateAnnotation', procedureID, JSON.stringify(annotationJSON));
+        res.status(200).json({ annotation: JSON.parse(annotation) });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
 };
 
 exports.readAnnotation = async (req, res, next) => {
     const procedureID = req.params.id;
-    // ToDO
+
+    try {
+        const annotation = await fabric.evaluateTransaction('ReadAnnotation', procedureID);
+        res.status(200).json({ annotation: JSON.parse(annotation) });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
 };
+
 
 

@@ -44,3 +44,39 @@ exports.deletePatient = async (req, res, next) => {
         res.status(500).json({ error: error.message });
     }
 };
+
+exports.requestAccess = async (req, res, next) => {
+    const patientID = req.params.id;
+    const requesterID = req.params.requesterId;
+    
+    try {
+        const result = await fabric.submitTransaction('RequestAccess', patientID, requesterID);
+        res.status(200).json({ message: 'Access request sent successfully', result });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+};
+
+exports.grantAccess = async (req, res, next) => {
+    const patientID = req.params.id;
+    const requesterID = req.params.requesterId;
+
+    try {
+        const result = await fabric.submitTransaction('GrantAccess', patientID, requesterID);
+        res.status(200).json({ message: 'Access granted successfully', result });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+};
+
+exports.revokeAccess = async (req, res, next) => {
+    const patientID = req.params.id;
+    const requesterID = req.params.requesterId;
+
+    try {
+        const result = await fabric.submitTransaction('RevokeAccess', patientID, requesterID);
+        res.status(200).json({ message: 'Access revoked successfully', result });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+};
