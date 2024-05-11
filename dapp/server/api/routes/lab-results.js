@@ -14,8 +14,5 @@ router.post('/lab-results', labresultsController.createLabResult)
 // PATCH Update a lab result 
 router.patch('/lab-results/:id', labresultsController.updateLabResult)
 
-// DELETE Delete a lab result 
-router.patch('/lab-result/:id', labresultsController.deleteLabResult)
-
 
 module.exports = router

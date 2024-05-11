@@ -1,10 +1,6 @@
 const FabricNetwork = require('../../blockchain/fabric');
 const fabric = new FabricNetwork();
 
-exports.getOrganizations = async (req, res, next) => {
-    // Not implemented yet
-    res.status(501).json({ message: 'Not implemented' });
-};
 
 exports.getOrganizationDetails = async (req, res, next) => {
     const organizationID = req.params.id;

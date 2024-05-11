@@ -1,10 +1,6 @@
 const FabricNetwork = require('../../blockchain/fabric');
 const fabric = new FabricNetwork();
 
-exports.getPatients = async (req, res, next) => {
-    // Not implemented yet
-    res.status(501).json({ message: 'Not implemented' });
-};
 
 exports.getPatientDetails = async (req, res, next) => {
     const patientID = req.params.id;
@@ -17,7 +13,9 @@ exports.getPatientDetails = async (req, res, next) => {
 };
 
 exports.createPatient = async (req, res, next) => {
-    const { patientID, patientJSON } = req.body;
+    const patientID = req.params.id
+    const patientJSON  = req.body;
+    
     try {
         const result = await fabric.submitTransaction('CreatePatient', patientID, patientJSON);
         res.status(201).json({ message: 'Patient created successfully', result });

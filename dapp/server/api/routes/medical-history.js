@@ -6,7 +6,7 @@ const medicalHistoryController = require('../controllers/medical-history');
 
 
 // DELETE Delete medical record linked to a patient 
-router.get('/patient/:id/medical-history', medicalHistoryController.deleteMedicalRecords);
+router.delete('/patient/:id/medical-history', medicalHistoryController.deleteMedicalRecords);
 
 // POST Create a new medical record linked to a patient 
 router.post('/patient/:id/medical-history', medicalHistoryController.createMedicalRecords)

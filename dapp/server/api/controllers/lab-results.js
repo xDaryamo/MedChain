@@ -12,9 +12,9 @@ exports.getLabResultsByPatient = async (req, res, next) => {
 };
 
 exports.createLabResult = async (req, res, next) => {
-    const { resultID, resultJSON } = req.body;
+    const resultJSON = req.body;
     try {
-        const result = await fabric.submitTransaction('CreateLabResult', resultID, resultJSON);
+        const result = await fabric.submitTransaction('CreateLabResult', resultJSON);
         res.status(201).json({ message: 'LabResult created successfully', result });
     } catch (error) {
         res.status(500).json({ error: error.message });
@@ -32,12 +32,3 @@ exports.updateLabResult = async (req, res, next) => {
     }
 };
 
-exports.deleteLabResult= async (req, res, next) => {
-    const resultID = req.params.id;
-    try {
-        const result = await fabric.submitTransaction('DeleteLabResult', resultID);
-        res.status(200).json({ message: 'LabResult deleted successfully', result });
-    } catch (error) {
-        res.status(500).json({ error: error.message });
-    }
-};

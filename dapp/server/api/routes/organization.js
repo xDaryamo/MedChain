@@ -4,9 +4,6 @@ const router = express.Router();
 
 const organizationController = require('../controllers/organization');
 
-// GET List of Organizations
-router.get('/organizations', organizationController.getOrganizations);
-
 // GET Organization Details
 router.get('/organization/:id', organizationController.getOrganizationDetails);
 
