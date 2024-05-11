@@ -13,10 +13,10 @@ router.get('/organization/:id', organizationController.getOrganizationDetails);
 // POST Register a new Organization
 router.post('/organization', organizationController.createOrganization)
 
-// PUT Update Exisisting Organization information
-router.put('/organization/:id', organizationController.updateOrganization)
+// PATCH Update Exisisting Organization information
+router.patch('/organization/:id', organizationController.updateOrganization)
 
 // DELETE Remove an Organization
-router.delete('/patient/:id', organizationController.deleteOrganization)
+router.delete('/organization/:id', organizationController.deleteOrganization)
 
 module.exports = router
