@@ -4,6 +4,7 @@ const {
   registerAndEnrollUser,
   enrollAdmin,
   getMSPName,
+  decrypt,
 } = require("./CAUtil.js");
 const FabricCAServices = require("fabric-ca-client");
 const path = require("path");
@@ -71,9 +72,13 @@ class FabricNetwork {
 
   async loadIdentity(walletPath, MSPName) {
     const certPath = path.join(walletPath, "certificate.pem");
-    const keyPath = path.join(walletPath, "privateKey");
+    const keyPath = path.join(walletPath, "privateKey.enc");
     const certificate = fs.readFileSync(certPath, "utf8");
-    const privateKey = fs.readFileSync(keyPath, "utf8");
+
+    const encryptedPrivateKeyData = fs.readFileSync(keyPath, "utf8");
+    const encryptedPrivateKey = JSON.parse(encryptedPrivateKeyData);
+    const privateKey = decrypt(encryptedPrivateKey);
+
     return {
       credentials: { certificate, privateKey },
       mspId: MSPName,

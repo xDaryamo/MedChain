@@ -1,6 +1,14 @@
 const { FabricCAServices } = require("fabric-network");
 const path = require("path");
 const fs = require("fs");
+const crypto = require("crypto");
+require("dotenv").config();
+
+// Assumi che ENCRYPTION_KEY sia già definita nel tuo .env
+const encryptionKey = process.env.ENCRYPTION_KEY;
+if (!encryptionKey) {
+  throw new Error("Encryption key is not defined in the .env file.");
+}
 
 function buildCAClient(FabricCAServices, ccp, caHostName) {
   const caInfo = ccp.certificateAuthorities[caHostName];
@@ -28,7 +36,7 @@ async function enrollAdmin(caClient, walletPath, orgMspId, organization) {
     }
 
     if (
-      fs.existsSync(path.join(walletPath, "privateKey")) &&
+      fs.existsSync(path.join(walletPath, "privateKey.enc")) &&
       fs.existsSync(path.join(walletPath, "certificate.pem"))
     ) {
       console.log(
@@ -42,9 +50,11 @@ async function enrollAdmin(caClient, walletPath, orgMspId, organization) {
       enrollmentSecret: adminSecret,
     });
 
+    const encryptedPrivateKey = encrypt(enrollment.key.toBytes());
+
     fs.writeFileSync(
-      path.join(walletPath, "privateKey"),
-      enrollment.key.toBytes()
+      path.join(walletPath, "privateKey.enc"),
+      JSON.stringify(encryptedPrivateKey)
     );
     fs.writeFileSync(
       path.join(walletPath, "certificate.pem"),
@@ -74,8 +84,8 @@ async function registerAndEnrollUser(
     }
 
     if (
-      !fs.existsSync(path.join(walletPath, "privateKey")) &&
-      !fs.existsSync(path.join(walletPath, "certificate.pem"))
+      !fs.existsSync(path.join(walletPath, userId + "_privateKey.enc")) &&
+      !fs.existsSync(path.join(walletPath, userId + "_certificate.pem"))
     ) {
       const adminId = `Admin@${organization.replace(".medchain.com", "")}`;
 
@@ -85,14 +95,20 @@ async function registerAndEnrollUser(
         );
       }
 
+      const encryptedAdminPrivateKeyData = fs.readFileSync(
+        path.join(walletPath, "..", adminId, "privateKey.enc"),
+        "utf8"
+      );
+
+      const encryptedAdminPrivateKey = JSON.parse(encryptedAdminPrivateKeyData);
+      const decryptedAdminPrivateKey = decrypt(encryptedAdminPrivateKey);
+
       const adminIdentity = {
         credentials: {
           certificate: fs.readFileSync(
             path.join(walletPath, "..", adminId, "certificate.pem")
           ),
-          privateKey: fs.readFileSync(
-            path.join(walletPath, "..", adminId, "privateKey")
-          ),
+          privateKey: decryptedAdminPrivateKey,
         },
         mspId: orgMspId,
         type: "X.509",
@@ -117,9 +133,11 @@ async function registerAndEnrollUser(
         enrollmentSecret: secret,
       });
 
+      const encryptedPrivateKey = encrypt(enrollment.key.toBytes());
+
       fs.writeFileSync(
-        path.join(walletPath, "privateKey"),
-        enrollment.key.toBytes()
+        path.join(walletPath, "privateKey.enc"),
+        JSON.stringify(encryptedPrivateKey)
       );
       fs.writeFileSync(
         path.join(walletPath, "certificate.pem"),
@@ -149,9 +167,35 @@ function getMSPName(organization) {
   );
 }
 
+function encrypt(data) {
+  const iv = crypto.randomBytes(16);
+  const cipher = crypto.createCipheriv(
+    "aes-256-cbc",
+    Buffer.from(encryptionKey, "hex"),
+    iv
+  );
+  let encrypted = cipher.update(data, "utf8", "hex");
+  encrypted += cipher.final("hex");
+  return { iv: iv.toString("hex"), encryptedData: encrypted };
+}
+
+function decrypt(encryptedData) {
+  const iv = Buffer.from(encryptedData.iv, "hex");
+  const decipher = crypto.createDecipheriv(
+    "aes-256-cbc",
+    Buffer.from(encryptionKey, "hex"),
+    iv
+  );
+  let decrypted = decipher.update(encryptedData.encryptedData, "hex", "utf8");
+  decrypted += decipher.final("utf8");
+  return decrypted;
+}
+
 module.exports = {
   buildCAClient,
   enrollAdmin,
   registerAndEnrollUser,
   getMSPName,
+  encrypt,
+  decrypt,
 };
