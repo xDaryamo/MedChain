@@ -292,9 +292,6 @@ func TestCreateEncounter(t *testing.T) {
 	// Ensure GetStub returns the same instance of mockStub
 	mockCtx.On("GetStub").Return(mockStub)
 
-	// Mocking the input parameters
-	encounterID := "enc1"
-
 	encounterJSON := `{"ID":{"system":"http://example.com/enc1","value":"123456"},
 	"status":{"coding":[{"system":"http://example.com/encounter/status","code":"in-progress","display":"In Progress"}]},
 	"class":{"system":"http://example.com/encounter/class","code":"outpatient","display":"Outpatient"},
@@ -311,7 +308,7 @@ func TestCreateEncounter(t *testing.T) {
 	mockStub.On("PutState", mock.Anything, mock.Anything).Return(nil)
 
 	// Call the function under test
-	err := ec.CreateEncounter(mockCtx, encounterID, encounterJSON)
+	err := ec.CreateEncounter(mockCtx, encounterJSON)
 
 	assert.NoError(t, err)
 

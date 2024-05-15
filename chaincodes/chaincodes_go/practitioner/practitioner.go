@@ -13,35 +13,35 @@ type PractitionerContract struct {
 	contractapi.Contract
 }
 
-/*
-================================
-		CRUD OPERATIONS
-================================
-*/
-
 // CreatePractitioner adds a new practitioner record to the ledger
-func (c *PractitionerContract) CreatePractitioner(ctx contractapi.TransactionContextInterface, practitionerID string, practitionerJSON string) error {
-	exists, err := ctx.GetStub().GetState(practitionerID)
-	if err != nil {
-		return errors.New("failed to get practitioner: " + err.Error())
-	}
-	if exists != nil {
-		return errors.New("practitioner already exists: " + practitionerID)
-	}
-
+func (c *PractitionerContract) CreatePractitioner(ctx contractapi.TransactionContextInterface, practitionerJSON string) error {
+	// Deserialize JSON data into a Go data structure
 	var practitioner Practitioner
-	err = json.Unmarshal([]byte(practitionerJSON), &practitioner)
+	err := json.Unmarshal([]byte(practitionerJSON), &practitioner)
 	if err != nil {
 		return errors.New("failed to unmarshal practitioner: " + err.Error())
 	}
 
+	// Check if the practitioner request ID is provided and if it already exists
+	if practitioner.ID.Value == "" {
+		return errors.New("practitioner request ID is required")
+	}
+
+	existingPractitioner, err := ctx.GetStub().GetState(practitioner.ID.Value)
+	if err != nil {
+		return errors.New("failed to get practitioner: " + practitioner.ID.Value + " from world state")
+	}
+	if existingPractitioner != nil {
+		return errors.New("practitioner already exists: " + practitioner.ID.Value)
+	}
+
+	// Serialize the practitioner and save it on the blockchain
 	practitionerJSONBytes, err := json.Marshal(practitioner)
 	if err != nil {
 		return errors.New("failed to marshal practitioner: " + err.Error())
 	}
 
-	// Save the new practitioner to the ledger
-	return ctx.GetStub().PutState(practitionerID, practitionerJSONBytes)
+	return ctx.GetStub().PutState(practitioner.ID.Value, practitionerJSONBytes)
 }
 
 // ReadPractitioner retrieves a practitioner record from the ledger

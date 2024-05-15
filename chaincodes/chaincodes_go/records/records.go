@@ -29,22 +29,22 @@ func (mc *MedicalRecordsChaincode) CreateMedicalRecords(ctx contractapi.Transact
 	// Deserialize JSON data into a Go data structure
 	var medicalRecord MedicalRecords
 	if err := json.Unmarshal([]byte(medicalRecordJSON), &medicalRecord); err != nil {
-		return err
+		return errors.New("failed to unmarshal medical record: " + err.Error())
 	}
 
 	// Check if the medical record folder already exists
 	existingRecord, err := mc.GetMedicalRecords(ctx, patientID)
 	if err != nil {
-		return err
+		return errors.New("failed to get medical record for patient " + patientID + " from wolrd state")
 	}
 	if existingRecord != nil {
-		return errors.New("medical records already exist for patient")
+		return errors.New("medical records already exist for patient " + patientID)
 	}
 
 	// Serialize the medical record folder and save it on the blockchain
 	medicalRecordJSONBytes, err := json.Marshal(medicalRecord)
 	if err != nil {
-		return err
+		return errors.New("failed to marshal practitioner: " + err.Error())
 	}
 	return ctx.GetStub().PutState(patientID, medicalRecordJSONBytes)
 }

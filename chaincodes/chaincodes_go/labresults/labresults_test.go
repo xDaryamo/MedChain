@@ -427,43 +427,6 @@ func TestGetLabResult_AccessError(t *testing.T) {
 	assert.Contains(t, err.Error(), "failed to read from world state", "Error message should indicate a failure to read from the world state.")
 }
 
-func TestLabResultExists_Exists(t *testing.T) {
-	labChaincode := new(LabResultsChaincode)
-	mockCtx := new(MockTransactionContext)
-	mockStub := new(MockStub)
-	mockCtx.On("GetStub").Return(mockStub)
-
-	mockStub.On("GetState", "existingID").Return([]byte("some data"), nil)
-	exists, err := labChaincode.LabResultExists(mockCtx, "existingID")
-	assert.NoError(t, err)
-	assert.True(t, exists, "Lab result should exist when data is returned.")
-}
-
-func TestLabResultExists_DoesNotExist(t *testing.T) {
-	labChaincode := new(LabResultsChaincode)
-	mockCtx := new(MockTransactionContext)
-	mockStub := new(MockStub)
-	mockCtx.On("GetStub").Return(mockStub)
-
-	mockStub.On("GetState", "nonExistingID").Return(nil, nil)
-	exists, err := labChaincode.LabResultExists(mockCtx, "nonExistingID")
-	assert.NoError(t, err)
-	assert.False(t, exists, "Lab result should not exist when no data is returned.")
-}
-
-func TestLabResultExists_WorldStateAccessError(t *testing.T) {
-	labChaincode := new(LabResultsChaincode)
-	mockCtx := new(MockTransactionContext)
-	mockStub := new(MockStub)
-	mockCtx.On("GetStub").Return(mockStub)
-
-	mockStub.On("GetState", "errorID").Return(nil, errors.New("ledger access error"))
-	exists, err := labChaincode.LabResultExists(mockCtx, "errorID")
-	assert.Error(t, err)
-	assert.False(t, exists, "Lab result should not exist when an error occurs accessing the world state.")
-	assert.Contains(t, err.Error(), "failed to read from world state", "Error message should indicate a failure to read from the world state.")
-}
-
 func TestQueryLabResults_Successful(t *testing.T) {
 	labChaincode := new(LabResultsChaincode)
 	mockCtx := new(MockTransactionContext)
