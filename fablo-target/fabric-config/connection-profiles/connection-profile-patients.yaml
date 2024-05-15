@@ -1,11 +1,11 @@
-name: fablo-test-network-patient
-description: Connection profile for Patient in Fablo network
+name: fablo-test-network-patients
+description: Connection profile for Patients in Fablo network
 version: 1.0.0
 client:
-  organization: Patient
+  organization: Patients
 organizations:
-  Patient:
-    mspid: PatientMSP
+  Patients:
+    mspid: PatientsMSP
     peers:
       - peer0.ospedale-maresca.aslnapoli3.medchain.com
       - peer0.ospedale-del-mare.aslnapoli1.medchain.com

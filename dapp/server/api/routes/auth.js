@@ -1,12 +1,10 @@
 const express = require("express");
-const { body } = require("express-validator/check");
+const { body } = require("express-validator");
 
 const User = require("../models/user");
 const authController = require("../controllers/auth");
 
 const router = express.Router();
-
-const { body } = require("express-validator");
 
 router.put(
   "/signup",
@@ -14,7 +12,7 @@ router.put(
     body("email")
       .isEmail()
       .withMessage("Please enter a valid email.")
-      .custom(async (value, { req }) => {
+      .custom(async (value) => {
         const userDoc = await User.findOne({ email: value });
         if (userDoc) {
           throw new Error("Email address already exists!");

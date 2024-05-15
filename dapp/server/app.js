@@ -3,7 +3,12 @@ const bodyParser = require("body-parser");
 
 const app = express();
 const mongoose = require("mongoose");
+
 const authRoutes = require("./api/routes/auth");
+const patientRoutes = require("./api/routes/patient");
+
+const FabricNetwork = require("./blockchain/fabric");
+const fabric = new FabricNetwork();
 
 const mongoUri =
   "mongodb+srv://dazza:6ncrjZ6HTleG6sCj@cluster0.06w67sk.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
@@ -24,7 +29,9 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use("/auth", authRoutes);
+//app.use("/auth", authRoutes);
+
+app.use(patientRoutes);
 
 app.use((err, req, res, next) => {
   console.error(err);
@@ -38,10 +45,12 @@ const PORT = process.env.PORT || 3000;
 
 const startServer = async () => {
   try {
-    await mongoose.connect(mongoUri, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-    });
+    // Enroll admin
+    console.log("Enrolling admin...");
+    await fabric.enrollAdmin("patients.medchain.com");
+    console.log("Admin enrolled successfully.");
+
+    await mongoose.connect(mongoUri);
     app.listen(PORT, () => {
       console.log(`Server is running on port ${PORT}`);
     });

@@ -63,7 +63,7 @@ channelQuery() {
     peerChannelList "cli.laboratorio-analisi-sdn.medchain.com" "peer0.laboratorio-analisi-sdn.medchain.com:7201"
 
   elif
-    [ "$1" = "list" ] && [ "$2" = "patient" ] && [ "$3" = "peer0" ]
+    [ "$1" = "list" ] && [ "$2" = "patients" ] && [ "$3" = "peer0" ]
   then
 
     peerChannelList "cli.patients.medchain.com" "peer0.patients.medchain.com:7221"
@@ -153,6 +153,23 @@ channelQuery() {
     TARGET_FILE=${6:-"$BLOCK_NAME.block"}
 
     peerChannelFetchBlock "patient-records-channel" "cli.neurologia.napoli.medchain.com" "${BLOCK_NAME}" "peer0.neurologia.napoli.medchain.com:7121" "$TARGET_FILE"
+
+  elif
+    [ "$1" = "getinfo" ] && [ "$2" = "patient-records-channel" ] && [ "$3" = "patients" ] && [ "$4" = "peer0" ]
+  then
+
+    peerChannelGetInfo "patient-records-channel" "cli.patients.medchain.com" "peer0.patients.medchain.com:7221"
+
+  elif [ "$1" = "fetch" ] && [ "$2" = "config" ] && [ "$3" = "patient-records-channel" ] && [ "$4" = "patients" ] && [ "$5" = "peer0" ]; then
+    TARGET_FILE=${6:-"$channel-config.json"}
+
+    peerChannelFetchConfig "patient-records-channel" "cli.patients.medchain.com" "$TARGET_FILE" "peer0.patients.medchain.com:7221"
+
+  elif [ "$1" = "fetch" ] && [ "$3" = "patient-records-channel" ] && [ "$4" = "patients" ] && [ "$5" = "peer0" ]; then
+    BLOCK_NAME=$2
+    TARGET_FILE=${6:-"$BLOCK_NAME.block"}
+
+    peerChannelFetchBlock "patient-records-channel" "cli.patients.medchain.com" "${BLOCK_NAME}" "peer0.patients.medchain.com:7221" "$TARGET_FILE"
 
   elif
     [ "$1" = "getinfo" ] && [ "$2" = "prescriptions-channel" ] && [ "$3" = "medicinageneralenapoli" ] && [ "$4" = "peer0" ]
@@ -560,8 +577,8 @@ printChannelsHelp() {
   echo -e "\t List channels on 'peer0' of 'LaboratorioAnalisiSDN'".
   echo ""
 
-  echo "fablo channel list patient peer0"
-  echo -e "\t List channels on 'peer0' of 'Patient'".
+  echo "fablo channel list patients peer0"
+  echo -e "\t List channels on 'peer0' of 'Patients'".
   echo ""
 
   echo "fablo channel getinfo patient-records-channel ospedalemaresca peer0"
@@ -612,6 +629,16 @@ printChannelsHelp() {
   echo ""
   echo "fablo channel fetch <newest|oldest|block-number> patient-records-channel neurologianapoli peer0 [file name]"
   echo -e "\t Fetch a block with given number and save it. Uses first peer 'peer0' of 'NeurologiaNapoli'".
+  echo ""
+
+  echo "fablo channel getinfo patient-records-channel patients peer0"
+  echo -e "\t Get channel info on 'peer0' of 'Patients'".
+  echo ""
+  echo "fablo channel fetch config patient-records-channel patients peer0 [file-name.json]"
+  echo -e "\t Download latest config block and save it. Uses first peer 'peer0' of 'Patients'".
+  echo ""
+  echo "fablo channel fetch <newest|oldest|block-number> patient-records-channel patients peer0 [file name]"
+  echo -e "\t Fetch a block with given number and save it. Uses first peer 'peer0' of 'Patients'".
   echo ""
 
   echo "fablo channel getinfo prescriptions-channel medicinageneralenapoli peer0"

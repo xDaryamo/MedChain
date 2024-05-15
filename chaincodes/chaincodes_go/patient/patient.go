@@ -33,6 +33,11 @@ func (c *PatientContract) CreatePatient(ctx contractapi.TransactionContextInterf
 		return errors.New("patient already exists: " + patientID)
 	}
 
+	log.Printf("Creating new patient with ID: %s", patientID)
+
+
+	log.Printf("Patient JSON: %s", string(patientJSON))
+
 	var patient Patient
 	err = json.Unmarshal([]byte(patientJSON), &patient)
 	if err != nil {
@@ -43,6 +48,8 @@ func (c *PatientContract) CreatePatient(ctx contractapi.TransactionContextInterf
 	if err != nil {
 		return errors.New("failed to marshal patient: " + err.Error())
 	}
+
+	log.Printf("Patient with ID: %s created successfully", patientID)
 
 	// Save the new patient to the ledger
 	return ctx.GetStub().PutState(patientID, patientJSONBytes)
@@ -57,21 +64,31 @@ func (c *PatientContract) ReadPatient(ctx contractapi.TransactionContextInterfac
 		return nil, errors.New("patient does not exist: " + patientID)
 	}
 
+	log.Printf("Patient JSON: %s", string(patientJSON))
+
 	var patient Patient
 	err = json.Unmarshal(patientJSON, &patient)
 	if err != nil {
 		return nil, errors.New("failed to unmarshal patient: " + err.Error())
 	}
 
-	clientID, err := ctx.GetClientIdentity().GetID()
+	clientID, exists, err := ctx.GetClientIdentity().GetAttributeValue("userId")
 	if err != nil {
-		return nil, errors.New("failed to get client ID")
+		return nil, errors.New("failed to get client ID attribute: " + err.Error())
 	}
+	if !exists {
+		return nil, errors.New("client ID attribute does not exist")
+	}
+	
+	log.Printf("Client ID (patientID attribute): %s", clientID)
+	log.Printf("Patient ID: %s", patientID)
 
 	// Verifica se il richiedente è il paziente stesso
 	if clientID == patientID {
+		log.Printf("Uguale")	
 		return &patient, nil // Paziente accede ai propri dati
 	} else {
+		log.Printf("Non Uguale")	
 		// Altrimenti, verifica se il richiedente è autorizzato
 		authorized, err := c.isAuthorized(ctx, patientID, clientID)
 		if err != nil {

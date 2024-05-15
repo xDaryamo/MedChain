@@ -258,24 +258,24 @@ Organizations:
           - Host: peer0.laboratorio-analisi-sdn.medchain.com
             Port: 7201
 
-    - &Patient
-      Name: PatientMSP
-      ID: PatientMSP
+    - &Patients
+      Name: PatientsMSP
+      ID: PatientsMSP
       MSPDir: crypto-config/peerOrganizations/patients.medchain.com/msp
 
       Policies:
           Readers:
               Type: Signature
-              Rule: "OR('PatientMSP.member')"
+              Rule: "OR('PatientsMSP.member')"
           Writers:
               Type: Signature
-              Rule: "OR('PatientMSP.member')"
+              Rule: "OR('PatientsMSP.member')"
           Admins:
               Type: Signature
-              Rule: "OR('PatientMSP.admin')"
+              Rule: "OR('PatientsMSP.admin')"
           Endorsement:
               Type: Signature
-              Rule: "OR('PatientMSP.member')"
+              Rule: "OR('PatientsMSP.member')"
 
       AnchorPeers:
           - Host: peer0.patients.medchain.com
@@ -367,7 +367,7 @@ Profiles:
                     - *FarmaciaCarbone
                     - *LaboratorioAnalisiCMO
                     - *LaboratorioAnalisiSDN
-                    - *Patient
+                    - *Patients
 
     # Profile used to create channeltx for patient-records-channel #
     PatientRecordsChannel:
@@ -387,6 +387,7 @@ Profiles:
                     - *OspedaleSGiuliano
                     - *MedicinaGeneraleNapoli
                     - *NeurologiaNapoli
+                    - *Patients
         Application:
             <<: *ApplicationDefaults
             Organizations:
@@ -395,6 +396,7 @@ Profiles:
                 - *OspedaleSGiuliano
                 - *MedicinaGeneraleNapoli
                 - *NeurologiaNapoli
+                - *Patients
 
     # Profile used to create channeltx for prescriptions-channel #
     PrescriptionsChannel:

@@ -4,8 +4,8 @@ const fs = require("fs");
 const crypto = require("crypto");
 require("dotenv").config();
 
-// Assumi che ENCRYPTION_KEY sia già definita nel tuo .env
 const encryptionKey = process.env.ENCRYPTION_KEY;
+
 if (!encryptionKey) {
   throw new Error("Encryption key is not defined in the .env file.");
 }
@@ -124,6 +124,7 @@ async function registerAndEnrollUser(
           affiliation: userAffiliation,
           enrollmentID: userId,
           role: "client",
+          attrs: [{ name: "userId", value: userId, ecert: true }],
         },
         registrar
       );

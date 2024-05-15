@@ -1,5 +1,5 @@
 PeerOrgs:
-  - Name: Patient
+  - Name: Patients
     Domain: patients.medchain.com
     Specs:
     Template:

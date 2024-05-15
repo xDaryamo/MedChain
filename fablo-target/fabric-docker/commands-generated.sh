@@ -33,8 +33,8 @@ generateArtifacts() {
   printItalics "Generating crypto material for LaboratorioAnalisiSDN" "U1F512"
   certsGenerate "$FABLO_NETWORK_ROOT/fabric-config" "crypto-config-laboratorioanalisisdn.yaml" "peerOrganizations/laboratorio-analisi-sdn.medchain.com" "$FABLO_NETWORK_ROOT/fabric-config/crypto-config/"
 
-  printItalics "Generating crypto material for Patient" "U1F512"
-  certsGenerate "$FABLO_NETWORK_ROOT/fabric-config" "crypto-config-patient.yaml" "peerOrganizations/patients.medchain.com" "$FABLO_NETWORK_ROOT/fabric-config/crypto-config/"
+  printItalics "Generating crypto material for Patients" "U1F512"
+  certsGenerate "$FABLO_NETWORK_ROOT/fabric-config" "crypto-config-patients.yaml" "peerOrganizations/patients.medchain.com" "$FABLO_NETWORK_ROOT/fabric-config/crypto-config/"
 
   printItalics "Generating genesis block for group medchain-orderergroup" "U1F3E0"
   genesisBlockCreate "$FABLO_NETWORK_ROOT/fabric-config" "$FABLO_NETWORK_ROOT/fabric-config/config" "Medchain-orderergroupGenesis"
@@ -74,6 +74,8 @@ installChannels() {
   docker exec -i cli.medicina-generale.napoli.medchain.com bash -c "source scripts/channel_fns.sh; fetchChannelAndJoin 'patient-records-channel' 'MedicinaGeneraleNapoliMSP' 'peer0.medicina-generale.napoli.medchain.com:7101' 'crypto/users/Admin@medicina-generale.napoli.medchain.com/msp' 'orderer0.medchain-orderergroup.orderer.medchain.com:7030';"
   printItalics "Joining 'patient-records-channel' on  NeurologiaNapoli/peer0" "U1F638"
   docker exec -i cli.neurologia.napoli.medchain.com bash -c "source scripts/channel_fns.sh; fetchChannelAndJoin 'patient-records-channel' 'NeurologiaNapoliMSP' 'peer0.neurologia.napoli.medchain.com:7121' 'crypto/users/Admin@neurologia.napoli.medchain.com/msp' 'orderer0.medchain-orderergroup.orderer.medchain.com:7030';"
+  printItalics "Joining 'patient-records-channel' on  Patients/peer0" "U1F638"
+  docker exec -i cli.patients.medchain.com bash -c "source scripts/channel_fns.sh; fetchChannelAndJoin 'patient-records-channel' 'PatientsMSP' 'peer0.patients.medchain.com:7221' 'crypto/users/Admin@patients.medchain.com/msp' 'orderer0.medchain-orderergroup.orderer.medchain.com:7030';"
   printHeadline "Creating 'prescriptions-channel' on MedicinaGeneraleNapoli/peer0" "U1F63B"
   docker exec -i cli.medicina-generale.napoli.medchain.com bash -c "source scripts/channel_fns.sh; createChannelAndJoin 'prescriptions-channel' 'MedicinaGeneraleNapoliMSP' 'peer0.medicina-generale.napoli.medchain.com:7101' 'crypto/users/Admin@medicina-generale.napoli.medchain.com/msp' 'orderer0.medchain-orderergroup.orderer.medchain.com:7030';"
 
@@ -142,8 +144,11 @@ installChaincodes() {
     printHeadline "Installing 'patient' for NeurologiaNapoli" "U1F60E"
     chaincodeInstall "cli.neurologia.napoli.medchain.com" "peer0.neurologia.napoli.medchain.com:7121" "patient" "$version" ""
     chaincodeApprove "cli.neurologia.napoli.medchain.com" "peer0.neurologia.napoli.medchain.com:7121" "patient-records-channel" "patient" "$version" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "" ""
+    printHeadline "Installing 'patient' for Patients" "U1F60E"
+    chaincodeInstall "cli.patients.medchain.com" "peer0.patients.medchain.com:7221" "patient" "$version" ""
+    chaincodeApprove "cli.patients.medchain.com" "peer0.patients.medchain.com:7221" "patient-records-channel" "patient" "$version" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "" ""
     printItalics "Committing chaincode 'patient' on channel 'patient-records-channel' as 'OspedaleMaresca'" "U1F618"
-    chaincodeCommit "cli.ospedale-maresca.aslnapoli3.medchain.com" "peer0.ospedale-maresca.aslnapoli3.medchain.com:7041" "patient-records-channel" "patient" "$version" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "" "peer0.ospedale-maresca.aslnapoli3.medchain.com:7041,peer0.ospedale-del-mare.aslnapoli1.medchain.com:7061,peer0.ospedale-sgiuliano.aslnapoli2.medchain.com:7081,peer0.medicina-generale.napoli.medchain.com:7101,peer0.neurologia.napoli.medchain.com:7121" "" ""
+    chaincodeCommit "cli.ospedale-maresca.aslnapoli3.medchain.com" "peer0.ospedale-maresca.aslnapoli3.medchain.com:7041" "patient-records-channel" "patient" "$version" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "" "peer0.ospedale-maresca.aslnapoli3.medchain.com:7041,peer0.ospedale-del-mare.aslnapoli1.medchain.com:7061,peer0.ospedale-sgiuliano.aslnapoli2.medchain.com:7081,peer0.medicina-generale.napoli.medchain.com:7101,peer0.neurologia.napoli.medchain.com:7121,peer0.patients.medchain.com:7221" "" ""
   else
     echo "Warning! Skipping chaincode 'patient' installation. Chaincode directory is empty."
     echo "Looked in dir: '$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/patient'"
@@ -167,8 +172,11 @@ installChaincodes() {
     printHeadline "Installing 'organization' for NeurologiaNapoli" "U1F60E"
     chaincodeInstall "cli.neurologia.napoli.medchain.com" "peer0.neurologia.napoli.medchain.com:7121" "organization" "$version" ""
     chaincodeApprove "cli.neurologia.napoli.medchain.com" "peer0.neurologia.napoli.medchain.com:7121" "patient-records-channel" "organization" "$version" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "" ""
+    printHeadline "Installing 'organization' for Patients" "U1F60E"
+    chaincodeInstall "cli.patients.medchain.com" "peer0.patients.medchain.com:7221" "organization" "$version" ""
+    chaincodeApprove "cli.patients.medchain.com" "peer0.patients.medchain.com:7221" "patient-records-channel" "organization" "$version" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "" ""
     printItalics "Committing chaincode 'organization' on channel 'patient-records-channel' as 'OspedaleMaresca'" "U1F618"
-    chaincodeCommit "cli.ospedale-maresca.aslnapoli3.medchain.com" "peer0.ospedale-maresca.aslnapoli3.medchain.com:7041" "patient-records-channel" "organization" "$version" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "" "peer0.ospedale-maresca.aslnapoli3.medchain.com:7041,peer0.ospedale-del-mare.aslnapoli1.medchain.com:7061,peer0.ospedale-sgiuliano.aslnapoli2.medchain.com:7081,peer0.medicina-generale.napoli.medchain.com:7101,peer0.neurologia.napoli.medchain.com:7121" "" ""
+    chaincodeCommit "cli.ospedale-maresca.aslnapoli3.medchain.com" "peer0.ospedale-maresca.aslnapoli3.medchain.com:7041" "patient-records-channel" "organization" "$version" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "" "peer0.ospedale-maresca.aslnapoli3.medchain.com:7041,peer0.ospedale-del-mare.aslnapoli1.medchain.com:7061,peer0.ospedale-sgiuliano.aslnapoli2.medchain.com:7081,peer0.medicina-generale.napoli.medchain.com:7101,peer0.neurologia.napoli.medchain.com:7121,peer0.patients.medchain.com:7221" "" ""
   else
     echo "Warning! Skipping chaincode 'organization' installation. Chaincode directory is empty."
     echo "Looked in dir: '$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/organization'"
@@ -208,8 +216,11 @@ installChaincode() {
       printHeadline "Installing 'patient' for NeurologiaNapoli" "U1F60E"
       chaincodeInstall "cli.neurologia.napoli.medchain.com" "peer0.neurologia.napoli.medchain.com:7121" "patient" "$version" ""
       chaincodeApprove "cli.neurologia.napoli.medchain.com" "peer0.neurologia.napoli.medchain.com:7121" "patient-records-channel" "patient" "$version" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "" ""
+      printHeadline "Installing 'patient' for Patients" "U1F60E"
+      chaincodeInstall "cli.patients.medchain.com" "peer0.patients.medchain.com:7221" "patient" "$version" ""
+      chaincodeApprove "cli.patients.medchain.com" "peer0.patients.medchain.com:7221" "patient-records-channel" "patient" "$version" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "" ""
       printItalics "Committing chaincode 'patient' on channel 'patient-records-channel' as 'OspedaleMaresca'" "U1F618"
-      chaincodeCommit "cli.ospedale-maresca.aslnapoli3.medchain.com" "peer0.ospedale-maresca.aslnapoli3.medchain.com:7041" "patient-records-channel" "patient" "$version" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "" "peer0.ospedale-maresca.aslnapoli3.medchain.com:7041,peer0.ospedale-del-mare.aslnapoli1.medchain.com:7061,peer0.ospedale-sgiuliano.aslnapoli2.medchain.com:7081,peer0.medicina-generale.napoli.medchain.com:7101,peer0.neurologia.napoli.medchain.com:7121" "" ""
+      chaincodeCommit "cli.ospedale-maresca.aslnapoli3.medchain.com" "peer0.ospedale-maresca.aslnapoli3.medchain.com:7041" "patient-records-channel" "patient" "$version" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "" "peer0.ospedale-maresca.aslnapoli3.medchain.com:7041,peer0.ospedale-del-mare.aslnapoli1.medchain.com:7061,peer0.ospedale-sgiuliano.aslnapoli2.medchain.com:7081,peer0.medicina-generale.napoli.medchain.com:7101,peer0.neurologia.napoli.medchain.com:7121,peer0.patients.medchain.com:7221" "" ""
 
     else
       echo "Warning! Skipping chaincode 'patient' install. Chaincode directory is empty."
@@ -235,8 +246,11 @@ installChaincode() {
       printHeadline "Installing 'organization' for NeurologiaNapoli" "U1F60E"
       chaincodeInstall "cli.neurologia.napoli.medchain.com" "peer0.neurologia.napoli.medchain.com:7121" "organization" "$version" ""
       chaincodeApprove "cli.neurologia.napoli.medchain.com" "peer0.neurologia.napoli.medchain.com:7121" "patient-records-channel" "organization" "$version" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "" ""
+      printHeadline "Installing 'organization' for Patients" "U1F60E"
+      chaincodeInstall "cli.patients.medchain.com" "peer0.patients.medchain.com:7221" "organization" "$version" ""
+      chaincodeApprove "cli.patients.medchain.com" "peer0.patients.medchain.com:7221" "patient-records-channel" "organization" "$version" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "" ""
       printItalics "Committing chaincode 'organization' on channel 'patient-records-channel' as 'OspedaleMaresca'" "U1F618"
-      chaincodeCommit "cli.ospedale-maresca.aslnapoli3.medchain.com" "peer0.ospedale-maresca.aslnapoli3.medchain.com:7041" "patient-records-channel" "organization" "$version" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "" "peer0.ospedale-maresca.aslnapoli3.medchain.com:7041,peer0.ospedale-del-mare.aslnapoli1.medchain.com:7061,peer0.ospedale-sgiuliano.aslnapoli2.medchain.com:7081,peer0.medicina-generale.napoli.medchain.com:7101,peer0.neurologia.napoli.medchain.com:7121" "" ""
+      chaincodeCommit "cli.ospedale-maresca.aslnapoli3.medchain.com" "peer0.ospedale-maresca.aslnapoli3.medchain.com:7041" "patient-records-channel" "organization" "$version" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "" "peer0.ospedale-maresca.aslnapoli3.medchain.com:7041,peer0.ospedale-del-mare.aslnapoli1.medchain.com:7061,peer0.ospedale-sgiuliano.aslnapoli2.medchain.com:7081,peer0.medicina-generale.napoli.medchain.com:7101,peer0.neurologia.napoli.medchain.com:7121,peer0.patients.medchain.com:7221" "" ""
 
     else
       echo "Warning! Skipping chaincode 'organization' install. Chaincode directory is empty."
@@ -264,8 +278,10 @@ runDevModeChaincode() {
     chaincodeApprove "cli.medicina-generale.napoli.medchain.com" "peer0.medicina-generale.napoli.medchain.com:7101" "patient-records-channel" "patient" "0.1" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "" ""
     printHeadline "Approving 'patient' for NeurologiaNapoli (dev mode)" "U1F60E"
     chaincodeApprove "cli.neurologia.napoli.medchain.com" "peer0.neurologia.napoli.medchain.com:7121" "patient-records-channel" "patient" "0.1" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "" ""
+    printHeadline "Approving 'patient' for Patients (dev mode)" "U1F60E"
+    chaincodeApprove "cli.patients.medchain.com" "peer0.patients.medchain.com:7221" "patient-records-channel" "patient" "0.1" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "" ""
     printItalics "Committing chaincode 'patient' on channel 'patient-records-channel' as 'OspedaleMaresca' (dev mode)" "U1F618"
-    chaincodeCommit "cli.ospedale-maresca.aslnapoli3.medchain.com" "peer0.ospedale-maresca.aslnapoli3.medchain.com:7041" "patient-records-channel" "patient" "0.1" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "" "peer0.ospedale-maresca.aslnapoli3.medchain.com:7041,peer0.ospedale-del-mare.aslnapoli1.medchain.com:7061,peer0.ospedale-sgiuliano.aslnapoli2.medchain.com:7081,peer0.medicina-generale.napoli.medchain.com:7101,peer0.neurologia.napoli.medchain.com:7121" "" ""
+    chaincodeCommit "cli.ospedale-maresca.aslnapoli3.medchain.com" "peer0.ospedale-maresca.aslnapoli3.medchain.com:7041" "patient-records-channel" "patient" "0.1" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "" "peer0.ospedale-maresca.aslnapoli3.medchain.com:7041,peer0.ospedale-del-mare.aslnapoli1.medchain.com:7061,peer0.ospedale-sgiuliano.aslnapoli2.medchain.com:7081,peer0.medicina-generale.napoli.medchain.com:7101,peer0.neurologia.napoli.medchain.com:7121,peer0.patients.medchain.com:7221" "" ""
 
   fi
   if [ "$chaincodeName" = "organization" ]; then
@@ -280,8 +296,10 @@ runDevModeChaincode() {
     chaincodeApprove "cli.medicina-generale.napoli.medchain.com" "peer0.medicina-generale.napoli.medchain.com:7101" "patient-records-channel" "organization" "0.1" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "" ""
     printHeadline "Approving 'organization' for NeurologiaNapoli (dev mode)" "U1F60E"
     chaincodeApprove "cli.neurologia.napoli.medchain.com" "peer0.neurologia.napoli.medchain.com:7121" "patient-records-channel" "organization" "0.1" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "" ""
+    printHeadline "Approving 'organization' for Patients (dev mode)" "U1F60E"
+    chaincodeApprove "cli.patients.medchain.com" "peer0.patients.medchain.com:7221" "patient-records-channel" "organization" "0.1" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "" ""
     printItalics "Committing chaincode 'organization' on channel 'patient-records-channel' as 'OspedaleMaresca' (dev mode)" "U1F618"
-    chaincodeCommit "cli.ospedale-maresca.aslnapoli3.medchain.com" "peer0.ospedale-maresca.aslnapoli3.medchain.com:7041" "patient-records-channel" "organization" "0.1" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "" "peer0.ospedale-maresca.aslnapoli3.medchain.com:7041,peer0.ospedale-del-mare.aslnapoli1.medchain.com:7061,peer0.ospedale-sgiuliano.aslnapoli2.medchain.com:7081,peer0.medicina-generale.napoli.medchain.com:7101,peer0.neurologia.napoli.medchain.com:7121" "" ""
+    chaincodeCommit "cli.ospedale-maresca.aslnapoli3.medchain.com" "peer0.ospedale-maresca.aslnapoli3.medchain.com:7041" "patient-records-channel" "organization" "0.1" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "" "peer0.ospedale-maresca.aslnapoli3.medchain.com:7041,peer0.ospedale-del-mare.aslnapoli1.medchain.com:7061,peer0.ospedale-sgiuliano.aslnapoli2.medchain.com:7081,peer0.medicina-generale.napoli.medchain.com:7101,peer0.neurologia.napoli.medchain.com:7121,peer0.patients.medchain.com:7221" "" ""
 
   fi
 }
@@ -318,8 +336,11 @@ upgradeChaincode() {
       printHeadline "Installing 'patient' for NeurologiaNapoli" "U1F60E"
       chaincodeInstall "cli.neurologia.napoli.medchain.com" "peer0.neurologia.napoli.medchain.com:7121" "patient" "$version" ""
       chaincodeApprove "cli.neurologia.napoli.medchain.com" "peer0.neurologia.napoli.medchain.com:7121" "patient-records-channel" "patient" "$version" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "" ""
+      printHeadline "Installing 'patient' for Patients" "U1F60E"
+      chaincodeInstall "cli.patients.medchain.com" "peer0.patients.medchain.com:7221" "patient" "$version" ""
+      chaincodeApprove "cli.patients.medchain.com" "peer0.patients.medchain.com:7221" "patient-records-channel" "patient" "$version" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "" ""
       printItalics "Committing chaincode 'patient' on channel 'patient-records-channel' as 'OspedaleMaresca'" "U1F618"
-      chaincodeCommit "cli.ospedale-maresca.aslnapoli3.medchain.com" "peer0.ospedale-maresca.aslnapoli3.medchain.com:7041" "patient-records-channel" "patient" "$version" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "" "peer0.ospedale-maresca.aslnapoli3.medchain.com:7041,peer0.ospedale-del-mare.aslnapoli1.medchain.com:7061,peer0.ospedale-sgiuliano.aslnapoli2.medchain.com:7081,peer0.medicina-generale.napoli.medchain.com:7101,peer0.neurologia.napoli.medchain.com:7121" "" ""
+      chaincodeCommit "cli.ospedale-maresca.aslnapoli3.medchain.com" "peer0.ospedale-maresca.aslnapoli3.medchain.com:7041" "patient-records-channel" "patient" "$version" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "" "peer0.ospedale-maresca.aslnapoli3.medchain.com:7041,peer0.ospedale-del-mare.aslnapoli1.medchain.com:7061,peer0.ospedale-sgiuliano.aslnapoli2.medchain.com:7081,peer0.medicina-generale.napoli.medchain.com:7101,peer0.neurologia.napoli.medchain.com:7121,peer0.patients.medchain.com:7221" "" ""
 
     else
       echo "Warning! Skipping chaincode 'patient' upgrade. Chaincode directory is empty."
@@ -345,8 +366,11 @@ upgradeChaincode() {
       printHeadline "Installing 'organization' for NeurologiaNapoli" "U1F60E"
       chaincodeInstall "cli.neurologia.napoli.medchain.com" "peer0.neurologia.napoli.medchain.com:7121" "organization" "$version" ""
       chaincodeApprove "cli.neurologia.napoli.medchain.com" "peer0.neurologia.napoli.medchain.com:7121" "patient-records-channel" "organization" "$version" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "" ""
+      printHeadline "Installing 'organization' for Patients" "U1F60E"
+      chaincodeInstall "cli.patients.medchain.com" "peer0.patients.medchain.com:7221" "organization" "$version" ""
+      chaincodeApprove "cli.patients.medchain.com" "peer0.patients.medchain.com:7221" "patient-records-channel" "organization" "$version" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "" ""
       printItalics "Committing chaincode 'organization' on channel 'patient-records-channel' as 'OspedaleMaresca'" "U1F618"
-      chaincodeCommit "cli.ospedale-maresca.aslnapoli3.medchain.com" "peer0.ospedale-maresca.aslnapoli3.medchain.com:7041" "patient-records-channel" "organization" "$version" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "" "peer0.ospedale-maresca.aslnapoli3.medchain.com:7041,peer0.ospedale-del-mare.aslnapoli1.medchain.com:7061,peer0.ospedale-sgiuliano.aslnapoli2.medchain.com:7081,peer0.medicina-generale.napoli.medchain.com:7101,peer0.neurologia.napoli.medchain.com:7121" "" ""
+      chaincodeCommit "cli.ospedale-maresca.aslnapoli3.medchain.com" "peer0.ospedale-maresca.aslnapoli3.medchain.com:7041" "patient-records-channel" "organization" "$version" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "" "peer0.ospedale-maresca.aslnapoli3.medchain.com:7041,peer0.ospedale-del-mare.aslnapoli1.medchain.com:7061,peer0.ospedale-sgiuliano.aslnapoli2.medchain.com:7081,peer0.medicina-generale.napoli.medchain.com:7101,peer0.neurologia.napoli.medchain.com:7121,peer0.patients.medchain.com:7221" "" ""
 
     else
       echo "Warning! Skipping chaincode 'organization' upgrade. Chaincode directory is empty."
@@ -362,6 +386,7 @@ notifyOrgsAboutChannels() {
   createNewChannelUpdateTx "patient-records-channel" "OspedaleSGiulianoMSP" "PatientRecordsChannel" "$FABLO_NETWORK_ROOT/fabric-config" "$FABLO_NETWORK_ROOT/fabric-config/config"
   createNewChannelUpdateTx "patient-records-channel" "MedicinaGeneraleNapoliMSP" "PatientRecordsChannel" "$FABLO_NETWORK_ROOT/fabric-config" "$FABLO_NETWORK_ROOT/fabric-config/config"
   createNewChannelUpdateTx "patient-records-channel" "NeurologiaNapoliMSP" "PatientRecordsChannel" "$FABLO_NETWORK_ROOT/fabric-config" "$FABLO_NETWORK_ROOT/fabric-config/config"
+  createNewChannelUpdateTx "patient-records-channel" "PatientsMSP" "PatientRecordsChannel" "$FABLO_NETWORK_ROOT/fabric-config" "$FABLO_NETWORK_ROOT/fabric-config/config"
   createNewChannelUpdateTx "prescriptions-channel" "MedicinaGeneraleNapoliMSP" "PrescriptionsChannel" "$FABLO_NETWORK_ROOT/fabric-config" "$FABLO_NETWORK_ROOT/fabric-config/config"
   createNewChannelUpdateTx "prescriptions-channel" "NeurologiaNapoliMSP" "PrescriptionsChannel" "$FABLO_NETWORK_ROOT/fabric-config" "$FABLO_NETWORK_ROOT/fabric-config/config"
   createNewChannelUpdateTx "prescriptions-channel" "FarmaciaPetroneMSP" "PrescriptionsChannel" "$FABLO_NETWORK_ROOT/fabric-config" "$FABLO_NETWORK_ROOT/fabric-config/config"
@@ -390,6 +415,7 @@ notifyOrgsAboutChannels() {
   notifyOrgAboutNewChannel "patient-records-channel" "OspedaleSGiulianoMSP" "cli.ospedale-sgiuliano.aslnapoli2.medchain.com" "peer0.ospedale-sgiuliano.aslnapoli2.medchain.com" "orderer0.medchain-orderergroup.orderer.medchain.com:7030"
   notifyOrgAboutNewChannel "patient-records-channel" "MedicinaGeneraleNapoliMSP" "cli.medicina-generale.napoli.medchain.com" "peer0.medicina-generale.napoli.medchain.com" "orderer0.medchain-orderergroup.orderer.medchain.com:7030"
   notifyOrgAboutNewChannel "patient-records-channel" "NeurologiaNapoliMSP" "cli.neurologia.napoli.medchain.com" "peer0.neurologia.napoli.medchain.com" "orderer0.medchain-orderergroup.orderer.medchain.com:7030"
+  notifyOrgAboutNewChannel "patient-records-channel" "PatientsMSP" "cli.patients.medchain.com" "peer0.patients.medchain.com" "orderer0.medchain-orderergroup.orderer.medchain.com:7030"
   notifyOrgAboutNewChannel "prescriptions-channel" "MedicinaGeneraleNapoliMSP" "cli.medicina-generale.napoli.medchain.com" "peer0.medicina-generale.napoli.medchain.com" "orderer0.medchain-orderergroup.orderer.medchain.com:7030"
   notifyOrgAboutNewChannel "prescriptions-channel" "NeurologiaNapoliMSP" "cli.neurologia.napoli.medchain.com" "peer0.neurologia.napoli.medchain.com" "orderer0.medchain-orderergroup.orderer.medchain.com:7030"
   notifyOrgAboutNewChannel "prescriptions-channel" "FarmaciaPetroneMSP" "cli.farmacia-petrone.napoli.medchain.com" "peer0.farmacia-petrone.napoli.medchain.com" "orderer0.medchain-orderergroup.orderer.medchain.com:7030"
@@ -418,6 +444,7 @@ notifyOrgsAboutChannels() {
   deleteNewChannelUpdateTx "patient-records-channel" "OspedaleSGiulianoMSP" "cli.ospedale-sgiuliano.aslnapoli2.medchain.com"
   deleteNewChannelUpdateTx "patient-records-channel" "MedicinaGeneraleNapoliMSP" "cli.medicina-generale.napoli.medchain.com"
   deleteNewChannelUpdateTx "patient-records-channel" "NeurologiaNapoliMSP" "cli.neurologia.napoli.medchain.com"
+  deleteNewChannelUpdateTx "patient-records-channel" "PatientsMSP" "cli.patients.medchain.com"
   deleteNewChannelUpdateTx "prescriptions-channel" "MedicinaGeneraleNapoliMSP" "cli.medicina-generale.napoli.medchain.com"
   deleteNewChannelUpdateTx "prescriptions-channel" "NeurologiaNapoliMSP" "cli.neurologia.napoli.medchain.com"
   deleteNewChannelUpdateTx "prescriptions-channel" "FarmaciaPetroneMSP" "cli.farmacia-petrone.napoli.medchain.com"
@@ -496,6 +523,14 @@ networkDown() {
     echo "Removing image $image..."
     docker rmi "$image" || echo "docker rmi of $image failed. Check if all fabric dockers properly was deleted"
   done
+  for container in $(docker ps -a | grep "dev-peer0.patients.medchain.com-patient" | awk '{print $1}'); do
+    echo "Removing container $container..."
+    docker rm -f "$container" || echo "docker rm of $container failed. Check if all fabric dockers properly was deleted"
+  done
+  for image in $(docker images "dev-peer0.patients.medchain.com-patient*" -q); do
+    echo "Removing image $image..."
+    docker rmi "$image" || echo "docker rmi of $image failed. Check if all fabric dockers properly was deleted"
+  done
   for container in $(docker ps -a | grep "dev-peer0.ospedale-maresca.aslnapoli3.medchain.com-organization" | awk '{print $1}'); do
     echo "Removing container $container..."
     docker rm -f "$container" || echo "docker rm of $container failed. Check if all fabric dockers properly was deleted"
@@ -533,6 +568,14 @@ networkDown() {
     docker rm -f "$container" || echo "docker rm of $container failed. Check if all fabric dockers properly was deleted"
   done
   for image in $(docker images "dev-peer0.neurologia.napoli.medchain.com-organization*" -q); do
+    echo "Removing image $image..."
+    docker rmi "$image" || echo "docker rmi of $image failed. Check if all fabric dockers properly was deleted"
+  done
+  for container in $(docker ps -a | grep "dev-peer0.patients.medchain.com-organization" | awk '{print $1}'); do
+    echo "Removing container $container..."
+    docker rm -f "$container" || echo "docker rm of $container failed. Check if all fabric dockers properly was deleted"
+  done
+  for image in $(docker images "dev-peer0.patients.medchain.com-organization*" -q); do
     echo "Removing image $image..."
     docker rmi "$image" || echo "docker rmi of $image failed. Check if all fabric dockers properly was deleted"
   done

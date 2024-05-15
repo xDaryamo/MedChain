@@ -115,7 +115,7 @@
     },
     {
       "organization": {
-        "name": "Patient",
+        "name": "Patients",
         "domain": "patients.medchain.com"
       },
       "peer": {
@@ -146,6 +146,10 @@
         },
         {
           "name": "NeurologiaNapoli",
+          "peers": ["peer0"]
+        },
+        {
+          "name": "Patients",
           "peers": ["peer0"]
         }
       ]

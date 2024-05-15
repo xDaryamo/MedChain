@@ -1040,7 +1040,7 @@ services:
     ports:
       - 7220:7054
     working_dir: /etc/hyperledger/fabric-ca-server
-    command: sh -c 'fabric-ca-server start -b ${PATIENT_CA_ADMIN_NAME}:${PATIENT_CA_ADMIN_PASSWORD} -d'
+    command: sh -c 'fabric-ca-server start -b ${PATIENTS_CA_ADMIN_NAME}:${PATIENTS_CA_ADMIN_PASSWORD} -d'
     volumes:
       - ../fabric-config/crypto-config/peerOrganizations/patients.medchain.com/ca/:/etc/hyperledger/fabric-ca-server/crypto
       - ../fabric-config/fabric-ca-server-config/patients.medchain.com/fabric-ca-server-config.yaml:/etc/hyperledger/fabric-ca-server/fabric-ca-server-config.yaml
@@ -1058,7 +1058,7 @@ services:
       - CORE_PEER_ID=cli.patients.medchain.com
       - CORE_CHAINCODE_KEEPALIVE=10
       #
-      - CORE_PEER_LOCALMSPID=PatientMSP
+      - CORE_PEER_LOCALMSPID=PatientsMSP
       - CORE_PEER_MSPCONFIGPATH=/var/hyperledger/cli/crypto/users/Admin@patients.medchain.com/msp
       - CORE_PEER_ADDRESS=peer0.patients.medchain.com:7221
     working_dir: /var/hyperledger/cli/
@@ -1078,7 +1078,7 @@ services:
     container_name: peer0.patients.medchain.com
     image: hyperledger/fabric-peer:${FABRIC_VERSION}
     environment:
-      - CORE_PEER_LOCALMSPID=PatientMSP
+      - CORE_PEER_LOCALMSPID=PatientsMSP
       - CORE_PEER_ID=peer0.patients.medchain.com
       - CORE_PEER_ADDRESS=peer0.patients.medchain.com:7221
       - CORE_PEER_LISTENADDRESS=peer0.patients.medchain.com:7221
