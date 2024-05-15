@@ -15,24 +15,32 @@ type LabResultsChaincode struct {
 
 // CreateLabResult creates a new laboratory result on the blockchain
 func (t *LabResultsChaincode) CreateLabResult(ctx contractapi.TransactionContextInterface, labResultJSON string) error {
+	// Deserialize JSON data into a Go data structure
 	var labResult Observation
 	err := json.Unmarshal([]byte(labResultJSON), &labResult)
 	if err != nil {
-		return errors.New("failed to decode JSON")
+		return errors.New("failed to unmarshal lab result: " + err.Error())
 	}
 
+	// Check if the lab result request ID is provided and if it already exists
 	if labResult.ID == "" {
 		return errors.New("lab result ID is required")
 	}
-	exists, err := t.LabResultExists(ctx, labResult.ID)
+
+	existingLabResult, err := ctx.GetStub().GetState(labResult.ID)
 	if err != nil {
-		return err
+		return errors.New("failed to get lab result " + labResult.ID + " from world state")
 	}
-	if exists {
-		return errors.New("the lab result already exists")
+	if existingLabResult != nil {
+		return errors.New("lab result already exists: " + labResult.ID)
 	}
 
-	labResultAsBytes, _ := json.Marshal(labResult)
+	// Serialize the patient and save it on the blockchain
+	labResultAsBytes, err := json.Marshal(labResult)
+	if err != nil {
+		return errors.New("failed to marshal lab result: " + err.Error())
+	}
+
 	return ctx.GetStub().PutState(labResult.ID, labResultAsBytes)
 }
 
@@ -67,15 +75,6 @@ func (t *LabResultsChaincode) GetLabResult(ctx contractapi.TransactionContextInt
 	}
 
 	return string(labResultAsBytes), nil
-}
-
-// LabResultExists checks if a laboratory result exists in the blockchain
-func (t *LabResultsChaincode) LabResultExists(ctx contractapi.TransactionContextInterface, labResultID string) (bool, error) {
-	labResultAsBytes, err := ctx.GetStub().GetState(labResultID)
-	if err != nil {
-		return false, errors.New("failed to read from world state")
-	}
-	return labResultAsBytes != nil, nil
 }
 
 // QueryLabResults retrieves lab results for a specific patient using the Observation struct

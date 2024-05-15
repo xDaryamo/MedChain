@@ -15,28 +15,36 @@ type OrganizationChaincode struct {
 }
 
 // CreateOrganization creates a new organization
-func (oc *OrganizationChaincode) CreateOrganization(ctx contractapi.TransactionContextInterface, organizationID string, organizationJSON string) error {
+func (oc *OrganizationChaincode) CreateOrganization(ctx contractapi.TransactionContextInterface, organizationJSON string) error {
 	// Deserialize JSON data into a Go data structure
 	var organization Organization
-	if err := json.Unmarshal([]byte(organizationJSON), &organization); err != nil {
-		return err
+	err := json.Unmarshal([]byte(organizationJSON), &organization)
+
+	if err != nil {
+		return errors.New("failed to unmarshal organization: " + err.Error())
 	}
 
-	// Check if the organization already exists
-	existingOrganization, err := oc.GetOrganization(ctx, organizationID)
-	if err != nil {
-		return err
+	// Check if the organization request ID is provided and if it already exists
+	if organization.ID.Value == "" {
+		return errors.New("organization request ID is required")
 	}
+
+	existingOrganization, err := oc.GetOrganization(ctx, organization.ID.Value)
+
+	if err != nil {
+		return errors.New("failed to retrieve organization " + organization.ID.Value + " from world state")
+	}
+
 	if existingOrganization != nil {
-		return errors.New("organization already exists")
+		return errors.New("organization already exists: " + organization.ID.Value)
 	}
 
 	// Serialize the organization and save it on the blockchain
 	organizationJSONBytes, err := json.Marshal(organization)
 	if err != nil {
-		return err
+		return errors.New("failed to marshal organization: " + err.Error())
 	}
-	return ctx.GetStub().PutState(organizationID, organizationJSONBytes)
+	return ctx.GetStub().PutState(organization.ID.Value, organizationJSONBytes)
 }
 
 // GetOrganization retrieves an organization from the blockchain

@@ -17,33 +17,29 @@ type PatientContract struct {
 	contractapi.Contract
 }
 
-/*
-================================
-		CRUD OPERATIONS
-================================
-*/
 // CreatePatient adds a new patient record to the ledger
-func (c *PatientContract) CreatePatient(ctx contractapi.TransactionContextInterface, patientID string, patientJSON string) error {
-	// Check if patient exists before unmarshaling JSON to avoid unnecessary processing
-	exists, err := ctx.GetStub().GetState(patientID)
-	if err != nil {
-		return errors.New("failed to get patient: " + err.Error())
-	}
-	if exists != nil {
-		return errors.New("patient already exists: " + patientID)
-	}
-
-	log.Printf("Creating new patient with ID: %s", patientID)
-
-
-	log.Printf("Patient JSON: %s", string(patientJSON))
-
+func (c *PatientContract) CreatePatient(ctx contractapi.TransactionContextInterface, patientJSON string) error {
+	// Deserialize JSON data into a Go data structure
 	var patient Patient
-	err = json.Unmarshal([]byte(patientJSON), &patient)
+	err := json.Unmarshal([]byte(patientJSON), &patient)
 	if err != nil {
 		return errors.New("failed to unmarshal patient: " + err.Error())
 	}
 
+	// Check if the patient request ID is provided and if it already exists
+	if patient.ID.Value == "" {
+		return errors.New("patient request ID is required")
+	}
+
+	existingPatient, err := ctx.GetStub().GetState(patient.ID.Value)
+	if err != nil {
+		return errors.New("failed to get patient " + patient.ID.Value + " from world state")
+	}
+	if existingPatient != nil {
+		return errors.New("patient already exists: " + patient.ID.Value)
+	}
+
+	// Serialize the patient and save it on the blockchain
 	patientJSONBytes, err := json.Marshal(patient)
 	if err != nil {
 		return errors.New("failed to marshal patient: " + err.Error())
@@ -52,7 +48,7 @@ func (c *PatientContract) CreatePatient(ctx contractapi.TransactionContextInterf
 	log.Printf("Patient with ID: %s created successfully", patientID)
 
 	// Save the new patient to the ledger
-	return ctx.GetStub().PutState(patientID, patientJSONBytes)
+	return ctx.GetStub().PutState(patient.ID.Value, patientJSONBytes)
 }
 
 func (c *PatientContract) ReadPatient(ctx contractapi.TransactionContextInterface, patientID string) (*Patient, error) {

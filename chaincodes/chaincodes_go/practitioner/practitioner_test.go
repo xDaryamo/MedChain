@@ -390,7 +390,7 @@ func TestCreatePractitioner(t *testing.T) {
 	mockStub.On("GetState", practitionerID).Return(nil, nil)
 	mockStub.On("PutState", practitionerID, mock.Anything).Return(nil)
 
-	err := cc.CreatePractitioner(mockCtx, practitionerID, practitionerJSON)
+	err := cc.CreatePractitioner(mockCtx, practitionerJSON)
 
 	assert.NoError(t, err)
 	mockStub.AssertExpectations(t)
@@ -512,7 +512,7 @@ func TestCreatePractitioner_PractitionerExists(t *testing.T) {
 	existingPractitionerJSON := []byte(practitionerJSON)
 	mockStub.On("GetState", practitionerID).Return(existingPractitionerJSON, nil)
 
-	err := cc.CreatePractitioner(mockCtx, practitionerID, practitionerJSON)
+	err := cc.CreatePractitioner(mockCtx, practitionerJSON)
 	assert.Error(t, err)
 	assert.Equal(t, "practitioner already exists: practitioner1", err.Error())
 }
@@ -528,7 +528,7 @@ func TestCreatePractitioner_InvalidJSON(t *testing.T) {
 	mockCtx.On("GetStub").Return(mockStub)
 	mockStub.On("GetState", practitionerID).Return(nil, nil)
 
-	err := cc.CreatePractitioner(mockCtx, practitionerID, practitionerJSON)
+	err := cc.CreatePractitioner(mockCtx, practitionerJSON)
 	assert.Error(t, err)
 }
 

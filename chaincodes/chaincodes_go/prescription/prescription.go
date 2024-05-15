@@ -14,25 +14,34 @@ type PrescriptionChaincode struct {
 
 // CreateMedicationRequest creates a new medication request on the blockchain
 func (t *PrescriptionChaincode) CreateMedicationRequest(ctx contractapi.TransactionContextInterface, medicationRequestJSON string) error {
+	// Deserialize JSON data into a Go data structure
 	var medicationRequest MedicationRequest
 	err := json.Unmarshal([]byte(medicationRequestJSON), &medicationRequest)
+
 	if err != nil {
-		return errors.New("failed to decode JSON")
+		return errors.New("failed to unmarshal prescription: " + err.Error())
 	}
 
 	// Check if the medication request ID is provided and if the prescription already exists
 	if medicationRequest.ID.Value == "" {
 		return errors.New("medication request ID is required")
 	}
-	exists, err := t.PrescriptionExists(ctx, medicationRequest.ID.Value)
+
+	existingPrescription, err := ctx.GetStub().GetState(medicationRequest.ID.Value)
 	if err != nil {
-		return err
-	}
-	if exists {
-		return errors.New("the prescription already exists")
+		return errors.New("failed to retrieve prescription " + medicationRequest.ID.Value + " from world state")
 	}
 
-	medicationRequestAsBytes, _ := json.Marshal(medicationRequest)
+	if existingPrescription != nil {
+		return errors.New("the prescription already exists " + medicationRequest.ID.Value)
+	}
+
+	// Serialize the prescription and save it on the blockchain
+	medicationRequestAsBytes, err := json.Marshal(medicationRequest)
+	if err != nil {
+		return errors.New("failed to marshal prescription: " + err.Error())
+	}
+
 	return ctx.GetStub().PutState(medicationRequest.ID.Value, medicationRequestAsBytes)
 }
 
@@ -76,15 +85,6 @@ func (t *PrescriptionChaincode) GetMedicationRequest(ctx contractapi.Transaction
 	}
 
 	return string(prescriptionAsBytes), nil
-}
-
-// PrescriptionExists checks if a prescription exists in the blockchain
-func (t *PrescriptionChaincode) PrescriptionExists(ctx contractapi.TransactionContextInterface, prescriptionID string) (bool, error) {
-	prescriptionAsBytes, err := ctx.GetStub().GetState(prescriptionID)
-	if err != nil {
-		return false, errors.New("failed to read from world state")
-	}
-	return prescriptionAsBytes != nil, nil
 }
 
 func main() {

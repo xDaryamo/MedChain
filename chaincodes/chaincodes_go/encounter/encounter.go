@@ -16,28 +16,34 @@ type EncounterChaincode struct {
 }
 
 // CreateEncounter creates a new Encounter
-func (ec *EncounterChaincode) CreateEncounter(ctx contractapi.TransactionContextInterface, encounterID string, encounterJSON string) error {
+func (ec *EncounterChaincode) CreateEncounter(ctx contractapi.TransactionContextInterface, encounterJSON string) error {
 	// Deserialize JSON data into a Go data structure
 	var encounter Encounter
-	if err := json.Unmarshal([]byte(encounterJSON), &encounter); err != nil {
-		return err
+	err := json.Unmarshal([]byte(encounterJSON), &encounter)
+
+	if err != nil {
+		return errors.New("failed to unmarshal encounter: " + err.Error())
+	}
+
+	if encounter.ID.Value == "" {
+		return errors.New("lencounter ID is required")
 	}
 
 	// Check if the Encounter record already exists
-	existingEncounter, err := ec.GetEncounter(ctx, encounterID)
+	existingEncounter, err := ec.GetEncounter(ctx, encounter.ID.Value)
 	if err != nil {
-		return err
+		return errors.New("failed to get encounter " + encounter.ID.Value + " from world state")
 	}
 	if existingEncounter != nil {
-		return errors.New("encounter record already exists")
+		return errors.New("encounter record already exists " + encounter.ID.Value)
 	}
 
 	// Serialize the Encounter record and save it on the blockchain
 	encounterJSONBytes, err := json.Marshal(encounter)
 	if err != nil {
-		return err
+		return errors.New("failed to marshal encounter: " + err.Error())
 	}
-	return ctx.GetStub().PutState(encounterID, encounterJSONBytes)
+	return ctx.GetStub().PutState(encounter.ID.Value, encounterJSONBytes)
 }
 
 // GetEncounter retrieves an Encounter from the blockchain

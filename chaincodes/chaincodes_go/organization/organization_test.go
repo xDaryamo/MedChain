@@ -3,7 +3,6 @@ package main
 import (
 	"encoding/json"
 	"testing"
-	"time"
 
 	"github.com/golang/protobuf/ptypes/timestamp"
 	"github.com/hyperledger/fabric-chaincode-go/pkg/cid"
@@ -285,24 +284,121 @@ func TestCreateOrganization(t *testing.T) {
 	// Create a new mock transaction context
 	mockCtx := new(MockTransactionContext)
 
+	organizationId := "org123"
+
 	// Mock organization data
-	organizationID := "org1"
 	organizationJSON := `{
-		"ID": {
-			"System": "http://example.com/identifier",
-			"Value": "org1"
+		"Identifier": {
+			"System": "http://example.com/org/id",
+			"Value": "org123"
 		},
-		"name": "Hospital A",
-		"type": {
-			"coding": [
-				{
-					"system": "http://example.com/codesystem",
-					"code": "Hospital",
-					"display": "Hospital"
+		"Active": true,
+		"Type": {
+			"Coding": [{
+				"System": "http://example.com/org/type",
+				"Code": "hospital",
+				"Display": "Hospital"
+			}],
+			"Text": "Hospital"
+		},
+		"Name": "Example Hospital",
+		"Alias": "EH",
+		"Description": "This is an example hospital.",
+		"Contact": {
+			"Name": {
+				"Text": "John Doe",
+				"Family": "Doe",
+				"Given": ["John"],
+				"Prefix": ["Prefix"],
+				"Suffix": ["Suffix"]
+			},
+			"Telecom": {
+				"System": {
+					"Coding": [{
+						"System": "http://hl7.org/fhir/v2/0131",
+						"Code": "tel",
+						"Display": "Telephone"
+					}]
+				},
+				"Value": "123-456-7890",
+				"Use": {
+					"Coding": [{
+						"System": "http://hl7.org/fhir/v2/0201",
+						"Code": "work",
+						"Display": "Work"
+					}]
+				},
+				"Rank": 1,
+				"Period": {
+					"Start": "2023-01-01T00:00:00Z",
+					"End": "2024-01-01T00:00:00Z"
 				}
-			],
-			"text": "Hospital"
-		}
+			},
+			"Address": {
+				"Use": {
+					"Coding": [{
+						"System": "http://hl7.org/fhir/v3/AddressUse",
+						"Code": "WP",
+						"Display": "Work Place"
+					}]
+				},
+				"Type": {
+					"Coding": [{
+						"System": "http://hl7.org/fhir/v3/PostalAddressUse",
+						"Code": "PHYS",
+						"Display": "Physical Visit Address"
+					}]
+				},
+				"Text": "123 Main Street",
+				"Line": "Example Line",
+				"City": "Example City",
+				"State": "Example State",
+				"PostalCode": "12345",
+				"Country": "United States"
+			},
+			"Organization": {
+				"Reference": "http://example.com/organizations/456",
+				"Display": "Another Organization"
+			},
+			"Period": {
+				"Start": "2023-01-01T00:00:00Z",
+				"End": "2024-01-01T00:00:00Z"
+			}
+		},
+		"PartOf": {
+			"Reference": "http://example.com/organizations/789",
+			"Display": "Parent Organization"
+		},
+		"EndPoint": {
+			"Reference": "http://example.com/endpoints/123",
+			"Display": "Endpoint"
+		},
+		"Qualification": [{
+			"Identifier": {
+				"System": "http://example.com/qualification/id",
+				"Value": "Q123"
+			},
+			"Code": {
+				"Coding": [{
+					"System": "http://example.com/qualification/code",
+					"Code": "MD",
+					"Display": "Medical Doctor"
+				}],
+				"Text": "Medical Doctor"
+			},
+			"Status": {
+				"Coding": [{
+					"System": "http://example.com/qualification/status",
+					"Code": "active",
+					"Display": "Active"
+				}],
+				"Text": "Active"
+			},
+			"Issuer": {
+				"Reference": "http://example.com/organizations/issuers/456",
+				"Display": "Issuer Organization"
+			}
+		}]
 	}`
 
 	// Mock the GetStub method to return a new MockStub
@@ -310,14 +406,15 @@ func TestCreateOrganization(t *testing.T) {
 	mockCtx.On("GetStub").Return(mockStub)
 
 	// Mock GetState to return nil when called during the test
-	mockStub.On("GetState", mock.Anything).Return(nil, nil)
+	mockStub.On("GetState", organizationId).Return(nil, nil)
 
 	// Mock PutState method to return nil (indicating success)
-	mockStub.On("PutState", mock.Anything, mock.Anything).Return(nil)
+	mockStub.On("PutState", organizationId, mock.Anything).Return(nil)
 
 	// Call the CreateOrganization function with the mocked context and organization data
-	err := cc.CreateOrganization(mockCtx, organizationID, organizationJSON)
-	assert.NoError(t, err) // Expect an error since organization already exists
+	err := cc.CreateOrganization(mockCtx, organizationJSON)
+	assert.NoError(t, err)
+
 }
 
 func TestCreateOrganization_OrganizationExists(t *testing.T) {
@@ -325,23 +422,119 @@ func TestCreateOrganization_OrganizationExists(t *testing.T) {
 	mockCtx := new(MockTransactionContext)
 
 	// Mock organization data
-	organizationID := "org1"
+	organizationID := "org123"
 	organizationJSON := `{
-		"ID": {
-			"System": "http://example.com/identifier",
-			"Value": "org1"
+		"Identifier": {
+			"System": "http://example.com/org/id",
+			"Value": "org123"
 		},
-		"name": "Hospital A",
-		"type": {
-			"coding": [
-				{
-					"system": "http://example.com/codesystem",
-					"code": "Hospital",
-					"display": "Hospital"
+		"Active": true,
+		"Type": {
+			"Coding": [{
+				"System": "http://example.com/org/type",
+				"Code": "hospital",
+				"Display": "Hospital"
+			}],
+			"Text": "Hospital"
+		},
+		"Name": "Example Hospital",
+		"Alias": "EH",
+		"Description": "This is an example hospital.",
+		"Contact": {
+			"Name": {
+				"Text": "John Doe",
+				"Family": "Doe",
+				"Given": ["John"],
+				"Prefix": ["Prefix"],
+				"Suffix": ["Suffix"]
+			},
+			"Telecom": {
+				"System": {
+					"Coding": [{
+						"System": "http://hl7.org/fhir/v2/0131",
+						"Code": "tel",
+						"Display": "Telephone"
+					}]
+				},
+				"Value": "123-456-7890",
+				"Use": {
+					"Coding": [{
+						"System": "http://hl7.org/fhir/v2/0201",
+						"Code": "work",
+						"Display": "Work"
+					}]
+				},
+				"Rank": 1,
+				"Period": {
+					"Start": "2023-01-01T00:00:00Z",
+					"End": "2024-01-01T00:00:00Z"
 				}
-			],
-			"text": "Hospital"
-		}
+			},
+			"Address": {
+				"Use": {
+					"Coding": [{
+						"System": "http://hl7.org/fhir/v3/AddressUse",
+						"Code": "WP",
+						"Display": "Work Place"
+					}]
+				},
+				"Type": {
+					"Coding": [{
+						"System": "http://hl7.org/fhir/v3/PostalAddressUse",
+						"Code": "PHYS",
+						"Display": "Physical Visit Address"
+					}]
+				},
+				"Text": "123 Main Street",
+				"Line": "Example Line",
+				"City": "Example City",
+				"State": "Example State",
+				"PostalCode": "12345",
+				"Country": "United States"
+			},
+			"Organization": {
+				"Reference": "http://example.com/organizations/456",
+				"Display": "Another Organization"
+			},
+			"Period": {
+				"Start": "2023-01-01T00:00:00Z",
+				"End": "2024-01-01T00:00:00Z"
+			}
+		},
+		"PartOf": {
+			"Reference": "http://example.com/organizations/789",
+			"Display": "Parent Organization"
+		},
+		"EndPoint": {
+			"Reference": "http://example.com/endpoints/123",
+			"Display": "Endpoint"
+		},
+		"Qualification": [{
+			"Identifier": {
+				"System": "http://example.com/qualification/id",
+				"Value": "Q123"
+			},
+			"Code": {
+				"Coding": [{
+					"System": "http://example.com/qualification/code",
+					"Code": "MD",
+					"Display": "Medical Doctor"
+				}],
+				"Text": "Medical Doctor"
+			},
+			"Status": {
+				"Coding": [{
+					"System": "http://example.com/qualification/status",
+					"Code": "active",
+					"Display": "Active"
+				}],
+				"Text": "Active"
+			},
+			"Issuer": {
+				"Reference": "http://example.com/organizations/issuers/456",
+				"Display": "Issuer Organization"
+			}
+		}]
 	}`
 
 	// Mock the GetStub method to return a new MockStub
@@ -352,9 +545,9 @@ func TestCreateOrganization_OrganizationExists(t *testing.T) {
 	existingOrganizationJSON := []byte(organizationJSON)
 	mockStub.On("GetState", organizationID).Return(existingOrganizationJSON, nil)
 
-	err := cc.CreateOrganization(mockCtx, organizationID, organizationJSON)
+	err := cc.CreateOrganization(mockCtx, organizationJSON)
 	assert.Error(t, err)
-	assert.Equal(t, "organization already exists", err.Error())
+	assert.Equal(t, "organization already exists: "+organizationID, err.Error())
 }
 
 func TestCreateOrganization_InvalidJSON(t *testing.T) {
@@ -386,7 +579,7 @@ func TestCreateOrganization_InvalidJSON(t *testing.T) {
 	mockCtx.On("GetStub").Return(mockStub)
 	mockStub.On("GetState", organizationID).Return(nil, nil)
 
-	err := cc.CreateOrganization(mockCtx, organizationID, organizationJSON)
+	err := cc.CreateOrganization(mockCtx, organizationJSON)
 	assert.Error(t, err)
 }
 
@@ -794,7 +987,10 @@ func TestUpdateQualification(t *testing.T) {
 }
 
 func TestUpdateContact(t *testing.T) {
+	// Create a new instance of the OrganizationChaincode
 	cc := new(OrganizationChaincode)
+
+	// Create a new mock transaction context
 	mockCtx := new(MockTransactionContext)
 
 	// Mock organization data
@@ -807,10 +1003,18 @@ func TestUpdateContact(t *testing.T) {
 				Text: "John Doe",
 			},
 			Telecom: ContactPoint{
-				System: Code{Coding: []Coding{{System: "exampleSystem", Code: "email", Display: "jhnd"}}},
-				Value:  "123456789",
-				Use:    Code{Coding: []Coding{{System: "useSystem", Code: "useCode", Display: "useDisplay"}}},
-				Rank:   1,
+				System: Code{
+					Coding: []Coding{
+						{System: "exampleSystem", Code: "email", Display: "jhnd"},
+					},
+				},
+				Value: "123456789",
+				Use: Code{
+					Coding: []Coding{
+						{System: "useSystem", Code: "useCode", Display: "useDisplay"},
+					},
+				},
+				Rank: 1,
 			},
 			Address: Address{
 				City:    "New York",
@@ -819,31 +1023,42 @@ func TestUpdateContact(t *testing.T) {
 			Organization: &Reference{
 				Reference: "http://example.com/organization",
 			},
-			Period: Period{
-				Start: time.Now(),
-				End:   time.Now().AddDate(1, 0, 0),
-			},
 		},
 	}
-	updatedTelecom := ContactPoint{
-		System: Code{Coding: []Coding{{System: "exampleSystem", Code: "email", Display: "johndoe"}}},
-		Value:  "jane@example.com",
-		Use:    Code{Coding: []Coding{{System: "newUseSystem", Code: "newUseCode", Display: "newUseDisplay"}}},
-		Rank:   2, // Set the Rank field to the expected value
-	}
-	updatedContact := ExtendedContactDetail{
-		Name:         organization.Contact.Name,
-		Telecom:      organization.Contact.Telecom,
-		Address:      organization.Contact.Address,
-		Organization: organization.Contact.Organization,
-		Period:       organization.Contact.Period,
-	}
 
-	// Mock GetOrganization method to return existing organization
+	// Marshal the organization data
 	organizationBytes, _ := json.Marshal(organization)
+
+	// Mock the GetStub method to return a new MockStub
 	mockStub := new(MockStub)
 	mockCtx.On("GetStub").Return(mockStub)
+
+	// Mock GetState to return the existing organization
 	mockStub.On("GetState", organizationID).Return(organizationBytes, nil)
+
+	// Define the updated contact data
+	updatedTelecom := ContactPoint{
+		System: Code{
+			Coding: []Coding{
+				{System: "exampleSystem", Code: "email", Display: "johndoe"},
+			},
+		},
+		Value: "jane@example.com",
+		Use: Code{
+			Coding: []Coding{
+				{System: "newUseSystem", Code: "newUseCode", Display: "newUseDisplay"},
+			},
+		},
+		Rank: 2,
+	}
+
+	// Define the updated contact
+	updatedContact := ExtendedContactDetail{
+		Name:         organization.Contact.Name,
+		Telecom:      updatedTelecom,
+		Address:      organization.Contact.Address,
+		Organization: organization.Contact.Organization,
+	}
 
 	// Mock PutState method to return success
 	mockStub.On("PutState", organizationID, mock.Anything).Return(nil).Run(func(args mock.Arguments) {
@@ -851,9 +1066,10 @@ func TestUpdateContact(t *testing.T) {
 		var updatedOrganization Organization
 		err := json.Unmarshal(arg, &updatedOrganization)
 		require.NoError(t, err)
-		assert.Equal(t, updatedTelecom, updatedOrganization.Contact.Telecom) // Updated telecom should match
+		assert.Equal(t, updatedContact, updatedOrganization.Contact) // Ensure the contact was updated correctly
 	})
 
+	// Call the UpdateContact function with the mocked context and updated contact data
 	err := cc.UpdateContact(mockCtx, organizationID, updatedContact)
 	assert.NoError(t, err)
 }
