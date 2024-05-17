@@ -284,11 +284,14 @@ func sampleObservationJSON(id string) string {
 	observation := Observation{
 		ID:     id,
 		Status: "final",
-		Code: CodeableConcept{
+		Code: &CodeableConcept{
 			Text: "Blood Test",
 		},
 	}
-	bytes, _ := json.Marshal(observation)
+	bytes, err := json.Marshal(observation)
+	if err != nil {
+		panic("Failed to marshal observation: " + err.Error())
+	}
 	return string(bytes)
 }
 
@@ -297,14 +300,17 @@ func sampleObservationJSONWithPatient(id string, patientID string) string {
 	observation := Observation{
 		ID:     id,
 		Status: "final",
-		Code: CodeableConcept{
+		Code: &CodeableConcept{
 			Text: "Blood Test",
 		},
 		Subject: &Reference{
 			Reference: "Patient/" + patientID,
 		},
 	}
-	bytes, _ := json.Marshal(observation)
+	bytes, err := json.Marshal(observation)
+	if err != nil {
+		panic("Failed to marshal observation: " + err.Error())
+	}
 	return string(bytes)
 }
 
