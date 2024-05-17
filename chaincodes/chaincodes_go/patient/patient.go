@@ -17,14 +17,19 @@ type PatientContract struct {
 	contractapi.Contract
 }
 
-// CreatePatient adds a new patient record to the ledger
 func (c *PatientContract) CreatePatient(ctx contractapi.TransactionContextInterface, patientJSON string) error {
+
+	log.Printf("Patient JSON from param: %s", string(patientJSON))
+
+
 	// Deserialize JSON data into a Go data structure
 	var patient Patient
 	err := json.Unmarshal([]byte(patientJSON), &patient)
 	if err != nil {
 		return errors.New("failed to unmarshal patient: " + err.Error())
 	}
+
+	log.Printf("Patient struct unmarshalled: %+v", patient)
 
 	// Check if the patient request ID is provided and if it already exists
 	if patient.ID.Value == "" {
@@ -45,58 +50,67 @@ func (c *PatientContract) CreatePatient(ctx contractapi.TransactionContextInterf
 		return errors.New("failed to marshal patient: " + err.Error())
 	}
 
-	log.Printf("Patient with ID: %s created successfully", patientID)
+	log.Printf("Patient with ID: %s created successfully", patient.ID.Value)
+	log.Printf("Serialized Patient JSON: %s", string(patientJSONBytes))
 
 	// Save the new patient to the ledger
 	return ctx.GetStub().PutState(patient.ID.Value, patientJSONBytes)
 }
 
-func (c *PatientContract) ReadPatient(ctx contractapi.TransactionContextInterface, patientID string) (*Patient, error) {
+func (c *PatientContract) ReadPatient(ctx contractapi.TransactionContextInterface, patientID string) (string, error) {
+	var patient Patient
+
+	// Leggi lo stato del paziente dal ledger
 	patientJSON, err := ctx.GetStub().GetState(patientID)
 	if err != nil {
-		return nil, errors.New("failed to read patient: " + err.Error())
+		return "", errors.New("failed to read patient: " + err.Error())
 	}
 	if patientJSON == nil {
-		return nil, errors.New("patient does not exist: " + patientID)
+		return "", errors.New("patient does not exist: " + patientID)
 	}
 
-	log.Printf("Patient JSON: %s", string(patientJSON))
+	log.Printf("Patient JSON from ledger: %s", string(patientJSON))
 
-	var patient Patient
+	// Deserializza i dati JSON nel paziente
 	err = json.Unmarshal(patientJSON, &patient)
 	if err != nil {
-		return nil, errors.New("failed to unmarshal patient: " + err.Error())
+		return "", errors.New("failed to unmarshal patient: " + err.Error())
 	}
 
+	log.Printf("Patient object: %+v", patient)
+
+	// Ottieni l'ID del client richiedente
 	clientID, exists, err := ctx.GetClientIdentity().GetAttributeValue("userId")
 	if err != nil {
-		return nil, errors.New("failed to get client ID attribute: " + err.Error())
+		return "", errors.New("failed to get client ID attribute: " + err.Error())
 	}
 	if !exists {
-		return nil, errors.New("client ID attribute does not exist")
+		return "", errors.New("client ID attribute does not exist")
 	}
-	
+
 	log.Printf("Client ID (patientID attribute): %s", clientID)
 	log.Printf("Patient ID: %s", patientID)
 
 	// Verifica se il richiedente è il paziente stesso
 	if clientID == patientID {
-		log.Printf("Uguale")	
-		return &patient, nil // Paziente accede ai propri dati
+		log.Printf("Uguale")
+		return string(patientJSON), nil // Paziente accede ai propri dati
+	}
+
+	log.Printf("Non Uguale")
+	// Altrimenti, verifica se il richiedente è autorizzato
+	authorized, err := c.isAuthorized(ctx, patientID, clientID)
+	if err != nil {
+		return "", err
+	}
+	if authorized {
+		return string(patientJSON), nil
 	} else {
-		log.Printf("Non Uguale")	
-		// Altrimenti, verifica se il richiedente è autorizzato
-		authorized, err := c.isAuthorized(ctx, patientID, clientID)
-		if err != nil {
-			return nil, err
-		}
-		if authorized {
-			return &patient, nil
-		} else {
-			return nil, errors.New("unauthorized access: client is neither the patient nor an authorized entity")
-		}
+		return "", errors.New("unauthorized access: client is neither the patient nor an authorized entity")
 	}
 }
+
+
 
 // UpdatePatient updates an existing patient record in the ledger
 func (c *PatientContract) UpdatePatient(ctx contractapi.TransactionContextInterface, patientID string, patientJSON string) error {
@@ -273,6 +287,7 @@ func (c *PatientContract) isAuthorized(ctx contractapi.TransactionContextInterfa
 	}
 	return false, nil
 }
+
 
 func main() {
 	chaincode, err := contractapi.NewChaincode(new(PatientContract))

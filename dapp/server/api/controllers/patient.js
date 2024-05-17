@@ -32,13 +32,24 @@ exports.createPatient = async (req, res, next) => {
 
     patientJSON.identifier.value = userId;
 
+    // Validate and stringify JSON
+    let patientJSONString;
+    try {
+      patientJSONString = JSON.stringify(patientJSON);
+      JSON.parse(patientJSONString); // This ensures the string is valid JSON
+    } catch (jsonError) {
+      console.error("Invalid JSON format:", jsonError);
+      return res.status(400).json({ error: "Invalid JSON format" });
+    }
+
     await fabric.init(userId, organization, channel, chaincode);
     console.log("Fabric network initialized successfully.");
 
-    // Effettua la transazione per creare il paziente
+    // Log the JSON string
+    console.log("Submitting transaction with patient JSON:", patientJSONString);
+
     const result = await fabric.submitTransaction(
       "CreatePatient",
-      userId,
       JSON.stringify(patientJSON)
     );
 
@@ -54,6 +65,23 @@ exports.createPatient = async (req, res, next) => {
   }
 };
 
+const object = {
+  active: true,
+  date: "0001-01-01T00:00:00Z",
+  gender: { coding: null },
+  identifier: {
+    system: "http://hospital.smarthealth.it",
+    value: "cdc455e6-3216-4ea5-af87-ff3d99368b3c",
+  },
+  maritalstatus: {},
+  name: { family: "Rossi", text: "Mario" },
+  photo: {
+    creation: "0001-01-01T00:00:00Z",
+    duration: { value: 0 },
+    language: { coding: null },
+    type: { coding: null },
+  },
+};
 exports.updatePatient = async (req, res, next) => {
   const patientID = req.params.id;
   const updatedPatient = req.body.updatedPatient;

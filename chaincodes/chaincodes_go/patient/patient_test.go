@@ -315,18 +315,18 @@ func (mci *MockClientIdentity) GetX509Certificate() (*x509.Certificate, error) {
 // Tests
 
 func generatePatientJSON(id string) string {
+	now := time.Now()
 	patient := Patient{
-		ID:        Identifier{Value: id},
-		Name:      HumanName{Family: "Smith", Given: []string{"John"}},
-		Gender:    Code{Coding: []Coding{{System: "http://hl7.org/fhir/ValueSet/administrative-gender", Code: "male", Display: "Male"}}},
-		BirthDate: time.Now(),
+		ID:        &Identifier{Value: id},
+		Name:      &HumanName{Family: "Smith", Given: []string{"John"}},
+		Gender:    &Code{Coding: []Coding{{System: "http://hl7.org/fhir/ValueSet/administrative-gender", Code: "male", Display: "Male"}}},
+		BirthDate: &now,
 	}
 	patientJSON, _ := json.Marshal(patient)
 	return string(patientJSON)
 }
 
 func TestCreatePatient_Success(t *testing.T) {
-
 	patientContract := new(PatientContract)
 
 	stub := new(MockStub)
@@ -486,12 +486,14 @@ func TestDeletePatient_NonExistent(t *testing.T) {
 	stub.AssertExpectations(t)
 }
 
+
 func TestReadPatient_SuccessByPatient(t *testing.T) {
 	contract := new(PatientContract)
 	stub := new(MockStub)
 	ctx := new(MockTransactionContext)
 	clientIdentity := new(MockClientIdentity)
 
+	// Set up the mock transaction context to return the mock stub and client identity
 	ctx.On("GetStub").Return(stub)
 	ctx.On("GetClientIdentity").Return(clientIdentity)
 
@@ -499,17 +501,36 @@ func TestReadPatient_SuccessByPatient(t *testing.T) {
 	patientData := generatePatientJSON(patientID)
 	patientBytes := []byte(patientData)
 
+	// Mock GetState to return the patient JSON data
 	stub.On("GetState", patientID).Return(patientBytes, nil)
-	clientIdentity.On("GetID").Return(patientID, nil)
 
-	patient, err := contract.ReadPatient(ctx, patientID)
+	// Mock GetAttributeValue to return the patient ID for the userId attribute
+	clientIdentity.On("GetAttributeValue", "userId").Return(patientID, true, nil)
 
+	// Call the ReadPatient method
+	patientJSON, err := contract.ReadPatient(ctx, patientID)
+
+	// Assert no error is returned
 	assert.Nil(t, err)
-	assert.NotNil(t, patient)
+
+	// Assert that patientJSON is not nil
+	assert.NotNil(t, patientJSON)
+
+	// Unmarshal the returned patient JSON
+	var patient Patient
+	err = json.Unmarshal([]byte(patientJSON), &patient)
+
+	// Assert no error during unmarshaling
+	assert.Nil(t, err)
+
+	// Assert the expected patient details
 	assert.Equal(t, "John", patient.Name.Given[0]) // Example of accessing nested fields
+
+	// Verify that all expectations were met
 	stub.AssertExpectations(t)
 	clientIdentity.AssertExpectations(t)
 }
+
 
 func TestReadPatient_SuccessByAuthorizedUser(t *testing.T) {
 	contract := new(PatientContract)
@@ -528,7 +549,7 @@ func TestReadPatient_SuccessByAuthorizedUser(t *testing.T) {
 	// Mock patient data retrieval
 	stub.On("GetState", patientID).Return(patientBytes, nil)
 	// Mock client identity retrieval
-	clientIdentity.On("GetID").Return(clientID, nil)
+	clientIdentity.On("GetAttributeValue", "userId").Return(clientID, true, nil)
 
 	// Set up authorization data to indicate that the doctor is authorized
 	authData := Authorization{PatientID: patientID, Authorized: map[string]bool{clientID: true}}
@@ -536,14 +557,22 @@ func TestReadPatient_SuccessByAuthorizedUser(t *testing.T) {
 	stub.On("GetState", "auth_"+patientID).Return(authBytes, nil)
 
 	// Attempt to read the patient data as an authorized user
-	patient, err := contract.ReadPatient(ctx, patientID)
+	patientJSON, err := contract.ReadPatient(ctx, patientID)
 
 	assert.Nil(t, err)
-	assert.NotNil(t, patient)
+	assert.NotNil(t, patientJSON)
+
+	var patient Patient
+	err = json.Unmarshal([]byte(patientJSON), &patient)
+	assert.Nil(t, err)
 	assert.Equal(t, "John", patient.Name.Given[0]) // Example of accessing nested fields
+
 	stub.AssertExpectations(t)
 	clientIdentity.AssertExpectations(t)
 }
+
+
+
 
 func TestReadPatient_UnauthorizedAccess(t *testing.T) {
 	contract := new(PatientContract)
@@ -559,18 +588,28 @@ func TestReadPatient_UnauthorizedAccess(t *testing.T) {
 	patientData := generatePatientJSON(patientID)
 	patientBytes := []byte(patientData)
 
+	// Mock patient data retrieval
 	stub.On("GetState", patientID).Return(patientBytes, nil)
-	clientIdentity.On("GetID").Return(unauthorizedClientID, nil)
-	stub.On("GetState", "auth_"+patientID).Return(nil, nil) // Nessuna autorizzazione trovata
+	// Mock client identity retrieval
+	clientIdentity.On("GetAttributeValue", "userId").Return(unauthorizedClientID, true, nil)
+	// Mock authorization retrieval to return nil (no authorization found)
+	stub.On("GetState", "auth_"+patientID).Return(nil, nil)
 
-	patient, err := contract.ReadPatient(ctx, patientID)
+	// Attempt to read the patient data as an unauthorized user
+	patientJSON, err := contract.ReadPatient(ctx, patientID)
 
+	// Assert that an error is returned
 	assert.NotNil(t, err)
-	assert.Nil(t, patient)
+	// Assert that the patient JSON is nil
+	assert.Empty(t, patientJSON)
+	// Assert that the error message matches the expected unauthorized access error
 	assert.Equal(t, "unauthorized access: client is neither the patient nor an authorized entity", err.Error())
+	
+	// Verify that all expectations were met
 	stub.AssertExpectations(t)
 	clientIdentity.AssertExpectations(t)
 }
+
 
 func TestReadPatient_NonExistentPatient(t *testing.T) {
 	contract := new(PatientContract)
@@ -581,13 +620,20 @@ func TestReadPatient_NonExistentPatient(t *testing.T) {
 
 	nonExistentPatientID := "patient-999"
 
+	// Mock GetState to return nil, indicating the patient does not exist
 	stub.On("GetState", nonExistentPatientID).Return(nil, nil)
 
-	patient, err := contract.ReadPatient(ctx, nonExistentPatientID)
+	// Attempt to read the non-existent patient data
+	patientJSON, err := contract.ReadPatient(ctx, nonExistentPatientID)
 
+	// Assert that an error is returned
 	assert.NotNil(t, err)
-	assert.Nil(t, patient)
+	// Assert that the patient JSON is empty
+	assert.Empty(t, patientJSON)
+	// Assert that the error message matches the expected error message
 	assert.Equal(t, "patient does not exist: "+nonExistentPatientID, err.Error())
+
+	// Verify that all expectations were met
 	stub.AssertExpectations(t)
 }
 
@@ -677,3 +723,4 @@ func TestRevokeAccess_Success(t *testing.T) {
 	stub.AssertExpectations(t)
 	clientIdentity.AssertExpectations(t)
 }
+
