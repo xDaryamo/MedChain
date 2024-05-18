@@ -15,9 +15,8 @@ type PrescriptionChaincode struct {
 func (t *PrescriptionChaincode) CreatePrescription(ctx contractapi.TransactionContextInterface, medicationRequestJSON string) error {
 	var medicationRequest MedicationRequest
 	err := json.Unmarshal([]byte(medicationRequestJSON), &medicationRequest)
-
 	if err != nil {
-		return errors.New("failed to unmarshal prescription: " + err.Error())
+		return errors.New("failed to decode JSON")
 	}
 
 	if medicationRequest.ID == nil || medicationRequest.ID.Value == "" {
@@ -26,11 +25,10 @@ func (t *PrescriptionChaincode) CreatePrescription(ctx contractapi.TransactionCo
 
 	exists, err := t.PrescriptionExists(ctx, medicationRequest.ID.Value)
 	if err != nil {
-		return errors.New("failed to retrieve prescription " + medicationRequest.ID.Value + " from world state")
+		return err
 	}
-
-	if existingPrescription != nil {
-		return errors.New("the prescription already exists " + medicationRequest.ID.Value)
+	if exists {
+		return errors.New("the prescription already exists")
 	}
 
 	medicationRequestAsBytes, err := json.Marshal(medicationRequest)
