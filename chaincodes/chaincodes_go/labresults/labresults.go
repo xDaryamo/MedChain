@@ -13,7 +13,7 @@ type LabResultsChaincode struct {
 	contractapi.Contract
 }
 
-// CreateLabResult creates a new laboratory result on the blockchain
+// CreateLabResult crea un nuovo risultato di laboratorio sulla blockchain
 func (t *LabResultsChaincode) CreateLabResult(ctx contractapi.TransactionContextInterface, labResultJSON string) error {
 	// Deserialize JSON data into a Go data structure
 	var labResult Observation
@@ -35,16 +35,14 @@ func (t *LabResultsChaincode) CreateLabResult(ctx contractapi.TransactionContext
 		return errors.New("lab result already exists: " + labResult.ID)
 	}
 
-	// Serialize the patient and save it on the blockchain
 	labResultAsBytes, err := json.Marshal(labResult)
 	if err != nil {
-		return errors.New("failed to marshal lab result: " + err.Error())
+		return errors.New("failed to encode JSON")
 	}
-
 	return ctx.GetStub().PutState(labResult.ID, labResultAsBytes)
 }
 
-// UpdateLabResult updates an existing laboratory result on the blockchain
+// UpdateLabResult aggiorna un risultato di laboratorio esistente sulla blockchain
 func (t *LabResultsChaincode) UpdateLabResult(ctx contractapi.TransactionContextInterface, labResultID string, labResultJSON string) error {
 	labResultAsBytes, err := ctx.GetStub().GetState(labResultID)
 	if err != nil {
@@ -60,11 +58,14 @@ func (t *LabResultsChaincode) UpdateLabResult(ctx contractapi.TransactionContext
 		return errors.New("failed to decode JSON")
 	}
 
-	updatedLabResultAsBytes, _ := json.Marshal(labResult)
+	updatedLabResultAsBytes, err := json.Marshal(labResult)
+	if err != nil {
+		return errors.New("failed to encode JSON")
+	}
 	return ctx.GetStub().PutState(labResultID, updatedLabResultAsBytes)
 }
 
-// GetLabResult retrieves a specific laboratory result from the blockchain
+// GetLabResult recupera uno specifico risultato di laboratorio dalla blockchain
 func (t *LabResultsChaincode) GetLabResult(ctx contractapi.TransactionContextInterface, labResultID string) (string, error) {
 	labResultAsBytes, err := ctx.GetStub().GetState(labResultID)
 	if err != nil {
@@ -77,7 +78,16 @@ func (t *LabResultsChaincode) GetLabResult(ctx contractapi.TransactionContextInt
 	return string(labResultAsBytes), nil
 }
 
-// QueryLabResults retrieves lab results for a specific patient using the Observation struct
+// LabResultExists verifica se un risultato di laboratorio esiste nella blockchain
+func (t *LabResultsChaincode) LabResultExists(ctx contractapi.TransactionContextInterface, labResultID string) (bool, error) {
+	labResultAsBytes, err := ctx.GetStub().GetState(labResultID)
+	if err != nil {
+		return false, errors.New("failed to read from world state")
+	}
+	return labResultAsBytes != nil, nil
+}
+
+// QueryLabResults recupera i risultati di laboratorio per un paziente specifico utilizzando la struttura Observation
 func (t *LabResultsChaincode) QueryLabResults(ctx contractapi.TransactionContextInterface, patientID string) ([]Observation, error) {
 	queryString := fmt.Sprintf(`{"selector":{"subject.reference":"%s", "category.text":"Laboratory"}}`, patientID)
 	resultsIterator, err := ctx.GetStub().GetQueryResult(queryString)

@@ -269,86 +269,164 @@ func (c *PractitionerContract) DeleteProcedure(ctx contractapi.TransactionContex
 }
 
 // CreateAnnotation adds a new annotation record to the ledger
-func (c *PractitionerContract) CreateAnnotation(ctx contractapi.TransactionContextInterface, annotationID string, annotationJSON string) error {
-	exists, err := ctx.GetStub().GetState(annotationID)
+func (c *PractitionerContract) CreateAnnotation(ctx contractapi.TransactionContextInterface, procedureID string, annotationID string, annotationJSON string) error {
+	// Check if the procedure exists
+	procedureJSON, err := ctx.GetStub().GetState(procedureID)
 	if err != nil {
-		return errors.New("failed to get annotation: " + err.Error())
+		return errors.New("failed to get procedure: " + err.Error())
 	}
-	if exists != nil {
-		return errors.New("annotation already exists: " + annotationID)
+	if procedureJSON == nil {
+		return errors.New("procedure does not exist: " + procedureID)
 	}
 
+	// Retrieve the procedure from the ledger
+	var procedure Procedure
+	err = json.Unmarshal(procedureJSON, &procedure)
+	if err != nil {
+		return errors.New("failed to unmarshal procedure: " + err.Error())
+	}
+
+	// Unmarshal the annotation JSON into a struct
 	var annotation Annotation
 	err = json.Unmarshal([]byte(annotationJSON), &annotation)
 	if err != nil {
 		return errors.New("failed to unmarshal annotation: " + err.Error())
 	}
 
-	annotationJSONBytes, err := json.Marshal(annotation)
+	// Add the annotation to the procedure
+	procedure.Note = append(procedure.Note, annotation)
+
+	// Marshal the updated procedure back to JSON
+	updatedProcedureJSON, err := json.Marshal(procedure)
 	if err != nil {
-		return errors.New("failed to marshal annotation: " + err.Error())
+		return errors.New("failed to marshal updated procedure: " + err.Error())
 	}
 
-	// Save the new annotation to the ledger
-	return ctx.GetStub().PutState(annotationID, annotationJSONBytes)
+	// Update the procedure record in the ledger
+	err = ctx.GetStub().PutState(procedureID, updatedProcedureJSON)
+	if err != nil {
+		return errors.New("failed to update procedure: " + err.Error())
+	}
+
+	return nil
 }
 
 // ReadAnnotation retrieves an annotation record from the ledger
-func (c *PractitionerContract) ReadAnnotation(ctx contractapi.TransactionContextInterface, annotationID string) (*Annotation, error) {
-	annotationJSON, err := ctx.GetStub().GetState(annotationID)
+func (c *PractitionerContract) ReadAnnotation(ctx contractapi.TransactionContextInterface, procedureID string, annotationIndex int) (*Annotation, error) {
+	// Retrieve the procedure from the ledger
+	procedureJSON, err := ctx.GetStub().GetState(procedureID)
 	if err != nil {
-		return nil, errors.New("failed to read annotation: " + err.Error())
+		return nil, errors.New("failed to read procedure: " + err.Error())
 	}
-	if annotationJSON == nil {
-		return nil, errors.New("annotation does not exist: " + annotationID)
+	if procedureJSON == nil {
+		return nil, errors.New("procedure does not exist: " + procedureID)
 	}
 
-	var annotation Annotation
-	err = json.Unmarshal(annotationJSON, &annotation)
+	// Unmarshal the procedure JSON into a struct
+	var procedure Procedure
+	err = json.Unmarshal(procedureJSON, &procedure)
 	if err != nil {
-		return nil, errors.New("failed to unmarshal annotation: " + err.Error())
+		return nil, errors.New("failed to unmarshal procedure: " + err.Error())
 	}
+
+	// Check if the annotation index is valid
+	if annotationIndex < 0 || annotationIndex >= len(procedure.Note) {
+		return nil, errors.New("invalid annotation index")
+	}
+
+	// Retrieve the annotation from the procedure
+	annotation := procedure.Note[annotationIndex]
 
 	return &annotation, nil
 }
 
 // UpdateAnnotation updates an existing annotation record in the ledger
-func (c *PractitionerContract) UpdateAnnotation(ctx contractapi.TransactionContextInterface, annotationID string, annotationJSON string) error {
-	exists, err := ctx.GetStub().GetState(annotationID)
+func (c *PractitionerContract) UpdateAnnotation(ctx contractapi.TransactionContextInterface, procedureID string, annotationIndex int, annotationJSON string) error {
+	// Retrieve the procedure from the ledger
+	procedureJSON, err := ctx.GetStub().GetState(procedureID)
 	if err != nil {
-		return errors.New("failed to get annotation: " + err.Error())
+		return errors.New("failed to read procedure: " + err.Error())
 	}
-	if exists == nil {
-		return errors.New("annotation does not exist: " + annotationID)
+	if procedureJSON == nil {
+		return errors.New("procedure does not exist: " + procedureID)
 	}
 
-	var annotation Annotation
-	err = json.Unmarshal([]byte(annotationJSON), &annotation)
+	// Unmarshal the procedure JSON into a struct
+	var procedure Procedure
+	err = json.Unmarshal(procedureJSON, &procedure)
 	if err != nil {
-		return errors.New("failed to unmarshal annotation: " + err.Error())
+		return errors.New("failed to unmarshal procedure: " + err.Error())
 	}
 
-	annotationJSONBytes, err := json.Marshal(annotation)
-	if err != nil {
-		return errors.New("failed to marshal annotation: " + err.Error())
+	// Check if the annotation index is valid
+	if annotationIndex < 0 || annotationIndex >= len(procedure.Note) {
+		return errors.New("invalid annotation index")
 	}
 
-	// Update the annotation record in the ledger
-	return ctx.GetStub().PutState(annotationID, annotationJSONBytes)
+	// Unmarshal the updated annotation JSON into a struct
+	var updatedAnnotation Annotation
+	err = json.Unmarshal([]byte(annotationJSON), &updatedAnnotation)
+	if err != nil {
+		return errors.New("failed to unmarshal updated annotation: " + err.Error())
+	}
+
+	// Update the annotation in the procedure
+	procedure.Note[annotationIndex] = updatedAnnotation
+
+	// Marshal the updated procedure back to JSON
+	updatedProcedureJSON, err := json.Marshal(procedure)
+	if err != nil {
+		return errors.New("failed to marshal updated procedure: " + err.Error())
+	}
+
+	// Update the procedure record in the ledger
+	err = ctx.GetStub().PutState(procedureID, updatedProcedureJSON)
+	if err != nil {
+		return errors.New("failed to update procedure: " + err.Error())
+	}
+
+	return nil
 }
 
 // DeleteAnnotation removes an annotation record from the ledger
-func (c *PractitionerContract) DeleteAnnotation(ctx contractapi.TransactionContextInterface, annotationID string) error {
-	exists, err := ctx.GetStub().GetState(annotationID)
+func (c *PractitionerContract) DeleteAnnotation(ctx contractapi.TransactionContextInterface, procedureID string, annotationIndex int) error {
+	// Retrieve the procedure from the ledger
+	procedureJSON, err := ctx.GetStub().GetState(procedureID)
 	if err != nil {
-		return errors.New("failed to get annotation: " + err.Error())
+		return errors.New("failed to read procedure: " + err.Error())
 	}
-	if exists == nil {
-		return errors.New("annotation does not exist: " + annotationID)
+	if procedureJSON == nil {
+		return errors.New("procedure does not exist: " + procedureID)
 	}
 
-	// Remove the annotation record
-	return ctx.GetStub().DelState(annotationID)
+	// Unmarshal the procedure JSON into a struct
+	var procedure Procedure
+	err = json.Unmarshal(procedureJSON, &procedure)
+	if err != nil {
+		return errors.New("failed to unmarshal procedure: " + err.Error())
+	}
+
+	// Check if the annotation index is valid
+	if annotationIndex < 0 || annotationIndex >= len(procedure.Note) {
+		return errors.New("invalid annotation index")
+	}
+
+	// Remove the annotation from the procedure
+	procedure.Note = append(procedure.Note[:annotationIndex], procedure.Note[annotationIndex+1:]...)
+
+	// Marshal the updated procedure back to JSON
+	updatedProcedureJSON, err := json.Marshal(procedure)
+	if err != nil {
+		return errors.New("failed to marshal updated procedure: " + err.Error())
+	}
+
+	// Update the procedure record in the ledger
+	err = ctx.GetStub().PutState(procedureID, updatedProcedureJSON)
+	if err != nil {
+		return errors.New("failed to update procedure: " + err.Error())
+	}
+
+	return nil
 }
 
 func main() {

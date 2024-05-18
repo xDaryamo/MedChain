@@ -723,4 +723,3 @@ func TestRevokeAccess_Success(t *testing.T) {
 	stub.AssertExpectations(t)
 	clientIdentity.AssertExpectations(t)
 }
-

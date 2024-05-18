@@ -282,12 +282,13 @@ func (m *MockIterator) Close() error {
 
 func generateMedicationRequestJSON(id string, status string) string {
 	// Create a simple MedicationRequest struct
+	now := time.Now() // Creare il valore time.Time
 	medicationRequest := MedicationRequest{
-		ID: Identifier{
+		ID: &Identifier{
 			System: "http://hospital.smarthealth.it/medicationrequests",
 			Value:  id,
 		},
-		Status: Code{
+		Status: &Code{
 			Coding: []Coding{
 				{
 					System:  "http://hl7.org/fhir/medicationrequest-status",
@@ -296,7 +297,7 @@ func generateMedicationRequestJSON(id string, status string) string {
 				},
 			},
 		},
-		Intent: Code{
+		Intent: &Code{
 			Coding: []Coding{
 				{
 					System:  "http://hl7.org/fhir/medication-request-intent",
@@ -305,7 +306,7 @@ func generateMedicationRequestJSON(id string, status string) string {
 				},
 			},
 		},
-		MedicationCodeableConcept: CodeableConcept{
+		MedicationCodeableConcept: &CodeableConcept{
 			Coding: []Coding{
 				{
 					System:  "http://www.nlm.nih.gov/research/umls/rxnorm",
@@ -319,7 +320,7 @@ func generateMedicationRequestJSON(id string, status string) string {
 			Reference: "Patient/example",
 			Display:   "John Doe",
 		},
-		AuthoredOn: time.Now(),
+		AuthoredOn: &now, // Usare l'indirizzo del valore time.Time
 		Requester: &Reference{
 			Reference: "Practitioner/example",
 			Display:   "Dr. Jane Smith",
@@ -333,11 +334,11 @@ func generateMedicationRequestJSON(id string, status string) string {
 			Performer: &Reference{
 				Reference: "Organization/pharmacy",
 			},
-			Quantity: Quantity{
+			Quantity: &Quantity{
 				Value: 15,
 				Unit:  "teaspoonful",
 			},
-			ExpectedSupplyDuration: Duration{
+			ExpectedSupplyDuration: &Duration{
 				Value: 10,
 				Unit:  "days",
 			},
@@ -353,7 +354,7 @@ func generateMedicationRequestJSON(id string, status string) string {
 	return string(medicationRequestJSON)
 }
 
-func TestCreateMedicationRequest_Success(t *testing.T) {
+func TestCreatePrescription_Success(t *testing.T) {
 	mockStub := new(MockStub)
 	mockCtx := new(MockTransactionContext)
 	mockCtx.On("GetStub").Return(mockStub)
@@ -365,13 +366,13 @@ func TestCreateMedicationRequest_Success(t *testing.T) {
 	mockStub.On("PutState", medicationRequestID, mock.Anything).Return(nil) // Expect the put to succeed
 
 	chaincode := PrescriptionChaincode{}
-	err := chaincode.CreateMedicationRequest(mockCtx, medicationRequestJSON)
+	err := chaincode.CreatePrescription(mockCtx, medicationRequestJSON)
 
 	assert.Nil(t, err)
 	mockStub.AssertExpectations(t)
 }
 
-func TestCreateMedicationRequest_AlreadyExists(t *testing.T) {
+func TestCreatePrescription_AlreadyExists(t *testing.T) {
 	mockStub := new(MockStub)
 	mockCtx := new(MockTransactionContext)
 	mockCtx.On("GetStub").Return(mockStub)
@@ -382,14 +383,14 @@ func TestCreateMedicationRequest_AlreadyExists(t *testing.T) {
 	mockStub.On("GetState", medicationRequestID).Return([]byte("existing medication request"), nil) // Medication request already exists
 
 	chaincode := PrescriptionChaincode{}
-	err := chaincode.CreateMedicationRequest(mockCtx, medicationRequestJSON)
+	err := chaincode.CreatePrescription(mockCtx, medicationRequestJSON)
 
 	assert.NotNil(t, err)
 	assert.Equal(t, "the prescription already exists "+medicationRequestID, err.Error())
 	mockStub.AssertExpectations(t)
 }
 
-func TestCreateMedicationRequest_InvalidJSON(t *testing.T) {
+func TestCreatePrescription_InvalidJSON(t *testing.T) {
 	mockStub := new(MockStub)
 	mockCtx := new(MockTransactionContext)
 	mockCtx.On("GetStub").Return(mockStub)
@@ -397,14 +398,14 @@ func TestCreateMedicationRequest_InvalidJSON(t *testing.T) {
 	invalidJSON := "{this is not valid JSON"
 
 	chaincode := PrescriptionChaincode{}
-	err := chaincode.CreateMedicationRequest(mockCtx, invalidJSON)
+	err := chaincode.CreatePrescription(mockCtx, invalidJSON)
 
 	assert.NotNil(t, err)
 	assert.Contains(t, err.Error(), "failed to unmarshal prescription")
 	mockStub.AssertExpectations(t)
 }
 
-func TestCreateMedicationRequest_NoID(t *testing.T) {
+func TestCreatePrescription_NoID(t *testing.T) {
 	mockStub := new(MockStub)
 	mockCtx := new(MockTransactionContext)
 	mockCtx.On("GetStub").Return(mockStub)
@@ -412,7 +413,7 @@ func TestCreateMedicationRequest_NoID(t *testing.T) {
 	medicationRequestJSON := generateMedicationRequestJSON("", "active")
 
 	chaincode := PrescriptionChaincode{}
-	err := chaincode.CreateMedicationRequest(mockCtx, medicationRequestJSON)
+	err := chaincode.CreatePrescription(mockCtx, medicationRequestJSON)
 
 	assert.NotNil(t, err)
 	assert.Equal(t, "medication request ID is required", err.Error())
@@ -493,7 +494,7 @@ func TestVerifyPrescription_StubFailure(t *testing.T) {
 	mockStub.AssertExpectations(t)
 }
 
-func TestGetMedicationRequest_Success(t *testing.T) {
+func TestReadPrescription_Success(t *testing.T) {
 	mockStub := new(MockStub)
 	mockCtx := new(MockTransactionContext)
 	mockCtx.On("GetStub").Return(mockStub)
@@ -504,14 +505,14 @@ func TestGetMedicationRequest_Success(t *testing.T) {
 	mockStub.On("GetState", medicationRequestID).Return([]byte(medicationRequestJSON), nil)
 
 	chaincode := PrescriptionChaincode{}
-	result, err := chaincode.GetMedicationRequest(mockCtx, medicationRequestID)
+	result, err := chaincode.ReadPrescription(mockCtx, medicationRequestID)
 
 	assert.Nil(t, err)
 	assert.Equal(t, medicationRequestJSON, result)
 	mockStub.AssertExpectations(t)
 }
 
-func TestGetMedicationRequest_NotFound(t *testing.T) {
+func TestReadPrescription_NotFound(t *testing.T) {
 	mockStub := new(MockStub)
 	mockCtx := new(MockTransactionContext)
 	mockCtx.On("GetStub").Return(mockStub)
@@ -521,7 +522,7 @@ func TestGetMedicationRequest_NotFound(t *testing.T) {
 	mockStub.On("GetState", medicationRequestID).Return(nil, nil)
 
 	chaincode := PrescriptionChaincode{}
-	result, err := chaincode.GetMedicationRequest(mockCtx, medicationRequestID)
+	result, err := chaincode.ReadPrescription(mockCtx, medicationRequestID)
 
 	assert.NotNil(t, err)
 	assert.Equal(t, "", result)
@@ -529,7 +530,7 @@ func TestGetMedicationRequest_NotFound(t *testing.T) {
 	mockStub.AssertExpectations(t)
 }
 
-func TestGetMedicationRequest_LedgerError(t *testing.T) {
+func TestReadPrescription_LedgerError(t *testing.T) {
 	mockStub := new(MockStub)
 	mockCtx := new(MockTransactionContext)
 	mockCtx.On("GetStub").Return(mockStub)
@@ -539,7 +540,7 @@ func TestGetMedicationRequest_LedgerError(t *testing.T) {
 	mockStub.On("GetState", medicationRequestID).Return(nil, errors.New("ledger error"))
 
 	chaincode := PrescriptionChaincode{}
-	result, err := chaincode.GetMedicationRequest(mockCtx, medicationRequestID)
+	result, err := chaincode.ReadPrescription(mockCtx, medicationRequestID)
 
 	assert.NotNil(t, err)
 	assert.Equal(t, "", result)

@@ -12,9 +12,7 @@ type PrescriptionChaincode struct {
 	contractapi.Contract
 }
 
-// CreateMedicationRequest creates a new medication request on the blockchain
-func (t *PrescriptionChaincode) CreateMedicationRequest(ctx contractapi.TransactionContextInterface, medicationRequestJSON string) error {
-	// Deserialize JSON data into a Go data structure
+func (t *PrescriptionChaincode) CreatePrescription(ctx contractapi.TransactionContextInterface, medicationRequestJSON string) error {
 	var medicationRequest MedicationRequest
 	err := json.Unmarshal([]byte(medicationRequestJSON), &medicationRequest)
 
@@ -22,12 +20,11 @@ func (t *PrescriptionChaincode) CreateMedicationRequest(ctx contractapi.Transact
 		return errors.New("failed to unmarshal prescription: " + err.Error())
 	}
 
-	// Check if the medication request ID is provided and if the prescription already exists
-	if medicationRequest.ID.Value == "" {
+	if medicationRequest.ID == nil || medicationRequest.ID.Value == "" {
 		return errors.New("medication request ID is required")
 	}
 
-	existingPrescription, err := ctx.GetStub().GetState(medicationRequest.ID.Value)
+	exists, err := t.PrescriptionExists(ctx, medicationRequest.ID.Value)
 	if err != nil {
 		return errors.New("failed to retrieve prescription " + medicationRequest.ID.Value + " from world state")
 	}
@@ -36,16 +33,14 @@ func (t *PrescriptionChaincode) CreateMedicationRequest(ctx contractapi.Transact
 		return errors.New("the prescription already exists " + medicationRequest.ID.Value)
 	}
 
-	// Serialize the prescription and save it on the blockchain
 	medicationRequestAsBytes, err := json.Marshal(medicationRequest)
 	if err != nil {
-		return errors.New("failed to marshal prescription: " + err.Error())
+		return errors.New("failed to marshal medication request")
 	}
 
 	return ctx.GetStub().PutState(medicationRequest.ID.Value, medicationRequestAsBytes)
 }
 
-// VerifyPrescription modifies the status of a prescription when it is filled by a pharmacy
 func (t *PrescriptionChaincode) VerifyPrescription(ctx contractapi.TransactionContextInterface, prescriptionID string, pharmacyID string) error {
 	prescriptionAsBytes, err := ctx.GetStub().GetState(prescriptionID)
 	if err != nil {
@@ -61,21 +56,21 @@ func (t *PrescriptionChaincode) VerifyPrescription(ctx contractapi.TransactionCo
 		return errors.New("failed to unmarshal prescription")
 	}
 
-	// Ensure that the status code is defined and accessible
-	if len(prescription.Status.Coding) == 0 || prescription.Status.Coding[0].Code != "active" {
+	if prescription.Status == nil || len(prescription.Status.Coding) == 0 || prescription.Status.Coding[0].Code != "active" {
 		return errors.New("prescription is not active or no status code available")
 	}
 
-	// Change the status to 'completed'
 	prescription.Status.Coding[0].Code = "completed"
 	prescription.DispenseRequest.Performer = &Reference{Reference: pharmacyID}
-	updatedPrescriptionAsBytes, _ := json.Marshal(prescription)
+	updatedPrescriptionAsBytes, err := json.Marshal(prescription)
+	if err != nil {
+		return errors.New("failed to marshal updated prescription")
+	}
 
 	return ctx.GetStub().PutState(prescriptionID, updatedPrescriptionAsBytes)
 }
 
-// GetMedicationRequest retrieves a specific prescription from the blockchain
-func (t *PrescriptionChaincode) GetMedicationRequest(ctx contractapi.TransactionContextInterface, prescriptionID string) (string, error) {
+func (t *PrescriptionChaincode) ReadPrescription(ctx contractapi.TransactionContextInterface, prescriptionID string) (string, error) {
 	prescriptionAsBytes, err := ctx.GetStub().GetState(prescriptionID)
 	if err != nil {
 		return "", errors.New("failed to read from world state")
@@ -87,13 +82,21 @@ func (t *PrescriptionChaincode) GetMedicationRequest(ctx contractapi.Transaction
 	return string(prescriptionAsBytes), nil
 }
 
+func (t *PrescriptionChaincode) PrescriptionExists(ctx contractapi.TransactionContextInterface, prescriptionID string) (bool, error) {
+	prescriptionAsBytes, err := ctx.GetStub().GetState(prescriptionID)
+	if err != nil {
+		return false, errors.New("failed to read from world state")
+	}
+	return prescriptionAsBytes != nil, nil
+}
+
 func main() {
 	chaincode, err := contractapi.NewChaincode(new(PrescriptionChaincode))
 	if err != nil {
-		log.Panic(errors.New("Error creating prescription chaincode: " + err.Error()))
+		log.Panic("Error creating prescription chaincode: ", err)
 	}
 
 	if err := chaincode.Start(); err != nil {
-		log.Panic(errors.New("Error starting prescription chaincode: " + err.Error()))
+		log.Panic("Error starting prescription chaincode: ", err)
 	}
 }
