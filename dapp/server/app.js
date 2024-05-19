@@ -6,6 +6,7 @@ const mongoose = require("mongoose");
 
 const authRoutes = require("./api/routes/auth");
 const patientRoutes = require("./api/routes/patient");
+const encounterRoutes = require("./api/routes/encounter");
 
 const FabricNetwork = require("./blockchain/fabric");
 const fabric = new FabricNetwork();
@@ -32,6 +33,7 @@ app.use((req, res, next) => {
 //app.use("/auth", authRoutes);
 
 app.use(patientRoutes);
+app.use(encounterRoutes);
 
 app.use((err, req, res, next) => {
   console.error(err);

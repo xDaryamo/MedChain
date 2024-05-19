@@ -1,9 +1,12 @@
 package main
 
 import (
+	"crypto/x509"
 	"encoding/json"
+	"encoding/pem"
+	"errors"
+	"fmt"
 	"testing"
-	"time"
 
 	"github.com/golang/protobuf/ptypes/timestamp"
 	"github.com/hyperledger/fabric-chaincode-go/pkg/cid"
@@ -277,578 +280,1096 @@ func (m *MockIterator) Close() error {
 	return nil
 }
 
+type MockClientIdentity struct {
+	mock.Mock
+}
+
+func (m *MockClientIdentity) GetID() (string, error) {
+	args := m.Called()
+	return args.String(0), args.Error(1)
+}
+
+func (m *MockClientIdentity) GetMSPID() (string, error) {
+	args := m.Called()
+	return args.String(0), args.Error(1)
+}
+
+func (m *MockClientIdentity) GetAttributeValue(attrName string) (string, bool, error) {
+	args := m.Called(attrName)
+	return args.String(0), args.Bool(1), args.Error(2)
+}
+
+func (m *MockClientIdentity) AssertAttributeValue(attrName, attrValue string) error {
+	args := m.Called(attrName, attrValue)
+	return args.Error(0)
+}
+
+func (m *MockClientIdentity) GetX509Certificate() (*x509.Certificate, error) {
+	args := m.Called()
+	certPEM := args.Get(0).([]byte)
+	block, _ := pem.Decode(certPEM)
+	if block == nil {
+		return nil, errors.New("failed to decode PEM block containing the certificate")
+	}
+	cert, err := x509.ParseCertificate(block.Bytes)
+	return cert, err
+}
+
+// TestCreateEncounter tests the CreateEncounter function
 func TestCreateEncounter(t *testing.T) {
+	chaincode := new(EncounterChaincode)
+	ctx := new(MockTransactionContext)
+	stub := new(MockStub)
 
-	var mockStub *MockStub
+	stub.On("GetChannelID").Return("testchannel")
+	ctx.On("GetStub").Return(stub)
+	clientIdentity := new(MockClientIdentity)
+	ctx.On("GetClientIdentity").Return(clientIdentity)
 
-	// Mocking the TransactionContextInterface
-	mockCtx := new(MockTransactionContext)
+	// Mock the GetID, GetMSPID, GetAttributeValue, and AssertAttributeValue methods
+	clientIdentity.On("GetID").Return("testClientID", nil)
+	clientIdentity.On("GetMSPID").Return("Org1MSP", nil)
+	clientIdentity.On("AssertAttributeValue", "role", "doctor").Return(nil)
+	clientIdentity.On("GetAttributeValue", "userId").Return("testUserId", true, nil)
 
-	mockStub = new(MockStub)
+	// Mock the GetX509Certificate method
+	certPEM := []byte(`-----BEGIN CERTIFICATE-----
+MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAuW9TzzjO74odDzReLxVc
+...
+-----END CERTIFICATE-----`)
+	clientIdentity.On("GetX509Certificate").Return(certPEM, nil)
 
-	// Creating an instance of EncounterChaincode
-	ec := new(EncounterChaincode)
-
-	// Ensure GetStub returns the same instance of mockStub
-	mockCtx.On("GetStub").Return(mockStub)
-
-	encounterJSON := `{"ID":{"system":"http://example.com/enc1","value":"123456"},
-	"status":{"coding":[{"system":"http://example.com/encounter/status","code":"in-progress","display":"In Progress"}]},
-	"class":{"system":"http://example.com/encounter/class","code":"outpatient","display":"Outpatient"},
-	"subject":{"reference":"Patient/123"},
-	"participant":[{"type":[{"coding":[{"system":"http://example.com/encounter/participantType","code":"primary","display":"Primary"}],"text":"Primary"}],
-	"individual":{"reference":"Practitioner/456"}}],"period":{"start":"2024-04-15T10:00:00Z","end":"2024-04-15T11:00:00Z"},
-	"reasonReference":[{"coding":[{"system":"http://example.com/encounter/reasonReference","code":"diabetes","display":"Diabetes"}],"text":"Diabetes"}]
-	}`
-
-	// Mocking GetState method to return nil for encounterID
-	mockStub.On("GetState", mock.Anything).Return(nil, nil)
-
-	// Mocking PutState method to return nil
-	mockStub.On("PutState", mock.Anything, mock.Anything).Return(nil)
-
-	// Call the function under test
-	err := ec.CreateEncounter(mockCtx, encounterJSON)
-
-	assert.NoError(t, err)
-
-}
-
-func TestGetEncounter(t *testing.T) {
-
-	var mockStub *MockStub
-
-	// Mocking the TransactionContextInterface
-	mockCtx := new(MockTransactionContext)
-
-	// Creating an instance of EncounterChaincode
-	ec := new(EncounterChaincode)
-
-	mockStub = new(MockStub)
-
-	// Ensure GetStub returns the same instance of mockStub
-	mockCtx.On("GetStub").Return(mockStub)
-
-	// Mocking the input parameters
-	encounterID := "enc1"
-
-	// Define a sample encounter JSON
-	encounterJSON := `{"ID":{"system":"http://example.com/enc1","value":"123456"},
-	"status":{"coding":[{"system":"http://example.com/encounter/status","code":"in-progress","display":"In Progress"}]},
-	"class":{"system":"http://example.com/encounter/class","code":"outpatient","display":"Outpatient"},
-	"subject":{"reference":"Patient/123"},
-	"participant":[{"type":[{"coding":[{"system":"http://example.com/encounter/participantType","code":"primary","display":"Primary"}],"text":"Primary"}],
-	"individual":{"reference":"Practitioner/456"}}],"period":{"start":"2024-04-15T10:00:00Z","end":"2024-04-15T11:00:00Z"},
-	"reasonReference":[{"coding":[{"system":"http://example.com/encounter/reasonReference","code":"diabetes","display":"Diabetes"}],"text":"Diabetes"}]
-	}`
-
-	// Mocking GetState method to return the sample encounter JSON
-	mockStub.On("GetState", encounterID).Return([]byte(encounterJSON), nil)
-
-	// Call the function under test
-	resultEncounter, err := ec.GetEncounter(mockCtx, encounterID)
-
-	// Verify that the result is as expected
-	assert.NoError(t, err)
-	assert.NotNil(t, resultEncounter)
-
-	// Deserialize the expected encounter JSON
-	var expectedEncounter Encounter
-	err = json.Unmarshal([]byte(encounterJSON), &expectedEncounter)
-	assert.NoError(t, err)
-
-	// Check if the result encounter matches the expected encounter
-	assert.Equal(t, &expectedEncounter, resultEncounter)
-}
-
-func TestSearchEncounter(t *testing.T) {
-
-	var mockStub *MockStub
-
-	// Mocking the TransactionContextInterface
-	mockCtx := new(MockTransactionContext)
-
-	// Creating an instance of EncounterChaincode
-	ec := new(EncounterChaincode)
-
-	mockStub = new(MockStub)
-
-	// Ensure GetStub returns the same instance of mockStub
-	mockCtx.On("GetStub").Return(mockStub)
-
-	// Define sample encounter data
-	encounter1 := Encounter{ID: Identifier{System: "http://example.com/enc1", Value: "123456"}}
-	encounter2 := Encounter{ID: Identifier{System: "http://example.com/enc2", Value: "789012"}}
-	encounter3 := Encounter{ID: Identifier{System: "http://example.com/enc3", Value: "345678"}}
-
-	// Serialize sample encounters to JSON
-	encounter1JSON, _ := json.Marshal(encounter1)
-	encounter2JSON, _ := json.Marshal(encounter2)
-	encounter3JSON, _ := json.Marshal(encounter3)
-
-	// Mocking GetStateByRange method to return sample encounter data
-	mockStub.On("GetStateByRange", "", "").Return(&MockIterator{
-		Records: []KVPair{
-			{Key: "enc1", Value: encounter1JSON},
-			{Key: "enc2", Value: encounter2JSON},
-			{Key: "enc3", Value: encounter3JSON},
+	encounter := Encounter{
+		ID: &Identifier{
+			System: "http://example.com/systems/encounter",
+			Value:  "encounter1",
 		},
-	}, nil)
+		Status: &Code{
+			Coding: []Coding{
+				{
+					System:  "http://hl7.org/fhir/ValueSet/encounter-status",
+					Code:    "in-progress",
+					Display: "In Progress",
+				},
+			},
+		},
+		Class: &Coding{
+			System:  "http://hl7.org/fhir/ValueSet/v3-ActEncounterCode",
+			Code:    "AMB",
+			Display: "ambulatory",
+		},
+		Type: []CodeableConcept{
+			{
+				Coding: []Coding{
+					{
+						System:  "http://hl7.org/fhir/ValueSet/encounter-type",
+						Code:    "consult",
+						Display: "Consultation",
+					},
+				},
+				Text: "Consultation encounter",
+			},
+		},
+		ServiceType: &CodeableConcept{
+			Coding: []Coding{
+				{
+					System:  "http://hl7.org/fhir/ValueSet/service-type",
+					Code:    "primary",
+					Display: "Primary Care",
+				},
+			},
+			Text: "Primary Care",
+		},
+		Priority: &CodeableConcept{
+			Coding: []Coding{
+				{
+					System:  "http://terminology.hl7.org/ValueSet/v3-ActPriority",
+					Code:    "R",
+					Display: "Routine",
+				},
+			},
+			Text: "Routine Priority",
+		},
+		Subject: &Reference{
+			Reference: "Patient/example",
+			Display:   "Jane Doe",
+		},
+		BasedOn: []Reference{
+			{
+				Reference: "ServiceRequest/example",
+				Display:   "Consultation request",
+			},
+		},
+		Participant: []EncounterParticipant{
+			{
+				Type: []CodeableConcept{
+					{
+						Coding: []Coding{
+							{
+								System:  "http://hl7.org/fhir/v3/ParticipationType",
+								Code:    "PPRF",
+								Display: "Primary performer",
+							},
+						},
+						Text: "Primary Healthcare Provider",
+					},
+				},
+
+				Individual: &Reference{
+					Reference: "Practitioner/example",
+					Display:   "Dr. John Smith",
+				},
+			},
+		},
+		Appointment: &Reference{
+			Reference: "Appointment/example",
+			Display:   "Consultation appointment",
+		},
+		ReasonCode: &CodeableConcept{
+			Coding: []Coding{
+				{
+					System:  "http://snomed.info/sct",
+					Code:    "123456789",
+					Display: "Chief Complaint",
+				},
+			},
+			Text: "Patient complaint of headache",
+		},
+		ReasonReference: []CodeableConcept{
+			{
+				Coding: []Coding{
+					{
+						System:  "http://hl7.org/fhir/ValueSet/diagnosis-role",
+						Code:    "CC",
+						Display: "Chief complaint",
+					},
+				},
+				Text: "Chief Complaint",
+			},
+		},
+		Diagnosis: []EncounterDiagnosis{
+			{
+				Condition: &Reference{
+					Reference: "Condition/example",
+					Display:   "Headache",
+				},
+				Use: &CodeableConcept{
+					Coding: []Coding{
+						{
+							System:  "http://terminology.hl7.org/CodeSystem/diagnosis-role",
+							Code:    "AD",
+							Display: "Admission diagnosis",
+						},
+					},
+					Text: "Admission Diagnosis",
+				},
+				Rank: 1,
+			},
+		},
+		Location: []Location{
+			{
+				ID: &Identifier{
+					System: "http://example.com/location",
+					Value:  "loc-1",
+				},
+				Status: &Code{
+					Coding: []Coding{
+						{
+							System:  "http://terminology.hl7.org/CodeSystem/location-status",
+							Code:    "active",
+							Display: "Active",
+						},
+					},
+				},
+				Name:        "Hospital A",
+				Description: "Main Hospital Building",
+				Type: &CodeableConcept{
+					Coding: []Coding{
+						{
+							System:  "http://terminology.hl7.org/CodeSystem/v3-RoleCode",
+							Code:    "HOSP",
+							Display: "Hospital",
+						},
+					},
+					Text: "Hospital",
+				},
+				ManagingOrganization: &Reference{
+					Reference: "Organization/example",
+					Display:   "Hospital A Organization",
+				},
+			},
+		},
+		ServiceProvider: &Reference{
+			Reference: "Organization/hospital-a",
+			Display:   "Hospital A",
+		},
+		PartOf: &Reference{
+			Reference: "Encounter/prior-encounter",
+			Display:   "Previous Encounter",
+		},
+	}
 
-	// Call the function under test with a query
-	query := "789012" // Search for encounters containing "enc2" in the ID
-	resultEncounters, err := ec.SearchEncounter(mockCtx, query)
-
-	// Verify that the result is as expected
-	assert.NoError(t, err)
-	assert.NotNil(t, resultEncounters)
-	assert.Len(t, resultEncounters, 1)
-
-	// Ensure that the returned encounter matches the expected encounter
-	assert.Equal(t, encounter2, *resultEncounters[0])
-}
-
-func TestUpdateEncounter(t *testing.T) {
-
-	var mockStub *MockStub
-
-	// Mocking the TransactionContextInterface
-	mockCtx := new(MockTransactionContext)
-
-	// Creating an instance of EncounterChaincode
-	ec := new(EncounterChaincode)
-
-	mockStub = new(MockStub)
-
-	// Ensure GetStub returns the same instance of mockStub
-	mockCtx.On("GetStub").Return(mockStub)
-
-	// Define sample encounter data
-	existingEncounter := Encounter{ID: Identifier{System: "http://example.com/enc1", Value: "123456"}}
-	updatedEncounter := Encounter{ID: Identifier{System: "http://example.com/enc1", Value: "123456"} /* Add any updates */}
-
-	// Serialize sample encounters to JSON
-	existingEncounterJSON, _ := json.Marshal(existingEncounter)
-	updatedEncounterJSON, _ := json.Marshal(updatedEncounter)
-
-	// Mocking GetEncounter method to return existing encounter data
-	mockStub.On("GetState", "123456").Return(existingEncounterJSON, nil)
-
-	// Mocking PutState method to ensure the updated encounter is saved
-	mockStub.On("PutState", "123456", updatedEncounterJSON).Return(nil)
-
-	// Call the function under test
-	err := ec.UpdateEncounter(mockCtx, "123456", string(updatedEncounterJSON))
-
-	// Verify that the result is as expected
-	assert.NoError(t, err, "UpdateEncounter should not return an error")
-}
-
-func TestDeleteEncounter(t *testing.T) {
-
-	var mockStub *MockStub
-
-	// Mocking the TransactionContextInterface
-	mockCtx := new(MockTransactionContext)
-
-	// Creating an instance of EncounterChaincode
-	ec := new(EncounterChaincode)
-
-	mockStub = new(MockStub)
-
-	// Ensure GetStub returns the same instance of mockStub
-	mockCtx.On("GetStub").Return(mockStub)
-
-	// Define sample encounter data
-	existingEncounter := Encounter{ID: Identifier{System: "http://example.com/enc1", Value: "123456"}}
-
-	// Serialize sample encounter to JSON
-	existingEncounterJSON, _ := json.Marshal(existingEncounter)
-
-	// Mocking GetEncounter method to return existing encounter data
-	mockStub.On("GetState", "123456").Return(existingEncounterJSON, nil)
-
-	// Mocking DelState method to ensure the encounter is deleted
-	mockStub.On("DelState", "123456").Return(nil)
-
-	// Call the function under test
-	err := ec.DeleteEncounter(mockCtx, "123456")
-
-	// Verify that the result is as expected
-	assert.NoError(t, err, "DeleteEncounter should not return an error")
-}
-
-func TestGetEncountersByPatientID(t *testing.T) {
-
-	var mockStub *MockStub
-
-	// Mocking the TransactionContextInterface
-	mockCtx := new(MockTransactionContext)
-
-	// Creating an instance of EncounterChaincode
-	ec := new(EncounterChaincode)
-
-	mockStub = new(MockStub)
-
-	// Ensure GetStub returns the same instance of mockStub
-	mockCtx.On("GetStub").Return(mockStub)
-
-	// Mocking GetStateByRange to return a range of encounter data
-	mockStub.On("GetStateByRange", "", "").Return(&MockIterator{}, nil)
-
-	// Call the function under test
-	results, err := ec.GetEncountersByPatientID(mockCtx, "patientID")
-
-	// Verify that the result is as expected
-	assert.NoError(t, err, "GetEncountersByPatientID should not return an error")
-	assert.Empty(t, results, "GetEncountersByPatientID should return empty results as no encounters are stored")
-}
-
-func TestGetEncountersByDateRange(t *testing.T) {
-
-	var mockStub *MockStub
-
-	// Mocking the TransactionContextInterface
-	mockCtx := new(MockTransactionContext)
-
-	// Creating an instance of EncounterChaincode
-	ec := new(EncounterChaincode)
-
-	mockStub = new(MockStub)
-
-	// Ensure GetStub returns the same instance of mockStub
-	mockCtx.On("GetStub").Return(mockStub)
-
-	// Mocking GetStateByRange to return a range of encounter data
-	mockStub.On("GetStateByRange", "", "").Return(&MockIterator{}, nil)
-
-	// Define sample start and end dates
-	startDate := time.Now().AddDate(0, -1, 0) // 1 month ago
-	endDate := time.Now()
-
-	// Call the function under test
-	results, err := ec.GetEncountersByDateRange(mockCtx, startDate, endDate)
-
-	// Verify that the result is as expected
-	assert.NoError(t, err, "GetEncountersByDateRange should not return an error")
-	assert.Empty(t, results, "GetEncountersByDateRange should return empty results as no encounters are stored")
-}
-
-func TestGetEncountersByType(t *testing.T) {
-
-	var mockStub *MockStub
-
-	// Mocking the TransactionContextInterface
-	mockCtx := new(MockTransactionContext)
-
-	// Creating an instance of EncounterChaincode
-	ec := new(EncounterChaincode)
-
-	mockStub = new(MockStub)
-
-	// Ensure GetStub returns the same instance of mockStub
-	mockCtx.On("GetStub").Return(mockStub)
-
-	// Mocking GetStateByRange to return a range of encounter data
-	mockStub.On("GetStateByRange", "", "").Return(&MockIterator{}, nil)
-
-	// Call the function under test
-	results, err := ec.GetEncountersByType(mockCtx, "emergency")
-
-	// Verify that the result is as expected
-	assert.NoError(t, err, "GetEncountersByType should not return an error")
-	assert.Empty(t, results, "GetEncountersByType should return empty results as no encounters are stored")
-}
-
-func TestGetEncountersByLocation(t *testing.T) {
-
-	var mockStub *MockStub
-
-	// Mocking the TransactionContextInterface
-	mockCtx := new(MockTransactionContext)
-
-	// Creating an instance of EncounterChaincode
-	ec := new(EncounterChaincode)
-
-	mockStub = new(MockStub)
-
-	// Ensure GetStub returns the same instance of mockStub
-	mockCtx.On("GetStub").Return(mockStub)
-
-	// Mocking GetStateByRange to return a range of encounter data
-	mockStub.On("GetStateByRange", "", "").Return(&MockIterator{}, nil)
-
-	// Call the function under test
-	results, err := ec.GetEncountersByLocation(mockCtx, "locationID")
-
-	// Verify that the result is as expected
-	assert.NoError(t, err, "GetEncountersByLocation should not return an error")
-	assert.Empty(t, results, "GetEncountersByLocation should return empty results as no encounters are stored")
-}
-
-func TestGetEncountersByPractitioner(t *testing.T) {
-
-	var mockStub *MockStub
-
-	// Mocking the TransactionContextInterface
-	mockCtx := new(MockTransactionContext)
-
-	// Creating an instance of EncounterChaincode
-	ec := new(EncounterChaincode)
-
-	mockStub = new(MockStub)
-
-	// Ensure GetStub returns the same instance of mockStub
-	mockCtx.On("GetStub").Return(mockStub)
-
-	// Mocking GetStateByRange to return a range of encounter data
-	mockStub.On("GetStateByRange", "", "").Return(&MockIterator{}, nil)
-
-	// Call the function under test
-	results, err := ec.GetEncountersByPractitioner(mockCtx, "practitionerID")
-
-	// Verify that the result is as expected
-	assert.NoError(t, err, "GetEncountersByPractitioner should not return an error")
-	assert.Empty(t, results, "GetEncountersByPractitioner should return empty results as no encounters are stored")
-}
-
-func TestUpdateEncounterStatus(t *testing.T) {
-
-	var mockStub *MockStub
-
-	// Mocking the TransactionContextInterface
-	mockCtx := new(MockTransactionContext)
-
-	// Creating an instance of EncounterChaincode
-	ec := new(EncounterChaincode)
-
-	mockStub = new(MockStub)
-
-	// Define sample encounter data
-	encounter := Encounter{ID: Identifier{System: "http://example.com/enc1", Value: "123456"}}
-
-	// Serialize sample encounters to JSON
 	encounterJSON, _ := json.Marshal(encounter)
 
-	mockIterator := &MockIterator{
-		Records: []KVPair{
-			{Key: "encounterID", Value: encounterJSON},
+	stub.On("GetState", "encounter1").Return(nil, nil)
+	stub.On("PutState", "encounter1", encounterJSON).Return(nil)
+
+	invokeResponse := peer.Response{
+		Status:  200,
+		Payload: []byte(""),
+	}
+	stub.On("InvokeChaincode", "patient", mock.AnythingOfType("[][]uint8"), "testchannel").Return(invokeResponse, nil)
+
+	err := chaincode.CreateEncounter(ctx, string(encounterJSON))
+	assert.NoError(t, err)
+
+	stub.AssertExpectations(t)
+	ctx.AssertExpectations(t)
+}
+
+// TestReadEncounter tests the ReadEncounter function
+func TestReadEncounter(t *testing.T) {
+	chaincode := new(EncounterChaincode)
+	ctx := new(MockTransactionContext)
+	stub := new(MockStub)
+
+	stub.On("GetChannelID").Return("testchannel")
+	ctx.On("GetStub").Return(stub)
+	clientIdentity := new(MockClientIdentity)
+	ctx.On("GetClientIdentity").Return(clientIdentity)
+
+	// Mock the GetAttributeValue method
+	clientIdentity.On("GetAttributeValue", "userId").Return("testUserId", true, nil)
+
+	// Mock an encounter ID to read
+	encounterID := "encounter1"
+	encounterJSON := []byte(`{
+		"id": {
+		  "system": "http://example.com/systems/encounter",
+		  "value": "encounter1"
+		},
+		"status": {
+		  "coding": [
+			{
+			  "system": "http://hl7.org/fhir/ValueSet/encounter-status",
+			  "code": "in-progress",
+			  "display": "In Progress"
+			}
+		  ]
+		},
+		"class": {
+		  "system": "http://hl7.org/fhir/ValueSet/v3-ActEncounterCode",
+		  "code": "AMB",
+		  "display": "ambulatory"
+		},
+		"type": [
+		  {
+			"coding": [
+			  {
+				"system": "http://hl7.org/fhir/ValueSet/encounter-type",
+				"code": "consult",
+				"display": "Consultation"
+			  }
+			],
+			"text": "Consultation encounter"
+		  }
+		],
+		"serviceType": {
+		  "coding": [
+			{
+			  "system": "http://hl7.org/fhir/ValueSet/service-type",
+			  "code": "primary",
+			  "display": "Primary Care"
+			}
+		  ],
+		  "text": "Primary Care"
+		},
+		"priority": {
+		  "coding": [
+			{
+			  "system": "http://terminology.hl7.org/ValueSet/v3-ActPriority",
+			  "code": "R",
+			  "display": "Routine"
+			}
+		  ],
+		  "text": "Routine Priority"
+		},
+		"subject": {
+		  "reference": "Patient/example",
+		  "display": "Jane Doe"
+		},
+		"basedOn": [
+		  {
+			"reference": "ServiceRequest/example",
+			"display": "Consultation request"
+		  }
+		],
+		"participant": [
+		  {
+			"type": [
+			  {
+				"coding": [
+				  {
+					"system": "http://hl7.org/fhir/v3/ParticipationType",
+					"code": "PPRF",
+					"display": "Primary performer"
+				  }
+				],
+				"text": "Primary Healthcare Provider"
+			  }
+			],
+			"individual": {
+			  "reference": "Practitioner/example",
+			  "display": "Dr. John Smith"
+			}
+		  }
+		],
+		"appointment": {
+		  "reference": "Appointment/example",
+		  "display": "Consultation appointment"
+		},
+		"reasonCode": {
+		  "coding": [
+			{
+			  "system": "http://snomed.info/sct",
+			  "code": "123456789",
+			  "display": "Chief Complaint"
+			}
+		  ],
+		  "text": "Patient complaint of headache"
+		},
+		"reasonReference": [
+		  {
+			"coding": [
+			  {
+				"system": "http://hl7.org/fhir/ValueSet/diagnosis-role",
+				"code": "CC",
+				"display": "Chief complaint"
+			  }
+			],
+			"text": "Chief Complaint"
+		  }
+		],
+		"diagnosis": [
+		  {
+			"condition": {
+			  "reference": "Condition/example",
+			  "display": "Headache"
+			},
+			"use": {
+			  "coding": [
+				{
+				  "system": "http://terminology.hl7.org/CodeSystem/diagnosis-role",
+				  "code": "AD",
+				  "display": "Admission diagnosis"
+				}
+			  ],
+			  "text": "Admission Diagnosis"
+			},
+			"rank": 1
+		  }
+		],
+		"location": [
+		  {
+			"id": {
+			  "system": "http://example.com/location",
+			  "value": "loc-1"
+			},
+			"status": {
+			  "coding": [
+				{
+				  "system": "http://terminology.hl7.org/CodeSystem/location-status",
+				  "code": "active",
+				  "display": "Active"
+				}
+			  ]
+			},
+			"name": "Hospital A",
+			"description": "Main Hospital Building",
+			"type": {
+			  "coding": [
+				{
+				  "system": "http://terminology.hl7.org/CodeSystem/v3-RoleCode",
+				  "code": "HOSP",
+				  "display": "Hospital"
+				}
+			  ],
+			  "text": "Hospital"
+			},
+			"managingOrganization": {
+			  "reference": "Organization/example",
+			  "display": "Hospital A Organization"
+			}
+		  }
+		],
+		"serviceProvider": {
+		  "reference": "Organization/hospital-a",
+		  "display": "Hospital A"
+		},
+		"partOf": {
+		  "reference": "Encounter/prior-encounter",
+		  "display": "Previous Encounter"
+		}
+	  }`)
+
+	// Mock behavior for GetState to return the encounter JSON
+	stub.On("GetState", encounterID).Return(encounterJSON, nil)
+
+	// Mock behavior for InvokeChaincode (assuming it succeeds)
+	invokeResponse := peer.Response{
+		Status:  200,
+		Payload: nil,
+	}
+	stub.On("InvokeChaincode", "patient", mock.AnythingOfType("[][]uint8"), "testchannel").Return(invokeResponse, nil)
+
+	// Invoke the ReadEncounter function
+	resultJSON, err := chaincode.ReadEncounter(ctx, encounterID)
+	assert.NoError(t, err)
+	assert.Equal(t, string(encounterJSON), resultJSON)
+
+	stub.AssertExpectations(t)
+	ctx.AssertExpectations(t)
+}
+
+// TestUpdateEncounter tests the UpdateEncounter function
+func TestUpdateEncounter(t *testing.T) {
+	// Create new instances of mocks
+	chaincode := new(EncounterChaincode)
+	ctx := new(MockTransactionContext)
+	stub := new(MockStub)
+
+	stub.On("GetChannelID").Return("testchannel")
+	// Mock behavior for GetStub to return the mock stub instance
+	ctx.On("GetStub").Return(stub)
+
+	// Mock behavior for GetClientIdentity to return "testUserId"
+	clientIdentity := new(MockClientIdentity)
+	ctx.On("GetClientIdentity").Return(clientIdentity)
+	clientIdentity.On("GetID").Return("testUserId", nil)
+
+	// Mock an existing encounter ID to update
+	encounterID := "encounter1"
+	existingEncounterJSON := []byte(`{
+		"id": {
+		  "system": "http://example.com/systems/encounter",
+		  "value": "encounter1"
+		},
+		"status": {
+		  "coding": [
+			{
+			  "system": "http://hl7.org/fhir/ValueSet/encounter-status",
+			  "code": "in-progress",
+			  "display": "In Progress"
+			}
+		  ]
+		},
+		"class": {
+		  "system": "http://hl7.org/fhir/ValueSet/v3-ActEncounterCode",
+		  "code": "AMB",
+		  "display": "ambulatory"
+		},
+		"type": [
+		  {
+			"coding": [
+			  {
+				"system": "http://hl7.org/fhir/ValueSet/encounter-type",
+				"code": "consult",
+				"display": "Consultation"
+			  }
+			],
+			"text": "Consultation encounter"
+		  }
+		],
+		"serviceType": {
+		  "coding": [
+			{
+			  "system": "http://hl7.org/fhir/ValueSet/service-type",
+			  "code": "primary",
+			  "display": "Primary Care"
+			}
+		  ],
+		  "text": "Primary Care"
+		},
+		"priority": {
+		  "coding": [
+			{
+			  "system": "http://terminology.hl7.org/ValueSet/v3-ActPriority",
+			  "code": "R",
+			  "display": "Routine"
+			}
+		  ],
+		  "text": "Routine Priority"
+		},
+		"subject": {
+		  "reference": "Patient/example",
+		  "display": "Jane Doe"
+		},
+		"basedOn": [
+		  {
+			"reference": "ServiceRequest/example",
+			"display": "Consultation request"
+		  }
+		],
+		"participant": [
+		  {
+			"type": [
+			  {
+				"coding": [
+				  {
+					"system": "http://hl7.org/fhir/v3/ParticipationType",
+					"code": "PPRF",
+					"display": "Primary performer"
+				  }
+				],
+				"text": "Primary Healthcare Provider"
+			  }
+			],
+			"individual": {
+			  "reference": "Practitioner/example",
+			  "display": "Dr. John Smith"
+			}
+		  }
+		],
+		"appointment": {
+		  "reference": "Appointment/example",
+		  "display": "Consultation appointment"
+		},
+		"reasonCode": {
+		  "coding": [
+			{
+			  "system": "http://snomed.info/sct",
+			  "code": "123456789",
+			  "display": "Chief Complaint"
+			}
+		  ],
+		  "text": "Patient complaint of headache"
+		},
+		"reasonReference": [
+		  {
+			"coding": [
+			  {
+				"system": "http://hl7.org/fhir/ValueSet/diagnosis-role",
+				"code": "CC",
+				"display": "Chief complaint"
+			  }
+			],
+			"text": "Chief Complaint"
+		  }
+		],
+		"diagnosis": [
+		  {
+			"condition": {
+			  "reference": "Condition/example",
+			  "display": "Headache"
+			},
+			"use": {
+			  "coding": [
+				{
+				  "system": "http://terminology.hl7.org/CodeSystem/diagnosis-role",
+				  "code": "AD",
+				  "display": "Admission diagnosis"
+				}
+			  ],
+			  "text": "Admission Diagnosis"
+			},
+			"rank": 1
+		  }
+		],
+		"location": [
+		  {
+			"id": {
+			  "system": "http://example.com/location",
+			  "value": "loc-1"
+			},
+			"status": {
+			  "coding": [
+				{
+				  "system": "http://terminology.hl7.org/CodeSystem/location-status",
+				  "code": "active",
+				  "display": "Active"
+				}
+			  ]
+			},
+			"name": "Hospital A",
+			"description": "Main Hospital Building",
+			"type": {
+			  "coding": [
+				{
+				  "system": "http://terminology.hl7.org/CodeSystem/v3-RoleCode",
+				  "code": "HOSP",
+				  "display": "Hospital"
+				}
+			  ],
+			  "text": "Hospital"
+			},
+			"managingOrganization": {
+			  "reference": "Organization/example",
+			  "display": "Hospital A Organization"
+			}
+		  }
+		],
+		"serviceProvider": {
+		  "reference": "Organization/hospital-a",
+		  "display": "Hospital A"
+		},
+		"partOf": {
+		  "reference": "Encounter/prior-encounter",
+		  "display": "Previous Encounter"
+		}
+	  }`)
+
+	// Mock behavior for GetState to return the existing encounter JSON
+	stub.On("GetState", encounterID).Return(existingEncounterJSON, nil)
+
+	// Mock behavior for InvokeChaincode (assuming it succeeds)
+	invokeResponse := peer.Response{
+		Status:  200,
+		Payload: nil,
+	}
+	stub.On("InvokeChaincode", "patient", mock.AnythingOfType("[][]uint8"), "testchannel").Return(invokeResponse, nil)
+
+	// Mock behavior for PutState to accept any byte array and succeed
+	stub.On("PutState", encounterID, mock.AnythingOfType("[]uint8")).Return(nil)
+
+	// Invoke the UpdateEncounter function with updated JSON
+	err := chaincode.UpdateEncounter(ctx, encounterID, string(existingEncounterJSON))
+	assert.NoError(t, err)
+
+	// Assert that all expected methods were called on the stub and context
+	stub.AssertExpectations(t)
+	ctx.AssertExpectations(t)
+}
+
+// TestDeleteEncounter tests the DeleteEncounter function
+func TestDeleteEncounter(t *testing.T) {
+	// Create new instances of mocks
+	chaincode := new(EncounterChaincode)
+	ctx := new(MockTransactionContext)
+	stub := new(MockStub)
+
+	stub.On("GetChannelID").Return("testchannel")
+	// Mock behavior for GetStub to return the mock stub instance
+	ctx.On("GetStub").Return(stub)
+
+	// Mock behavior for GetClientIdentity to return "testUserId"
+	clientIdentity := new(MockClientIdentity)
+	ctx.On("GetClientIdentity").Return(clientIdentity)
+	clientIdentity.On("GetID").Return("testUserId", nil)
+
+	// Mock an existing encounter ID to delete
+	encounterID := "encounter1"
+	existingEncounterJSON := []byte(`{
+		"id": {
+		  "system": "http://example.com/systems/encounter",
+		  "value": "encounter1"
+		},
+		"status": {
+		  "coding": [
+			{
+			  "system": "http://hl7.org/fhir/ValueSet/encounter-status",
+			  "code": "in-progress",
+			  "display": "In Progress"
+			}
+		  ]
+		},
+		"class": {
+		  "system": "http://hl7.org/fhir/ValueSet/v3-ActEncounterCode",
+		  "code": "AMB",
+		  "display": "ambulatory"
+		},
+		"type": [
+		  {
+			"coding": [
+			  {
+				"system": "http://hl7.org/fhir/ValueSet/encounter-type",
+				"code": "consult",
+				"display": "Consultation"
+			  }
+			],
+			"text": "Consultation encounter"
+		  }
+		],
+		"serviceType": {
+		  "coding": [
+			{
+			  "system": "http://hl7.org/fhir/ValueSet/service-type",
+			  "code": "primary",
+			  "display": "Primary Care"
+			}
+		  ],
+		  "text": "Primary Care"
+		},
+		"priority": {
+		  "coding": [
+			{
+			  "system": "http://terminology.hl7.org/ValueSet/v3-ActPriority",
+			  "code": "R",
+			  "display": "Routine"
+			}
+		  ],
+		  "text": "Routine Priority"
+		},
+		"subject": {
+		  "reference": "Patient/example",
+		  "display": "Jane Doe"
+		},
+		"basedOn": [
+		  {
+			"reference": "ServiceRequest/example",
+			"display": "Consultation request"
+		  }
+		],
+		"participant": [
+		  {
+			"type": [
+			  {
+				"coding": [
+				  {
+					"system": "http://hl7.org/fhir/v3/ParticipationType",
+					"code": "PPRF",
+					"display": "Primary performer"
+				  }
+				],
+				"text": "Primary Healthcare Provider"
+			  }
+			],
+			"individual": {
+			  "reference": "Practitioner/example",
+			  "display": "Dr. John Smith"
+			}
+		  }
+		],
+		"appointment": {
+		  "reference": "Appointment/example",
+		  "display": "Consultation appointment"
+		},
+		"reasonCode": {
+		  "coding": [
+			{
+			  "system": "http://snomed.info/sct",
+			  "code": "123456789",
+			  "display": "Chief Complaint"
+			}
+		  ],
+		  "text": "Patient complaint of headache"
+		},
+		"reasonReference": [
+		  {
+			"coding": [
+			  {
+				"system": "http://hl7.org/fhir/ValueSet/diagnosis-role",
+				"code": "CC",
+				"display": "Chief complaint"
+			  }
+			],
+			"text": "Chief Complaint"
+		  }
+		],
+		"diagnosis": [
+		  {
+			"condition": {
+			  "reference": "Condition/example",
+			  "display": "Headache"
+			},
+			"use": {
+			  "coding": [
+				{
+				  "system": "http://terminology.hl7.org/CodeSystem/diagnosis-role",
+				  "code": "AD",
+				  "display": "Admission diagnosis"
+				}
+			  ],
+			  "text": "Admission Diagnosis"
+			},
+			"rank": 1
+		  }
+		],
+		"location": [
+		  {
+			"id": {
+			  "system": "http://example.com/location",
+			  "value": "loc-1"
+			},
+			"status": {
+			  "coding": [
+				{
+				  "system": "http://terminology.hl7.org/CodeSystem/location-status",
+				  "code": "active",
+				  "display": "Active"
+				}
+			  ]
+			},
+			"name": "Hospital A",
+			"description": "Main Hospital Building",
+			"type": {
+			  "coding": [
+				{
+				  "system": "http://terminology.hl7.org/CodeSystem/v3-RoleCode",
+				  "code": "HOSP",
+				  "display": "Hospital"
+				}
+			  ],
+			  "text": "Hospital"
+			},
+			"managingOrganization": {
+			  "reference": "Organization/example",
+			  "display": "Hospital A Organization"
+			}
+		  }
+		],
+		"serviceProvider": {
+		  "reference": "Organization/hospital-a",
+		  "display": "Hospital A"
+		},
+		"partOf": {
+		  "reference": "Encounter/prior-encounter",
+		  "display": "Previous Encounter"
+		}
+	  }`)
+
+	// Mock behavior for GetState to return the existing encounter JSON
+	stub.On("GetState", encounterID).Return(existingEncounterJSON, nil)
+
+	// Mock behavior for InvokeChaincode (assuming it succeeds)
+	invokeResponse := peer.Response{
+		Status:  200,
+		Payload: nil,
+	}
+	stub.On("InvokeChaincode", "patient", mock.AnythingOfType("[][]uint8"), "testchannel").Return(invokeResponse, nil)
+
+	// Mock behavior for DelState to accept encounterID and succeed
+	stub.On("DelState", encounterID).Return(nil)
+
+	// Invoke the DeleteEncounter function
+	err := chaincode.DeleteEncounter(ctx, encounterID)
+	assert.NoError(t, err)
+
+	// Assert that all expected methods were called on the stub and context
+	stub.AssertExpectations(t)
+	ctx.AssertExpectations(t)
+}
+
+// TestSearchEncountersByType tests the SearchEncountersByType function
+func TestSearchEncountersByType(t *testing.T) {
+	// Create new instances of mocks
+	chaincode := new(EncounterChaincode)
+	ctx := new(MockTransactionContext)
+	stub := new(MockStub)
+
+	stub.On("GetChannelID").Return("testchannel")
+	// Mock behavior for GetStub to return the mock stub instance
+	ctx.On("GetStub").Return(stub)
+
+	// Mock behavior for GetClientIdentity to return "testUserId"
+	clientIdentity := new(MockClientIdentity)
+	ctx.On("GetClientIdentity").Return(clientIdentity)
+	clientIdentity.On("GetID").Return("testUserId", nil)
+
+	// Mock a type code to search for
+	typeCode := "consult"
+
+	// Mock behavior for GetQueryResult to return mock results iterator
+	queryString := fmt.Sprintf(`{"selector":{"type":{"coding":{"code":"%s"}}}}`, typeCode)
+
+	mockEncounters := []Encounter{
+		{
+			ID: &Identifier{
+				System: "http://example.com/systems/encounter",
+				Value:  "encounter1",
+			},
+			Status: &Code{
+				Coding: []Coding{
+					{
+						System:  "http://hl7.org/fhir/ValueSet/encounter-status",
+						Code:    "in-progress",
+						Display: "In Progress",
+					},
+				},
+			},
+			Class: &Coding{
+				System:  "http://hl7.org/fhir/ValueSet/v3-ActEncounterCode",
+				Code:    "AMB",
+				Display: "ambulatory",
+			},
+			Type: []CodeableConcept{
+				{
+					Coding: []Coding{
+						{
+							System:  "http://hl7.org/fhir/ValueSet/encounter-type",
+							Code:    "consult",
+							Display: "Consultation",
+						},
+					},
+					Text: "Consultation encounter",
+				},
+			},
+			ServiceType: &CodeableConcept{
+				Coding: []Coding{
+					{
+						System:  "http://hl7.org/fhir/ValueSet/service-type",
+						Code:    "primary",
+						Display: "Primary Care",
+					},
+				},
+				Text: "Primary Care",
+			},
+			Priority: &CodeableConcept{
+				Coding: []Coding{
+					{
+						System:  "http://terminology.hl7.org/ValueSet/v3-ActPriority",
+						Code:    "R",
+						Display: "Routine",
+					},
+				},
+				Text: "Routine Priority",
+			},
+			Subject: &Reference{
+				Reference: "Patient/example",
+				Display:   "Jane Doe",
+			},
+			BasedOn: []Reference{
+				{
+					Reference: "ServiceRequest/example",
+					Display:   "Consultation request",
+				},
+			},
+			Participant: []EncounterParticipant{
+				{
+					Type: []CodeableConcept{
+						{
+							Coding: []Coding{
+								{
+									System:  "http://hl7.org/fhir/v3/ParticipationType",
+									Code:    "PPRF",
+									Display: "Primary performer",
+								},
+							},
+							Text: "Primary Healthcare Provider",
+						},
+					},
+
+					Individual: &Reference{
+						Reference: "Practitioner/example",
+						Display:   "Dr. John Smith",
+					},
+				},
+			},
+			Appointment: &Reference{
+				Reference: "Appointment/example",
+				Display:   "Consultation appointment",
+			},
+			ReasonCode: &CodeableConcept{
+				Coding: []Coding{
+					{
+						System:  "http://snomed.info/sct",
+						Code:    "123456789",
+						Display: "Chief Complaint",
+					},
+				},
+				Text: "Patient complaint of headache",
+			},
+			ReasonReference: []CodeableConcept{
+				{
+					Coding: []Coding{
+						{
+							System:  "http://hl7.org/fhir/ValueSet/diagnosis-role",
+							Code:    "CC",
+							Display: "Chief complaint",
+						},
+					},
+					Text: "Chief Complaint",
+				},
+			},
+			Diagnosis: []EncounterDiagnosis{
+				{
+					Condition: &Reference{
+						Reference: "Condition/example",
+						Display:   "Headache",
+					},
+					Use: &CodeableConcept{
+						Coding: []Coding{
+							{
+								System:  "http://terminology.hl7.org/CodeSystem/diagnosis-role",
+								Code:    "AD",
+								Display: "Admission diagnosis",
+							},
+						},
+						Text: "Admission Diagnosis",
+					},
+					Rank: 1,
+				},
+			},
+			Location: []Location{
+				{
+					ID: &Identifier{
+						System: "http://example.com/location",
+						Value:  "loc-1",
+					},
+					Status: &Code{
+						Coding: []Coding{
+							{
+								System:  "http://terminology.hl7.org/CodeSystem/location-status",
+								Code:    "active",
+								Display: "Active",
+							},
+						},
+					},
+					Name:        "Hospital A",
+					Description: "Main Hospital Building",
+					Type: &CodeableConcept{
+						Coding: []Coding{
+							{
+								System:  "http://terminology.hl7.org/CodeSystem/v3-RoleCode",
+								Code:    "HOSP",
+								Display: "Hospital",
+							},
+						},
+						Text: "Hospital",
+					},
+					ManagingOrganization: &Reference{
+						Reference: "Organization/example",
+						Display:   "Hospital A Organization",
+					},
+				},
+			},
+			ServiceProvider: &Reference{
+				Reference: "Organization/hospital-a",
+				Display:   "Hospital A",
+			},
+			PartOf: &Reference{
+				Reference: "Encounter/prior-encounter",
+				Display:   "Previous Encounter",
+			},
 		},
 	}
 
-	// Ensure GetStub returns the same instance of mockStub
-	mockCtx.On("GetStub").Return(mockStub)
+	mockEncountersJSON, err := json.Marshal(mockEncounters)
+	assert.NoError(t, err)
 
-	// Mocking GetStateByRange to return a query result containing the desired encounter
-	mockStub.On("GetStateByRange", "", "").Return(mockIterator)
-
-	mockStub.On("GetState", mock.Anything).Return(mockIterator.Records[0].Value, nil)
-
-	mockStub.On("PutState", mock.Anything, mock.Anything).Return(nil)
-
-	// Create a sample Coding struct
-	coding := Coding{
-		System:  "http://example.com/coding/system",
-		Code:    "12345",
-		Display: "Sample Coding",
+	// Create a new MockIterator and add mock records to it
+	mockIterator := new(MockIterator)
+	for _, encounter := range mockEncounters {
+		encounterJSON, err := json.Marshal(encounter)
+		assert.NoError(t, err)
+		mockIterator.AddRecord(encounter.ID.Value, encounterJSON)
 	}
 
-	// Create a sample Code struct with the coding
-	statusCode := Code{Coding: []Coding{coding}}
-
-	// Call the function under test
-	err := ec.UpdateEncounterStatus(mockCtx, "encounterID", statusCode)
-
-	// Verify that the result is as expected
-	assert.NoError(t, err, "UpdateEncounterStatus should not return an error")
-}
-
-func TestAddDiagnosisToEncounter(t *testing.T) {
-
-	var mockStub *MockStub
-
-	// Mocking the TransactionContextInterface
-	mockCtx := new(MockTransactionContext)
-
-	// Creating an instance of EncounterChaincode
-	ec := new(EncounterChaincode)
-
-	mockStub = new(MockStub)
-
-	// Ensure GetStub returns the same instance of mockStub
-	mockCtx.On("GetStub").Return(mockStub)
-
-	// Mocking GetState to return a sample encounter
-	mockStub.On("GetState", mock.Anything).Return([]byte(`{"ID":{"System":"http://example.com/enc1","Value":"123456"}}`), nil)
-
-	mockStub.On("PutState", mock.Anything, mock.Anything).Return(nil)
-
-	// Call the function under test
-	err := ec.AddDiagnosisToEncounter(mockCtx, "encounterID", EncounterDiagnosis{})
-
-	// Verify that the result is as expected
-	assert.NoError(t, err, "AddDiagnosisToEncounter should not return an error")
-}
-
-func TestAddParticipantToEncounter(t *testing.T) {
-
-	var mockStub *MockStub
-
-	// Mocking the TransactionContextInterface
-	mockCtx := new(MockTransactionContext)
-
-	// Creating an instance of EncounterChaincode
-	ec := new(EncounterChaincode)
-
-	mockStub = new(MockStub)
-
-	// Ensure GetStub returns the same instance of mockStub
-	mockCtx.On("GetStub").Return(mockStub)
-
-	// Mocking GetState to return a sample encounter
-	mockStub.On("GetState", mock.Anything).Return([]byte(`{"ID":{"System":"http://example.com/enc1","Value":"123456"}}`), nil)
-
-	mockStub.On("PutState", mock.Anything, mock.Anything).Return(nil)
-
-	// Call the function under test
-	err := ec.AddParticipantToEncounter(mockCtx, "encounterID", EncounterParticipant{})
-
-	// Verify that the result is as expected
-	assert.NoError(t, err, "AddParticipantToEncounter should not return an error")
-}
-
-func TestRemoveParticipantFromEncounter(t *testing.T) {
-
-	var mockStub *MockStub
-
-	// Mocking the TransactionContextInterface
-	mockCtx := new(MockTransactionContext)
-
-	// Creating an instance of EncounterChaincode
-	ec := new(EncounterChaincode)
-
-	mockStub = new(MockStub)
-
-	// Ensure GetStub returns the same instance of mockStub
-	mockCtx.On("GetStub").Return(mockStub)
-
-	// Mocking GetState to return a sample encounter
-	mockStub.On("GetState", mock.Anything).Return([]byte(`{"ID":{"System":"http://example.com/enc1","Value":"123456"},
-	"Participant":[{"Type":[{"Coding":[{"System":"http://example.com/coding/system","Code":"12345","Display":"Sample Coding"}]}],
-	"Period":{"Start":"2024-04-17T08:00:00Z","End":"2024-04-17T12:00:00Z"},
-	"Individual":{"Reference":"http://example.com/individual/123"}}]}`), nil)
-
-	mockStub.On("PutState", mock.Anything, mock.Anything).Return(nil)
-
-	// Call the function under test
-	err := ec.RemoveParticipantFromEncounter(mockCtx, "encounterID", 0)
-
-	// Verify that the result is as expected
-	assert.NoError(t, err, "RemoveParticipantFromEncounter should not return an error")
-}
-
-func TestAddLocationToEncounter(t *testing.T) {
-
-	var mockStub *MockStub
-
-	// Mocking the TransactionContextInterface
-	mockCtx := new(MockTransactionContext)
-
-	// Creating an instance of EncounterChaincode
-	ec := new(EncounterChaincode)
-
-	mockStub = new(MockStub)
-
-	// Ensure GetStub returns the same instance of mockStub
-	mockCtx.On("GetStub").Return(mockStub)
-
-	// Mocking GetState to return a sample encounter
-	mockStub.On("GetState", mock.Anything).Return([]byte(`{"ID":{"System":"http://example.com/enc1","Value":"123456"}}`), nil)
-
-	mockStub.On("PutState", mock.Anything, mock.Anything).Return(nil)
-
-	// Call the function under test
-	err := ec.AddLocationToEncounter(mockCtx, "encounterID", Location{})
-
-	// Verify that the result is as expected
-	assert.NoError(t, err, "AddLocationToEncounter should not return an error")
-}
-
-func TestRemoveLocationFromEncounter(t *testing.T) {
-
-	var mockStub *MockStub
-
-	// Mocking the TransactionContextInterface
-	mockCtx := new(MockTransactionContext)
-
-	// Creating an instance of EncounterChaincode
-	ec := new(EncounterChaincode)
-
-	mockStub = new(MockStub)
-
-	// Ensure GetStub returns the same instance of mockStub
-	mockCtx.On("GetStub").Return(mockStub)
-
-	// Mocking GetState to return a sample encounter
-	mockStub.On("GetState", mock.Anything).Return([]byte(`{"ID":{"System":"http://example.com/enc1","Value":"123456"}, "Location":[{"Name":"Location1"},{"Name":"Location2"}]}`), nil)
-
-	mockStub.On("PutState", mock.Anything, mock.Anything).Return(nil)
-
-	// Call the function under test
-	err := ec.RemoveLocationFromEncounter(mockCtx, "encounterID", 0)
-
-	// Verify that the result is as expected
-	assert.NoError(t, err, "RemoveLocationFromEncounter should not return an error")
-}
-
-func TestGetEncountersByReason(t *testing.T) {
-
-	var mockStub *MockStub
-
-	// Mocking the TransactionContextInterface
-	mockCtx := new(MockTransactionContext)
-
-	// Creating an instance of EncounterChaincode
-	ec := new(EncounterChaincode)
-
-	mockStub = new(MockStub)
-
-	// Ensure GetStub returns the same instance of mockStub
-	mockCtx.On("GetStub").Return(mockStub)
-
-	// Mocking GetStateByRange to return a range of encounter data
-	mockStub.On("GetStateByRange", "", "").Return(&MockIterator{}, nil)
-
-	// Call the function under test
-	results, err := ec.GetEncountersByReason(mockCtx, "reason")
-
-	// Verify that the result is as expected
-	assert.NoError(t, err, "GetEncountersByReason should not return an error")
-	assert.Empty(t, results, "GetEncountersByReason should return empty results as no encounters are stored")
-}
-
-func TestGetEncountersByServiceProvider(t *testing.T) {
-
-	var mockStub *MockStub
-
-	// Mocking the TransactionContextInterface
-	mockCtx := new(MockTransactionContext)
-
-	// Creating an instance of EncounterChaincode
-	ec := new(EncounterChaincode)
-
-	mockStub = new(MockStub)
-
-	// Ensure GetStub returns the same instance of mockStub
-	mockCtx.On("GetStub").Return(mockStub)
-
-	// Mocking GetStateByRange to return a range of encounter data
-	mockStub.On("GetStateByRange", "", "").Return(&MockIterator{}, nil)
-
-	// Call the function under test
-	results, err := ec.GetEncountersByServiceProvider(mockCtx, "serviceProviderID")
-
-	// Verify that the result is as expected
-	assert.NoError(t, err, "GetEncountersByServiceProvider should not return an error")
-	assert.Empty(t, results, "GetEncountersByServiceProvider should return empty results as no encounters are stored")
+	// Mock behavior for InvokeChaincode (assuming it succeeds)
+	invokeResponse := peer.Response{
+		Status:  200,
+		Payload: nil,
+	}
+	stub.On("InvokeChaincode", "patient", mock.AnythingOfType("[][]uint8"), "testchannel").Return(invokeResponse, nil)
+
+	// Mock behavior for GetQueryResult to return mock iterator
+	stub.On("GetQueryResult", queryString).Return(mockIterator, nil)
+
+	// Invoke the SearchEncountersByType function
+	resultJSON, err := chaincode.SearchEncountersByType(ctx, typeCode)
+	assert.NoError(t, err)
+	assert.Equal(t, string(mockEncountersJSON), resultJSON)
+
+	// Assert that all expected methods were called on the stub and context
+	stub.AssertExpectations(t)
+	ctx.AssertExpectations(t)
 }
