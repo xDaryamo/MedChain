@@ -21,7 +21,6 @@ func (c *PatientContract) CreatePatient(ctx contractapi.TransactionContextInterf
 
 	log.Printf("Patient JSON from param: %s", string(patientJSON))
 
-
 	// Deserialize JSON data into a Go data structure
 	var patient Patient
 	err := json.Unmarshal([]byte(patientJSON), &patient)
@@ -99,7 +98,7 @@ func (c *PatientContract) ReadPatient(ctx contractapi.TransactionContextInterfac
 
 	log.Printf("Non Uguale")
 	// Altrimenti, verifica se il richiedente è autorizzato
-	authorized, err := c.isAuthorized(ctx, patientID, clientID)
+	authorized, err := c.IsAuthorized(ctx, patientID, clientID)
 	if err != nil {
 		return "", err
 	}
@@ -109,8 +108,6 @@ func (c *PatientContract) ReadPatient(ctx contractapi.TransactionContextInterfac
 		return "", errors.New("unauthorized access: client is neither the patient nor an authorized entity")
 	}
 }
-
-
 
 // UpdatePatient updates an existing patient record in the ledger
 func (c *PatientContract) UpdatePatient(ctx contractapi.TransactionContextInterface, patientID string, patientJSON string) error {
@@ -129,15 +126,12 @@ func (c *PatientContract) UpdatePatient(ctx contractapi.TransactionContextInterf
 		return errors.New("failed to get client ID")
 	}
 
-	// Controlla se il richiedente è il paziente stesso o un ente autorizzato
-	if clientID != patientID {
-		authorized, err := c.isAuthorized(ctx, patientID, clientID)
-		if err != nil {
-			return err
-		}
-		if !authorized {
-			return errors.New("unauthorized to update patient records")
-		}
+	authorized, err := c.IsAuthorized(ctx, patientID, clientID)
+	if err != nil {
+		return err
+	}
+	if !authorized {
+		return errors.New("unauthorized to update patient records")
 	}
 
 	// Deserializza il JSON del paziente ricevuto
@@ -266,7 +260,13 @@ func (c *PatientContract) RevokeAccess(ctx contractapi.TransactionContextInterfa
 	return ctx.GetStub().PutState("auth_"+patientID, updatedAuthBytes)
 }
 
-func (c *PatientContract) isAuthorized(ctx contractapi.TransactionContextInterface, patientID string, clientID string) (bool, error) {
+func (c *PatientContract) IsAuthorized(ctx contractapi.TransactionContextInterface, patientID string, clientID string) (bool, error) {
+
+	// Controlla se il richiedente è il paziente stesso o un ente autorizzato
+	if clientID == patientID {
+		return true, nil
+	}
+
 	authAsBytes, err := ctx.GetStub().GetState("auth_" + patientID)
 	if err != nil {
 		return false, errors.New("failed to get authorization data: " + err.Error())
@@ -287,7 +287,6 @@ func (c *PatientContract) isAuthorized(ctx contractapi.TransactionContextInterfa
 	}
 	return false, nil
 }
-
 
 func main() {
 	chaincode, err := contractapi.NewChaincode(new(PatientContract))
