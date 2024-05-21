@@ -23,21 +23,21 @@
     "FarmaciaCarbone": {
       "mspid": "FarmaciaCarboneMSP",
       "adminPrivateKey": {
-        "path": "/tmp/crypto/peerOrganizations/farmacia-carbone.napoli.medchain.com/users/Admin@farmacia-carbone.napoli.medchain.com/msp/keystore/priv-key.pem"
+        "path": "/tmp/crypto/peerOrganizations/farmacia-carbone.medchain.com/users/Admin@farmacia-carbone.medchain.com/msp/keystore/priv-key.pem"
       },
       "peers": [
-        "peer0.farmacia-carbone.napoli.medchain.com"
+        "peer0.farmacia-carbone.medchain.com"
       ],
       "signedCert": {
-        "path": "/tmp/crypto/peerOrganizations/farmacia-carbone.napoli.medchain.com/users/Admin@farmacia-carbone.napoli.medchain.com/msp/signcerts/Admin@farmacia-carbone.napoli.medchain.com-cert.pem"
+        "path": "/tmp/crypto/peerOrganizations/farmacia-carbone.medchain.com/users/Admin@farmacia-carbone.medchain.com/msp/signcerts/Admin@farmacia-carbone.medchain.com-cert.pem"
       }
     }
   },
   "peers": {
-    "peer0.farmacia-carbone.napoli.medchain.com": {
-      "url": "grpc://peer0.farmacia-carbone.napoli.medchain.com:7161",
+    "peer0.farmacia-carbone.medchain.com": {
+      "url": "grpc://peer0.farmacia-carbone.medchain.com:7161",
       "tlsCACerts": {
-        "path": "/tmp/crypto/peerOrganizations/farmacia-carbone.napoli.medchain.com/msp/tlscacerts/tlsca.farmacia-carbone.napoli.medchain.com-cert.pem"
+        "path": "/tmp/crypto/peerOrganizations/farmacia-carbone.medchain.com/msp/tlscacerts/tlsca.farmacia-carbone.medchain.com-cert.pem"
       }
     }
   },
@@ -45,7 +45,7 @@
     "prescriptions-channel": {
       "peers": {}
     },
-    "public-health-channel": {
+    "identity-channel": {
       "peers": {}
     }
   }

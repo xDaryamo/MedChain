@@ -51,7 +51,7 @@
     "emergency-channel": {
       "peers": {}
     },
-    "public-health-channel": {
+    "identity-channel": {
       "peers": {}
     }
   }

@@ -56,7 +56,7 @@
     {
       "organization": {
         "name": "MedicinaGeneraleNapoli",
-        "domain": "medicina-generale.napoli.medchain.com"
+        "domain": "medicina-generale-napoli.medchain.com"
       },
       "peer": {
         "instances": 1,
@@ -66,7 +66,7 @@
     {
       "organization": {
         "name": "NeurologiaNapoli",
-        "domain": "neurologia.napoli.medchain.com"
+        "domain": "neurologia-napoli.medchain.com"
       },
       "peer": {
         "instances": 1,
@@ -76,7 +76,7 @@
     {
       "organization": {
         "name": "FarmaciaPetrone",
-        "domain": "farmacia-petrone.napoli.medchain.com"
+        "domain": "farmacia-petrone.medchain.com"
       },
       "peer": {
         "instances": 1,
@@ -86,7 +86,7 @@
     {
       "organization": {
         "name": "FarmaciaCarbone",
-        "domain": "farmacia-carbone.napoli.medchain.com"
+        "domain": "farmacia-carbone.medchain.com"
       },
       "peer": {
         "instances": 1,
@@ -95,7 +95,7 @@
     },
     {
       "organization": {
-        "name": "LaboratorioAnalisiCMO",
+        "name": "LaboratorioAnalisiCmo",
         "domain": "laboratorio-analisi-cmo.medchain.com"
       },
       "peer": {
@@ -105,7 +105,7 @@
     },
     {
       "organization": {
-        "name": "LaboratorioAnalisiSDN",
+        "name": "LaboratorioAnalisiSdn",
         "domain": "laboratorio-analisi-sdn.medchain.com"
       },
       "peer": {
@@ -191,11 +191,11 @@
           "peers": ["peer0"]
         },
         {
-          "name": "LaboratorioAnalisiCMO",
+          "name": "LaboratorioAnalisiCmo",
           "peers": ["peer0"]
         },
         {
-          "name": "LaboratorioAnalisiSDN",
+          "name": "LaboratorioAnalisiSdn",
           "peers": ["peer0"]
         }
       ]
@@ -218,7 +218,7 @@
       ]
     },
     {
-      "name": "public-health-channel",
+      "name": "identity-channel",
       "orgs": [
         {
           "name": "OspedaleMaresca",
@@ -249,11 +249,15 @@
           "peers": ["peer0"]
         },
         {
-          "name": "LaboratorioAnalisiCMO",
+          "name": "LaboratorioAnalisiCmo",
           "peers": ["peer0"]
         },
         {
-          "name": "LaboratorioAnalisiSDN",
+          "name": "LaboratorioAnalisiSdn",
+          "peers": ["peer0"]
+        },
+        {
+          "name": "Patients",
           "peers": ["peer0"]
         }
       ]
@@ -264,15 +268,22 @@
       "name": "patient",
       "version": "0.1",
       "lang": "golang",
-      "channel": "patient-records-channel",
+      "channel": "identity-channel",
       "directory": "./chaincodes/chaincodes_go/patient"
     },
     {
-      "name": "organization",
+      "name": "labresults",
       "version": "0.1",
       "lang": "golang",
-      "channel": "patient-records-channel",
-      "directory": "./chaincodes/chaincodes_go/organization"
+      "channel": "lab-results-channel",
+      "directory": "./chaincodes/chaincodes_go/labresults"
+    },
+    {
+      "name": "practitioner",
+      "version": "0.1",
+      "lang": "golang",
+      "channel": "identity-channel",
+      "directory": "./chaincodes/chaincodes_go/practitioner"
     }
   ]
 }

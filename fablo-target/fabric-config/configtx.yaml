@@ -123,7 +123,7 @@ Organizations:
     - &MedicinaGeneraleNapoli
       Name: MedicinaGeneraleNapoliMSP
       ID: MedicinaGeneraleNapoliMSP
-      MSPDir: crypto-config/peerOrganizations/medicina-generale.napoli.medchain.com/msp
+      MSPDir: crypto-config/peerOrganizations/medicina-generale-napoli.medchain.com/msp
 
       Policies:
           Readers:
@@ -140,13 +140,13 @@ Organizations:
               Rule: "OR('MedicinaGeneraleNapoliMSP.member')"
 
       AnchorPeers:
-          - Host: peer0.medicina-generale.napoli.medchain.com
+          - Host: peer0.medicina-generale-napoli.medchain.com
             Port: 7101
 
     - &NeurologiaNapoli
       Name: NeurologiaNapoliMSP
       ID: NeurologiaNapoliMSP
-      MSPDir: crypto-config/peerOrganizations/neurologia.napoli.medchain.com/msp
+      MSPDir: crypto-config/peerOrganizations/neurologia-napoli.medchain.com/msp
 
       Policies:
           Readers:
@@ -163,13 +163,13 @@ Organizations:
               Rule: "OR('NeurologiaNapoliMSP.member')"
 
       AnchorPeers:
-          - Host: peer0.neurologia.napoli.medchain.com
+          - Host: peer0.neurologia-napoli.medchain.com
             Port: 7121
 
     - &FarmaciaPetrone
       Name: FarmaciaPetroneMSP
       ID: FarmaciaPetroneMSP
-      MSPDir: crypto-config/peerOrganizations/farmacia-petrone.napoli.medchain.com/msp
+      MSPDir: crypto-config/peerOrganizations/farmacia-petrone.medchain.com/msp
 
       Policies:
           Readers:
@@ -186,13 +186,13 @@ Organizations:
               Rule: "OR('FarmaciaPetroneMSP.member')"
 
       AnchorPeers:
-          - Host: peer0.farmacia-petrone.napoli.medchain.com
+          - Host: peer0.farmacia-petrone.medchain.com
             Port: 7141
 
     - &FarmaciaCarbone
       Name: FarmaciaCarboneMSP
       ID: FarmaciaCarboneMSP
-      MSPDir: crypto-config/peerOrganizations/farmacia-carbone.napoli.medchain.com/msp
+      MSPDir: crypto-config/peerOrganizations/farmacia-carbone.medchain.com/msp
 
       Policies:
           Readers:
@@ -209,50 +209,50 @@ Organizations:
               Rule: "OR('FarmaciaCarboneMSP.member')"
 
       AnchorPeers:
-          - Host: peer0.farmacia-carbone.napoli.medchain.com
+          - Host: peer0.farmacia-carbone.medchain.com
             Port: 7161
 
-    - &LaboratorioAnalisiCMO
-      Name: LaboratorioAnalisiCMOMSP
-      ID: LaboratorioAnalisiCMOMSP
+    - &LaboratorioAnalisiCmo
+      Name: LaboratorioAnalisiCmoMSP
+      ID: LaboratorioAnalisiCmoMSP
       MSPDir: crypto-config/peerOrganizations/laboratorio-analisi-cmo.medchain.com/msp
 
       Policies:
           Readers:
               Type: Signature
-              Rule: "OR('LaboratorioAnalisiCMOMSP.member')"
+              Rule: "OR('LaboratorioAnalisiCmoMSP.member')"
           Writers:
               Type: Signature
-              Rule: "OR('LaboratorioAnalisiCMOMSP.member')"
+              Rule: "OR('LaboratorioAnalisiCmoMSP.member')"
           Admins:
               Type: Signature
-              Rule: "OR('LaboratorioAnalisiCMOMSP.admin')"
+              Rule: "OR('LaboratorioAnalisiCmoMSP.admin')"
           Endorsement:
               Type: Signature
-              Rule: "OR('LaboratorioAnalisiCMOMSP.member')"
+              Rule: "OR('LaboratorioAnalisiCmoMSP.member')"
 
       AnchorPeers:
           - Host: peer0.laboratorio-analisi-cmo.medchain.com
             Port: 7181
 
-    - &LaboratorioAnalisiSDN
-      Name: LaboratorioAnalisiSDNMSP
-      ID: LaboratorioAnalisiSDNMSP
+    - &LaboratorioAnalisiSdn
+      Name: LaboratorioAnalisiSdnMSP
+      ID: LaboratorioAnalisiSdnMSP
       MSPDir: crypto-config/peerOrganizations/laboratorio-analisi-sdn.medchain.com/msp
 
       Policies:
           Readers:
               Type: Signature
-              Rule: "OR('LaboratorioAnalisiSDNMSP.member')"
+              Rule: "OR('LaboratorioAnalisiSdnMSP.member')"
           Writers:
               Type: Signature
-              Rule: "OR('LaboratorioAnalisiSDNMSP.member')"
+              Rule: "OR('LaboratorioAnalisiSdnMSP.member')"
           Admins:
               Type: Signature
-              Rule: "OR('LaboratorioAnalisiSDNMSP.admin')"
+              Rule: "OR('LaboratorioAnalisiSdnMSP.admin')"
           Endorsement:
               Type: Signature
-              Rule: "OR('LaboratorioAnalisiSDNMSP.member')"
+              Rule: "OR('LaboratorioAnalisiSdnMSP.member')"
 
       AnchorPeers:
           - Host: peer0.laboratorio-analisi-sdn.medchain.com
@@ -365,8 +365,8 @@ Profiles:
                     - *NeurologiaNapoli
                     - *FarmaciaPetrone
                     - *FarmaciaCarbone
-                    - *LaboratorioAnalisiCMO
-                    - *LaboratorioAnalisiSDN
+                    - *LaboratorioAnalisiCmo
+                    - *LaboratorioAnalisiSdn
                     - *Patients
 
     # Profile used to create channeltx for patient-records-channel #
@@ -439,16 +439,16 @@ Profiles:
                     - *OspedaleMaresca
                     - *MedicinaGeneraleNapoli
                     - *NeurologiaNapoli
-                    - *LaboratorioAnalisiCMO
-                    - *LaboratorioAnalisiSDN
+                    - *LaboratorioAnalisiCmo
+                    - *LaboratorioAnalisiSdn
         Application:
             <<: *ApplicationDefaults
             Organizations:
                 - *OspedaleMaresca
                 - *MedicinaGeneraleNapoli
                 - *NeurologiaNapoli
-                - *LaboratorioAnalisiCMO
-                - *LaboratorioAnalisiSDN
+                - *LaboratorioAnalisiCmo
+                - *LaboratorioAnalisiSdn
 
     # Profile used to create channeltx for emergency-channel #
     EmergencyChannel:
@@ -473,8 +473,8 @@ Profiles:
                 - *OspedaleDelMare
                 - *OspedaleSGiuliano
 
-    # Profile used to create channeltx for public-health-channel #
-    PublicHealthChannel:
+    # Profile used to create channeltx for identity-channel #
+    IdentityChannel:
         <<: *ChannelDefaults
         Orderer:
             <<: *Medchain-orderergroupDefaults
@@ -493,8 +493,9 @@ Profiles:
                     - *NeurologiaNapoli
                     - *FarmaciaPetrone
                     - *FarmaciaCarbone
-                    - *LaboratorioAnalisiCMO
-                    - *LaboratorioAnalisiSDN
+                    - *LaboratorioAnalisiCmo
+                    - *LaboratorioAnalisiSdn
+                    - *Patients
         Application:
             <<: *ApplicationDefaults
             Organizations:
@@ -505,5 +506,6 @@ Profiles:
                 - *NeurologiaNapoli
                 - *FarmaciaPetrone
                 - *FarmaciaCarbone
-                - *LaboratorioAnalisiCMO
-                - *LaboratorioAnalisiSDN
+                - *LaboratorioAnalisiCmo
+                - *LaboratorioAnalisiSdn
+                - *Patients

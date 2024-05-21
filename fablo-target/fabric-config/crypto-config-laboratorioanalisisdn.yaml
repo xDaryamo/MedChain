@@ -1,5 +1,5 @@
 PeerOrgs:
-  - Name: LaboratorioAnalisiSDN
+  - Name: LaboratorioAnalisiSdn
     Domain: laboratorio-analisi-sdn.medchain.com
     Specs:
     Template:

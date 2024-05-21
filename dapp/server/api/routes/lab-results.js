@@ -1,18 +1,34 @@
-const express = require('express');
-
+const express = require("express");
 const router = express.Router();
+const labresultsController = require("../controllers/lab-results");
+const { verifyToken, authorizeOrganization } = require("../middleware/auth");
 
-const labresultsController = require('../controllers/lab-results');
+router.get(
+  "/patient/:id",
+  verifyToken,
+  authorizeOrganization(["labs.medchain.com"]), //to do: add all orgs
+  labresultsController.getLabResultsByPatient
+);
 
+router.get(
+  "/:resultId",
+  verifyToken,
+  authorizeOrganization(["laboratorio-analisi-cmo.medchain.com"]),
+  labresultsController.getLabResult
+);
 
-// GET Retrieve all lab results associated with a specific patient
-router.get('/patient/:id/lab-results', labresultsController.getLabResultsByPatient);
+router.post(
+  "/",
+  verifyToken,
+  authorizeOrganization(["laboratorio-analisi-cmo.medchain.com"]),
+  labresultsController.createLabResult
+);
 
-// POST Create a new lab result 
-router.post('/lab-results', labresultsController.createLabResult)
+router.patch(
+  "/tech/:resultId",
+  verifyToken,
+  authorizeOrganization(["labs.medchain.com"]),
+  labresultsController.updateLabResult
+);
 
-// PATCH Update a lab result 
-router.patch('/lab-results/:id', labresultsController.updateLabResult)
-
-
-module.exports = router
+module.exports = router;

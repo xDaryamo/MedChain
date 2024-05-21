@@ -433,7 +433,7 @@ func TestGetLabResult_AccessError(t *testing.T) {
 	assert.Contains(t, err.Error(), "failed to read from world state", "Error message should indicate a failure to read from the world state.")
 }
 
-func TestQueryLabResults_Successful(t *testing.T) {
+func TestQueryLabResultsByPatientID_Successful(t *testing.T) {
 	labChaincode := new(LabResultsChaincode)
 	mockCtx := new(MockTransactionContext)
 	mockStub := new(MockStub)
@@ -446,12 +446,12 @@ func TestQueryLabResults_Successful(t *testing.T) {
 	mockIterator.AddRecord("obs2", []byte(observation2))
 	mockStub.On("GetQueryResult", mock.Anything).Return(mockIterator, nil)
 
-	results, err := labChaincode.QueryLabResults(mockCtx, "patient1")
+	results, err := labChaincode.QueryLabResultsByPatientID(mockCtx, "patient1")
 	assert.NoError(t, err)
 	assert.Len(t, results, 2, "There should be two observations for the patient.")
 }
 
-func TestQueryLabResults_NoResults(t *testing.T) {
+func TestQueryLabResultsByPatientID_NoResults(t *testing.T) {
 	labChaincode := new(LabResultsChaincode)
 	mockCtx := new(MockTransactionContext)
 	mockStub := new(MockStub)
@@ -459,12 +459,12 @@ func TestQueryLabResults_NoResults(t *testing.T) {
 
 	mockStub.On("GetQueryResult", mock.Anything).Return(&MockIterator{}, nil)
 
-	results, err := labChaincode.QueryLabResults(mockCtx, "patient2")
+	results, err := labChaincode.QueryLabResultsByPatientID(mockCtx, "patient2")
 	assert.NoError(t, err)
 	assert.Len(t, results, 0, "There should be no observations for the patient.")
 }
 
-func TestQueryLabResults_ErrorHandling(t *testing.T) {
+func TestQueryLabResultsByPatientID_ErrorHandling(t *testing.T) {
 	labChaincode := new(LabResultsChaincode)
 	mockCtx := new(MockTransactionContext)
 	mockStub := new(MockStub)
@@ -472,7 +472,7 @@ func TestQueryLabResults_ErrorHandling(t *testing.T) {
 
 	mockStub.On("GetQueryResult", mock.Anything).Return(nil, errors.New("failed to execute query"))
 
-	results, err := labChaincode.QueryLabResults(mockCtx, "patient3")
+	results, err := labChaincode.QueryLabResultsByPatientID(mockCtx, "patient3")
 	assert.Error(t, err)
 	assert.Nil(t, results, "Results should be nil when an error occurs.")
 }

@@ -5,12 +5,12 @@ const FabricNetwork = require("./fabric");
 const fabricNetwork = new FabricNetwork();
 
 // Organization details
-const organization = "ospedale-maresca.aslnapoli3.medchain.com";
+const organization = "laboratorio-analisi-cmo.medchain.com";
 const userAffiliation = "";
 
 // Channel and chaincode details
-const channelName = "patient-records-channel";
-const chaincodeName = "organization";
+const channelName = "identity-channel";
+const chaincodeName = "practitioner";
 
 async function main() {
   try {
@@ -31,6 +31,7 @@ async function main() {
     console.log("Initializing Fabric network...");
     await fabricNetwork.init(userId, organization, channelName, chaincodeName);
     console.log("Fabric network initialized successfully.");
+    //await fabricNetwork.revokeUserEnrollment(userId, organization);
   } catch (error) {
     console.error("Error:", error);
   } finally {

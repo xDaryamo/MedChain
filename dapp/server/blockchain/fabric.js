@@ -38,6 +38,7 @@ class FabricNetwork {
 
   loadConnectionProfile(organization) {
     const ccpPath = this.getCCPPath(organization);
+    console.log(ccpPath);
     if (!fs.existsSync(ccpPath)) {
       throw new Error(`Connection profile for ${organization} not found.`);
     }
@@ -66,7 +67,6 @@ class FabricNetwork {
       getMSPName(organization)
     );
     await wallet.put(userId, identity);
-    console.log(walletPath);
     return wallet;
   }
 
@@ -99,8 +99,11 @@ class FabricNetwork {
       identity: userId,
       discovery: { enabled: true, asLocalhost: true },
     };
+
     await this.gateway.connect(ccp, connectionOptions);
+
     this.network = await this.gateway.getNetwork(channelName);
+
     this.contract = this.network.getContract(chaincodeName);
     console.log(
       `Successfully connected to Fabric network for organization: ${organization}`
@@ -161,6 +164,68 @@ class FabricNetwork {
     } catch (error) {
       console.error(`Error submitting transaction: ${error}`);
       throw error;
+    }
+  }
+
+  async revokeUserEnrollment(userId, organization) {
+    try {
+      const walletPath = path.join(__dirname, "wallet", organization, userId);
+      const ccp = this.loadConnectionProfile(organization);
+      const caClient = buildCAClient(
+        FabricCAServices,
+        ccp,
+        `ca.${organization}`
+      );
+
+      const adminId = `Admin@${organization.replace(".medchain.com", "")}`;
+      const adminWalletPath = path.join(
+        __dirname,
+        "wallet",
+        organization,
+        adminId
+      );
+      const encryptedAdminPrivateKeyData = fs.readFileSync(
+        path.join(adminWalletPath, "privateKey.enc"),
+        "utf8"
+      );
+      const encryptedAdminPrivateKey = JSON.parse(encryptedAdminPrivateKeyData);
+      const decryptedAdminPrivateKey = decrypt(encryptedAdminPrivateKey);
+
+      const adminIdentity = {
+        credentials: {
+          certificate: fs.readFileSync(
+            path.join(adminWalletPath, "certificate.pem")
+          ),
+          privateKey: decryptedAdminPrivateKey,
+        },
+        mspId: getMSPName(organization),
+        type: "X.509",
+      };
+
+      const wallet = await Wallets.newFileSystemWallet(walletPath);
+      const provider = wallet
+        .getProviderRegistry()
+        .getProvider(adminIdentity.type);
+      const adminUser = await provider.getUserContext(adminIdentity, adminId);
+
+      // Revoca l'enrollment dell'utente
+      await caClient.revoke({ enrollmentID: userId }, adminUser);
+
+      // Rimuovi la cartella wallet dell'utente
+      if (fs.existsSync(walletPath)) {
+        fs.rmdirSync(walletPath, { recursive: true });
+        console.log(
+          `Enrollment revoked and wallet directory deleted for user ${userId}`
+        );
+      } else {
+        console.log(
+          `No wallet directory found for user ${userId}, nothing to revoke`
+        );
+      }
+    } catch (error) {
+      console.error(
+        `Failed to revoke enrollment for user ${userId}: ${error.message}`
+      );
     }
   }
 

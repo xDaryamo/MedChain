@@ -1,7 +1,7 @@
 {
   "network-configs": {
     "network-laboratorioanalisicmo": {
-      "name": "Network of LaboratorioAnalisiCMO",
+      "name": "Network of LaboratorioAnalisiCmo",
       "profile": "/opt/explorer/app/platform/fabric/connection-profile/connection-profile-laboratorioanalisicmo.json"
     }
   },

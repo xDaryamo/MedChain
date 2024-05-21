@@ -20,6 +20,7 @@ router.put(
       })
       .normalizeEmail(),
     body("password").trim().isLength({ min: 5 }),
+    body("role").not().isEmpty().withMessage("Role is required"),
   ],
   authController.signup
 );

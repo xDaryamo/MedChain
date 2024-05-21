@@ -23,21 +23,21 @@
     "MedicinaGeneraleNapoli": {
       "mspid": "MedicinaGeneraleNapoliMSP",
       "adminPrivateKey": {
-        "path": "/tmp/crypto/peerOrganizations/medicina-generale.napoli.medchain.com/users/Admin@medicina-generale.napoli.medchain.com/msp/keystore/priv-key.pem"
+        "path": "/tmp/crypto/peerOrganizations/medicina-generale-napoli.medchain.com/users/Admin@medicina-generale-napoli.medchain.com/msp/keystore/priv-key.pem"
       },
       "peers": [
-        "peer0.medicina-generale.napoli.medchain.com"
+        "peer0.medicina-generale-napoli.medchain.com"
       ],
       "signedCert": {
-        "path": "/tmp/crypto/peerOrganizations/medicina-generale.napoli.medchain.com/users/Admin@medicina-generale.napoli.medchain.com/msp/signcerts/Admin@medicina-generale.napoli.medchain.com-cert.pem"
+        "path": "/tmp/crypto/peerOrganizations/medicina-generale-napoli.medchain.com/users/Admin@medicina-generale-napoli.medchain.com/msp/signcerts/Admin@medicina-generale-napoli.medchain.com-cert.pem"
       }
     }
   },
   "peers": {
-    "peer0.medicina-generale.napoli.medchain.com": {
-      "url": "grpc://peer0.medicina-generale.napoli.medchain.com:7101",
+    "peer0.medicina-generale-napoli.medchain.com": {
+      "url": "grpc://peer0.medicina-generale-napoli.medchain.com:7101",
       "tlsCACerts": {
-        "path": "/tmp/crypto/peerOrganizations/medicina-generale.napoli.medchain.com/msp/tlscacerts/tlsca.medicina-generale.napoli.medchain.com-cert.pem"
+        "path": "/tmp/crypto/peerOrganizations/medicina-generale-napoli.medchain.com/msp/tlscacerts/tlsca.medicina-generale-napoli.medchain.com-cert.pem"
       }
     }
   },
@@ -51,7 +51,7 @@
     "lab-results-channel": {
       "peers": {}
     },
-    "public-health-channel": {
+    "identity-channel": {
       "peers": {}
     }
   }

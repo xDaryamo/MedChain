@@ -1,32 +1,66 @@
 const express = require("express");
-
 const router = express.Router();
-
 const patientController = require("../controllers/patient");
+const { verifyToken, authorizeOrganization } = require("../middleware/auth");
 
-// GET Patient Details
-router.get("/patient/:id", patientController.getPatientDetails);
-
-// POST Register a new Patient
-router.post("/patient", patientController.createPatient);
-
-// PATCH Update Exisisting Patient information
-router.patch("/patient/:id", patientController.updatePatient);
-
-// DELETE Remove a Patient
-router.delete("/patient/:id", patientController.deletePatient);
-
-// Authorization operations
+// Rotte per i pazienti
+router.get(
+  "/:id",
+  verifyToken,
+  authorizeOrganization([
+    "patients.medchain.com",
+    "ospedale-maresca.aslnapoli3.medchain.com",
+    "ospedale-del-mare.aslnapoli1.medchain.com",
+    "ospedale-sgiuliano.aslnapoli2.medchain.com",
+    "medicina-generale-napoli.medchain.com",
+    "neurologia-napoli.medchain.com",
+  ]),
+  patientController.getPatient
+);
 router.post(
-  "/patients/:id/request-access/:requesterId",
+  "/",
+  verifyToken,
+  authorizeOrganization(["patients.medchain.com"]),
+  patientController.createPatient
+);
+router.patch(
+  "/:id",
+  verifyToken,
+  authorizeOrganization(["patients.medchain.com"]),
+  patientController.updatePatient
+);
+router.delete(
+  "/:id",
+  verifyToken,
+  authorizeOrganization(["patients.medchain.com"]),
+  patientController.deletePatient
+);
+
+router.post(
+  "/request-access/:id/",
+  verifyToken,
+  authorizeOrganization([
+    "patients.medchain.com",
+    "ospedale-maresca.aslnapoli3.medchain.com",
+    "ospedale-del-mare.aslnapoli1.medchain.com",
+    "ospedale-sgiuliano.aslnapoli2.medchain.com",
+    "medicina-generale-napoli.medchain.com",
+    "neurologia-napoli.medchain.com",
+  ]),
   patientController.requestAccess
 );
+
 router.post(
-  "/patients/:id/grant-access/:requesterId",
+  "/grant-access/:requesterId",
+  verifyToken,
+  authorizeOrganization(["patients.medchain.com"]),
   patientController.grantAccess
 );
+
 router.post(
-  "/patients/:id/revoke-access/:requesterId",
+  "/revoke-access/:requesterId",
+  verifyToken,
+  authorizeOrganization(["patients.medchain.com"]),
   patientController.revokeAccess
 );
 

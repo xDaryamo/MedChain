@@ -4,6 +4,11 @@ import (
 	"time"
 )
 
+// Code represents a coded value following a coding system like LOINC or SNOMED CT
+type Code struct {
+	Coding []Coding `json:"coding"` // A reference to a code defined by a terminology system
+}
+
 // Coding provides reference information to a coding system and a code within that system
 type Coding struct {
 	System  string `json:"system,omitempty"`  // The identification of the code system that defines the meaning of the symbol in the code
@@ -23,10 +28,18 @@ type Reference struct {
 	Display   string `json:"display,omitempty"`
 }
 
+// Annotation represents a comment or explanatory note
+type Annotation struct {
+	AuthorReference *Reference `json:"authorReference,omitempty"` // Reference to who made the note
+	AuthorString    string     `json:"authorString,omitempty"`    // String identifying who made the note
+	Time            time.Time  `json:"time,omitempty"`            // Time the note was made
+	Text            string     `json:"text"`                      // The content of the note
+}
+
 // Period represents a start and an end time
 type Period struct {
-	Start *time.Time `json:"start,omitempty"` // The start of the period
-	End   *time.Time `json:"end,omitempty"`   // The end of the period
+	Start time.Time `json:"start,omitempty"` // The start of the period
+	End   time.Time `json:"end,omitempty"`   // The end of the period
 }
 
 // Quantity represents the amount of medication.
@@ -36,24 +49,16 @@ type Quantity struct {
 	System string  `json:"system,omitempty"` // The system that the unit is derived from.
 }
 
-// Ratio represents a relationship between two quantities.
-type Ratio struct {
-	Numerator   *Quantity `json:"numerator"`   // The value of the numerator
-	Denominator *Quantity `json:"denominator"` // The value of the denominator
-}
-
-// Annotation represents a comment or explanatory note
-type Annotation struct {
-	AuthorReference *Reference `json:"authorReference,omitempty"` // Reference to who made the note
-	AuthorString    string     `json:"authorString,omitempty"`    // String identifying who made the note
-	Time            *time.Time  `json:"time,omitempty"`            // Time the note was made
-	Text            string     `json:"text"`                      // The content of the note
-}
-
 // Range specifies a range of values
 type Range struct {
 	Low  *Quantity `json:"low,omitempty"`  // Low limit
 	High *Quantity `json:"high,omitempty"` // High limit
+}
+
+// Ratio represents a relationship between two quantities.
+type Ratio struct {
+	Numerator   *Quantity `json:"numerator"`   // The value of the numerator
+	Denominator *Quantity `json:"denominator"` // The value of the denominator
 }
 
 // ObservationComponent represents a component of the observation
@@ -78,7 +83,7 @@ type Observation struct {
 	Subject         *Reference             `json:"subject"`                   // Who and/or what the observation is about
 	Encounter       *Reference             `json:"encounter,omitempty"`       // The healthcare event (e.g., a patient encounter) during which the observation was made
 	EffectivePeriod *Period                 `json:"effectivePeriod,omitempty"` // A period of time during which the observation was made
-	Issued          *time.Time              `json:"issued,omitempty"`          // The date and time this observation was made available
+	Issued          time.Time              `json:"issued,omitempty"`          // The date and time this observation was made available
 	Performer       []Reference            `json:"performer,omitempty"`       // Who made the observation
 	Interpretation  []CodeableConcept      `json:"interpretation,omitempty"`  // High-level interpretation of observation
 	Note            []Annotation           `json:"note,omitempty"`            // Comments about the observation

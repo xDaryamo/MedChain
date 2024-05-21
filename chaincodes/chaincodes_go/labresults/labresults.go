@@ -3,7 +3,6 @@ package main
 import (
 	"encoding/json"
 	"errors"
-	"fmt"
 	"log"
 
 	"github.com/hyperledger/fabric-contract-api-go/contractapi"
@@ -35,10 +34,7 @@ func (t *LabResultsChaincode) CreateLabResult(ctx contractapi.TransactionContext
 		return errors.New("lab result already exists: " + labResult.ID)
 	}
 
-	labResultAsBytes, err := json.Marshal(labResult)
-	if err != nil {
-		return errors.New("failed to encode JSON")
-	}
+	labResultAsBytes, _ := json.Marshal(labResult)
 	return ctx.GetStub().PutState(labResult.ID, labResultAsBytes)
 }
 
@@ -78,7 +74,7 @@ func (t *LabResultsChaincode) GetLabResult(ctx contractapi.TransactionContextInt
 	return string(labResultAsBytes), nil
 }
 
-// LabResultExists verifica se un risultato di laboratorio esiste nella blockchain
+// LabResultExists checks if a laboratory result exists in the blockchain
 func (t *LabResultsChaincode) LabResultExists(ctx contractapi.TransactionContextInterface, labResultID string) (bool, error) {
 	labResultAsBytes, err := ctx.GetStub().GetState(labResultID)
 	if err != nil {
@@ -87,9 +83,9 @@ func (t *LabResultsChaincode) LabResultExists(ctx contractapi.TransactionContext
 	return labResultAsBytes != nil, nil
 }
 
-// QueryLabResults recupera i risultati di laboratorio per un paziente specifico utilizzando la struttura Observation
-func (t *LabResultsChaincode) QueryLabResults(ctx contractapi.TransactionContextInterface, patientID string) ([]Observation, error) {
-	queryString := fmt.Sprintf(`{"selector":{"subject.reference":"%s", "category.text":"Laboratory"}}`, patientID)
+// QueryLabResultsByPatientID retrieves all lab results for a given patient ID
+func (t *LabResultsChaincode) QueryLabResultsByPatientID(ctx contractapi.TransactionContextInterface, patientID string) ([]Observation, error) {
+	queryString := `{"selector":{"subject.reference":"` + patientID + `"}}`
 	resultsIterator, err := ctx.GetStub().GetQueryResult(queryString)
 	if err != nil {
 		return nil, err
@@ -104,11 +100,13 @@ func (t *LabResultsChaincode) QueryLabResults(ctx contractapi.TransactionContext
 		}
 
 		var observation Observation
-		if err := json.Unmarshal(queryResponse.Value, &observation); err != nil {
+		err = json.Unmarshal(queryResponse.Value, &observation)
+		if err != nil {
 			return nil, err
 		}
 		results = append(results, observation)
 	}
+
 	return results, nil
 }
 

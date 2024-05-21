@@ -72,7 +72,7 @@ type ContactPoint struct {
 }
 
 // Address represents an address expressed using postal conventions
-type Address struct {
+type 	Address struct {
 	Use        *Code   `json:"use,omitempty"`        // The use of the address (e.g., home, work)
 	Type       *Code   `json:"type,omitempty"`       // The type of address (e.g., postal, physical)
 	Text       string `json:"text,omitempty"`       // A full text representation of the address

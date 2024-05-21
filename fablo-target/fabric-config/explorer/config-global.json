@@ -29,11 +29,11 @@
       "profile": "/opt/explorer/app/platform/fabric/connection-profile/connection-profile-farmaciacarbone.json"
     },
     "network-laboratorioanalisicmo": {
-      "name": "Network of LaboratorioAnalisiCMO",
+      "name": "Network of LaboratorioAnalisiCmo",
       "profile": "/opt/explorer/app/platform/fabric/connection-profile/connection-profile-laboratorioanalisicmo.json"
     },
     "network-laboratorioanalisisdn": {
-      "name": "Network of LaboratorioAnalisiSDN",
+      "name": "Network of LaboratorioAnalisiSdn",
       "profile": "/opt/explorer/app/platform/fabric/connection-profile/connection-profile-laboratorioanalisisdn.json"
     },
     "network-patients": {

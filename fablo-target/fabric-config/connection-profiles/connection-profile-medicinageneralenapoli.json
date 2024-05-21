@@ -12,16 +12,16 @@
         "peer0.ospedale-maresca.aslnapoli3.medchain.com",
         "peer0.ospedale-del-mare.aslnapoli1.medchain.com",
         "peer0.ospedale-sgiuliano.aslnapoli2.medchain.com",
-        "peer0.medicina-generale.napoli.medchain.com",
-        "peer0.neurologia.napoli.medchain.com",
-        "peer0.farmacia-petrone.napoli.medchain.com",
-        "peer0.farmacia-carbone.napoli.medchain.com",
+        "peer0.medicina-generale-napoli.medchain.com",
+        "peer0.neurologia-napoli.medchain.com",
+        "peer0.farmacia-petrone.medchain.com",
+        "peer0.farmacia-carbone.medchain.com",
         "peer0.laboratorio-analisi-cmo.medchain.com",
         "peer0.laboratorio-analisi-sdn.medchain.com",
         "peer0.patients.medchain.com"
       ],
       "certificateAuthorities": [
-        "ca.medicina-generale.napoli.medchain.com"
+        "ca.medicina-generale-napoli.medchain.com"
       ]
     }
   },
@@ -35,16 +35,16 @@
     "peer0.ospedale-sgiuliano.aslnapoli2.medchain.com": {
       "url": "grpc://localhost:7081"
     },
-    "peer0.medicina-generale.napoli.medchain.com": {
+    "peer0.medicina-generale-napoli.medchain.com": {
       "url": "grpc://localhost:7101"
     },
-    "peer0.neurologia.napoli.medchain.com": {
+    "peer0.neurologia-napoli.medchain.com": {
       "url": "grpc://localhost:7121"
     },
-    "peer0.farmacia-petrone.napoli.medchain.com": {
+    "peer0.farmacia-petrone.medchain.com": {
       "url": "grpc://localhost:7141"
     },
-    "peer0.farmacia-carbone.napoli.medchain.com": {
+    "peer0.farmacia-carbone.medchain.com": {
       "url": "grpc://localhost:7161"
     },
     "peer0.laboratorio-analisi-cmo.medchain.com": {
@@ -58,9 +58,9 @@
     }
   },
   "certificateAuthorities": {
-    "ca.medicina-generale.napoli.medchain.com": {
+    "ca.medicina-generale-napoli.medchain.com": {
       "url": "http://localhost:7100",
-      "caName": "ca.medicina-generale.napoli.medchain.com",
+      "caName": "ca.medicina-generale-napoli.medchain.com",
       "httpOptions": {
         "verify": false
       }

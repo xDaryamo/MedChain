@@ -8,9 +8,10 @@ const userSchema = new Schema({
   email: { type: String, required: true, unique: true },
   role: {
     type: String,
-    enum: ["patient", "doctor", "pharmacy", "lab", "hospital"],
+    enum: ["patient", "doctor", "pharmacy", "lab", "hospital", "practitioner"],
     required: true,
   },
+  organization: { type: String, required: true },
   creationDate: { type: Date, default: Date.now },
 });
 

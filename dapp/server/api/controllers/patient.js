@@ -2,159 +2,234 @@ const FabricNetwork = require("../../blockchain/fabric");
 
 const fabric = new FabricNetwork();
 
-exports.getPatientDetails = async (req, res, next) => {
-  const patientID = req.params.id;
-  try {
-    const organization = "patients.medchain.com";
-    const channel = "patient-records-channel";
-    const chaincode = "patient";
+exports.getPatient = async (req, res, next) => {
+  const patientId = req.params.id;
 
-    await fabric.init(patientID, organization, channel, chaincode);
+  try {
+    const channel = "identity-channel";
+    const chaincode = "patient";
+    const userId = req.user.userId;
+    const organization = req.user.organization;
+
+    await fabric.init(userId, organization, channel, chaincode);
     console.log("Fabric network initialized successfully.");
 
-    const patientDetails = await fabric.evaluateTransaction(
+    const resultString = await fabric.evaluateTransaction(
       "ReadPatient",
-      patientID
+      patientId
     );
-    res.status(200).json({ patient: JSON.parse(patientDetails) });
+    const result = JSON.parse(resultString);
+
+    res
+      .status(200)
+      .json({ message: "Patient retrieved successfully", result: result });
   } catch (error) {
     res.status(500).json({ error: error.message });
+  } finally {
+    fabric.disconnect();
+    console.log("Disconnected from Fabric gateway.");
   }
 };
 
 exports.createPatient = async (req, res, next) => {
-  const patientJSON = req.body;
+  const { organization, fhirData } = req.body;
   try {
-    const organization = "patients.medchain.com";
-    const channel = "patient-records-channel";
+    const channel = "identity-channel";
     const chaincode = "patient";
-    const userId = await fabric.registerAndEnrollUser("", organization);
+    const userId = fhirData.identifier.value;
 
-    patientJSON.identifier.value = userId;
+    await fabric.init(userId, organization, channel, chaincode);
+    console.log("Fabric network initialized successfully.");
 
     // Validate and stringify JSON
     let patientJSONString;
     try {
-      patientJSONString = JSON.stringify(patientJSON);
+      patientJSONString = JSON.stringify(fhirData);
       JSON.parse(patientJSONString); // This ensures the string is valid JSON
     } catch (jsonError) {
       console.error("Invalid JSON format:", jsonError);
-      return res.status(400).json({ error: "Invalid JSON format" });
+      return { error: "Invalid JSON format" };
     }
-
-    await fabric.init(userId, organization, channel, chaincode);
-    console.log("Fabric network initialized successfully.");
 
     // Log the JSON string
     console.log("Submitting transaction with patient JSON:", patientJSONString);
 
     const result = await fabric.submitTransaction(
       "CreatePatient",
-      JSON.stringify(patientJSON)
+      patientJSONString
     );
 
-    res
-      .status(201)
-      .json({ message: "Patient created successfully", result: result });
+    return { message: "Patient created successfully", result: result };
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    return { error: error.message };
   } finally {
-    // Disconnetti dalla rete Fabric
     fabric.disconnect();
     console.log("Disconnected from Fabric gateway.");
   }
 };
 
-const object = {
-  active: true,
-  date: "0001-01-01T00:00:00Z",
-  gender: { coding: null },
-  identifier: {
-    system: "http://hospital.smarthealth.it",
-    value: "cdc455e6-3216-4ea5-af87-ff3d99368b3c",
-  },
-  maritalstatus: {},
-  name: { family: "Rossi", text: "Mario" },
-  photo: {
-    creation: "0001-01-01T00:00:00Z",
-    duration: { value: 0 },
-    language: { coding: null },
-    type: { coding: null },
-  },
-};
 exports.updatePatient = async (req, res, next) => {
-  const patientID = req.params.id;
-  const updatedPatient = req.body.updatedPatient;
+  const fhirData = req.body;
   try {
-    const result = await fabric.submitTransaction(
+    const channel = "identity-channel";
+    const chaincode = "patient";
+    const userId = req.user.id;
+    const organization = req.user.organization;
+
+    await fabric.init(userId, organization, channel, chaincode);
+    console.log("Fabric network initialized successfully.");
+
+    let patientJSONString;
+    try {
+      patientJSONString = JSON.stringify(fhirData);
+      JSON.parse(patientJSONString);
+    } catch (jsonError) {
+      console.error("Invalid JSON format:", jsonError);
+      return res.status(400).json({ error: "Invalid JSON format" });
+    }
+
+    console.log("Submitting transaction with patient JSON:", patientJSONString);
+
+    const resultString = await fabric.submitTransaction(
       "UpdatePatient",
-      patientID,
-      JSON.stringify(updatedPatient)
+      patientJSONString
     );
+
+    const result = JSON.parse(resultString);
     res
       .status(200)
-      .json({ message: "Organization updated successfully", result });
+      .json({ message: "Patient updated successfully", result: result });
   } catch (error) {
     res.status(500).json({ error: error.message });
+  } finally {
+    fabric.disconnect();
+    console.log("Disconnected from Fabric gateway.");
   }
 };
 
 exports.deletePatient = async (req, res, next) => {
   const patientID = req.params.id;
+  const organization = req.user.organization;
   try {
-    const result = await fabric.submitTransaction("DeletePatient", patientID);
+    const channel = "identity-channel";
+    const chaincode = "patient";
+
+    await fabric.init(patientID, organization, channel, chaincode);
+    console.log("Fabric network initialized successfully.");
+
+    const resultString = await fabric.submitTransaction(
+      "DeletePatient",
+      patientID
+    );
+    const result = JSON.parse(resultString); // Assuming resultString is JSON string
+
     res.status(200).json({ message: "Patient deleted successfully", result });
   } catch (error) {
     res.status(500).json({ error: error.message });
+  } finally {
+    fabric.disconnect();
+    console.log("Disconnected from Fabric gateway.");
   }
 };
 
 exports.requestAccess = async (req, res, next) => {
   const patientID = req.params.id;
-  const requesterID = req.params.requesterId;
-
+  const requesterID = req.user.userId;
+  const organization = req.user.organization;
   try {
-    const result = await fabric.submitTransaction(
+    const channel = "identity-channel";
+    const chaincode = "patient";
+
+    await fabric.init(requesterID, organization, channel, chaincode);
+    console.log("Fabric network initialized successfully.");
+
+    const resultString = await fabric.submitTransaction(
       "RequestAccess",
       patientID,
       requesterID
     );
+
+    // Log the result string for debugging
+    console.log("Result from blockchain:", resultString);
+
+    // Check if resultString is valid JSON
+    let result;
+    if (resultString) {
+      try {
+        result = JSON.parse(resultString);
+      } catch (jsonError) {
+        console.error("Error parsing JSON:", jsonError);
+        return res
+          .status(500)
+          .json({ error: "Error parsing JSON response from blockchain" });
+      }
+    } else {
+      return res.status(500).json({ error: "Empty response from blockchain" });
+    }
+
     res
       .status(200)
       .json({ message: "Access request sent successfully", result });
   } catch (error) {
     res.status(500).json({ error: error.message });
+  } finally {
+    fabric.disconnect();
+    console.log("Disconnected from Fabric gateway.");
   }
 };
 
 exports.grantAccess = async (req, res, next) => {
-  const patientID = req.params.id;
+  const patientID = req.user.userId;
   const requesterID = req.params.requesterId;
+  const organization = req.user.organization;
 
   try {
-    const result = await fabric.submitTransaction(
+    const channel = "identity-channel";
+    const chaincode = "patient";
+
+    await fabric.init(patientID, organization, channel, chaincode);
+    console.log("Fabric network initialized successfully.");
+
+    const resultString = await fabric.submitTransaction(
       "GrantAccess",
       patientID,
       requesterID
     );
+    const result = JSON.parse(resultString); // Assuming resultString is JSON string
+
     res.status(200).json({ message: "Access granted successfully", result });
   } catch (error) {
     res.status(500).json({ error: error.message });
+  } finally {
+    fabric.disconnect();
+    console.log("Disconnected from Fabric gateway.");
   }
 };
 
 exports.revokeAccess = async (req, res, next) => {
-  const patientID = req.params.id;
+  const patientID = req.user.userId;
   const requesterID = req.params.requesterId;
+  const organization = req.user.organization;
 
   try {
-    const result = await fabric.submitTransaction(
+    const channel = "identity-channel";
+    const chaincode = "patient";
+
+    await fabric.init(patientID, organization, channel, chaincode);
+    console.log("Fabric network initialized successfully.");
+
+    const resultString = await fabric.submitTransaction(
       "RevokeAccess",
       patientID,
       requesterID
     );
+    const result = JSON.parse(resultString); // Assuming resultString is JSON string
+
     res.status(200).json({ message: "Access revoked successfully", result });
   } catch (error) {
     res.status(500).json({ error: error.message });
+  } finally {
+    fabric.disconnect();
+    console.log("Disconnected from Fabric gateway.");
   }
 };

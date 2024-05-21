@@ -4,8 +4,11 @@ const bodyParser = require("body-parser");
 const app = express();
 const mongoose = require("mongoose");
 
+const organizations = require("./config/organizations");
+
 const authRoutes = require("./api/routes/auth");
 const patientRoutes = require("./api/routes/patient");
+const labResultsRoutes = require("./api/routes/lab-results");
 
 const FabricNetwork = require("./blockchain/fabric");
 const fabric = new FabricNetwork();
@@ -29,9 +32,10 @@ app.use((req, res, next) => {
   next();
 });
 
-//app.use("/auth", authRoutes);
+app.use("/auth", authRoutes);
 
-app.use(patientRoutes);
+app.use("/patient", patientRoutes);
+app.use("/labresults", labResultsRoutes);
 
 app.use((err, req, res, next) => {
   console.error(err);
@@ -45,10 +49,12 @@ const PORT = process.env.PORT || 3000;
 
 const startServer = async () => {
   try {
-    // Enroll admin
-    console.log("Enrolling admin...");
-    await fabric.enrollAdmin("patients.medchain.com");
-    console.log("Admin enrolled successfully.");
+    // Enroll admins for all organizations
+    console.log("Enrolling admins...");
+    for (const org of organizations) {
+      await fabric.enrollAdmin(org);
+    }
+    console.log("Admins enrolled successfully.");
 
     await mongoose.connect(mongoUri);
     app.listen(PORT, () => {

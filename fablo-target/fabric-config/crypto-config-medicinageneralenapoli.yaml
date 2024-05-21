@@ -1,6 +1,6 @@
 PeerOrgs:
   - Name: MedicinaGeneraleNapoli
-    Domain: medicina-generale.napoli.medchain.com
+    Domain: medicina-generale-napoli.medchain.com
     Specs:
     Template:
       Count: 1

@@ -23,21 +23,21 @@
     "NeurologiaNapoli": {
       "mspid": "NeurologiaNapoliMSP",
       "adminPrivateKey": {
-        "path": "/tmp/crypto/peerOrganizations/neurologia.napoli.medchain.com/users/Admin@neurologia.napoli.medchain.com/msp/keystore/priv-key.pem"
+        "path": "/tmp/crypto/peerOrganizations/neurologia-napoli.medchain.com/users/Admin@neurologia-napoli.medchain.com/msp/keystore/priv-key.pem"
       },
       "peers": [
-        "peer0.neurologia.napoli.medchain.com"
+        "peer0.neurologia-napoli.medchain.com"
       ],
       "signedCert": {
-        "path": "/tmp/crypto/peerOrganizations/neurologia.napoli.medchain.com/users/Admin@neurologia.napoli.medchain.com/msp/signcerts/Admin@neurologia.napoli.medchain.com-cert.pem"
+        "path": "/tmp/crypto/peerOrganizations/neurologia-napoli.medchain.com/users/Admin@neurologia-napoli.medchain.com/msp/signcerts/Admin@neurologia-napoli.medchain.com-cert.pem"
       }
     }
   },
   "peers": {
-    "peer0.neurologia.napoli.medchain.com": {
-      "url": "grpc://peer0.neurologia.napoli.medchain.com:7121",
+    "peer0.neurologia-napoli.medchain.com": {
+      "url": "grpc://peer0.neurologia-napoli.medchain.com:7121",
       "tlsCACerts": {
-        "path": "/tmp/crypto/peerOrganizations/neurologia.napoli.medchain.com/msp/tlscacerts/tlsca.neurologia.napoli.medchain.com-cert.pem"
+        "path": "/tmp/crypto/peerOrganizations/neurologia-napoli.medchain.com/msp/tlscacerts/tlsca.neurologia-napoli.medchain.com-cert.pem"
       }
     }
   },
@@ -51,7 +51,7 @@
     "lab-results-channel": {
       "peers": {}
     },
-    "public-health-channel": {
+    "identity-channel": {
       "peers": {}
     }
   }

@@ -23,21 +23,21 @@
     "FarmaciaPetrone": {
       "mspid": "FarmaciaPetroneMSP",
       "adminPrivateKey": {
-        "path": "/tmp/crypto/peerOrganizations/farmacia-petrone.napoli.medchain.com/users/Admin@farmacia-petrone.napoli.medchain.com/msp/keystore/priv-key.pem"
+        "path": "/tmp/crypto/peerOrganizations/farmacia-petrone.medchain.com/users/Admin@farmacia-petrone.medchain.com/msp/keystore/priv-key.pem"
       },
       "peers": [
-        "peer0.farmacia-petrone.napoli.medchain.com"
+        "peer0.farmacia-petrone.medchain.com"
       ],
       "signedCert": {
-        "path": "/tmp/crypto/peerOrganizations/farmacia-petrone.napoli.medchain.com/users/Admin@farmacia-petrone.napoli.medchain.com/msp/signcerts/Admin@farmacia-petrone.napoli.medchain.com-cert.pem"
+        "path": "/tmp/crypto/peerOrganizations/farmacia-petrone.medchain.com/users/Admin@farmacia-petrone.medchain.com/msp/signcerts/Admin@farmacia-petrone.medchain.com-cert.pem"
       }
     }
   },
   "peers": {
-    "peer0.farmacia-petrone.napoli.medchain.com": {
-      "url": "grpc://peer0.farmacia-petrone.napoli.medchain.com:7141",
+    "peer0.farmacia-petrone.medchain.com": {
+      "url": "grpc://peer0.farmacia-petrone.medchain.com:7141",
       "tlsCACerts": {
-        "path": "/tmp/crypto/peerOrganizations/farmacia-petrone.napoli.medchain.com/msp/tlscacerts/tlsca.farmacia-petrone.napoli.medchain.com-cert.pem"
+        "path": "/tmp/crypto/peerOrganizations/farmacia-petrone.medchain.com/msp/tlscacerts/tlsca.farmacia-petrone.medchain.com-cert.pem"
       }
     }
   },
@@ -45,7 +45,7 @@
     "prescriptions-channel": {
       "peers": {}
     },
-    "public-health-channel": {
+    "identity-channel": {
       "peers": {}
     }
   }
