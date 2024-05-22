@@ -73,11 +73,16 @@ exports.updatePatient = async (req, res, next) => {
   try {
     const channel = "identity-channel";
     const chaincode = "patient";
-    const userId = req.user.id;
+    const userId = req.user.userId;
     const organization = req.user.organization;
 
     await fabric.init(userId, organization, channel, chaincode);
     console.log("Fabric network initialized successfully.");
+
+    if (!fhirData.identifier) {
+      fhirData.identifier = {};
+    }
+    fhirData.identifier.value = userId;
 
     let patientJSONString;
     try {
