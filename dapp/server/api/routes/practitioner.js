@@ -5,44 +5,50 @@ const router = express.Router();
 const practitionerController = require('../controllers/practitioner');
 
 
-// POST Create a new practitioner associated with a specific organization
-router.post('/organization/:id/practitioner', practitionerController.createPractitioner);
+// POST Create a new practitioner 
+router.post('/practitioner/:userid', practitionerController.createPractitioner);
 
-// GET Retrieve a practitioner associated with a specific organization
-router.get('/organization/:id/practitioner/:practitionerid', practitionerController.readPractitioner);
+// GET Retrieve a practitioner
+router.get('/practitioner/:userid', practitionerController.readPractitioner);
 
-// PATCH Update a practitioner associated with a specific organization
-router.patch('/organization/:id/practitioner/:practitionerid', practitionerController.updatePractitioner);
+// PATCH Update a practitioner 
+router.patch('/practitioner/:userid', practitionerController.updatePractitioner);
 
-// DELETE Delete a practitioner associated with a specific organization
-router.delete('/organization/:id/practitioner/:practitionerid', practitionerController.updatePractitioner);
-
-
-// POST Create a new procedure associated with a specific practitioner
-router.post('/practitioner/:id/procedure/:procedureid', practitionerController.createProcedure);
-
-// GET Retrieve a procedure associated with a specific organization
-router.get('/practitioner/:id/procedure/:procedureid', practitionerController.readProcedure);
-
-// PATCH Update a procedure associated with a specific practitioner
-router.patch('/practitioner/:id/procedure/:procedureid', practitionerController.updateProcedure);
+// DELETE Delete a practitioner
+router.delete('/practitioner/:userid', practitionerController.updatePractitioner);
 
 
-// POST Create a new condition associated with a specific patient 
-router.post('/patient/:id/condition/:conditionid', practitionerController.createCondition);
+// POST Create a new procedure 
+router.post('/practitioner/:userid', practitionerController.createProcedure);
 
-// GET Retrieve a specific condition associated with a specific patient
-router.get('/patient/:id/condition/:conditionid', practitionerController.readCondition);
+// GET Retrieve a procedure 
+router.get('/practitioner/:userid/:procedureid', practitionerController.readProcedure);
 
-// PATCH Update a specific condition associated with a specific patient
-router.patch('/patient/:id/condition/:conditionid', practitionerController.updateCondition);
+// PATCH Update a procedure 
+router.patch('/practitioner/:userid/:procedureid', practitionerController.updateProcedure);
+
+// DELETE Delete a procedure
+router.delete('/practitioner/:userid/:procedureid', practitionerController.deleteProcedure);
 
 
-// POST Create a new annotation associated with a procedure
-router.post('/procedure/:id/annotations', practitionerController.createAnnotation);
+// POST Create a new condition 
+router.post('/practitioner/:userid', practitionerController.createCondition);
 
-// GET Retrieve annotations associated with a procedure
-router.get('/procedure/:id/annotations', practitionerController.readAnnotation);
+// GET Retrieve a specific condition 
+router.get('/practitioner/:userid/:conditionid', practitionerController.readCondition);
+
+// PATCH Update a specific condition 
+router.patch('/practitioner/:userid/:conditionid', practitionerController.updateCondition);
+
+// DELETE Delete a procedure
+router.delete('/practitioner/:userid/:conditionid', practitionerController.deleteCondition);
+
+
+// POST Create a new annotation 
+router.post('/practitioner/:userid/:procedureid', practitionerController.createAnnotation);
+
+// GET Retrieve annotation 
+router.get('/procedure/:userid/:procedureid/:annotationindex', practitionerController.readAnnotation);
 
 
 module.exports = router

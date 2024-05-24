@@ -1,8 +1,0 @@
-PeerOrgs:
-  - Name: LaboratorioAnalisiCmo
-    Domain: laboratorio-analisi-cmo.medchain.com
-    Specs:
-    Template:
-      Count: 1
-    Users:
-      Count: 1

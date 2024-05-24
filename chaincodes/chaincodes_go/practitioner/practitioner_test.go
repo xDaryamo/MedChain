@@ -1,6 +1,10 @@
 package main
 
 import (
+	"crypto/x509"
+	"encoding/json"
+	"encoding/pem"
+	"errors"
 	"testing"
 
 	"github.com/golang/protobuf/ptypes/timestamp"
@@ -275,1086 +279,901 @@ func (m *MockIterator) Close() error {
 	return nil
 }
 
+type MockClientIdentity struct {
+	mock.Mock
+}
+
+func (m *MockClientIdentity) GetID() (string, error) {
+	args := m.Called()
+	return args.String(0), args.Error(1)
+}
+
+func (m *MockClientIdentity) GetMSPID() (string, error) {
+	args := m.Called()
+	return args.String(0), args.Error(1)
+}
+
+func (m *MockClientIdentity) GetAttributeValue(attrName string) (string, bool, error) {
+	args := m.Called(attrName)
+	return args.String(0), args.Bool(1), args.Error(2)
+}
+
+func (m *MockClientIdentity) AssertAttributeValue(attrName, attrValue string) error {
+	args := m.Called(attrName, attrValue)
+	return args.Error(0)
+}
+
+func (m *MockClientIdentity) GetX509Certificate() (*x509.Certificate, error) {
+	args := m.Called()
+	certPEM := args.Get(0).([]byte)
+	block, _ := pem.Decode(certPEM)
+	if block == nil {
+		return nil, errors.New("failed to decode PEM block containing the certificate")
+	}
+	cert, err := x509.ParseCertificate(block.Bytes)
+	return cert, err
+}
+
 // Tests for CreatePractitioner function
 func TestCreatePractitioner(t *testing.T) {
 	cc := new(PractitionerContract)
 	mockCtx := new(MockTransactionContext)
+	stub := new(MockStub)
 
-	practitionerID := "practitioner1"
-	practitionerJSON := `{
-		"identifier": {
-			"system": "http://example.com/identifier",
-			"value": "practitioner1"
+	//"date": "1990-01-01T00:00:00Z",
+
+	practitioner := Practitioner{
+		ID: &Identifier{
+			System: "http://example.com/systems/practitioner",
+			Value:  "practitioner1",
 		},
-		"active": true,
-		"name": [
-			{
-				"use": "official",
-				"family": "Doe",
-				"given": [
-					"John"
-				]
-			}
-		],
-		"telecom": {
-			"system": {
-				"coding": [
+		Active: true,
+		Name:   []HumanName{{Family: "Doe", Given: []string{"John"}}},
+		Telecom: &ContactPoint{
+			System: &Code{
+				Coding: []Coding{
 					{
-						"system": "exampleSystem",
-						"code": "email",
-						"display": "jhnd"
-					}
-				]
+						System:  "exampleSystem",
+						Code:    "email",
+						Display: "jhnd",
+					},
+				},
 			},
-			"value": "123456789",
-			"use": {
-				"coding": [
+			Value: "123456789",
+			Use: &Code{
+				Coding: []Coding{
 					{
-						"system": "useSystem",
-						"code": "useCode",
-						"display": "useDisplay"
-					}
-				]
+						System:  "useSystem",
+						Code:    "useCode",
+						Display: "useDisplay",
+					},
+				},
 			},
-			"rank": 1
+			Rank: 1,
 		},
-		"gender": {
-			"coding": [
+		Gender: &Code{
+			Coding: []Coding{
 				{
-					"system": "http://hl7.org/fhir/administrative-gender",
-					"code": "male",
-					"display": "Male"
-				}
-			]
-		},
-		"date": "1990-01-01T00:00:00Z",
-		"deceased": false,
-		"address": {
-			"use": {
-				"coding": [
-					{
-						"system": "useSystem",
-						"code": "useCode",
-						"display": "useDisplay"
-					}
-				]
+					System:  "http://hl7.org/fhir/agender",
+					Code:    "M",
+					Display: "Male",
+				},
 			},
-			"line": "123 Main St",
-			"city": "Anytown",
-			"state": "ST",
-			"postalCode": "12345",
-			"country": "US"
 		},
-		"photo": {
-			"url": "http://example.com/photo.jpg"
+		Deceased: false,
+		Address: &Address{
+			Use: &Code{
+				Coding: []Coding{
+					{
+						System:  "useSystem",
+						Code:    "useCode",
+						Display: "useDisplay",
+					},
+				},
+			},
+			Line:       "123 Main St",
+			City:       "Anytown",
+			State:      "ST",
+			PostalCode: "12345",
+			Country:    "US",
 		},
-		"qualification": [
+		Photo: &Attachment{Url: "http://example.com/photo.jpg"},
+		Qualification: []Qualification{
 			{
-				"identifier": {
-					"system": "http://example.com/qualification",
-					"value": "MD"
+				ID: &Identifier{
+					System: "http://example.com/qualification",
+					Value:  "MD",
 				},
-				"code": {
-					"coding": [
+				Code: &CodeableConcept{
+					Coding: []Coding{
 						{
-							"system": "http://example.com/codesystem",
-							"code": "MD",
-							"display": "Doctor of Medicine"
-						}
-					],
-					"text": "Doctor of Medicine"
+							System:  "http://example.com/codesystem",
+							Code:    "MD",
+							Display: "Doctor of Medicine",
+						},
+					},
+					Text: "Doctor of Medicine",
 				},
-				"issuer": {
-					"reference": "Organization/org1"
-				}
-			}
-		],
-		"communication": [
+				Issuer: &Reference{
+					Reference: "Organization/org1",
+				},
+			},
+		},
+		Communication: []Communication{
 			{
-				"language": {
-					"coding": [
+				Language: &CodeableConcept{
+					Coding: []Coding{
 						{
-							"system": "http://example.com/codesystem",
-							"code": "en",
-							"display": "English"
-						}
-					],
-					"text": "English"
-				}
-			}
-		]
-	}`
+							System:  "http://example.com/codesystem",
+							Code:    "en",
+							Display: "English",
+						},
+					},
+					Text: "English",
+				},
+			},
+		},
+	}
 
-	mockStub := new(MockStub)
-	mockCtx.On("GetStub").Return(mockStub)
-	mockStub.On("GetState", practitionerID).Return(nil, nil)
-	mockStub.On("PutState", practitionerID, mock.Anything).Return(nil)
+	practitionerJSON, _ := json.Marshal(practitioner)
 
-	err := cc.CreatePractitioner(mockCtx, practitionerJSON)
+	mockCtx.On("GetStub").Return(stub)
+	stub.On("GetState", "practitioner1").Return(nil, nil)
+	stub.On("PutState", "practitioner1", practitionerJSON).Return(nil)
 
+	err := cc.CreatePractitioner(mockCtx, string(practitionerJSON))
 	assert.NoError(t, err)
-	mockStub.AssertExpectations(t)
+
+	stub.AssertExpectations(t)
+	mockCtx.AssertExpectations(t)
 }
 
 func TestCreatePractitioner_PractitionerExists(t *testing.T) {
 	cc := new(PractitionerContract)
 	mockCtx := new(MockTransactionContext)
+	stub := new(MockStub)
 
-	practitionerID := "practitioner1"
-	practitionerJSON := `{
-		"identifier": {
-			"system": "http://example.com/identifier",
-			"value": "practitioner1"
+	practitioner := Practitioner{
+		ID: &Identifier{
+			System: "http://example.com/systems/practitioner",
+			Value:  "practitioner1",
 		},
-		"active": true,
-		"name": [
-			{
-				"use": "official",
-				"family": "Doe",
-				"given": [
-					"John"
-				]
-			}
-		],
-		"telecom": {
-			"system": {
-				"coding": [
+		Active: true,
+		Name:   []HumanName{{Family: "Doe", Given: []string{"John"}}},
+		Telecom: &ContactPoint{
+			System: &Code{
+				Coding: []Coding{
 					{
-						"system": "exampleSystem",
-						"code": "email",
-						"display": "jhnd"
-					}
-				]
+						System:  "exampleSystem",
+						Code:    "email",
+						Display: "jhnd",
+					},
+				},
 			},
-			"value": "123456789",
-			"use": {
-				"coding": [
+			Value: "123456789",
+			Use: &Code{
+				Coding: []Coding{
 					{
-						"system": "useSystem",
-						"code": "useCode",
-						"display": "useDisplay"
-					}
-				]
+						System:  "useSystem",
+						Code:    "useCode",
+						Display: "useDisplay",
+					},
+				},
 			},
-			"rank": 1
+			Rank: 1,
 		},
-		"gender": {
-			"coding": [
+		Gender: &Code{
+			Coding: []Coding{
 				{
-					"system": "http://hl7.org/fhir/administrative-gender",
-					"code": "male",
-					"display": "Male"
-				}
-			]
-		},
-		"date": "1990-01-01T00:00:00Z",
-		"deceased": false,
-		"address": {
-			"use": {
-				"coding": [
-					{
-						"system": "useSystem",
-						"code": "useCode",
-						"display": "useDisplay"
-					}
-				]
+					System:  "http://hl7.org/fhir/agender",
+					Code:    "M",
+					Display: "Male",
+				},
 			},
-			"line": "123 Main St",
-			"city": "Anytown",
-			"state": "ST",
-			"postalCode": "12345",
-			"country": "US"
 		},
-		"photo": {
-			"url": "http://example.com/photo.jpg"
+		Deceased: false,
+		Address: &Address{
+			Use: &Code{
+				Coding: []Coding{
+					{
+						System:  "useSystem",
+						Code:    "useCode",
+						Display: "useDisplay",
+					},
+				},
+			},
+			Line:       "123 Main St",
+			City:       "Anytown",
+			State:      "ST",
+			PostalCode: "12345",
+			Country:    "US",
 		},
-		"qualification": [
+		Photo: &Attachment{Url: "http://example.com/photo.jpg"},
+		Qualification: []Qualification{
 			{
-				"identifier": {
-					"system": "http://example.com/qualification",
-					"value": "MD"
+				ID: &Identifier{
+					System: "http://example.com/qualification",
+					Value:  "MD",
 				},
-				"code": {
-					"coding": [
+				Code: &CodeableConcept{
+					Coding: []Coding{
 						{
-							"system": "http://example.com/codesystem",
-							"code": "MD",
-							"display": "Doctor of Medicine"
-						}
-					],
-					"text": "Doctor of Medicine"
+							System:  "http://example.com/codesystem",
+							Code:    "MD",
+							Display: "Doctor of Medicine",
+						},
+					},
+					Text: "Doctor of Medicine",
 				},
-				"issuer": {
-					"reference": "Organization/org1"
-				}
-			}
-		],
-		"communication": [
+				Issuer: &Reference{
+					Reference: "Organization/org1",
+				},
+			},
+		},
+		Communication: []Communication{
 			{
-				"language": {
-					"coding": [
+				Language: &CodeableConcept{
+					Coding: []Coding{
 						{
-							"system": "http://example.com/codesystem",
-							"code": "en",
-							"display": "English"
-						}
-					],
-					"text": "English"
-				}
-			}
-		]
-	}`
+							System:  "http://example.com/codesystem",
+							Code:    "en",
+							Display: "English",
+						},
+					},
+					Text: "English",
+				},
+			},
+		},
+	}
 
-	mockStub := new(MockStub)
-	mockCtx.On("GetStub").Return(mockStub)
+	practitionerJSON, _ := json.Marshal(practitioner)
+	existingPractitionerJSON, _ := json.Marshal(practitioner)
 
-	// Mock GetState method to return existing practitioner
-	existingPractitionerJSON := []byte(practitionerJSON)
-	mockStub.On("GetState", practitionerID).Return(existingPractitionerJSON, nil)
+	mockCtx.On("GetStub").Return(stub)
+	stub.On("GetState", "practitioner1").Return(existingPractitionerJSON, nil)
 
-	err := cc.CreatePractitioner(mockCtx, practitionerJSON)
+	err := cc.CreatePractitioner(mockCtx, string(practitionerJSON))
 	assert.Error(t, err)
-	assert.Equal(t, "practitioner already exists: practitioner1", err.Error())
+	assert.Equal(t, "practitioner already exists: "+practitioner.ID.Value, err.Error())
+
+	stub.AssertExpectations(t)
+	mockCtx.AssertExpectations(t)
 }
 
 func TestCreatePractitioner_InvalidJSON(t *testing.T) {
 	cc := new(PractitionerContract)
 	mockCtx := new(MockTransactionContext)
+	stub := new(MockStub)
 
-	practitionerID := "practitioner1"
-	practitionerJSON := `{...}` // Invalid JSON with syntax error
+	// "Active" field should be a boolean, but here it's a string to simulate an error
+	invalidJSON := `{
+        "ID": {"System": "http://example.com/systems/practitioner", "Value": "practitioner1"},
+        "Active": "true", 
+        "Name": [{"Family": "Doe", "Given": ["John"]}],
+        "Telecom": {
+            "System": {"Coding": [{"System": "exampleSystem", "Code": "email", "Display": "jhnd"}]},
+            "Value": "123456789",
+            "Use": {"Coding": [{"System": "useSystem", "Code": "useCode", "Display": "useDisplay"}]},
+            "Rank": 1
+        },
+        "Gender": {"Coding": [{"System": "http://hl7.org/fhir/agender", "Code": "M", "Display": "Male"}]},
+        "Deceased": false,
+        "Address": {
+            "Use": {"Coding": [{"System": "useSystem", "Code": "useCode", "Display": "useDisplay"}]},
+            "Line": "123 Main St",
+            "City": "Anytown",
+            "State": "ST",
+            "PostalCode": "12345",
+            "Country": "US"
+        },
+        "Photo": {"Url": "http://example.com/photo.jpg"},
+        "Qualification": [{
+            "ID": {"System": "http://example.com/qualification", "Value": "MD"},
+            "Code": {"Coding": [{"System": "http://example.com/codesystem", "Code": "MD", "Display": "Doctor of Medicine"}], "Text": "Doctor of Medicine"},
+            "Issuer": {"Reference": "Organization/org1"}
+        }],
+        "Communication": [{
+            "Language": {"Coding": [{"System": "http://example.com/codesystem", "Code": "en", "Display": "English"}], "Text": "English"}
+        }]
+    }`
 
-	mockStub := new(MockStub)
-	mockCtx.On("GetStub").Return(mockStub)
-	mockStub.On("GetState", practitionerID).Return(nil, nil)
+	mockCtx.On("GetStub").Return(stub)
 
-	err := cc.CreatePractitioner(mockCtx, practitionerJSON)
+	err := cc.CreatePractitioner(mockCtx, invalidJSON)
 	assert.Error(t, err)
+	assert.Contains(t, err.Error(), "cannot unmarshal string into Go struct field Practitioner.active of type bool")
+
+	// No need to assert expectations on the stub or context as GetStub() is not called due to unmarshaling error
 }
 
 func TestReadPractitioner(t *testing.T) {
 	cc := new(PractitionerContract)
 	mockCtx := new(MockTransactionContext)
+	stub := new(MockStub)
 
 	practitionerID := "practitioner1"
-	practitionerJSON := `{
-		"identifier": {
-			"system": "http://example.com/identifier",
-			"value": "practitioner1"
-		},
-		"active": true,
-		"name": [
-			{
-				"use": "official",
-				"family": "Doe",
-				"given": [
-					"John"
-				]
-			}
-		],
-		"telecom": {
-			"system": {
-				"coding": [
-					{
-						"system": "exampleSystem",
-						"code": "email",
-						"display": "jhnd"
-					}
-				]
-			},
-			"value": "123456789",
-			"use": {
-				"coding": [
-					{
-						"system": "useSystem",
-						"code": "useCode",
-						"display": "useDisplay"
-					}
-				]
-			},
-			"rank": 1
-		},
-		"gender": {
-			"coding": [
-				{
-					"system": "http://hl7.org/fhir/administrative-gender",
-					"code": "male",
-					"display": "Male"
-				}
-			]
-		},
-		"date": "1990-01-01T00:00:00Z",
-		"deceased": false,
-		"address": {
-			"use": {
-				"coding": [
-					{
-						"system": "useSystem",
-						"code": "useCode",
-						"display": "useDisplay"
-					}
-				]
-			},
-			"line": "123 Main St",
-			"city": "Anytown",
-			"state": "ST",
-			"postalCode": "12345",
-			"country": "US"
-		},
-		"photo": {
-			"url": "http://example.com/photo.jpg"
-		},
-		"qualification": [
-			{
-				"identifier": {
-					"system": "http://example.com/qualification",
-					"value": "MD"
-				},
-				"code": {
-					"coding": [
-						{
-							"system": "http://example.com/codesystem",
-							"code": "MD",
-							"display": "Doctor of Medicine"
-						}
-					],
-					"text": "Doctor of Medicine"
-				},
-				"issuer": {
-					"reference": "Organization/org1"
-				}
-			}
-		],
-		"communication": [
-			{
-				"language": {
-					"coding": [
-						{
-							"system": "http://example.com/codesystem",
-							"code": "en",
-							"display": "English"
-						}
-					],
-					"text": "English"
-				}
-			}
-		]
-	}`
 
-	practitionerBytes := []byte(practitionerJSON)
+	mockCtx.On("GetStub").Return(stub)
 
-	mockStub := new(MockStub)
-	mockCtx.On("GetStub").Return(mockStub)
-	mockStub.On("GetState", practitionerID).Return(practitionerBytes, nil)
+	existingPractitioner := Practitioner{
+		ID: &Identifier{
+			System: "http://example.com/systems/practitioner",
+			Value:  practitionerID,
+		},
+		Active: true,
+	}
 
-	result, err := cc.ReadPractitioner(mockCtx, practitionerID)
+	existingPractitionerJSON, _ := json.Marshal(existingPractitioner)
+
+	stub.On("GetState", practitionerID).Return(existingPractitionerJSON, nil)
+
+	returnedJSON, err := cc.ReadPractitioner(mockCtx, practitionerID)
 
 	assert.NoError(t, err)
-	assert.NotNil(t, result)
+	assert.Equal(t, string(existingPractitionerJSON), returnedJSON)
 
+	mockCtx.AssertExpectations(t)
+	stub.AssertExpectations(t)
 }
 
 func TestReadPractitioner_PractitionerNotFound(t *testing.T) {
 	cc := new(PractitionerContract)
 	mockCtx := new(MockTransactionContext)
+	stub := new(MockStub)
 
-	practitionerID := "practitioner1"
+	practitionerID := "nonexistent_practitioner"
 
-	mockStub := new(MockStub)
-	mockCtx.On("GetStub").Return(mockStub)
-	mockStub.On("GetState", practitionerID).Return(nil, nil)
+	mockCtx.On("GetStub").Return(stub)
 
-	result, err := cc.ReadPractitioner(mockCtx, practitionerID)
+	stub.On("GetState", practitionerID).Return(nil, nil)
+
+	_, err := cc.ReadPractitioner(mockCtx, practitionerID)
 
 	assert.Error(t, err)
-	assert.Nil(t, result)
+	assert.Contains(t, err.Error(), "practitioner does not exist")
+
+	mockCtx.AssertExpectations(t)
+	stub.AssertExpectations(t)
 }
 
 func TestUpdatePractitioner(t *testing.T) {
 	cc := new(PractitionerContract)
 	mockCtx := new(MockTransactionContext)
+	stub := new(MockStub)
 
 	practitionerID := "practitioner1"
-	practitionerJSON := `{
-		"identifier": {
-			"system": "http://example.com/identifier",
-			"value": "practitioner1"
-		},
-		"active": true,
-		"name": [
-			{
-				"use": "official",
-				"family": "Doe",
-				"given": [
-					"John"
-				]
-			}
-		],
-		"telecom": {
-			"system": {
-				"coding": [
-					{
-						"system": "exampleSystem",
-						"code": "email",
-						"display": "jhnd"
-					}
-				]
-			},
-			"value": "123456789",
-			"use": {
-				"coding": [
-					{
-						"system": "useSystem",
-						"code": "useCode",
-						"display": "useDisplay"
-					}
-				]
-			},
-			"rank": 1
-		},
-		"gender": {
-			"coding": [
-				{
-					"system": "http://hl7.org/fhir/administrative-gender",
-					"code": "male",
-					"display": "Male"
-				}
-			]
-		},
-		"date": "1990-01-01T00:00:00Z",
-		"deceased": false,
-		"address": {
-			"use": {
-				"coding": [
-					{
-						"system": "useSystem",
-						"code": "useCode2",
-						"display": "useDisplay"
-					}
-				]
-			},
-			"line": "123 Main St",
-			"city": "Anytown",
-			"state": "ST",
-			"postalCode": "12345",
-			"country": "US"
-		},
-		"photo": {
-			"url": "http://example.com/photo.jpg"
-		},
-		"qualification": [
-			{
-				"identifier": {
-					"system": "http://example.com/qualification",
-					"value": "MD"
-				},
-				"code": {
-					"coding": [
-						{
-							"system": "http://example.com/codesystem",
-							"code": "MD",
-							"display": "Doctor of Medicine"
-						}
-					],
-					"text": "Doctor of Medicine"
-				},
-				"issuer": {
-					"reference": "Organization/org1"
-				}
-			}
-		],
-		"communication": [
-			{
-				"language": {
-					"coding": [
-						{
-							"system": "http://example.com/codesystem",
-							"code": "en",
-							"display": "English"
-						}
-					],
-					"text": "English"
-				}
-			}
-		]
-	}`
 
-	mockStub := new(MockStub)
-	mockCtx.On("GetStub").Return(mockStub)
-	existingPractitionerJSON := []byte(practitionerJSON)
-	mockStub.On("GetState", practitionerID).Return(existingPractitionerJSON, nil)
-	mockStub.On("PutState", practitionerID, mock.Anything).Return(nil)
+	mockCtx.On("GetStub").Return(stub)
 
-	err := cc.UpdatePractitioner(mockCtx, practitionerID, practitionerJSON)
+	updatedPractitioner := Practitioner{
+		ID: &Identifier{
+			System: "http://example.com/systems/practitioner",
+			Value:  practitionerID,
+		},
+		Active: false, // Example of an update
+	}
+
+	updatedPractitionerJSON, _ := json.Marshal(updatedPractitioner)
+
+	stub.On("GetState", practitionerID).Return([]byte("{}"), nil)
+
+	stub.On("PutState", practitionerID, updatedPractitionerJSON).Return(nil)
+
+	err := cc.UpdatePractitioner(mockCtx, practitionerID, string(updatedPractitionerJSON))
 
 	assert.NoError(t, err)
-	mockStub.AssertExpectations(t)
+
+	mockCtx.AssertExpectations(t)
+	stub.AssertExpectations(t)
 }
 
 func TestUpdatePractitioner_PractitionerNotFound(t *testing.T) {
 	cc := new(PractitionerContract)
 	mockCtx := new(MockTransactionContext)
+	stub := new(MockStub)
 
-	practitionerID := "practitioner1"
-	practitionerJSON := `{
-		"identifier": {
-			"system": "http://example.com/identifier",
-			"value": "practitioner1"
-		},
-		"active": true,
-		"name": [
-			{
-				"use": "official",
-				"family": "Doe",
-				"given": [
-					"John"
-				]
-			}
-		],
-		"telecom": {
-			"system": {
-				"coding": [
-					{
-						"system": "exampleSystem",
-						"code": "email",
-						"display": "jhnd"
-					}
-				]
-			},
-			"value": "123456789",
-			"use": {
-				"coding": [
-					{
-						"system": "useSystem",
-						"code": "useCode",
-						"display": "useDisplay"
-					}
-				]
-			},
-			"rank": 1
-		},
-		"gender": {
-			"coding": [
-				{
-					"system": "http://hl7.org/fhir/administrative-gender",
-					"code": "male",
-					"display": "Male"
-				}
-			]
-		},
-		"date": "1990-01-01T00:00:00Z",
-		"deceased": false,
-		"address": {
-			"use": {
-				"coding": [
-					{
-						"system": "useSystem",
-						"code": "useCode",
-						"display": "useDisplay"
-					}
-				]
-			},
-			"line": "123 Main St",
-			"city": "Anytown",
-			"state": "ST",
-			"postalCode": "12345",
-			"country": "US"
-		},
-		"photo": {
-			"url": "http://example.com/photo.jpg"
-		},
-		"qualification": [
-			{
-				"identifier": {
-					"system": "http://example.com/qualification",
-					"value": "MD"
-				},
-				"code": {
-					"coding": [
-						{
-							"system": "http://example.com/codesystem",
-							"code": "MD",
-							"display": "Doctor of Medicine"
-						}
-					],
-					"text": "Doctor of Medicine"
-				},
-				"issuer": {
-					"reference": "Organization/org1"
-				}
-			}
-		],
-		"communication": [
-			{
-				"language": {
-					"coding": [
-						{
-							"system": "http://example.com/codesystem",
-							"code": "en",
-							"display": "English"
-						}
-					],
-					"text": "English"
-				}
-			}
-		]
-	}`
+	practitionerID := "nonexistent_practitioner"
 
-	mockStub := new(MockStub)
-	mockCtx.On("GetStub").Return(mockStub)
-	mockStub.On("GetState", practitionerID).Return(nil, nil)
+	mockCtx.On("GetStub").Return(stub)
 
-	err := cc.UpdatePractitioner(mockCtx, practitionerID, practitionerJSON)
+	stub.On("GetState", practitionerID).Return(nil, nil)
+
+	err := cc.UpdatePractitioner(mockCtx, practitionerID, "{}")
 
 	assert.Error(t, err)
+	assert.Contains(t, err.Error(), "practitioner does not exist")
+
+	mockCtx.AssertExpectations(t)
+	stub.AssertExpectations(t)
 }
 
 func TestDeletePractitioner(t *testing.T) {
 	cc := new(PractitionerContract)
 	mockCtx := new(MockTransactionContext)
+	stub := new(MockStub)
 
 	practitionerID := "practitioner1"
 
-	mockStub := new(MockStub)
-	mockCtx.On("GetStub").Return(mockStub)
-	mockStub.On("GetState", practitionerID).Return([]byte{}, nil)
-	mockStub.On("DelState", practitionerID).Return(nil)
+	mockCtx.On("GetStub").Return(stub)
+
+	stub.On("GetState", practitionerID).Return([]byte("{}"), nil)
+
+	stub.On("DelState", practitionerID).Return(nil)
 
 	err := cc.DeletePractitioner(mockCtx, practitionerID)
 
 	assert.NoError(t, err)
-	mockStub.AssertExpectations(t)
+
+	mockCtx.AssertExpectations(t)
+	stub.AssertExpectations(t)
 }
 
 func TestDeletePractitioner_PractitionerNotFound(t *testing.T) {
 	cc := new(PractitionerContract)
 	mockCtx := new(MockTransactionContext)
+	stub := new(MockStub)
 
-	practitionerID := "practitioner1"
+	practitionerID := "nonexistent_practitioner"
 
-	mockStub := new(MockStub)
-	mockCtx.On("GetStub").Return(mockStub)
-	mockStub.On("GetState", practitionerID).Return(nil, nil)
+	mockCtx.On("GetStub").Return(stub)
+
+	stub.On("GetState", practitionerID).Return(nil, nil)
 
 	err := cc.DeletePractitioner(mockCtx, practitionerID)
 
 	assert.Error(t, err)
+	assert.Contains(t, err.Error(), "practitioner does not exist")
+
+	mockCtx.AssertExpectations(t)
+	stub.AssertExpectations(t)
 }
 
 func TestCreateProcedure_ProcedureExists(t *testing.T) {
 	cc := new(PractitionerContract)
 	mockCtx := new(MockTransactionContext)
+	stub := new(MockStub)
 
-	procedureID := "procedure1"
+	// Define a procedure ID that already exists
+	procedure := &Procedure{
+		ID: &Identifier{
+			System: "http://example.com/systems/practitioner",
+			Value:  "practitioner1",
+		},
+		Subject: &Reference{
+			Reference: "practitioners/practitioner1",
+			Display:   "practitioner1",
+		},
+		Code: &CodeableConcept{
+			Coding: []Coding{
+				{
+					System:  "http://example.com/codesystem",
+					Code:    "procedure-code",
+					Display: "pr-cd",
+				},
+			},
+			Text: "English",
+		},
+		Status: &Code{
+			Coding: []Coding{
+				{
+					System:  "useSystem",
+					Code:    "useCode",
+					Display: "executed",
+				},
+			},
+		},
+		Category: &CodeableConcept{
+			Coding: []Coding{
+				{
+					System:  "http://example.com/codesystem",
+					Code:    "procedure-category",
+					Display: "pr-ct",
+				},
+			},
+			Text: "English",
+		},
+		Performer: &Reference{
+			Reference: "practitioners/practitioner1",
+			Display:   "practitioner1",
+		},
+		PartOf: &Reference{
+			Reference: "procedures/emergency1",
+			Display:   "emergency1",
+		},
+	}
+
+	// Mock behavior for GetStub to return stub
+	mockCtx.On("GetStub").Return(stub)
+
+	// Convert the procedure to JSON bytes
+	procedureJSONBytes, err := json.Marshal(procedure)
+	assert.NoError(t, err)
+
+	// Stub behavior to indicate existing procedure
+	stub.On("GetState", procedure.ID.Value).Return(procedureJSONBytes, nil)
+
 	procedureJSON := `{
 		"identifier": {
-		  "system": "http://example.com/procedureID",
-		  "value": "procedure123"
+		  "System": "http://example.com/systems/practitioner",
+		  "Value": "practitioner1"
 		},
 		"subject": {
-		  "reference": "Patient/patient123"
+		  "Reference": "practitioners/practitioner1",
+		  "Display": "practitioner1"
 		},
 		"code": {
-		  "coding": [
+		  "Coding": [
 			{
-			  "system": "http://example.com/procedureCodes",
-			  "code": "12345",
-			  "display": "Procedure X"
+			  "System": "http://example.com/codesystem",
+			  "Code": "procedure-code",
+			  "Display": "pr-cd"
 			}
 		  ],
-		  "text": "Procedure X"
+		  "Text": "English"
 		},
 		"status": {
-			"coding": [
-				{
-					"system": "useSystem",
-					"code": "cmpltd",
-					"display": "completed"
-				}
-			]
+		  "Coding": [
+			{
+			  "System": "useSystem",
+			  "Code": "useCode",
+			  "Display": "executed"
+			}
+		  ]
 		},
 		"category": {
-		  "coding": [
+		  "Coding": [
 			{
-			  "system": "http://example.com/procedureCategory",
-			  "code": "surgical",
-			  "display": "Surgical Procedure"
+			  "System": "http://example.com/codesystem",
+			  "Code": "procedure-category",
+			  "Display": "pr-ct"
 			}
 		  ],
-		  "text": "Surgical Procedure"
+		  "Text": "English"
 		},
 		"performed": {
-		  "reference": "Practitioner/practitioner123"
+		  "Reference": "practitioners/practitioner1",
+		  "Display": "practitioner1"
 		},
-		"partOf": {
-		  "reference": "Encounter/encounter123"
-		},
-		"basedon": {
-		  "reference": "ServiceRequest/servicerequest123"
-		},
-		"reason": {
-		  "coding": [
-			{
-			  "system": "http://example.com/procedureReason",
-			  "code": "45678",
-			  "display": "Reason for Procedure"
-			}
-		  ],
-		  "text": "Reason for Procedure"
-		},
-		"encounter": {
-		  "reference": "Encounter/encounter123"
-		},
-		"note": [
-		  {
-			"authorReference": {
-			  "reference": "Practitioner/practitioner123"
-			},
-			"text": "Additional notes about the procedure"
-		  }
-		],
-		"reportedby": {
-		  "reference": "Practitioner/practitioner123"
+		"contained": {
+		  "Reference": "procedures/emergency1",
+		  "Display": "emergency1"
 		}
 	}`
 
-	mockStub := new(MockStub)
-	mockCtx.On("GetStub").Return(mockStub)
+	// Perform the CreateProcedure operation
+	err = cc.CreateProcedure(mockCtx, procedureJSON)
 
-	// Mock GetState method to return existing procedure
-	existingProcedureJSON := []byte(procedureJSON)
-	mockStub.On("GetState", procedureID).Return(existingProcedureJSON, nil)
-
-	err := cc.CreateProcedure(mockCtx, procedureID, procedureJSON)
+	// Assertions
 	assert.Error(t, err)
-	assert.Equal(t, "procedure already exists: procedure1", err.Error())
+	assert.Contains(t, err.Error(), "procedure already exists")
+
+	// Verify expectations
+	mockCtx.AssertExpectations(t)
+	stub.AssertExpectations(t)
 }
 
 func TestCreateProcedure_InvalidJSON(t *testing.T) {
 	cc := new(PractitionerContract)
 	mockCtx := new(MockTransactionContext)
 
-	procedureID := "procedure1"
-	procedureJSON := `{...}` // Invalid JSON with syntax error
+	invalidJSON := `{ 
+        "identifier": {
+            "System": "http://example.com/systems/practitioner",
+            "Value": "practitioner1"
+        },
+        "subject": {
+            "Reference": "practitioners/practitioner1",
+            "Display": "practitioner1"
+        },
+        "code": {
+            "Coding": [
+                {
+                    "System": "http://example.com/codesystem",
+                    "Code": "procedure-code",
+                    "Display": "pr-cd"
+                }
+            ],
+            "Text": "English"
+        },
+        "status": {
+            "Coding": [
+                {
+                    "System": "useSystem",
+                    "Code": "useCode",
+                    "Display": "executed"
+                }
+            ]
+        },
+        "category": {
+            "Coding": [
+                {
+                    "System": "http://example.com/codesystem",
+                    "Code": "procedure-category",
+                    "Display": "pr-ct"
+                }
+            ],
+            "Text": "English"
+        },
+        "performed": {
+            "Reference": "practitioners/practitioner1",
+            "Display": "practitioner1"
+        },
+        "contained": {
+            "Reference": "procedures/emergency1",
+            "Display": "emergency1"
+        }
+        "extraField": "unexpected value"
+    }`
 
-	mockStub := new(MockStub)
-	mockCtx.On("GetStub").Return(mockStub)
-	mockStub.On("GetState", procedureID).Return(nil, nil)
+	// Perform the CreateProcedure operation with invalid JSON
+	err := cc.CreateProcedure(mockCtx, invalidJSON)
 
-	err := cc.CreateProcedure(mockCtx, procedureID, procedureJSON)
+	// Assertions
 	assert.Error(t, err)
+	assert.Contains(t, err.Error(), "failed to unmarshal procedure")
+
+	// Verify expectations
+	mockCtx.AssertExpectations(t)
 }
 
 func TestReadProcedure(t *testing.T) {
 	cc := new(PractitionerContract)
 	mockCtx := new(MockTransactionContext)
+	stub := new(MockStub)
 
+	// Define a procedure ID that exists in the ledger
 	procedureID := "procedure1"
 	procedureJSON := `{
-		"identifier": {
-			"system": "http://example.com/procedureID",
-			"value": "procedure123"
-		},
-		"subject": {
-			"reference": "Patient/patient123"
-		},
-		"code": {
-			"coding": [
-			{
-				"system": "http://example.com/procedureCodes",
-				"code": "12345",
-				"display": "Procedure X"
-			}
-			],
-			"text": "Procedure X"
-		},
-		"status": {
-			"coding": [
-				{
-					"system": "useSystem",
-					"code": "cmpltd",
-					"display": "completed"
-				}
-			]
-		},
-		"category": {
-			"coding": [
-			{
-				"system": "http://example.com/procedureCategory",
-				"code": "surgical",
-				"display": "Surgical Procedure"
-			}
-			],
-			"text": "Surgical Procedure"
-		},
-		"performed": {
-			"reference": "Practitioner/practitioner123"
-		},
-		"partOf": {
-			"reference": "Encounter/encounter123"
-		},
-		"basedon": {
-			"reference": "ServiceRequest/servicerequest123"
-		},
-		"reason": {
-			"coding": [
-			{
-				"system": "http://example.com/procedureReason",
-				"code": "45678",
-				"display": "Reason for Procedure"
-			}
-			],
-			"text": "Reason for Procedure"
-		},
-		"encounter": {
-			"reference": "Encounter/encounter123"
-		},
-		"note": [
-			{
-			"authorReference": {
-				"reference": "Practitioner/practitioner123"
-			},
-			"text": "Additional notes about the procedure"
-			}
-		],
-		"reportedby": {
-			"reference": "Practitioner/practitioner123"
-		}
-	}`
+        "identifier": {
+            "System": "http://example.com/systems/practitioner",
+            "Value": "procedure1"
+        },
+        "subject": {
+            "Reference": "practitioners/practitioner1",
+            "Display": "practitioner1"
+        },
+        "code": {
+            "Coding": [
+                {
+                    "System": "http://example.com/codesystem",
+                    "Code": "procedure-code",
+                    "Display": "pr-cd"
+                }
+            ],
+            "Text": "English"
+        },
+        "status": {
+            "Coding": [
+                {
+                    "System": "useSystem",
+                    "Code": "useCode",
+                    "Display": "executed"
+                }
+            ]
+        },
+        "category": {
+            "Coding": [
+                {
+                    "System": "http://example.com/codesystem",
+                    "Code": "procedure-category",
+                    "Display": "pr-ct"
+                }
+            ],
+            "Text": "English"
+        },
+        "performed": {
+            "Reference": "practitioners/practitioner1",
+            "Display": "practitioner1"
+        },
+        "contained": {
+            "Reference": "procedures/emergency1",
+            "Display": "emergency1"
+        }
+    }`
 
-	procedureBytes := []byte(procedureJSON)
+	mockCtx.On("GetStub").Return(stub)
+	stub.On("GetChannelID").Return("testchannel")
+	stub.On("GetState", procedureID).Return([]byte(procedureJSON), nil)
 
-	mockStub := new(MockStub)
-	mockCtx.On("GetStub").Return(mockStub)
-	mockStub.On("GetState", procedureID).Return(procedureBytes, nil)
+	clientIdentity := new(MockClientIdentity)
+	mockCtx.On("GetClientIdentity").Return(clientIdentity)
+
+	clientIdentity.On("GetAttributeValue", "userId").Return("testUserId", true, nil)
+
+	invokeResponse := peer.Response{
+		Status:  200,
+		Payload: nil,
+	}
+	stub.On("InvokeChaincode", "patient", mock.AnythingOfType("[][]uint8"), "testchannel").Return(invokeResponse, nil)
 
 	result, err := cc.ReadProcedure(mockCtx, procedureID)
 
 	assert.NoError(t, err)
-	assert.NotNil(t, result)
+	assert.Equal(t, procedureJSON, result)
 
-	// Additional assertions can be made to compare result with expected values
+	mockCtx.AssertExpectations(t)
+	stub.AssertExpectations(t)
 }
 
 func TestReadProcedure_ProcedureNotFound(t *testing.T) {
 	cc := new(PractitionerContract)
 	mockCtx := new(MockTransactionContext)
+	stub := new(MockStub)
 
-	procedureID := "procedure1"
+	procedureID := "nonExistentProcedure"
 
-	mockStub := new(MockStub)
-	mockCtx.On("GetStub").Return(mockStub)
-	mockStub.On("GetState", procedureID).Return(nil, nil)
+	mockCtx.On("GetStub").Return(stub)
+
+	stub.On("GetState", procedureID).Return(nil, nil)
 
 	result, err := cc.ReadProcedure(mockCtx, procedureID)
 
+	assert.Empty(t, result)
 	assert.Error(t, err)
-	assert.Nil(t, result)
+	assert.Contains(t, err.Error(), "procedure does not exist")
+
+	mockCtx.AssertExpectations(t)
+	stub.AssertExpectations(t)
 }
 
 func TestUpdateProcedure(t *testing.T) {
+
 	cc := new(PractitionerContract)
 	mockCtx := new(MockTransactionContext)
+	stub := new(MockStub)
 
+	// Define existing procedure ID and updated procedure JSON
 	procedureID := "procedure1"
-	procedureJSON := `{
-		"identifier": {
-		  "system": "http://example.com/procedureID",
-		  "value": "procedure123"
-		},
-		"subject": {
-		  "reference": "Patient/patient123"
-		},
-		"code": {
-		  "coding": [
-			{
-			  "system": "http://example.com/procedureCodes",
-			  "code": "123456",
-			  "display": "Procedure Y"
-			}
-		  ],
-		  "text": "Procedure Y"
-		},
-		"status": {
-			"coding": [
-				{
-					"system": "useSystem",
-					"code": "prgrss",
-					"display": "in-progress"
-				}
-			]
-		},
-		"category": {
-		  "coding": [
-			{
-			  "system": "http://example.com/procedureCategory",
-			  "code": "surgical",
-			  "display": "Surgical Procedure"
-			}
-		  ],
-		  "text": "Surgical Procedure"
-		},
-		"performed": {
-		  "reference": "Practitioner/practitioner123"
-		},
-		"partOf": {
-		  "reference": "Encounter/encounter123"
-		},
-		"basedon": {
-		  "reference": "ServiceRequest/servicerequest123"
-		},
-		"reason": {
-		  "coding": [
-			{
-			  "system": "http://example.com/procedureReason",
-			  "code": "45678",
-			  "display": "Reason for Procedure"
-			}
-		  ],
-		  "text": "Reason for Procedure"
-		},
-		"encounter": {
-		  "reference": "Encounter/encounter123"
-		},
-		"note": [
-		  {
-			"authorReference": {
-			  "reference": "Practitioner/practitioner123"
+	updatedProcedureJSON := `{
+			"identifier": {
+				"System": "http://example.com/systems/practitioner",
+				"Value": "procedure1"
 			},
-			"text": "Additional notes about the procedure"
-		  }
-		],
-		"reportedby": {
-		  "reference": "Practitioner/practitioner123"
-		}
-	}`
+			"subject": {
+				"Reference": "practitioners/practitioner1",
+				"Display": "practitioner1"
+			},
+			"code": {
+				"Coding": [
+					{
+						"System": "http://example.com/codesystem",
+						"Code": "procedure-code",
+						"Display": "pr-cd"
+					}
+				],
+				"Text": "English"
+			},
+			"status": {
+				"Coding": [
+					{
+						"System": "useSystem",
+						"Code": "useCode",
+						"Display": "executed"
+					}
+				]
+			},
+			"category": {
+				"Coding": [
+					{
+						"System": "http://example.com/codesystem",
+						"Code": "procedure-category",
+						"Display": "pr-ct"
+					}
+				],
+				"Text": "English"
+			},
+			"performed": {
+				"Reference": "practitioners/practitioner1",
+				"Display": "practitioner1"
+			},
+			"contained": {
+				"Reference": "procedures/emergency1",
+				"Display": "emergency1"
+			}
+		}`
 
-	mockStub := new(MockStub)
-	mockCtx.On("GetStub").Return(mockStub)
-	existingProcedureJSON := []byte(procedureJSON)
-	mockStub.On("GetState", procedureID).Return(existingProcedureJSON, nil)
-	mockStub.On("PutState", procedureID, mock.Anything).Return(nil)
+	updatedProcedureJSONBytes, _ := json.Marshal(updatedProcedureJSON)
 
-	err := cc.UpdateProcedure(mockCtx, procedureID, procedureJSON)
+	mockCtx.On("GetStub").Return(stub)
+	stub.On("GetState", procedureID).Return(updatedProcedureJSONBytes, nil)
+	stub.On("GetChannelID").Return("testchannel")
+	stub.On("PutState", procedureID, mock.Anything).Return(nil)
+
+	clientIdentity := new(MockClientIdentity)
+	mockCtx.On("GetClientIdentity").Return(clientIdentity)
+
+	clientIdentity.On("GetAttributeValue", "userId").Return("testUserId", true, nil)
+
+	invokeResponse := peer.Response{
+		Status:  200,
+		Payload: nil,
+	}
+	stub.On("InvokeChaincode", "patient", mock.AnythingOfType("[][]uint8"), mock.AnythingOfType("string")).Return(invokeResponse, nil)
+
+	err := cc.UpdateProcedure(mockCtx, procedureID, updatedProcedureJSON)
 
 	assert.NoError(t, err)
-	mockStub.AssertExpectations(t)
-}
 
-func TestUpdateProcedure_ProcedureNotFound(t *testing.T) {
-	cc := new(PractitionerContract)
-	mockCtx := new(MockTransactionContext)
+	mockCtx.AssertExpectations(t)
+	stub.AssertExpectations(t)
 
-	procedureID := "procedure1"
-	procedureJSON := `{
-		"identifier": {
-		  "system": "http://example.com/procedureID",
-		  "value": "procedure123"
-		},
-		"subject": {
-		  "reference": "Patient/patient123"
-		},
-		"code": {
-		  "coding": [
-			{
-			  "system": "http://example.com/procedureCodes",
-			  "code": "123456",
-			  "display": "Procedure Y"
-			}
-		  ],
-		  "text": "Procedure Y"
-		},
-		"status": {
-			"coding": [
-				{
-					"system": "useSystem",
-					"code": "prgrss",
-					"display": "in-progress"
-				}
-			]
-		},
-		"category": {
-		  "coding": [
-			{
-			  "system": "http://example.com/procedureCategory",
-			  "code": "surgical",
-			  "display": "Surgical Procedure"
-			}
-		  ],
-		  "text": "Surgical Procedure"
-		},
-		"performed": {
-		  "reference": "Practitioner/practitioner123"
-		},
-		"partOf": {
-		  "reference": "Encounter/encounter123"
-		},
-		"basedon": {
-		  "reference": "ServiceRequest/servicerequest123"
-		},
-		"reason": {
-		  "coding": [
-			{
-			  "system": "http://example.com/procedureReason",
-			  "code": "45678",
-			  "display": "Reason for Procedure"
-			}
-		  ],
-		  "text": "Reason for Procedure"
-		},
-		"encounter": {
-		  "reference": "Encounter/encounter123"
-		},
-		"note": [
-		  {
-			"authorReference": {
-			  "reference": "Practitioner/practitioner123"
-			},
-			"text": "Additional notes about the procedure"
-		  }
-		],
-		"reportedby": {
-		  "reference": "Practitioner/practitioner123"
-		}
-	}`
-
-	mockStub := new(MockStub)
-	mockCtx.On("GetStub").Return(mockStub)
-	mockStub.On("GetState", procedureID).Return(nil, nil)
-
-	err := cc.UpdateProcedure(mockCtx, procedureID, procedureJSON)
-
-	assert.Error(t, err)
 }
 
 func TestDeleteProcedure(t *testing.T) {
 	cc := new(PractitionerContract)
 	mockCtx := new(MockTransactionContext)
+	stub := new(MockStub)
 
 	procedureID := "procedure1"
+	existingProcedureJSON := `{
+        "identifier": {
+            "System": "http://example.com/systems/practitioner",
+            "Value": "procedure1"
+        },
+        "subject": {
+            "Reference": "practitioners/practitioner1",
+            "Display": "practitioner1"
+        },
+        "code": {
+            "Coding": [
+                {
+                    "System": "http://example.com/codesystem",
+                    "Code": "procedure-code",
+                    "Display": "pr-cd"
+                }
+            ],
+            "Text": "English"
+        },
+        "status": {
+            "Coding": [
+                {
+                    "System": "useSystem",
+                    "Code": "useCode",
+                    "Display": "executed"
+                }
+            ]
+        },
+        "category": {
+            "Coding": [
+                {
+                    "System": "http://example.com/codesystem",
+                    "Code": "procedure-category",
+                    "Display": "pr-ct"
+                }
+            ],
+            "Text": "English"
+        },
+        "performed": {
+            "Reference": "practitioners/practitioner1",
+            "Display": "practitioner1"
+        },
+        "contained": {
+            "Reference": "procedures/emergency1",
+            "Display": "emergency1"
+        }
+    }`
 
-	mockStub := new(MockStub)
-	mockCtx.On("GetStub").Return(mockStub)
-	mockStub.On("GetState", procedureID).Return([]byte{}, nil)
-	mockStub.On("DelState", procedureID).Return(nil)
+	mockCtx.On("GetStub").Return(stub)
+
+	stub.On("GetChannelID").Return("testchannel")
+	stub.On("GetState", procedureID).Return([]byte(existingProcedureJSON), nil)
+	stub.On("DelState", procedureID).Return(nil)
+
+	clientIdentity := new(MockClientIdentity)
+	mockCtx.On("GetClientIdentity").Return(clientIdentity)
+
+	clientIdentity.On("GetAttributeValue", "userId").Return("testUserId", true, nil)
+
+	invokeResponse := peer.Response{
+		Status:  200,
+		Payload: nil,
+	}
+	stub.On("InvokeChaincode", "patient", mock.AnythingOfType("[][]uint8"), mock.AnythingOfType("string")).Return(invokeResponse, nil)
 
 	err := cc.DeleteProcedure(mockCtx, procedureID)
 
 	assert.NoError(t, err)
-	mockStub.AssertExpectations(t)
-}
 
-func TestDeleteProcedure_ProcedureNotFound(t *testing.T) {
-	cc := new(PractitionerContract)
-	mockCtx := new(MockTransactionContext)
-
-	procedureID := "procedure1"
-
-	mockStub := new(MockStub)
-	mockCtx.On("GetStub").Return(mockStub)
-	mockStub.On("GetState", procedureID).Return(nil, nil)
-
-	err := cc.DeleteProcedure(mockCtx, procedureID)
-
-	assert.Error(t, err)
+	mockCtx.AssertExpectations(t)
+	stub.AssertExpectations(t)
 }
