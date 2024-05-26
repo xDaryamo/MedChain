@@ -48,7 +48,7 @@ func (c *PractitionerContract) CreatePractitioner(ctx contractapi.TransactionCon
 
 	err = ctx.GetStub().PutState(practitioner.ID.Value, practitionerJSONBytes)
 	if err != nil {
-		return errors.New("failed to put lab result in world state: " + err.Error())
+		return errors.New("failed to put practitioner in world state: " + err.Error())
 	}
 
 	log.Printf("Practitioner with ID: %s created successfully", practitioner.ID.Value)
