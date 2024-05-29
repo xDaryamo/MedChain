@@ -1,7 +1,10 @@
 package main
 
 import (
-	"fmt"
+	"crypto/x509"
+	"encoding/json"
+	"encoding/pem"
+	"errors"
 	"testing"
 
 	"github.com/golang/protobuf/ptypes/timestamp"
@@ -276,266 +279,897 @@ func (m *MockIterator) Close() error {
 	return nil
 }
 
-// TestCreateMedicalRecords tests the CreateMedicalRecords function
-func TestCreateMedicalRecords(t *testing.T) {
-	// Create a new instance of the chaincode
-	cc := new(MedicalRecordsChaincode)
-
-	// Mock TransactionContext
-	mockCtx := new(MockTransactionContext)
-	mockStub := new(MockStub)
-	mockCtx.On("GetStub").Return(mockStub)
-
-	// Mock GetMedicalRecords to return nil, nil
-	mockStub.On("GetState", "patient1").Return(nil, nil)
-
-	// Mock GetState to return nil when called during the test
-	mockStub.On("GetState", mock.Anything).Return(nil, nil)
-
-	// Mock PutState method to return nil (indicating success)
-	mockStub.On("PutState", mock.Anything, mock.Anything).Return(nil)
-
-	// Test case 1: Create a new medical record folder successfully
-	err := cc.CreateMedicalRecords(mockCtx, "patient1", `{ "PatientID": "patient1", "Allergies": [], "Conditions": [], "Prescriptions": [], "CarePlan": {}, "Request": {} }`)
-	assert.NoError(t, err)
-
+type MockClientIdentity struct {
+	mock.Mock
 }
 
-// TestCreateMedicalRecordsIfExists tests the behavior of CreateMedicalRecords when the record already exists
-func TestCreateMedicalRecordsIfExists(t *testing.T) {
-	// Create a new instance of the chaincode
+func (m *MockClientIdentity) GetID() (string, error) {
+	args := m.Called()
+	return args.String(0), args.Error(1)
+}
+
+func (m *MockClientIdentity) GetMSPID() (string, error) {
+	args := m.Called()
+	return args.String(0), args.Error(1)
+}
+
+func (m *MockClientIdentity) GetAttributeValue(attrName string) (string, bool, error) {
+	args := m.Called(attrName)
+	return args.String(0), args.Bool(1), args.Error(2)
+}
+
+func (m *MockClientIdentity) AssertAttributeValue(attrName, attrValue string) error {
+	args := m.Called(attrName, attrValue)
+	return args.Error(0)
+}
+
+func (m *MockClientIdentity) GetX509Certificate() (*x509.Certificate, error) {
+	args := m.Called()
+	certPEM := args.Get(0).([]byte)
+	block, _ := pem.Decode(certPEM)
+	if block == nil {
+		return nil, errors.New("failed to decode PEM block containing the certificate")
+	}
+	cert, err := x509.ParseCertificate(block.Bytes)
+	return cert, err
+}
+
+func TestCreateMedicalRecords(t *testing.T) {
+	stub := new(MockStub)
+	ctx := new(MockTransactionContext)
+	mc := new(MedicalRecordsChaincode)
+
+	stub.On("GetChannelID").Return("testchannel")
+	ctx.On("GetStub").Return(stub)
+	clientIdentity := new(MockClientIdentity)
+	ctx.On("GetClientIdentity").Return(clientIdentity)
+
+	clientIdentity.On("GetID").Return("testClientID", nil)
+	clientIdentity.On("GetAttributeValue", "userId").Return("testUserId", true, nil)
+
+	record := &MedicalRecords{
+		RecordID: "record1",
+		PatienID: "patient1",
+		Allergies: []AllergyIntolerance{
+			{
+				ID: &Identifier{
+					System: "system",
+					Value:  "allergy1",
+				},
+				ClinicalStatus: &CodeableConcept{
+					Coding: []Coding{
+						{
+							System:  "sys",
+							Code:    "code",
+							Display: "display",
+						},
+					},
+					Text: "allergycode",
+				},
+				VerificationStatus: &CodeableConcept{
+					Coding: []Coding{
+						{
+							System:  "sys",
+							Code:    "code",
+							Display: "display",
+						},
+					},
+					Text: "allergyverification",
+				},
+				Type: "pollen",
+				Category: []string{
+					"common",
+				},
+				Criticality: "severe",
+			},
+		},
+		Conditions: []Condition{
+			{
+				ID: &Identifier{
+					System: "http://example.com/systems/patient",
+					Value:  "condition1",
+				},
+			},
+		},
+		Procedures: []Procedure{
+			{
+				ID: &Identifier{
+					System: "http://example.com/systems/practitioner",
+					Value:  "procedure1",
+				},
+				Subject: &Reference{
+					Reference: "practitioners/practitioner1",
+					Display:   "practitioner1",
+				},
+				Code: &CodeableConcept{
+					Coding: []Coding{
+						{
+							System:  "http://example.com/codesystem",
+							Code:    "procedure-code",
+							Display: "pr-cd",
+						},
+					},
+					Text: "English",
+				},
+				Status: &Code{
+					Coding: []Coding{
+						{
+							System:  "useSystem",
+							Code:    "useCode",
+							Display: "executed",
+						},
+					},
+				},
+				Category: &CodeableConcept{
+					Coding: []Coding{
+						{
+							System:  "http://example.com/codesystem",
+							Code:    "procedure-category",
+							Display: "pr-ct",
+						},
+					},
+					Text: "English",
+				},
+				Performer: &Reference{
+					Reference: "practitioners/practitioner1",
+					Display:   "practitioner1",
+				},
+				PartOf: &Reference{
+					Reference: "procedures/emergency1",
+					Display:   "emergency1",
+				},
+			},
+		},
+		Prescriptions: []MedicationRequest{
+			{
+				ID: &Identifier{
+					System: "http://hospital.smarthealth.it/medicationrequests",
+					Value:  "medication1",
+				},
+				Status: &Code{
+					Coding: []Coding{
+						{
+							System:  "http://hl7.org/fhir/medicationrequest-status",
+							Code:    "status",
+							Display: "status",
+						},
+					},
+				},
+				Intent: &Code{
+					Coding: []Coding{
+						{
+							System:  "http://hl7.org/fhir/medication-request-intent",
+							Code:    "order",
+							Display: "Order",
+						},
+					},
+				},
+				MedicationCodeableConcept: &CodeableConcept{
+					Coding: []Coding{
+						{
+							System:  "http://www.nlm.nih.gov/research/umls/rxnorm",
+							Code:    "582620",
+							Display: "Amoxicillin 250mg/5ml Suspension",
+						},
+					},
+					Text: "Amoxicillin 250mg/5ml Suspension",
+				},
+				Subject: &Reference{
+					Reference: "Patient/example",
+					Display:   "John Doe",
+				},
+			},
+		},
+		ServiceRequest: &Reference{
+			Reference: "servicerquest1",
+			Display:   "SerReq1",
+		},
+	}
+
+	recordJSON, _ := json.Marshal(record)
+
+	stub.On("GetState", "record1").Return(nil, nil)
+	stub.On("PutState", "record1", recordJSON).Return(nil)
+
+	invokeResponse := peer.Response{
+		Status:  200,
+		Payload: []byte(""),
+	}
+	stub.On("InvokeChaincode", "patient", mock.AnythingOfType("[][]uint8"), "testchannel").Return(invokeResponse, nil)
+
+	err := mc.CreateMedicalRecords(ctx, string(recordJSON))
+	assert.NoError(t, err)
+
+	stub.AssertExpectations(t)
+	ctx.AssertExpectations(t)
+}
+
+func TestReadMedicalRecords(t *testing.T) {
 	cc := new(MedicalRecordsChaincode)
+	ctx := new(MockTransactionContext)
+	stub := new(MockStub)
 
-	// Mock TransactionContext
-	mockCtx := new(MockTransactionContext)
-	mockStub := new(MockStub)
-	mockCtx.On("GetStub").Return(mockStub)
+	stub.On("GetChannelID").Return("testchannel")
+	ctx.On("GetStub").Return(stub)
+	clientIdentity := new(MockClientIdentity)
+	ctx.On("GetClientIdentity").Return(clientIdentity)
 
-	// Mock GetState to return a non-nil value when called with the key "patient1"
-	mockStub.On("GetState", "patient1").Return([]byte("existing_record"), nil)
+	clientIdentity.On("GetAttributeValue", "userId").Return("testUserId", true, nil)
 
-	// Test case: Try to create a medical record folder for an existing patient
-	err := cc.CreateMedicalRecords(mockCtx, "patient1", `{ "PatientID": "patient1", "Allergies": [], "Conditions": [], "Prescriptions": [], "CarePlan": {}, "Request": {} }`)
-	assert.Error(t, err) // Expect an error since the record already exists
+	recordID := "record1"
+	recordJSON := []byte(`{
+		"RecordID": "record1",
+		"PatientID": "patient1",
+		"Allergies": [
+		  {
+			"ID": {
+			  "System": "system",
+			  "Value": "allergy1"
+			},
+			"ClinicalStatus": {
+			  "Coding": [
+				{
+				  "System": "sys",
+				  "Code": "code",
+				  "Display": "display"
+				}
+			  ],
+			  "Text": "allergycode"
+			},
+			"VerificationStatus": {
+			  "Coding": [
+				{
+				  "System": "sys",
+				  "Code": "code",
+				  "Display": "display"
+				}
+			  ],
+			  "Text": "allergyverification"
+			},
+			"Type": "pollen",
+			"Category": [
+			  "common"
+			],
+			"Criticality": "severe"
+		  }
+		],
+		"Conditions": [
+		  {
+			"ID": {
+			  "System": "http://example.com/systems/patient",
+			  "Value": "condition1"
+			}
+		  }
+		],
+		"Procedures": [
+		  {
+			"ID": {
+			  "System": "http://example.com/systems/practitioner",
+			  "Value": "procedure1"
+			},
+			"Subject": {
+			  "Reference": "practitioners/practitioner1",
+			  "Display": "practitioner1"
+			},
+			"Code": {
+			  "Coding": [
+				{
+				  "System": "http://example.com/codesystem",
+				  "Code": "procedure-code",
+				  "Display": "pr-cd"
+				}
+			  ],
+			  "Text": "English"
+			},
+			"Status": {
+			  "Coding": [
+				{
+				  "System": "useSystem",
+				  "Code": "useCode",
+				  "Display": "executed"
+				}
+			  ]
+			},
+			"Category": {
+			  "Coding": [
+				{
+				  "System": "http://example.com/codesystem",
+				  "Code": "procedure-category",
+				  "Display": "pr-ct"
+				}
+			  ],
+			  "Text": "English"
+			},
+			"Performer": {
+			  "Reference": "practitioners/practitioner1",
+			  "Display": "practitioner1"
+			},
+			"PartOf": {
+			  "Reference": "procedures/emergency1",
+			  "Display": "emergency1"
+			}
+		  }
+		],
+		"Prescriptions": [
+		  {
+			"ID": {
+			  "System": "http://hospital.smarthealth.it/medicationrequests",
+			  "Value": "medication1"
+			},
+			"Status": {
+			  "Coding": [
+				{
+				  "System": "http://hl7.org/fhir/medicationrequest-status",
+				  "Code": "status",
+				  "Display": "status"
+				}
+			  ]
+			},
+			"Intent": {
+			  "Coding": [
+				{
+				  "System": "http://hl7.org/fhir/medication-request-intent",
+				  "Code": "order",
+				  "Display": "Order"
+				}
+			  ]
+			},
+			"MedicationCodeableConcept": {
+			  "Coding": [
+				{
+				  "System": "http://www.nlm.nih.gov/research/umls/rxnorm",
+				  "Code": "582620",
+				  "Display": "Amoxicillin 250mg/5ml Suspension"
+				}
+			  ],
+			  "Text": "Amoxicillin 250mg/5ml Suspension"
+			},
+			"Subject": {
+			  "Reference": "Patient/example",
+			  "Display": "John Doe"
+			}
+		  }
+		],
+		"ServiceRequest": {
+		  "Reference": "servicerequest1",
+		  "Display": "SerReq1"
+		}
+	  }`)
+
+	stub.On("GetState", recordID).Return(recordJSON, nil)
+
+	invokeResponse := peer.Response{
+		Status:  200,
+		Payload: nil,
+	}
+	stub.On("InvokeChaincode", "patient", mock.AnythingOfType("[][]uint8"), "testchannel").Return(invokeResponse, nil)
+
+	resultJSON, err := cc.ReadMedicalRecords(ctx, recordID)
+	assert.NoError(t, err)
+	assert.Equal(t, string(recordJSON), resultJSON)
+
+	stub.AssertExpectations(t)
+	ctx.AssertExpectations(t)
 }
 
 func TestUpdateMedicalRecords(t *testing.T) {
-	// Create a new instance of the chaincode
+
 	cc := new(MedicalRecordsChaincode)
+	ctx := new(MockTransactionContext)
+	stub := new(MockStub)
 
-	// Mock TransactionContext
-	mockCtx := new(MockTransactionContext)
-	mockStub := new(MockStub)
-	mockCtx.On("GetStub").Return(mockStub)
+	stub.On("GetChannelID").Return("testchannel")
+	ctx.On("GetStub").Return(stub)
 
-	const existingRecordJSON = `{
+	clientIdentity := new(MockClientIdentity)
+	ctx.On("GetClientIdentity").Return(clientIdentity)
+	clientIdentity.On("GetID").Return("testUserId", nil)
+
+	recordID := "record1"
+	updatedrecordJSON := []byte(`{
+		"RecordID": "record1",
 		"PatientID": "patient1",
 		"Allergies": [
-			{
-				"ID": {
-					"System": "http://example.com/identifier",
-					"Value": "123456"
-				},
-				"Type": ""
-			}
+		  {
+			"ID": {
+			  "System": "system",
+			  "Value": "allergy1"
+			},
+			"ClinicalStatus": {
+			  "Coding": [
+				{
+				  "System": "sys",
+				  "Code": "code",
+				  "Display": "display"
+				}
+			  ],
+			  "Text": "allergycode"
+			},
+			"VerificationStatus": {
+			  "Coding": [
+				{
+				  "System": "sys",
+				  "Code": "code",
+				  "Display": "display"
+				}
+			  ],
+			  "Text": "allergyverification"
+			},
+			"Type": "pollen",
+			"Category": [
+			  "common"
+			],
+			"Criticality": "severe"
+		  }
 		],
-		"Conditions": [],
-		"Prescriptions": [],
-		"CarePlan": {},
-		"Request": {}
-	}`
-
-	// Mock GetMedicalRecords to return an existing record
-	mockStub.On("GetState", "patient1").Return([]byte(existingRecordJSON), nil)
-
-	// Mock PutState method to return nil (indicating success)
-	mockStub.On("PutState", "patient1", mock.Anything).Return(nil)
-
-	// Test case: Update an existing medical record folder successfully
-	err := cc.UpdateMedicalRecords(mockCtx, "patient1", `{
-		"PatientID": "patient1",
-		"Allergies": [
-			{
-				"ID": {
-					"System": "http://example.com/identifier",
-					"Value": "123456"
-				},
-				"Type": "Pollen"
+		"Conditions": [
+		  {
+			"ID": {
+			  "System": "http://example.com/systems/patient",
+			  "Value": "condition1"
 			}
+		  }
 		],
-		"Conditions": [],
-		"Prescriptions": [],
-		"CarePlan": {},
-		"Request": {}
-	}`)
+		"Procedures": [
+		  {
+			"ID": {
+			  "System": "http://example.com/systems/practitioner",
+			  "Value": "procedure1"
+			},
+			"Subject": {
+			  "Reference": "practitioners/practitioner1",
+			  "Display": "practitioner1"
+			},
+			"Code": {
+			  "Coding": [
+				{
+				  "System": "http://example.com/codesystem",
+				  "Code": "procedure-code",
+				  "Display": "pr-cd"
+				}
+			  ],
+			  "Text": "English"
+			},
+			"Status": {
+			  "Coding": [
+				{
+				  "System": "useSystem",
+				  "Code": "useCode",
+				  "Display": "executed"
+				}
+			  ]
+			},
+			"Category": {
+			  "Coding": [
+				{
+				  "System": "http://example.com/codesystem",
+				  "Code": "procedure-category",
+				  "Display": "pr-ct"
+				}
+			  ],
+			  "Text": "English"
+			},
+			"Performer": {
+			  "Reference": "practitioners/practitioner1",
+			  "Display": "practitioner1"
+			},
+			"PartOf": {
+			  "Reference": "procedures/emergency1",
+			  "Display": "emergency1"
+			}
+		  }
+		],
+		"Prescriptions": [
+		  {
+			"ID": {
+			  "System": "http://hospital.smarthealth.it/medicationrequests",
+			  "Value": "medication1"
+			},
+			"Status": {
+			  "Coding": [
+				{
+				  "System": "http://hl7.org/fhir/medicationrequest-status",
+				  "Code": "status",
+				  "Display": "status"
+				}
+			  ]
+			},
+			"Intent": {
+			  "Coding": [
+				{
+				  "System": "http://hl7.org/fhir/medication-request-intent",
+				  "Code": "order",
+				  "Display": "Order"
+				}
+			  ]
+			},
+			"MedicationCodeableConcept": {
+			  "Coding": [
+				{
+				  "System": "http://www.nlm.nih.gov/research/umls/rxnorm",
+				  "Code": "582620",
+				  "Display": "Amoxicillin 250mg/5ml Suspension"
+				}
+			  ],
+			  "Text": "Amoxicillin 250mg/5ml Suspension"
+			},
+			"Subject": {
+			  "Reference": "Patient/example",
+			  "Display": "John Doe"
+			}
+		  }
+		],
+		"ServiceRequest": {
+		  "Reference": "servicerequest2",
+		  "Display": "SerReq2"
+		}
+	  }`)
+
+	stub.On("GetState", recordID).Return(updatedrecordJSON, nil)
+
+	invokeResponse := peer.Response{
+		Status:  200,
+		Payload: nil,
+	}
+	stub.On("InvokeChaincode", "patient", mock.AnythingOfType("[][]uint8"), "testchannel").Return(invokeResponse, nil)
+
+	stub.On("PutState", recordID, mock.AnythingOfType("[]uint8")).Return(nil)
+
+	err := cc.UpdateMedicalRecords(ctx, recordID, string(updatedrecordJSON))
 	assert.NoError(t, err)
+
+	stub.AssertExpectations(t)
+	ctx.AssertExpectations(t)
 }
 
 func TestDeleteMedicalRecords(t *testing.T) {
-	// Create a new instance of the chaincode
+
 	cc := new(MedicalRecordsChaincode)
-	var existingRecordJSON = `{"PatientID": "patient1", "Allergies": [], "Conditions": [], "Prescriptions": [], "CarePlan": {}, "Request": {}}`
+	ctx := new(MockTransactionContext)
+	stub := new(MockStub)
 
-	// Mock TransactionContext
-	mockCtx := new(MockTransactionContext)
-	mockStub := new(MockStub)
-	mockCtx.On("GetStub").Return(mockStub)
+	stub.On("GetChannelID").Return("testchannel")
+	ctx.On("GetStub").Return(stub)
+	clientIdentity := new(MockClientIdentity)
+	ctx.On("GetClientIdentity").Return(clientIdentity)
+	clientIdentity.On("GetID").Return("testUserId", nil)
 
-	// Mock GetMedicalRecords to return an existing record
-	mockStub.On("GetState", "patient1").Return([]byte(existingRecordJSON), nil)
-
-	// Mock DelState method to return nil (indicating success)
-	mockStub.On("DelState", "patient1").Return(nil)
-
-	// Test case: Delete an existing medical record folder successfully
-	err := cc.DeleteMedicalRecords(mockCtx, "patient1")
-	assert.NoError(t, err)
-}
-func TestSearchMedicalRecords(t *testing.T) {
-	// Define existing record JSON
-	const existingRecordJSON = `{
+	recordID := "record1"
+	recordJSON := []byte(`{
+		"RecordID": "record1",
 		"PatientID": "patient1",
 		"Allergies": [
-			{
-				"ID": {
-					"System": "http://example.com/identifier",
-					"Value": "123456"
-				},
-				"Type": "Pollen"
-			}
+		  {
+			"ID": {
+			  "System": "system",
+			  "Value": "allergy1"
+			},
+			"ClinicalStatus": {
+			  "Coding": [
+				{
+				  "System": "sys",
+				  "Code": "code",
+				  "Display": "display"
+				}
+			  ],
+			  "Text": "allergycode"
+			},
+			"VerificationStatus": {
+			  "Coding": [
+				{
+				  "System": "sys",
+				  "Code": "code",
+				  "Display": "display"
+				}
+			  ],
+			  "Text": "allergyverification"
+			},
+			"Type": "pollen",
+			"Category": [
+			  "common"
+			],
+			"Criticality": "severe"
+		  }
 		],
 		"Conditions": [
-			{
-				"ID": {
-					"System": "http://example.com/identifier",
-					"Value": "condition123"
-				},
-				"OnsetDateTime": "2024-04-15T10:30:00Z",
-				"AbatementDateTime": "",
-				"RecordedDate": "2024-04-15T10:30:00Z"
+		  {
+			"ID": {
+			  "System": "http://example.com/systems/patient",
+			  "Value": "condition1"
 			}
+		  }
 		],
-		"Prescriptions": [],
-		"CarePlan": {},
-		"Request": {}
-	}`
+		"Procedures": [
+		  {
+			"ID": {
+			  "System": "http://example.com/systems/practitioner",
+			  "Value": "procedure1"
+			},
+			"Subject": {
+			  "Reference": "practitioners/practitioner1",
+			  "Display": "practitioner1"
+			},
+			"Code": {
+			  "Coding": [
+				{
+				  "System": "http://example.com/codesystem",
+				  "Code": "procedure-code",
+				  "Display": "pr-cd"
+				}
+			  ],
+			  "Text": "English"
+			},
+			"Status": {
+			  "Coding": [
+				{
+				  "System": "useSystem",
+				  "Code": "useCode",
+				  "Display": "executed"
+				}
+			  ]
+			},
+			"Category": {
+			  "Coding": [
+				{
+				  "System": "http://example.com/codesystem",
+				  "Code": "procedure-category",
+				  "Display": "pr-ct"
+				}
+			  ],
+			  "Text": "English"
+			},
+			"Performer": {
+			  "Reference": "practitioners/practitioner1",
+			  "Display": "practitioner1"
+			},
+			"PartOf": {
+			  "Reference": "procedures/emergency1",
+			  "Display": "emergency1"
+			}
+		  }
+		],
+		"Prescriptions": [
+		  {
+			"ID": {
+			  "System": "http://hospital.smarthealth.it/medicationrequests",
+			  "Value": "medication1"
+			},
+			"Status": {
+			  "Coding": [
+				{
+				  "System": "http://hl7.org/fhir/medicationrequest-status",
+				  "Code": "status",
+				  "Display": "status"
+				}
+			  ]
+			},
+			"Intent": {
+			  "Coding": [
+				{
+				  "System": "http://hl7.org/fhir/medication-request-intent",
+				  "Code": "order",
+				  "Display": "Order"
+				}
+			  ]
+			},
+			"MedicationCodeableConcept": {
+			  "Coding": [
+				{
+				  "System": "http://www.nlm.nih.gov/research/umls/rxnorm",
+				  "Code": "582620",
+				  "Display": "Amoxicillin 250mg/5ml Suspension"
+				}
+			  ],
+			  "Text": "Amoxicillin 250mg/5ml Suspension"
+			},
+			"Subject": {
+			  "Reference": "Patient/example",
+			  "Display": "John Doe"
+			}
+		  }
+		],
+		"ServiceRequest": {
+		  "Reference": "servicerequest1",
+		  "Display": "SerReq1"
+		}
+	  }`)
 
-	// Create a new instance of the chaincode
-	cc := new(MedicalRecordsChaincode)
+	stub.On("GetState", recordID).Return(recordJSON, nil)
+	// Mock behavior for InvokeChaincode (assuming it succeeds)
+	invokeResponse := peer.Response{
+		Status:  200,
+		Payload: nil,
+	}
+	stub.On("InvokeChaincode", "patient", mock.AnythingOfType("[][]uint8"), "testchannel").Return(invokeResponse, nil)
 
-	// Mock TransactionContext
-	mockCtx := new(MockTransactionContext)
-	mockStub := new(MockStub)
-	mockCtx.On("GetStub").Return(mockStub)
+	// Mock behavior for DelState to accept encounterID and succeed
+	stub.On("DelState", recordID).Return(nil)
 
-	// Mock iterator
-	mockIterator := new(MockIterator)
-	mockStub.On("GetStateByRange", "", "").Return(mockIterator, nil)
-
-	// Add a record to the mock iterator
-	mockIterator.AddRecord("patient1", []byte(existingRecordJSON))
-
-	// Test case: Search for medical records with a specific ID
-	results, err := cc.SearchMedicalRecords(mockCtx, "condition123")
+	// Invoke the DeleteEncounter function
+	err := cc.DeleteMedicalRecords(ctx, recordID)
 	assert.NoError(t, err)
-	assert.NotNil(t, results)
-	assert.Len(t, results, 1)
+
+	// Assert that all expected methods were called on the stub and context
+	stub.AssertExpectations(t)
+	ctx.AssertExpectations(t)
 }
+func TestSearchMedicalRecords(t *testing.T) {
+	stub := new(MockStub)
+	ctx := new(MockTransactionContext)
+	mc := new(MedicalRecordsChaincode)
 
-func TestSearchNonExistentMedicalRecords(t *testing.T) {
-	// Create a new instance of the chaincode
-	cc := new(MedicalRecordsChaincode)
+	clientIdentity := new(MockClientIdentity)
+	ctx.On("GetClientIdentity").Return(clientIdentity)
 
-	// Mock TransactionContext
-	mockCtx := new(MockTransactionContext)
-	mockStub := new(MockStub)
-	mockCtx.On("GetStub").Return(mockStub)
+	clientIdentity.On("GetID").Return("testClientID", nil)
 
-	// Create a mock iterator with no records
-	mockIterator := new(MockIterator)
-	mockStub.On("GetStateByRange", "", "").Return(mockIterator, nil)
+	stub.On("GetChannelID").Return("testchannel")
+	ctx.On("GetStub").Return(stub)
 
-	// Test case: Search for non-existent medical records
-	results, err := cc.SearchMedicalRecords(mockCtx, "nonexistent123")
-	assert.NoError(t, err)
+	query := "patient1"
 
-	// If results are nil, assign an empty slice to avoid nil pointer dereference
-	if results == nil {
-		results = make([]*MedicalRecords, 0)
+	invokeResponse := peer.Response{
+		Status:  200,
+		Payload: []byte(""),
+	}
+	stub.On("InvokeChaincode", "patient", mock.AnythingOfType("[][]uint8"), "testchannel").Return(invokeResponse, nil)
+
+	record := &MedicalRecords{
+		RecordID: "record1",
+		PatienID: "patient1",
+		Allergies: []AllergyIntolerance{
+			{
+				ID: &Identifier{
+					System: "system",
+					Value:  "allergy1",
+				},
+				ClinicalStatus: &CodeableConcept{
+					Coding: []Coding{
+						{
+							System:  "sys",
+							Code:    "code",
+							Display: "display",
+						},
+					},
+					Text: "allergycode",
+				},
+				VerificationStatus: &CodeableConcept{
+					Coding: []Coding{
+						{
+							System:  "sys",
+							Code:    "code",
+							Display: "display",
+						},
+					},
+					Text: "allergyverification",
+				},
+				Type: "pollen",
+				Category: []string{
+					"common",
+				},
+				Criticality: "severe",
+			},
+		},
+		Conditions: []Condition{
+			{
+				ID: &Identifier{
+					System: "http://example.com/systems/patient",
+					Value:  "condition1",
+				},
+			},
+		},
+		Procedures: []Procedure{
+			{
+				ID: &Identifier{
+					System: "http://example.com/systems/practitioner",
+					Value:  "procedure1",
+				},
+				Subject: &Reference{
+					Reference: "practitioners/practitioner1",
+					Display:   "practitioner1",
+				},
+				Code: &CodeableConcept{
+					Coding: []Coding{
+						{
+							System:  "http://example.com/codesystem",
+							Code:    "procedure-code",
+							Display: "pr-cd",
+						},
+					},
+					Text: "English",
+				},
+				Status: &Code{
+					Coding: []Coding{
+						{
+							System:  "useSystem",
+							Code:    "useCode",
+							Display: "executed",
+						},
+					},
+				},
+				Category: &CodeableConcept{
+					Coding: []Coding{
+						{
+							System:  "http://example.com/codesystem",
+							Code:    "procedure-category",
+							Display: "pr-ct",
+						},
+					},
+					Text: "English",
+				},
+				Performer: &Reference{
+					Reference: "practitioners/practitioner1",
+					Display:   "practitioner1",
+				},
+				PartOf: &Reference{
+					Reference: "procedures/emergency1",
+					Display:   "emergency1",
+				},
+			},
+		},
+		Prescriptions: []MedicationRequest{
+			{
+				ID: &Identifier{
+					System: "http://hospital.smarthealth.it/medicationrequests",
+					Value:  "medication1",
+				},
+				Status: &Code{
+					Coding: []Coding{
+						{
+							System:  "http://hl7.org/fhir/medicationrequest-status",
+							Code:    "status",
+							Display: "status",
+						},
+					},
+				},
+				Intent: &Code{
+					Coding: []Coding{
+						{
+							System:  "http://hl7.org/fhir/medication-request-intent",
+							Code:    "order",
+							Display: "Order",
+						},
+					},
+				},
+				MedicationCodeableConcept: &CodeableConcept{
+					Coding: []Coding{
+						{
+							System:  "http://www.nlm.nih.gov/research/umls/rxnorm",
+							Code:    "582620",
+							Display: "Amoxicillin 250mg/5ml Suspension",
+						},
+					},
+					Text: "Amoxicillin 250mg/5ml Suspension",
+				},
+				Subject: &Reference{
+					Reference: "Patient/example",
+					Display:   "John Doe",
+				},
+			},
+		},
+		ServiceRequest: &Reference{
+			Reference: "servicerquest1",
+			Display:   "SerReq1",
+		},
+	}
+	recordJSON, _ := json.Marshal(record)
+
+	iterator := &MockIterator{
+		Records: []KVPair{
+			{Key: "record1", Value: recordJSON},
+		},
+		CurrentIndex: 0,
 	}
 
-	assert.NotNil(t, results)
-	assert.Len(t, results, 0)
-}
+	stub.On("GetStateByRange", "", "").Return(iterator, nil)
 
-func TestUpdateNonExistentMedicalRecords(t *testing.T) {
-	// Create a new instance of the chaincode
-	cc := new(MedicalRecordsChaincode)
+	results, err := mc.SearchMedicalRecords(ctx, query)
 
-	// Mock TransactionContext
-	mockCtx := new(MockTransactionContext)
-	mockStub := new(MockStub)
-	mockCtx.On("GetStub").Return(mockStub)
+	assert.NoError(t, err)
+	assert.Len(t, results, 1)
+	assert.JSONEq(t, string(recordJSON), results[0])
 
-	// Mock GetState to return nil, indicating the record doesn't exist
-	mockStub.On("GetState", "nonexistent_patient").Return(nil, nil)
+	stub.AssertExpectations(t)
+	ctx.AssertExpectations(t)
 
-	// Test case: Try to update non-existent medical records
-	err := cc.UpdateMedicalRecords(mockCtx, "nonexistent_patient", `{
-		"PatientID": "nonexistent_patient",
-		"Allergies": [],
-		"Conditions": [],
-		"Prescriptions": [],
-		"CarePlan": {},
-		"Request": {}
-	}`)
-	assert.Error(t, err) // Expect an error since the record doesn't exist
-}
-
-func TestDeleteNonExistentMedicalRecords(t *testing.T) {
-	// Create a new instance of the chaincode
-	cc := new(MedicalRecordsChaincode)
-
-	// Mock TransactionContext
-	mockCtx := new(MockTransactionContext)
-	mockStub := new(MockStub)
-	mockCtx.On("GetStub").Return(mockStub)
-
-	// Mock GetState to return nil, indicating the record doesn't exist
-	mockStub.On("GetState", "nonexistent_patient").Return(nil, nil)
-
-	// Test case: Try to delete non-existent medical records
-	err := cc.DeleteMedicalRecords(mockCtx, "nonexistent_patient")
-	assert.Error(t, err) // Expect an error since the record doesn't exist
-}
-
-func TestInvalidJSONFormat(t *testing.T) {
-	// Create a new instance of the chaincode
-	cc := new(MedicalRecordsChaincode)
-
-	// Mock TransactionContext
-	mockCtx := new(MockTransactionContext)
-	mockStub := new(MockStub)
-	mockCtx.On("GetStub").Return(mockStub)
-
-	// Test case: Try to create medical records with invalid JSON format
-	err := cc.CreateMedicalRecords(mockCtx, "patient1", `{invalid JSON}`)
-	assert.Error(t, err) // Expect an error due to invalid JSON format
-}
-
-func TestErrorPaths(t *testing.T) {
-	// Create a new instance of the chaincode
-	cc := new(MedicalRecordsChaincode)
-
-	// Mock TransactionContext
-	mockCtx := new(MockTransactionContext)
-	mockStub := new(MockStub)
-	mockCtx.On("GetStub").Return(mockStub)
-
-	// Mock GetState to return an error
-	mockStub.On("GetState", mock.Anything).Return(nil, fmt.Errorf("error retrieving state"))
-
-	// Test case: Create medical records when there's an error retrieving state
-	err := cc.CreateMedicalRecords(mockCtx, "patient1", `{ "PatientID": "patient1", "Allergies": [], "Conditions": [], "Prescriptions": [], "CarePlan": {}, "Request": {} }`)
-	assert.Error(t, err) // Expect an error due to error retrieving state
 }
