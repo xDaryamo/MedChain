@@ -20,6 +20,9 @@ type FollowedPatients struct {
 
 // CreateOrganization creates a new organization
 func (oc *OrganizationChaincode) CreateOrganization(ctx contractapi.TransactionContextInterface, organizationJSON string) error {
+
+	log.Printf("Organization JSON from param: %s", string(organizationJSON))
+
 	// Deserialize JSON data into a Go data structure
 	var organization Organization
 	err := json.Unmarshal([]byte(organizationJSON), &organization)
@@ -27,6 +30,8 @@ func (oc *OrganizationChaincode) CreateOrganization(ctx contractapi.TransactionC
 	if err != nil {
 		return errors.New("failed to unmarshal organization: " + err.Error())
 	}
+
+	log.Printf("Organization struct unmarshalled: %+v", organization)
 
 	// Check if the organization request ID is provided and if it already exists
 	if organization.ID.Value == "" {
@@ -48,7 +53,14 @@ func (oc *OrganizationChaincode) CreateOrganization(ctx contractapi.TransactionC
 	if err != nil {
 		return errors.New("failed to marshal organization: " + err.Error())
 	}
-	return ctx.GetStub().PutState(organization.ID.Value, organizationJSONBytes)
+
+	err = ctx.GetStub().PutState(organization.ID.Value, organizationJSONBytes)
+	if err != nil {
+		return errors.New("failed to put organization in world state: " + err.Error())
+	}
+
+	log.Printf("Organization with ID: %s created successfully", organization.ID.Value)
+	return nil
 }
 
 // ReadOrganization retrieves an organization from the blockchain
@@ -56,20 +68,24 @@ func (oc *OrganizationChaincode) ReadOrganization(ctx contractapi.TransactionCon
 	// Retrieve the organization from the blockchain
 	organizationJSON, err := ctx.GetStub().GetState(organizationID)
 	if err != nil {
-		return nil, err
+		return "", errors.New("failed to read organization: " + err.Error())
 	}
 	if organizationJSON == nil {
-		return nil, nil
+		return "", errors.New("organization does not exist: " + organizationID)
 	}
+
+	log.Printf("Organization JSON from ledger: %s", string(organizationJSON))
 
 	// Deserialize the organization
 	var organization Organization
 	err = json.Unmarshal(organizationJSON, &organization)
 	if err != nil {
-		return nil, err
+		return "", errors.New("failed to unmarshal organization: " + err.Error())
 	}
 
-	return &organization, nil
+	log.Printf("Organization object: %+v", organization)
+
+	return string(organizationJSON), nil
 }
 
 // UpdateOrganization updates an existing organization
@@ -77,10 +93,10 @@ func (oc *OrganizationChaincode) UpdateOrganization(ctx contractapi.TransactionC
 	// Retrieve the existing organization
 	existingOrganization, err := oc.ReadOrganization(ctx, organizationID)
 	if err != nil {
-		return err
+		return errors.New("failed to get organization: " + err.Error())
 	}
 	if existingOrganization == nil {
-		return errors.New("organization not found")
+		return errors.New("organization does not exist: " + organizationID)
 	}
 
 	// Deserialize the updated JSON data into a Go data structure
@@ -89,15 +105,16 @@ func (oc *OrganizationChaincode) UpdateOrganization(ctx contractapi.TransactionC
 		return err
 	}
 
-	// Update the existing organization with the new data
-	*existingOrganization = updatedOrganization
-
-	// Serialize the updated organization and save it on the blockchain
-	updatedOrganizationJSONBytes, err := json.Marshal(existingOrganization)
+	organizationJSONBytes, err := json.Marshal(updatedOrganization)
 	if err != nil {
-		return err
+		return errors.New("failed to marshal organization: " + err.Error())
 	}
-	return ctx.GetStub().PutState(organizationID, updatedOrganizationJSONBytes)
+
+	if err := ctx.GetStub().PutState(organizationID, organizationJSONBytes); err != nil {
+		return errors.New("failed to put state: " + err.Error())
+	}
+
+	return nil
 }
 
 // DeleteOrganization removes an existing organization
@@ -105,24 +122,29 @@ func (oc *OrganizationChaincode) DeleteOrganization(ctx contractapi.TransactionC
 	// Check if the organization exists
 	existingOrganization, err := oc.ReadOrganization(ctx, organizationID)
 	if err != nil {
-		return err
+		return errors.New("failed to get organization: " + err.Error())
 	}
 	if existingOrganization == nil {
-		return errors.New("organization not found")
+		return errors.New("organization does not exist: " + organizationID)
 	}
 
-	// Remove the organization from the blockchain
-	return ctx.GetStub().DelState(organizationID)
+	// Remove the practitioner record
+	err = ctx.GetStub().DelState(organizationID)
+	if err != nil {
+		return errors.New("failed to delete organization: " + err.Error())
+	}
+
+	return nil
 }
 
 // SearchOrganizationsByType allows searching for organizations based on type
-func (oc *OrganizationChaincode) SearchOrganizationsByType(ctx contractapi.TransactionContextInterface, query string) ([]*Organization, error) {
-	var results []*Organization
+func (oc *OrganizationChaincode) SearchOrganizationsByType(ctx contractapi.TransactionContextInterface, query string) ([]string, error) {
+	var results []string
 
 	// Retrieve all organizations stored on the blockchain
 	iterator, err := ctx.GetStub().GetStateByRange("", "")
 	if err != nil {
-		return nil, err
+		return results, err
 	}
 	defer iterator.Close()
 
@@ -130,17 +152,22 @@ func (oc *OrganizationChaincode) SearchOrganizationsByType(ctx contractapi.Trans
 	for iterator.HasNext() {
 		result, err := iterator.Next()
 		if err != nil {
-			return nil, err
+			return results, err
 		}
 		var organization Organization
 		err = json.Unmarshal(result.Value, &organization)
 		if err != nil {
-			return nil, err
+			return results, err
 		}
 
 		// Check if the value of the organization's type matches the query
 		if strings.Contains(organization.Type.Text, query) {
-			results = append(results, &organization)
+			resultsJSON, err := json.Marshal(organization)
+
+			if err != nil {
+				return results, err
+			}
+			results = append(results, string(resultsJSON))
 		}
 	}
 
@@ -148,13 +175,13 @@ func (oc *OrganizationChaincode) SearchOrganizationsByType(ctx contractapi.Trans
 }
 
 // SearchOrganizationByName allows searching for an organization based on name
-func (oc *OrganizationChaincode) SearchOrganizationByName(ctx contractapi.TransactionContextInterface, query string) (*Organization, error) {
+func (oc *OrganizationChaincode) SearchOrganizationByName(ctx contractapi.TransactionContextInterface, query string) (string, error) {
 	var result *Organization
 
 	// Retrieve all organizations stored on the blockchain
 	iterator, err := ctx.GetStub().GetStateByRange("", "")
 	if err != nil {
-		return nil, err
+		return "", err
 	}
 	defer iterator.Close()
 
@@ -162,15 +189,15 @@ func (oc *OrganizationChaincode) SearchOrganizationByName(ctx contractapi.Transa
 	for iterator.HasNext() {
 		record, err := iterator.Next()
 		if err != nil {
-			return nil, err
+			return "", err
 		}
 		var organization Organization
 		err = json.Unmarshal(record.Value, &organization)
 		if err != nil {
-			return nil, err
+			return "", err
 		}
 
-		// Check if the value of the organization's type matches the query
+		// Check if the value of the organization's name matches the query
 		if strings.Contains(organization.Name, query) {
 			result = &organization
 			break

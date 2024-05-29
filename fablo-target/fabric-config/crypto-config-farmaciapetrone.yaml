@@ -1,8 +1,0 @@
-PeerOrgs:
-  - Name: FarmaciaPetrone
-    Domain: farmacia-petrone.medchain.com
-    Specs:
-    Template:
-      Count: 1
-    Users:
-      Count: 1

@@ -13,7 +13,7 @@ router.get(
     "laboratorio-analisi-cmo.medchain.com",
     "medicina-generale-napoli.medchain.com",
     "neurologia-napoli.medchain.com",
-    "patients.medchain.com"
+    "patients.medchain.com",
   ]),
   practitionerController.getPractitioner
 );
@@ -27,7 +27,8 @@ router.post(
     "ospedale-sgiuliano.aslnapoli2.medchain.com",
     "medicina-generale-napoli.medchain.com",
     "neurologia-napoli.medchain.com",
-    "patients.medchain.com"]),
+    "patients.medchain.com",
+  ]),
   practitionerController.createPractitioner
 );
 
@@ -40,7 +41,8 @@ router.patch(
     "ospedale-sgiuliano.aslnapoli2.medchain.com",
     "medicina-generale-napoli.medchain.com",
     "neurologia-napoli.medchain.com",
-    "patients.medchain.com"]),
+    "patients.medchain.com",
+  ]),
   practitionerController.updatePractitioner
 );
 
@@ -53,7 +55,8 @@ router.delete(
     "ospedale-sgiuliano.aslnapoli2.medchain.com",
     "medicina-generale-napoli.medchain.com",
     "neurologia-napoli.medchain.com",
-    "patients.medchain.com"]),
+    "patients.medchain.com",
+  ]),
   practitionerController.deletePractitioner
 );
 

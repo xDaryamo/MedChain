@@ -36,7 +36,7 @@ func (ec *EncounterChaincode) CreateEncounter(ctx contractapi.TransactionContext
 	log.Printf("Encounter struct unmarshalled: %+v", encounter)
 
 	if encounter.ID.Value == "" {
-		return errors.New("lencounter ID is required")
+		return errors.New("encounter ID is required")
 	}
 
 	// Check if the Encounter record already exists

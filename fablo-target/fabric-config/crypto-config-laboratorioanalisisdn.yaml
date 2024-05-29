@@ -1,8 +1,0 @@
-PeerOrgs:
-  - Name: LaboratorioAnalisiSdn
-    Domain: laboratorio-analisi-sdn.medchain.com
-    Specs:
-    Template:
-      Count: 1
-    Users:
-      Count: 1

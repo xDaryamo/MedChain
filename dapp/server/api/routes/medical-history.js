@@ -6,16 +6,19 @@ const medicalHistoryController = require('../controllers/medical-history');
 
 
 // DELETE Delete medical record linked to a patient 
-router.delete('/patient/:id/medical-history', medicalHistoryController.deleteMedicalRecords);
+router.delete('/medical-history/:userid/:recordid', medicalHistoryController.deleteMedicalRecords);
 
 // POST Create a new medical record linked to a patient 
-router.post('/patient/:id/medical-history', medicalHistoryController.createMedicalRecords)
+router.post('/medical-history/:userid', medicalHistoryController.createMedicalRecords)
+
+// GET Retrieve medical record details
+router.get('/medical-history/:userid/:recordid', medicalHistoryController.getMedicalRecordsDetails);
 
 // GET Retrieve medical record details associated with a specific patient
-router.get('/patient/:id/medical-history', medicalHistoryController.getMedicalRecordsDetails);
+router.get('/medical-history/:userid/', medicalHistoryController.queryMedicalRecords);
 
 // PATCH update the medical record linked to a patient 
-router.patch('/patient/:id/medical-history', medicalHistoryController.updateMedicalRecords)
+router.patch('/medical-history/:userid/:recordid', medicalHistoryController.updateMedicalRecords)
 
 
 module.exports = router

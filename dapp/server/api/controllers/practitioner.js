@@ -50,7 +50,10 @@ exports.createPractitioner = async (req, res, next) => {
       return res.status(400).json({ error: "Invalid JSON format" });
     }
 
-    console.log("Submitting transaction with practitioner JSON:", practitionerJSONString);
+    console.log(
+      "Submitting transaction with practitioner JSON:",
+      practitionerJSONString
+    );
 
     const resultString = await fabric.submitTransaction(
       "CreatePractitioner",
@@ -93,7 +96,10 @@ exports.updatePractitioner = async (req, res, next) => {
       return res.status(400).json({ error: "Invalid JSON format" });
     }
 
-    console.log("Submitting transaction with practitioner JSON:", practitionerJSONString);
+    console.log(
+      "Submitting transaction with practitioner JSON:",
+      practitionerJSONString
+    );
 
     const resultString = await fabric.submitTransaction(
       "UpdatePractitioner",
@@ -129,7 +135,9 @@ exports.deletePractitioner = async (req, res, next) => {
     );
     const result = JSON.parse(resultString);
 
-    res.status(200).json({ message: "Practitioner deleted successfully", result });
+    res
+      .status(200)
+      .json({ message: "Practitioner deleted successfully", result });
   } catch (error) {
     res.status(500).json({ error: error.message });
   } finally {

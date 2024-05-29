@@ -1,9 +1,0 @@
-{
-  "network-configs": {
-    "network-patients": {
-      "name": "Network of Patients",
-      "profile": "/opt/explorer/app/platform/fabric/connection-profile/connection-profile-patients.json"
-    }
-  },
-  "license": "Apache-2.0"
-}
