@@ -17,7 +17,9 @@ class FabricNetwork {
   }
 
   async init(userId, organization, channelName, chaincodeName) {
+
     this.validateParameters(userId, organization, channelName, chaincodeName);
+
     const ccp = this.loadConnectionProfile(organization);
     const wallet = await this.configureWallet(userId, organization, ccp);
     await this.connectToGateway(

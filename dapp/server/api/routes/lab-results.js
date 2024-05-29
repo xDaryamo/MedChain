@@ -6,7 +6,7 @@ const { verifyToken, authorizeOrganization } = require("../middleware/auth");
 router.get(
   "/patient/:id",
   verifyToken,
-  authorizeOrganization(["labs.medchain.com"]), //to do: add all orgs
+  authorizeOrganization(["laboratorio-analisi-cmo.medchain.com"]), //to do: add all orgs
   labresultsController.getLabResultsByPatient
 );
 

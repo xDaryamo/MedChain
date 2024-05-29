@@ -44,6 +44,7 @@ func (t *LabResultsChaincode) CreateLabResult(ctx contractapi.TransactionContext
 	log.Printf("Lab result with ID: %s created successfully", labResult.ID)
 	return `{"message": "Lab result created successfully"}`, nil
 }
+
 // UpdateLabResult aggiorna un risultato di laboratorio esistente sulla blockchain
 func (t *LabResultsChaincode) UpdateLabResult(ctx contractapi.TransactionContextInterface, labResultID string, labResultJSON string) (string, error) {
 	log.Printf("Updating lab result with ID: %s using JSON: %s", labResultID, labResultJSON)
@@ -87,12 +88,12 @@ func (t *LabResultsChaincode) GetLabResult(ctx contractapi.TransactionContextInt
 	return string(labResultAsBytes), nil
 }
 
-
-// QueryLabResultsByPatientID retrieves all lab results for a given patient ID
 func (t *LabResultsChaincode) QueryLabResultsByPatientID(ctx contractapi.TransactionContextInterface, patientID string) (string, error) {
 	log.Printf("Querying lab results for patient ID: %s", patientID)
 
-	queryString := `{"selector":{"subject.reference":"` + patientID + `"}}`
+	// Ensure the patientID is prefixed correctly
+	patientReference := "Patient/" + patientID
+	queryString := `{"selector":{"subject.reference":"` + patientReference + `"}}`
 	resultsIterator, err := ctx.GetStub().GetQueryResult(queryString)
 	if err != nil {
 		return "", errors.New("failed to query lab results: " + err.Error())
@@ -105,6 +106,8 @@ func (t *LabResultsChaincode) QueryLabResultsByPatientID(ctx contractapi.Transac
 		if err != nil {
 			return "", errors.New("failed to iterate query results: " + err.Error())
 		}
+
+		log.Printf("Query response: %s", string(queryResponse.Value))
 
 		var observation Observation
 		err = json.Unmarshal(queryResponse.Value, &observation)

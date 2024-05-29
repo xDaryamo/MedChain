@@ -14,6 +14,10 @@ type OrganizationChaincode struct {
 	contractapi.Contract
 }
 
+type FollowedPatients struct {
+	Patients map[string]bool `json:"patients"`
+}
+
 // CreateOrganization creates a new organization
 func (oc *OrganizationChaincode) CreateOrganization(ctx contractapi.TransactionContextInterface, organizationJSON string) error {
 	// Deserialize JSON data into a Go data structure
@@ -29,7 +33,7 @@ func (oc *OrganizationChaincode) CreateOrganization(ctx contractapi.TransactionC
 		return errors.New("organization request ID is required")
 	}
 
-	existingOrganization, err := oc.GetOrganization(ctx, organization.ID.Value)
+	existingOrganization, err := oc.ReadOrganization(ctx, organization.ID.Value)
 
 	if err != nil {
 		return errors.New("failed to retrieve organization " + organization.ID.Value + " from world state")
@@ -47,8 +51,8 @@ func (oc *OrganizationChaincode) CreateOrganization(ctx contractapi.TransactionC
 	return ctx.GetStub().PutState(organization.ID.Value, organizationJSONBytes)
 }
 
-// GetOrganization retrieves an organization from the blockchain
-func (oc *OrganizationChaincode) GetOrganization(ctx contractapi.TransactionContextInterface, organizationID string) (*Organization, error) {
+// ReadOrganization retrieves an organization from the blockchain
+func (oc *OrganizationChaincode) ReadOrganization(ctx contractapi.TransactionContextInterface, organizationID string) (*Organization, error) {
 	// Retrieve the organization from the blockchain
 	organizationJSON, err := ctx.GetStub().GetState(organizationID)
 	if err != nil {
@@ -71,7 +75,7 @@ func (oc *OrganizationChaincode) GetOrganization(ctx contractapi.TransactionCont
 // UpdateOrganization updates an existing organization
 func (oc *OrganizationChaincode) UpdateOrganization(ctx contractapi.TransactionContextInterface, organizationID string, updatedOrganizationJSON string) error {
 	// Retrieve the existing organization
-	existingOrganization, err := oc.GetOrganization(ctx, organizationID)
+	existingOrganization, err := oc.ReadOrganization(ctx, organizationID)
 	if err != nil {
 		return err
 	}
@@ -99,7 +103,7 @@ func (oc *OrganizationChaincode) UpdateOrganization(ctx contractapi.TransactionC
 // DeleteOrganization removes an existing organization
 func (oc *OrganizationChaincode) DeleteOrganization(ctx contractapi.TransactionContextInterface, organizationID string) error {
 	// Check if the organization exists
-	existingOrganization, err := oc.GetOrganization(ctx, organizationID)
+	existingOrganization, err := oc.ReadOrganization(ctx, organizationID)
 	if err != nil {
 		return err
 	}
@@ -178,7 +182,7 @@ func (oc *OrganizationChaincode) SearchOrganizationByName(ctx contractapi.Transa
 
 // AddEndpoint adds a technical endpoint to the organization
 func (oc *OrganizationChaincode) AddEndpoint(ctx contractapi.TransactionContextInterface, organizationID string, endpoint Reference) error {
-	organization, err := oc.GetOrganization(ctx, organizationID)
+	organization, err := oc.ReadOrganization(ctx, organizationID)
 	if err != nil {
 		return err
 	}
@@ -199,7 +203,7 @@ func (oc *OrganizationChaincode) AddEndpoint(ctx contractapi.TransactionContextI
 
 // AddQualification adds a qualification to the organization
 func (oc *OrganizationChaincode) AddQualification(ctx contractapi.TransactionContextInterface, organizationID string, qualification Qualification) error {
-	organization, err := oc.GetOrganization(ctx, organizationID)
+	organization, err := oc.ReadOrganization(ctx, organizationID)
 	if err != nil {
 		return err
 	}
@@ -220,7 +224,7 @@ func (oc *OrganizationChaincode) AddQualification(ctx contractapi.TransactionCon
 
 // RemoveEndpoint removes a technical endpoint from the organization
 func (oc *OrganizationChaincode) RemoveEndpoint(ctx contractapi.TransactionContextInterface, organizationID string) error {
-	organization, err := oc.GetOrganization(ctx, organizationID)
+	organization, err := oc.ReadOrganization(ctx, organizationID)
 	if err != nil {
 		return err
 	}
@@ -241,7 +245,7 @@ func (oc *OrganizationChaincode) RemoveEndpoint(ctx contractapi.TransactionConte
 
 // RemoveQualification removes a qualification from the organization
 func (oc *OrganizationChaincode) RemoveQualification(ctx contractapi.TransactionContextInterface, organizationID string, qualificationIndex int) error {
-	organization, err := oc.GetOrganization(ctx, organizationID)
+	organization, err := oc.ReadOrganization(ctx, organizationID)
 	if err != nil {
 		return err
 	}
@@ -265,7 +269,7 @@ func (oc *OrganizationChaincode) RemoveQualification(ctx contractapi.Transaction
 
 // UpdateEndpoint updates a technical endpoint of the organization
 func (oc *OrganizationChaincode) UpdateEndpoint(ctx contractapi.TransactionContextInterface, organizationID string, updatedEndpoint Reference) error {
-	organization, err := oc.GetOrganization(ctx, organizationID)
+	organization, err := oc.ReadOrganization(ctx, organizationID)
 	if err != nil {
 		return err
 	}
@@ -286,7 +290,7 @@ func (oc *OrganizationChaincode) UpdateEndpoint(ctx contractapi.TransactionConte
 
 // UpdateContact updates contact details of the organization
 func (oc *OrganizationChaincode) UpdateContact(ctx contractapi.TransactionContextInterface, organizationID string, updatedContact ExtendedContactDetail) error {
-	organization, err := oc.GetOrganization(ctx, organizationID)
+	organization, err := oc.ReadOrganization(ctx, organizationID)
 	if err != nil {
 		return err
 	}
@@ -307,7 +311,7 @@ func (oc *OrganizationChaincode) UpdateContact(ctx contractapi.TransactionContex
 
 // UpdateQualification updates a qualification of the organization
 func (oc *OrganizationChaincode) UpdateQualification(ctx contractapi.TransactionContextInterface, organizationID string, updatedQualification Qualification, qualificationIndex int) error {
-	organization, err := oc.GetOrganization(ctx, organizationID)
+	organization, err := oc.ReadOrganization(ctx, organizationID)
 	if err != nil {
 		return err
 	}
@@ -332,7 +336,7 @@ func (oc *OrganizationChaincode) UpdateQualification(ctx contractapi.Transaction
 // GetParentOrganization retrieves the parent organization of the current organization, if any.
 func (oc *OrganizationChaincode) GetParentOrganization(ctx contractapi.TransactionContextInterface, organizationID string) (*Reference, error) {
 	// Retrieve the organization from the blockchain
-	organization, err := oc.GetOrganization(ctx, organizationID)
+	organization, err := oc.ReadOrganization(ctx, organizationID)
 	if err != nil {
 		return nil, err
 	}
@@ -347,7 +351,7 @@ func (oc *OrganizationChaincode) GetParentOrganization(ctx contractapi.Transacti
 // UpdateParentOrganization updates the parent organization of the current organization.
 func (oc *OrganizationChaincode) UpdateParentOrganization(ctx contractapi.TransactionContextInterface, organizationID string, parentOrganization Reference) error {
 	// Retrieve the organization from the blockchain
-	organization, err := oc.GetOrganization(ctx, organizationID)
+	organization, err := oc.ReadOrganization(ctx, organizationID)
 	if err != nil {
 		return err
 	}
@@ -364,6 +368,94 @@ func (oc *OrganizationChaincode) UpdateParentOrganization(ctx contractapi.Transa
 		return err
 	}
 	return ctx.GetStub().PutState(organizationID, organizationJSONBytes)
+}
+
+func (c *OrganizationChaincode) GrantAccess(ctx contractapi.TransactionContextInterface, patientID string, orgID string) (string, error) {
+	// Recupera la lista dei pazienti seguiti dall'organizzazione
+	followedPatientsAsBytes, err := ctx.GetStub().GetState("followedPatients_" + orgID)
+	if err != nil {
+		return "", err
+	}
+
+	var followedPatients FollowedPatients
+	if followedPatientsAsBytes != nil {
+		err = json.Unmarshal(followedPatientsAsBytes, &followedPatients)
+		if err != nil {
+			return "", err
+		}
+	} else {
+		followedPatients = FollowedPatients{Patients: make(map[string]bool)}
+	}
+
+	followedPatients.Patients[patientID] = true
+	updatedFollowedPatientsAsBytes, err := json.Marshal(followedPatients)
+	if err != nil {
+		return "", err
+	}
+
+	err = ctx.GetStub().PutState("followedPatients_"+orgID, updatedFollowedPatientsAsBytes)
+	if err != nil {
+		return "", err
+	}
+
+	return `{"message": "Access granted"}`, nil
+}
+
+func (c *OrganizationChaincode) GetFollowedPatients(ctx contractapi.TransactionContextInterface, orgID string) ([]string, error) {
+	// Recupera la lista dei pazienti seguiti dall'organizzazione
+	followedPatientsAsBytes, err := ctx.GetStub().GetState("followedPatients_" + orgID)
+	if err != nil {
+		return nil, err
+	}
+	if followedPatientsAsBytes == nil {
+		return nil, errors.New("no followed patients found")
+	}
+
+	var followedPatients FollowedPatients
+	err = json.Unmarshal(followedPatientsAsBytes, &followedPatients)
+	if err != nil {
+		return nil, err
+	}
+
+	// Estrai la lista dei patientID
+	patientIDs := make([]string, 0, len(followedPatients.Patients))
+	for patientID := range followedPatients.Patients {
+		patientIDs = append(patientIDs, patientID)
+	}
+
+	return patientIDs, nil
+}
+func (c *OrganizationChaincode) RevokeAccess(ctx contractapi.TransactionContextInterface, patientID string, orgID string) (string, error) {
+	// Recupera la lista dei pazienti seguiti dall'organizzazione
+	followedPatientsAsBytes, err := ctx.GetStub().GetState("followedPatients_" + orgID)
+	if err != nil {
+		return "", err
+	}
+	if followedPatientsAsBytes == nil {
+		return "", errors.New("no followed patients found")
+	}
+
+	var followedPatients FollowedPatients
+	err = json.Unmarshal(followedPatientsAsBytes, &followedPatients)
+	if err != nil {
+		return "", err
+	}
+
+	// Rimuovi il paziente dalla mappa
+	delete(followedPatients.Patients, patientID)
+
+	// Aggiorna lo stato nel ledger
+	updatedFollowedPatientsAsBytes, err := json.Marshal(followedPatients)
+	if err != nil {
+		return "", err
+	}
+
+	err = ctx.GetStub().PutState("followedPatients_"+orgID, updatedFollowedPatientsAsBytes)
+	if err != nil {
+		return "", err
+	}
+
+	return `{"message": "Access revoked"}`, nil
 }
 
 func main() {

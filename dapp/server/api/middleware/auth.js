@@ -18,7 +18,8 @@ exports.authorizeOrganization = (organizations) => {
     if (organizations.includes(req.user.organization)) {
       next();
     } else {
-      res.status(403).json({ message: "Forbidden" });
+      console.log(req.user.organization);
+      res.status(403).json({ message: "Forbidden"});
     }
   };
 };

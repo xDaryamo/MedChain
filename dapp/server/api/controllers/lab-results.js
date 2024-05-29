@@ -5,12 +5,13 @@ const fabric = new FabricNetwork();
 
 exports.getLabResultsByPatient = async (req, res, next) => {
   const patientID = req.params.id;
+  const userID = req.user.userId;
   try {
     const organization = req.user.organization;
     const channel = "lab-results-channel";
     const chaincode = "labresults";
+    await fabric.init(userID, organization, channel, chaincode);
 
-    await fabric.init(patientID, organization, channel, chaincode);
     console.log("Fabric network initialized successfully.");
 
     const labResults = await fabric.evaluateTransaction(
@@ -28,7 +29,7 @@ exports.getLabResultsByPatient = async (req, res, next) => {
 
 exports.getLabResult = async (req, res, next) => {
   const { resultId } = req.params;
-  const practitionerId = req.user.userId; // Use practitioner ID from the verified token
+  const practitionerId = req.user.userId; 
   const organization = req.user.organization;
 
   try {
@@ -83,14 +84,14 @@ exports.createLabResult = async (req, res, next) => {
       labResultJSONString
     );
 
-    const result = await fabric.submitTransaction(
+    const resultString = await fabric.submitTransaction(
       "CreateLabResult",
       labResultJSONString
     );
 
     res
       .status(201)
-      .json({ message: "Lab result created successfully", result });
+      .json({ message: "Lab result created successfully", result: resultString });
   } catch (error) {
     res.status(500).json({ error: error.message });
   } finally {
@@ -98,6 +99,7 @@ exports.createLabResult = async (req, res, next) => {
     console.log("Disconnected from Fabric gateway.");
   }
 };
+
 
 exports.updateLabResult = async (req, res, next) => {
   const labResultID = req.params.resultId;

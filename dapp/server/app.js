@@ -9,6 +9,7 @@ const organizations = require("./config/organizations");
 const authRoutes = require("./api/routes/auth");
 const patientRoutes = require("./api/routes/patient");
 const labResultsRoutes = require("./api/routes/lab-results");
+const practitionerRoutes = require("./api/routes/practitioner");
 
 const FabricNetwork = require("./blockchain/fabric");
 const fabric = new FabricNetwork();
@@ -35,6 +36,7 @@ app.use((req, res, next) => {
 app.use("/auth", authRoutes);
 
 app.use("/patient", patientRoutes);
+app.use("/practitioner", practitionerRoutes)
 app.use("/labresults", labResultsRoutes);
 
 app.use((err, req, res, next) => {

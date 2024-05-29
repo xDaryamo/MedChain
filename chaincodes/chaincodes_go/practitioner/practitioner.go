@@ -12,30 +12,30 @@ import (
 type PractitionerContract struct {
 	contractapi.Contract
 }
+type FollowedPatients struct {
+	Patients map[string]bool `json:"patients"` // Mappa dei pazienti seguiti
+}
 
 // CreatePractitioner adds a new practitioner record to the ledger
 func (c *PractitionerContract) CreatePractitioner(ctx contractapi.TransactionContextInterface, practitionerJSON string) (string, error) {
-	// Deserialize JSON data into a Go data structure
 	var practitioner Practitioner
 	err := json.Unmarshal([]byte(practitionerJSON), &practitioner)
 	if err != nil {
 		return "", errors.New("failed to unmarshal practitioner: " + err.Error())
 	}
 
-	// Check if the practitioner request ID is provided and if it already exists
 	if practitioner.ID.Value == "" {
 		return "", errors.New("practitioner request ID is required")
 	}
 
 	existingPractitioner, err := ctx.GetStub().GetState(practitioner.ID.Value)
 	if err != nil {
-		return "", errors.New("failed to get practitioner: " + practitioner.ID.Value + " from world state")
+		return "", errors.New("failed to get practitioner: " + practitioner.ID.Value + " from world state: " + err.Error())
 	}
 	if existingPractitioner != nil {
 		return "", errors.New("practitioner already exists: " + practitioner.ID.Value)
 	}
 
-	// Serialize the practitioner and save it on the blockchain
 	practitionerJSONBytes, err := json.Marshal(practitioner)
 	if err != nil {
 		return "", errors.New("failed to marshal practitioner: " + err.Error())
@@ -43,7 +43,7 @@ func (c *PractitionerContract) CreatePractitioner(ctx contractapi.TransactionCon
 
 	err = ctx.GetStub().PutState(practitioner.ID.Value, practitionerJSONBytes)
 	if err != nil {
-		return "", errors.New("failed to put lab result in world state: " + err.Error())
+		return "", errors.New("failed to put practitioner in world state: " + err.Error())
 	}
 
 	log.Printf("Practitioner with ID: %s created successfully", practitioner.ID.Value)
@@ -84,7 +84,6 @@ func (c *PractitionerContract) UpdatePractitioner(ctx contractapi.TransactionCon
 		return "", errors.New("failed to marshal practitioner: " + err.Error())
 	}
 
-	// Update the practitioner record in the ledger
 	err = ctx.GetStub().PutState(practitionerID, practitionerJSONBytes)
 	if err != nil {
 		return "", errors.New("failed to update practitioner: " + err.Error())
@@ -103,7 +102,6 @@ func (c *PractitionerContract) DeletePractitioner(ctx contractapi.TransactionCon
 		return "", errors.New("practitioner does not exist: " + practitionerID)
 	}
 
-	// Remove the practitioner record
 	err = ctx.GetStub().DelState(practitionerID)
 	if err != nil {
 		return "", errors.New("failed to delete practitioner: " + err.Error())
@@ -133,7 +131,6 @@ func (c *PractitionerContract) CreateCondition(ctx contractapi.TransactionContex
 		return "", errors.New("failed to marshal condition: " + err.Error())
 	}
 
-	// Save the new condition to the ledger
 	err = ctx.GetStub().PutState(conditionID, conditionJSONBytes)
 	if err != nil {
 		return "", errors.New("failed to put condition in world state: " + err.Error())
@@ -176,7 +173,6 @@ func (c *PractitionerContract) UpdateCondition(ctx contractapi.TransactionContex
 		return "", errors.New("failed to marshal condition: " + err.Error())
 	}
 
-	// Update the condition record in the ledger
 	err = ctx.GetStub().PutState(conditionID, conditionJSONBytes)
 	if err != nil {
 		return "", errors.New("failed to update condition: " + err.Error())
@@ -195,7 +191,6 @@ func (c *PractitionerContract) DeleteCondition(ctx contractapi.TransactionContex
 		return "", errors.New("condition does not exist: " + conditionID)
 	}
 
-	// Remove the condition record
 	err = ctx.GetStub().DelState(conditionID)
 	if err != nil {
 		return "", errors.New("failed to delete condition: " + err.Error())
@@ -225,7 +220,6 @@ func (c *PractitionerContract) CreateProcedure(ctx contractapi.TransactionContex
 		return "", errors.New("failed to marshal procedure: " + err.Error())
 	}
 
-	// Save the new procedure to the ledger
 	err = ctx.GetStub().PutState(procedureID, procedureJSONBytes)
 	if err != nil {
 		return "", errors.New("failed to put procedure in world state: " + err.Error())
@@ -268,7 +262,6 @@ func (c *PractitionerContract) UpdateProcedure(ctx contractapi.TransactionContex
 		return "", errors.New("failed to marshal procedure: " + err.Error())
 	}
 
-	// Update the procedure record in the ledger
 	err = ctx.GetStub().PutState(procedureID, procedureJSONBytes)
 	if err != nil {
 		return "", errors.New("failed to update procedure: " + err.Error())
@@ -287,7 +280,6 @@ func (c *PractitionerContract) DeleteProcedure(ctx contractapi.TransactionContex
 		return "", errors.New("procedure does not exist: " + procedureID)
 	}
 
-	// Remove the procedure record
 	err = ctx.GetStub().DelState(procedureID)
 	if err != nil {
 		return "", errors.New("failed to delete procedure: " + err.Error())
@@ -298,7 +290,6 @@ func (c *PractitionerContract) DeleteProcedure(ctx contractapi.TransactionContex
 
 // CreateAnnotation adds a new annotation record to the ledger
 func (c *PractitionerContract) CreateAnnotation(ctx contractapi.TransactionContextInterface, procedureID string, annotationJSON string) (string, error) {
-	// Check if the procedure exists
 	procedureJSON, err := ctx.GetStub().GetState(procedureID)
 	if err != nil {
 		return "", errors.New("failed to get procedure: " + err.Error())
@@ -307,30 +298,25 @@ func (c *PractitionerContract) CreateAnnotation(ctx contractapi.TransactionConte
 		return "", errors.New("procedure does not exist: " + procedureID)
 	}
 
-	// Retrieve the procedure from the ledger
 	var procedure Procedure
 	err = json.Unmarshal(procedureJSON, &procedure)
 	if err != nil {
 		return "", errors.New("failed to unmarshal procedure: " + err.Error())
 	}
 
-	// Unmarshal the annotation JSON into a struct
 	var annotation Annotation
 	err = json.Unmarshal([]byte(annotationJSON), &annotation)
 	if err != nil {
 		return "", errors.New("failed to unmarshal annotation: " + err.Error())
 	}
 
-	// Add the annotation to the procedure
 	procedure.Note = append(procedure.Note, annotation)
 
-	// Marshal the updated procedure back to JSON
 	updatedProcedureJSON, err := json.Marshal(procedure)
 	if err != nil {
 		return "", errors.New("failed to marshal updated procedure: " + err.Error())
 	}
 
-	// Update the procedure record in the ledger
 	err = ctx.GetStub().PutState(procedureID, updatedProcedureJSON)
 	if err != nil {
 		return "", errors.New("failed to update procedure: " + err.Error())
@@ -341,7 +327,6 @@ func (c *PractitionerContract) CreateAnnotation(ctx contractapi.TransactionConte
 
 // ReadAnnotation retrieves an annotation record from the ledger
 func (c *PractitionerContract) ReadAnnotation(ctx contractapi.TransactionContextInterface, procedureID string, annotationIndex int) (string, error) {
-	// Retrieve the procedure from the ledger
 	procedureJSON, err := ctx.GetStub().GetState(procedureID)
 	if err != nil {
 		return "", errors.New("failed to read procedure: " + err.Error())
@@ -350,19 +335,16 @@ func (c *PractitionerContract) ReadAnnotation(ctx contractapi.TransactionContext
 		return "", errors.New("procedure does not exist: " + procedureID)
 	}
 
-	// Unmarshal the procedure JSON into a struct
 	var procedure Procedure
 	err = json.Unmarshal(procedureJSON, &procedure)
 	if err != nil {
 		return "", errors.New("failed to unmarshal procedure: " + err.Error())
 	}
 
-	// Check if the annotation index is valid
 	if annotationIndex < 0 || annotationIndex >= len(procedure.Note) {
 		return "", errors.New("invalid annotation index")
 	}
 
-	// Retrieve the annotation from the procedure
 	annotationJSON, err := json.Marshal(procedure.Note[annotationIndex])
 	if err != nil {
 		return "", errors.New("failed to marshal annotation: " + err.Error())
@@ -373,7 +355,6 @@ func (c *PractitionerContract) ReadAnnotation(ctx contractapi.TransactionContext
 
 // UpdateAnnotation updates an existing annotation record in the ledger
 func (c *PractitionerContract) UpdateAnnotation(ctx contractapi.TransactionContextInterface, procedureID string, annotationIndex int, annotationJSON string) (string, error) {
-	// Retrieve the procedure from the ledger
 	procedureJSON, err := ctx.GetStub().GetState(procedureID)
 	if err != nil {
 		return "", errors.New("failed to read procedure: " + err.Error())
@@ -382,35 +363,29 @@ func (c *PractitionerContract) UpdateAnnotation(ctx contractapi.TransactionConte
 		return "", errors.New("procedure does not exist: " + procedureID)
 	}
 
-	// Unmarshal the procedure JSON into a struct
 	var procedure Procedure
 	err = json.Unmarshal(procedureJSON, &procedure)
 	if err != nil {
 		return "", errors.New("failed to unmarshal procedure: " + err.Error())
 	}
 
-	// Check if the annotation index is valid
 	if annotationIndex < 0 || annotationIndex >= len(procedure.Note) {
 		return "", errors.New("invalid annotation index")
 	}
 
-	// Unmarshal the updated annotation JSON into a struct
 	var updatedAnnotation Annotation
 	err = json.Unmarshal([]byte(annotationJSON), &updatedAnnotation)
 	if err != nil {
 		return "", errors.New("failed to unmarshal updated annotation: " + err.Error())
 	}
 
-	// Update the annotation in the procedure
 	procedure.Note[annotationIndex] = updatedAnnotation
 
-	// Marshal the updated procedure back to JSON
 	updatedProcedureJSON, err := json.Marshal(procedure)
 	if err != nil {
 		return "", errors.New("failed to marshal updated procedure: " + err.Error())
 	}
 
-	// Update the procedure record in the ledger
 	err = ctx.GetStub().PutState(procedureID, updatedProcedureJSON)
 	if err != nil {
 		return "", errors.New("failed to update procedure: " + err.Error())
@@ -421,7 +396,6 @@ func (c *PractitionerContract) UpdateAnnotation(ctx contractapi.TransactionConte
 
 // DeleteAnnotation removes an annotation record from the ledger
 func (c *PractitionerContract) DeleteAnnotation(ctx contractapi.TransactionContextInterface, procedureID string, annotationIndex int) (string, error) {
-	// Retrieve the procedure from the ledger
 	procedureJSON, err := ctx.GetStub().GetState(procedureID)
 	if err != nil {
 		return "", errors.New("failed to read procedure: " + err.Error())
@@ -430,14 +404,12 @@ func (c *PractitionerContract) DeleteAnnotation(ctx contractapi.TransactionConte
 		return "", errors.New("procedure does not exist: " + procedureID)
 	}
 
-	// Unmarshal the procedure JSON into a struct
 	var procedure Procedure
 	err = json.Unmarshal(procedureJSON, &procedure)
 	if err != nil {
 		return "", errors.New("failed to unmarshal procedure: " + err.Error())
 	}
 
-	// Check if the annotation index is valid
 	if annotationIndex < 0 || annotationIndex >= len(procedure.Note) {
 		return "", errors.New("invalid annotation index")
 	}
@@ -455,6 +427,97 @@ func (c *PractitionerContract) DeleteAnnotation(ctx contractapi.TransactionConte
 	}
 
 	return `{"message": "Annotation deleted successfully"}`, nil
+}
+
+func (c *PractitionerContract) GrantAccess(ctx contractapi.TransactionContextInterface, patientID string, practitionerID string) (string, error) {
+	// Recupera la lista dei pazienti seguiti dal practitioner
+	followedPatientsAsBytes, err := ctx.GetStub().GetState("followedPatients_" + practitionerID)
+	if err != nil {
+		return "", err
+	}
+
+	var followedPatients FollowedPatients
+	if followedPatientsAsBytes != nil {
+		err = json.Unmarshal(followedPatientsAsBytes, &followedPatients)
+		if err != nil {
+			return "", err
+		}
+	} else {
+		followedPatients = FollowedPatients{Patients: make(map[string]bool)}
+	}
+
+	// Aggiungi il paziente alla mappa
+	followedPatients.Patients[patientID] = true
+
+	// Aggiorna lo stato nel ledger
+	updatedFollowedPatientsAsBytes, err := json.Marshal(followedPatients)
+	if err != nil {
+		return "", err
+	}
+
+	err = ctx.GetStub().PutState("followedPatients_"+practitionerID, updatedFollowedPatientsAsBytes)
+	if err != nil {
+		return "", err
+	}
+
+	return `{"message": "Access granted"}`, nil
+}
+
+func (c *PractitionerContract) GetFollowedPatients(ctx contractapi.TransactionContextInterface, practitionerID string) ([]string, error) {
+	followedPatientsAsBytes, err := ctx.GetStub().GetState("followedPatients_" + practitionerID)
+	if err != nil {
+		return nil, err
+	}
+	if followedPatientsAsBytes == nil {
+		return nil, errors.New("no followed patients found")
+	}
+
+	var followedPatients FollowedPatients
+	err = json.Unmarshal(followedPatientsAsBytes, &followedPatients)
+	if err != nil {
+		return nil, err
+	}
+
+	// Estrai la lista dei patientID
+	patientIDs := make([]string, 0, len(followedPatients.Patients))
+	for patientID := range followedPatients.Patients {
+		patientIDs = append(patientIDs, patientID)
+	}
+
+	return patientIDs, nil
+}
+
+func (c *PractitionerContract) RevokeAccess(ctx contractapi.TransactionContextInterface, patientID string, practitionerID string) (string, error) {
+	// Recupera la lista dei pazienti seguiti dal practitioner
+	followedPatientsAsBytes, err := ctx.GetStub().GetState("followedPatients_" + practitionerID)
+	if err != nil {
+		return "", err
+	}
+	if followedPatientsAsBytes == nil {
+		return "", errors.New("no followed patients found")
+	}
+
+	var followedPatients FollowedPatients
+	err = json.Unmarshal(followedPatientsAsBytes, &followedPatients)
+	if err != nil {
+		return "", err
+	}
+
+	// Rimuovi il paziente dalla mappa
+	delete(followedPatients.Patients, patientID)
+
+	// Aggiorna lo stato nel ledger
+	updatedFollowedPatientsAsBytes, err := json.Marshal(followedPatients)
+	if err != nil {
+		return "", err
+	}
+
+	err = ctx.GetStub().PutState("followedPatients_"+practitionerID, updatedFollowedPatientsAsBytes)
+	if err != nil {
+		return "", err
+	}
+
+	return `{"message": "Access revoked"}`, nil
 }
 
 func main() {

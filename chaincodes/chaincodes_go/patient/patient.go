@@ -9,8 +9,9 @@ import (
 )
 
 type Authorization struct {
-	PatientID  string          `json:"patientId"`
-	Authorized map[string]bool `json:"authorized"` // Map of UserID and the authorizations
+	PatientID      string          `json:"patientId"`
+	Authorized     map[string]bool `json:"authorized"`     // Map of UserID and the authorizations
+	AuthorizedOrgs map[string]bool `json:"authorizedOrgs"` // Map of OrgID and the authorizations
 }
 
 type PatientContract struct {
@@ -48,8 +49,6 @@ func (c *PatientContract) CreatePatient(ctx contractapi.TransactionContextInterf
 	if err != nil {
 		return "", errors.New("failed to marshal patient: " + err.Error())
 	}
-
-
 
 	// Save the new patient to the ledger
 	err = ctx.GetStub().PutState(patient.ID.Value, patientJSONBytes)
@@ -91,16 +90,6 @@ func (c *PatientContract) ReadPatient(ctx contractapi.TransactionContextInterfac
 		return "", errors.New("client ID attribute does not exist")
 	}
 
-	log.Printf("Client ID (patientID attribute): %s", clientID)
-	log.Printf("Patient ID: %s", patientID)
-
-	// Verifica se il richiedente è il paziente stesso
-	if clientID == patientID {
-		log.Printf("Client is the patient")
-		return string(patientJSON), nil // Paziente accede ai propri dati
-	}
-	log.Printf("Client is not the patient, checking authorization")
-	// Altrimenti, verifica se il richiedente è autorizzato
 	authorized, err := c.IsAuthorized(ctx, patientID, clientID)
 	if err != nil {
 		return "", err
@@ -169,7 +158,6 @@ func (c *PatientContract) UpdatePatient(ctx contractapi.TransactionContextInterf
 	return `{"message": "Patient updated successfully"}`, nil
 }
 
-
 // DeletePatient removes a patient record from the ledger
 func (c *PatientContract) DeletePatient(ctx contractapi.TransactionContextInterface, patientID string) (string, error) {
 	exists, err := ctx.GetStub().GetState(patientID)
@@ -197,7 +185,7 @@ func (c *PatientContract) DeletePatient(ctx contractapi.TransactionContextInterf
 ================================
 */
 
-func (c *PatientContract) RequestAccess(ctx contractapi.TransactionContextInterface, patientID string, requesterID string) (string, error) {
+func (c *PatientContract) RequestAccess(ctx contractapi.TransactionContextInterface, patientID string, requesterID string, isOrg bool) (string, error) {
 	authAsBytes, err := ctx.GetStub().GetState("auth_" + patientID)
 	if err != nil {
 		return "", err
@@ -207,10 +195,15 @@ func (c *PatientContract) RequestAccess(ctx contractapi.TransactionContextInterf
 	if authAsBytes != nil {
 		json.Unmarshal(authAsBytes, &auth)
 	} else {
-		auth = Authorization{PatientID: patientID, Authorized: make(map[string]bool)}
+		auth = Authorization{PatientID: patientID, Authorized: make(map[string]bool), AuthorizedOrgs: make(map[string]bool)}
 	}
 
-	auth.Authorized[requesterID] = false
+	if isOrg {
+		auth.AuthorizedOrgs[requesterID] = false
+	} else {
+		auth.Authorized[requesterID] = false
+	}
+
 	updatedAuthBytes, err := json.Marshal(auth)
 	if err != nil {
 		return "", err
@@ -221,12 +214,12 @@ func (c *PatientContract) RequestAccess(ctx contractapi.TransactionContextInterf
 		return "", err
 	}
 
-	log.Printf("Access request for patient %s by requester %s recorded", patientID, requesterID)
+	log.Printf("Access request for patient %s by %s recorded", patientID, requesterID)
 
 	return `{"message": "Access request recorded"}`, nil
 }
 
-func (c *PatientContract) GrantAccess(ctx contractapi.TransactionContextInterface, patientID string, requesterID string) (string, error) {
+func (c *PatientContract) GrantAccess(ctx contractapi.TransactionContextInterface, patientID string, requesterID string, isOrg bool) (string, error) {
 	authAsBytes, err := ctx.GetStub().GetState("auth_" + patientID)
 	if err != nil {
 		return "", err
@@ -236,7 +229,10 @@ func (c *PatientContract) GrantAccess(ctx contractapi.TransactionContextInterfac
 	}
 
 	var auth Authorization
-	json.Unmarshal(authAsBytes, &auth)
+	err = json.Unmarshal(authAsBytes, &auth)
+	if err != nil {
+		return "", errors.New("failed to unmarshal authorization: " + err.Error())
+	}
 
 	clientID, exists, err := ctx.GetClientIdentity().GetAttributeValue("userId")
 	if err != nil {
@@ -250,7 +246,32 @@ func (c *PatientContract) GrantAccess(ctx contractapi.TransactionContextInterfac
 		return "", errors.New("only the patient can grant access")
 	}
 
-	auth.Authorized[requesterID] = true
+	if isOrg {
+		if _, ok := auth.AuthorizedOrgs[requesterID]; !ok {
+			return "", errors.New("no access request found for organization")
+		}
+		auth.AuthorizedOrgs[requesterID] = true
+
+		// Invoca il chaincode dell'organizzazione
+		invokeArgs := [][]byte{[]byte("GrantAccess"), []byte(patientID), []byte(requesterID)}
+		response := ctx.GetStub().InvokeChaincode("organization", invokeArgs, "")
+		if response.Status != 200 {
+			return "", errors.New("failed to invoke organization chaincode: " + response.Message)
+		}
+	} else {
+		if _, ok := auth.Authorized[requesterID]; !ok {
+			return "", errors.New("no access request found for requester")
+		}
+		auth.Authorized[requesterID] = true
+
+		// Invoca il chaincode del practitioner
+		invokeArgs := [][]byte{[]byte("GrantAccess"), []byte(patientID), []byte(requesterID)}
+		response := ctx.GetStub().InvokeChaincode("practitioner", invokeArgs, "")
+		if response.Status != 200 {
+			return "", errors.New("failed to invoke practitioner chaincode: " + response.Message)
+		}
+	}
+
 	updatedAuthBytes, err := json.Marshal(auth)
 	if err != nil {
 		return "", err
@@ -261,11 +282,11 @@ func (c *PatientContract) GrantAccess(ctx contractapi.TransactionContextInterfac
 		return "", err
 	}
 
-	log.Printf("Access granted for patient %s to requester %s", patientID, requesterID)
+	log.Printf("Access granted for patient %s to %s", patientID, requesterID)
 	return `{"message": "Access granted"}`, nil
 }
 
-func (c *PatientContract) RevokeAccess(ctx contractapi.TransactionContextInterface, patientID string, requesterID string) (string, error) {
+func (c *PatientContract) RevokeAccess(ctx contractapi.TransactionContextInterface, patientID string, requesterID string, isOrg bool) (string, error) {
 	authAsBytes, err := ctx.GetStub().GetState("auth_" + patientID)
 	if err != nil {
 		return "", err
@@ -275,7 +296,10 @@ func (c *PatientContract) RevokeAccess(ctx contractapi.TransactionContextInterfa
 	}
 
 	var auth Authorization
-	json.Unmarshal(authAsBytes, &auth)
+	err = json.Unmarshal(authAsBytes, &auth)
+	if err != nil {
+		return "", errors.New("failed to unmarshal authorization data: " + err.Error())
+	}
 
 	clientID, exists, err := ctx.GetClientIdentity().GetAttributeValue("userId")
 	if err != nil {
@@ -289,7 +313,32 @@ func (c *PatientContract) RevokeAccess(ctx contractapi.TransactionContextInterfa
 		return "", errors.New("only the patient can revoke access")
 	}
 
-	auth.Authorized[requesterID] = false
+	if isOrg {
+		if _, ok := auth.AuthorizedOrgs[requesterID]; !ok {
+			return "", errors.New("no authorization found for organization")
+		}
+		auth.AuthorizedOrgs[requesterID] = false
+
+		// Invoca il chaincode dell'organizzazione
+		invokeArgs := [][]byte{[]byte("RevokeAccess"), []byte(patientID), []byte(requesterID)}
+		response := ctx.GetStub().InvokeChaincode("organization", invokeArgs, "")
+		if response.Status != 200 {
+			return "", errors.New("failed to invoke organization chaincode: " + response.Message)
+		}
+	} else {
+		if _, ok := auth.Authorized[requesterID]; !ok {
+			return "", errors.New("no authorization found for user")
+		}
+		auth.Authorized[requesterID] = false
+
+		// Invoca il chaincode del practitioner
+		invokeArgs := [][]byte{[]byte("RevokeAccess"), []byte(patientID), []byte(requesterID)}
+		response := ctx.GetStub().InvokeChaincode("practitioner", invokeArgs, "")
+		if response.Status != 200 {
+			return "", errors.New("failed to invoke practitioner chaincode: " + response.Message)
+		}
+	}
+
 	updatedAuthBytes, err := json.Marshal(auth)
 	if err != nil {
 		return "", err
@@ -303,9 +352,8 @@ func (c *PatientContract) RevokeAccess(ctx contractapi.TransactionContextInterfa
 	log.Printf("Access revoked for patient %s from requester %s", patientID, requesterID)
 	return `{"message": "Access revoked"}`, nil
 }
-func (c *PatientContract) IsAuthorized(ctx contractapi.TransactionContextInterface, patientID string, clientID string) (bool, error) {
 
-	// Controlla se il richiedente è il paziente stesso o un ente autorizzato
+func (c *PatientContract) IsAuthorized(ctx contractapi.TransactionContextInterface, patientID string, clientID string) (bool, error) {
 	if clientID == patientID {
 		return true, nil
 	}
@@ -315,7 +363,7 @@ func (c *PatientContract) IsAuthorized(ctx contractapi.TransactionContextInterfa
 		return false, errors.New("failed to get authorization data: " + err.Error())
 	}
 	if authAsBytes == nil {
-		return false, nil // No Authorization found, no access
+		return false, nil
 	}
 
 	var auth Authorization
@@ -324,10 +372,22 @@ func (c *PatientContract) IsAuthorized(ctx contractapi.TransactionContextInterfa
 		return false, errors.New("failed to unmarshal authorization data: " + err.Error())
 	}
 
-	// Check if the clientID is in Authorized list and if the access is granted
 	if authorized, ok := auth.Authorized[clientID]; ok && authorized {
 		return true, nil
 	}
+
+	orgID, exists, err := ctx.GetClientIdentity().GetAttributeValue("org")
+	if err != nil {
+		return false, errors.New("failed to get organization ID attribute: " + err.Error())
+	}
+	if !exists {
+		return false, errors.New("organization ID attribute does not exist")
+	}
+
+	if authorizedOrg, ok := auth.AuthorizedOrgs[orgID]; ok && authorizedOrg {
+		return true, nil
+	}
+
 	return false, nil
 }
 

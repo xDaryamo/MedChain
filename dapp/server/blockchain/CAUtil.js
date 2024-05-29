@@ -124,7 +124,10 @@ async function registerAndEnrollUser(
           affiliation: userAffiliation,
           enrollmentID: userId,
           role: "client",
-          attrs: [{ name: "userId", value: userId, ecert: true }],
+          attrs: [
+            { name: "userId", value: userId, ecert: true },
+            { name: "org", value: organization, ecert: true },
+          ],
         },
         registrar
       );
