@@ -1,0 +1,9 @@
+{
+  "network-configs": {
+    "network-neurologianapoli": {
+      "name": "Network of NeurologiaNapoli",
+      "profile": "/opt/explorer/app/platform/fabric/connection-profile/connection-profile-neurologianapoli.json"
+    }
+  },
+  "license": "Apache-2.0"
+}

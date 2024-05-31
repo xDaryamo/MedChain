@@ -1,0 +1,9 @@
+{
+  "network-configs": {
+    "network-farmaciapetrone": {
+      "name": "Network of FarmaciaPetrone",
+      "profile": "/opt/explorer/app/platform/fabric/connection-profile/connection-profile-farmaciapetrone.json"
+    }
+  },
+  "license": "Apache-2.0"
+}
