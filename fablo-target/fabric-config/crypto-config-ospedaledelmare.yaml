@@ -1,0 +1,8 @@
+PeerOrgs:
+  - Name: OspedaleDelMare
+    Domain: ospedale-del-mare.aslnapoli1.medchain.com
+    Specs:
+    Template:
+      Count: 1
+    Users:
+      Count: 1

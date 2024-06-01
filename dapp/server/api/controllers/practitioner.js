@@ -145,3 +145,31 @@ exports.deletePractitioner = async (req, res, next) => {
     console.log("Disconnected from Fabric gateway.");
   }
 };
+
+exports.getFollowedPatients = async (req, res, next) => {
+  try {
+    const channel = "identity-channel";
+    const chaincode = "practitioner";
+    const organization = req.user.organization;
+    const practitionerId = req.user.userId;
+    console.log(practitionerId);
+    await fabric.init(practitionerId, organization, channel, chaincode);
+    console.log("Fabric network initialized successfully.");
+
+    const resultString = await fabric.evaluateTransaction(
+      "GetFollowedPatients",
+      practitionerId
+    );
+    const result = JSON.parse(resultString);
+
+    res.status(200).json({
+      message: "Followed patients retrieved successfully",
+      result: result,
+    });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  } finally {
+    fabric.disconnect();
+    console.log("Disconnected from Fabric gateway.");
+  }
+};

@@ -3,6 +3,7 @@ const bodyParser = require("body-parser");
 
 const app = express();
 const mongoose = require("mongoose");
+const axios = require("axios");
 
 const organizations = require("./config/organizations");
 
@@ -10,6 +11,7 @@ const authRoutes = require("./api/routes/auth");
 const patientRoutes = require("./api/routes/patient");
 const labResultsRoutes = require("./api/routes/lab-results");
 const practitionerRoutes = require("./api/routes/practitioner");
+const organizationRoutes = require("./api/routes/organization");
 
 const FabricNetwork = require("./blockchain/fabric");
 const fabric = new FabricNetwork();
@@ -36,8 +38,9 @@ app.use((req, res, next) => {
 app.use("/auth", authRoutes);
 
 app.use("/patient", patientRoutes);
-app.use("/practitioner", practitionerRoutes)
+app.use("/practitioner", practitionerRoutes);
 app.use("/labresults", labResultsRoutes);
+app.use("/organization", organizationRoutes);
 
 app.use((err, req, res, next) => {
   console.error(err);
@@ -58,9 +61,27 @@ const startServer = async () => {
     }
     console.log("Admins enrolled successfully.");
 
+    // Initialize the public identity
+    await fabric.enrollPublicUser("ospedale-maresca.aslnapoli3.medchain.com");
+    console.log("Public identity initialized successfully.");
+
+    // Connect to MongoDB
     await mongoose.connect(mongoUri);
-    app.listen(PORT, () => {
+
+    // Start the server
+    app.listen(PORT, async () => {
       console.log(`Server is running on port ${PORT}`);
+      try {
+        const response = await axios.get(
+          "http://localhost:3000/organization/initialize-ledger"
+        );
+        console.log(response.data);
+      } catch (error) {
+        console.error(
+          "Error initializing ledger:",
+          error.response ? error.response.data : error.message
+        );
+      }
     });
   } catch (err) {
     console.error("Failed to connect to MongoDB", err);

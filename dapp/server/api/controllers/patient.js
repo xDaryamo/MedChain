@@ -140,6 +140,7 @@ exports.deletePatient = async (req, res, next) => {
 exports.requestAccess = async (req, res, next) => {
   const patientID = req.params.id;
   const requesterID = req.user.userId;
+  const isOrg = req.body.isOrg;
   const organization = req.user.organization;
   try {
     const channel = "identity-channel";
@@ -151,7 +152,8 @@ exports.requestAccess = async (req, res, next) => {
     const resultString = await fabric.submitTransaction(
       "RequestAccess",
       patientID,
-      requesterID
+      requesterID,
+      isOrg.toString()
     );
 
     // Log the result string for debugging
@@ -186,6 +188,7 @@ exports.requestAccess = async (req, res, next) => {
 exports.grantAccess = async (req, res, next) => {
   const patientID = req.user.userId;
   const requesterID = req.params.requesterId;
+  const isOrg = req.body.isOrg;
   const organization = req.user.organization;
 
   try {
@@ -198,7 +201,8 @@ exports.grantAccess = async (req, res, next) => {
     const resultString = await fabric.submitTransaction(
       "GrantAccess",
       patientID,
-      requesterID
+      requesterID,
+      isOrg.toString()
     );
     const result = JSON.parse(resultString); // Assuming resultString is JSON string
 

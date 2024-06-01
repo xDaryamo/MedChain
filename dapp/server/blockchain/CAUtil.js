@@ -84,79 +84,84 @@ async function registerAndEnrollUser(
     }
 
     if (
-      !fs.existsSync(path.join(walletPath, userId + "_privateKey.enc")) &&
-      !fs.existsSync(path.join(walletPath, userId + "_certificate.pem"))
+      fs.existsSync(path.join(walletPath, "privateKey.enc")) &&
+      fs.existsSync(path.join(walletPath, "certificate.pem"))
     ) {
-      const adminId = `Admin@${organization.replace(".medchain.com", "")}`;
-
-      if (!fs.existsSync(path.join(walletPath, "..", adminId))) {
-        throw new Error(
-          `An identity for the admin user ${adminId} does not exist in the wallet`
-        );
-      }
-
-      const encryptedAdminPrivateKeyData = fs.readFileSync(
-        path.join(walletPath, "..", adminId, "privateKey.enc"),
-        "utf8"
-      );
-
-      const encryptedAdminPrivateKey = JSON.parse(encryptedAdminPrivateKeyData);
-      const decryptedAdminPrivateKey = decrypt(encryptedAdminPrivateKey);
-
-      const adminIdentity = {
-        credentials: {
-          certificate: fs.readFileSync(
-            path.join(walletPath, "..", adminId, "certificate.pem")
-          ),
-          privateKey: decryptedAdminPrivateKey,
-        },
-        mspId: orgMspId,
-        type: "X.509",
-      };
-
-      const provider = wallet
-        .getProviderRegistry()
-        .getProvider(adminIdentity.type);
-      const registrar = await provider.getUserContext(adminIdentity, adminId);
-
-      const secret = await caClient.register(
-        {
-          affiliation: userAffiliation,
-          enrollmentID: userId,
-          role: "client",
-          attrs: [
-            { name: "userId", value: userId, ecert: true },
-            { name: "org", value: organization, ecert: true },
-          ],
-        },
-        registrar
-      );
-
-      const enrollment = await caClient.enroll({
-        enrollmentID: userId,
-        enrollmentSecret: secret,
-      });
-
-      const encryptedPrivateKey = encrypt(enrollment.key.toBytes());
-
-      fs.writeFileSync(
-        path.join(walletPath, "privateKey.enc"),
-        JSON.stringify(encryptedPrivateKey)
-      );
-      fs.writeFileSync(
-        path.join(walletPath, "certificate.pem"),
-        enrollment.certificate
-      );
-
-      console.log(
-        `Successfully registered and enrolled user ${userId} and imported it into the wallet`
-      );
-    } else {
       console.log(
         `An identity for the user ${userId} already exists in the wallet`
       );
+      return;
     }
+
+    const adminId = `Admin@${organization.replace(".medchain.com", "")}`;
+
+    if (!fs.existsSync(path.join(walletPath, "..", adminId))) {
+      throw new Error(
+        `An identity for the admin user ${adminId} does not exist in the wallet`
+      );
+    }
+
+    const encryptedAdminPrivateKeyData = fs.readFileSync(
+      path.join(walletPath, "..", adminId, "privateKey.enc"),
+      "utf8"
+    );
+
+    const encryptedAdminPrivateKey = JSON.parse(encryptedAdminPrivateKeyData);
+    const decryptedAdminPrivateKey = decrypt(encryptedAdminPrivateKey);
+
+    const adminIdentity = {
+      credentials: {
+        certificate: fs.readFileSync(
+          path.join(walletPath, "..", adminId, "certificate.pem")
+        ),
+        privateKey: decryptedAdminPrivateKey,
+      },
+      mspId: orgMspId,
+      type: "X.509",
+    };
+
+    const provider = wallet
+      .getProviderRegistry()
+      .getProvider(adminIdentity.type);
+    const registrar = await provider.getUserContext(adminIdentity, adminId);
+
+    const secret = await caClient.register(
+      {
+        affiliation: userAffiliation,
+        enrollmentID: userId,
+        role: "client",
+        attrs: [
+          { name: "userId", value: userId, ecert: true },
+          { name: "org", value: organization, ecert: true },
+        ],
+      },
+      registrar
+    );
+
+    const enrollment = await caClient.enroll({
+      enrollmentID: userId,
+      enrollmentSecret: secret,
+    });
+
+    const encryptedPrivateKey = encrypt(enrollment.key.toBytes());
+
+    fs.writeFileSync(
+      path.join(walletPath, "privateKey.enc"),
+      JSON.stringify(encryptedPrivateKey)
+    );
+    fs.writeFileSync(
+      path.join(walletPath, "certificate.pem"),
+      enrollment.certificate
+    );
+
+    console.log(
+      `Successfully registered and enrolled user ${userId} and imported it into the wallet`
+    );
   } catch (error) {
+    if (error.message.includes("is already registered")) {
+      console.log(`User ${userId} is already registered.`);
+      return;
+    }
     throw new Error(`Failed to register or enroll user: ${error.message}`);
   }
 }

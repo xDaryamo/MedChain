@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 	"log"
 	"strings"
 
@@ -211,6 +212,37 @@ func (oc *OrganizationChaincode) SearchOrganizationByName(ctx contractapi.Transa
 	return "", err
 }
 
+// GetAllOrganizations retrieves all organizations from the ledger and returns them as JSON
+func (oc *OrganizationChaincode) GetAllOrganizations(ctx contractapi.TransactionContextInterface) (string, error) {
+	iterator, err := ctx.GetStub().GetStateByRange("", "")
+	if err != nil {
+		return "", err
+	}
+	defer iterator.Close()
+
+	var organizations []Organization
+	for iterator.HasNext() {
+		queryResponse, err := iterator.Next()
+		if err != nil {
+			return "", err
+		}
+
+		var organization Organization
+		err = json.Unmarshal(queryResponse.Value, &organization)
+		if err != nil {
+			return "", err
+		}
+		organizations = append(organizations, organization)
+	}
+
+	organizationsJSON, err := json.Marshal(organizations)
+	if err != nil {
+		return "", err
+	}
+
+	return string(organizationsJSON), nil
+}
+
 func (c *OrganizationChaincode) GrantAccess(ctx contractapi.TransactionContextInterface, patientID string, orgID string) (string, error) {
 	// Recupera la lista dei pazienti seguiti dall'organizzazione
 	followedPatientsAsBytes, err := ctx.GetStub().GetState("followedPatients_" + orgID)
@@ -299,6 +331,102 @@ func (c *OrganizationChaincode) RevokeAccess(ctx contractapi.TransactionContextI
 	return `{"message": "Access revoked"}`, nil
 }
 
+
+
+
+func (oc *OrganizationChaincode) InitLedger(ctx contractapi.TransactionContextInterface) (string, error) {
+    organizations := []Organization{
+        {
+            ID:          &Identifier{System: "http://example.org/ids", Value: "ospedale-maresca"},
+            Active:      true,
+            Type:        &CodeableConcept{Text: "Hospital"},
+            Name:        "Ospedale Maresca",
+            Description: "Ospedale Maresca",
+        },
+        {
+            ID:          &Identifier{System: "http://example.org/ids", Value: "ospedale-del-mare"},
+            Active:      true,
+            Type:        &CodeableConcept{Text: "Hospital"},
+            Name:        "Ospedale Del Mare",
+            Description: "Ospedale Del Mare",
+        },
+        {
+            ID:          &Identifier{System: "http://example.org/ids", Value: "ospedale-sgiuliano"},
+            Active:      true,
+            Type:        &CodeableConcept{Text: "Hospital"},
+            Name:        "Ospedale San Giuliano",
+            Description: "Ospedale San Giuliano",
+        },
+        {
+            ID:          &Identifier{System: "http://example.org/ids", Value: "medicina-generale-napoli"},
+            Active:      true,
+            Type:        &CodeableConcept{Text: "General Medicine"},
+            Name:        "Medicina Generale Napoli",
+            Description: "Medicina Generale Napoli",
+        },
+        {
+            ID:          &Identifier{System: "http://example.org/ids", Value: "neurologia-napoli"},
+            Active:      true,
+            Type:        &CodeableConcept{Text: "Neurology"},
+            Name:        "Neurologia Napoli",
+            Description: "Neurologia Napoli",
+        },
+        {
+            ID:          &Identifier{System: "http://example.org/ids", Value: "farmacia-petrone"},
+            Active:      true,
+            Type:        &CodeableConcept{Text: "Pharmacy"},
+            Name:        "Farmacia Petrone",
+            Description: "Farmacia Petrone",
+        },
+        {
+            ID:          &Identifier{System: "http://example.org/ids", Value: "farmacia-carbone"},
+            Active:      true,
+            Type:        &CodeableConcept{Text: "Pharmacy"},
+            Name:        "Farmacia Carbone",
+            Description: "Farmacia Carbone",
+        },
+        {
+            ID:          &Identifier{System: "http://example.org/ids", Value: "laboratorio-analisi-cmo"},
+            Active:      true,
+            Type:        &CodeableConcept{Text: "Laboratory"},
+            Name:        "Laboratorio Analisi CMO",
+            Description: "Laboratorio Analisi CMO",
+        },
+        {
+            ID:          &Identifier{System: "http://example.org/ids", Value: "laboratorio-analisi-sdn"},
+            Active:      true,
+            Type:        &CodeableConcept{Text: "Laboratory"},
+            Name:        "Laboratorio Analisi SDN",
+            Description: "Laboratorio Analisi SDN",
+        },
+        {
+            ID:          &Identifier{System: "http://example.org/ids", Value: "patients"},
+            Active:      true,
+            Type:        &CodeableConcept{Text: "Patients"},
+            Name:        "Patients",
+            Description: "Patients",
+        },
+    }
+
+    for _, organization := range organizations {
+        log.Printf("Organization: %s", organization.Name)
+        organizationJSON, err := json.Marshal(organization)
+        if err != nil {
+            return "", fmt.Errorf("failed to marshal organization: %s", err.Error())
+        }
+
+        err = ctx.GetStub().PutState(organization.ID.Value, organizationJSON)
+        if err != nil {
+            return "", fmt.Errorf("failed to put organization in world state: %s", err.Error())
+        }
+    }
+
+    return `{"message": "Ledger initialized successfully"}`, nil
+}
+
+
+
+
 func main() {
 	chaincode, err := contractapi.NewChaincode(new(OrganizationChaincode))
 	if err != nil {
@@ -309,3 +437,4 @@ func main() {
 		log.Panic(errors.New("error starting organization chaincode: " + err.Error()))
 	}
 }
+

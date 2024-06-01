@@ -17,7 +17,6 @@ class FabricNetwork {
   }
 
   async init(userId, organization, channelName, chaincodeName) {
-
     this.validateParameters(userId, organization, channelName, chaincodeName);
 
     const ccp = this.loadConnectionProfile(organization);
@@ -30,6 +29,29 @@ class FabricNetwork {
       chaincodeName,
       organization
     );
+  }
+
+  async enrollPublicUser(organization) {
+    const publicUserId = "publicUser";
+    const walletPath = path.join(
+      __dirname,
+      "wallet",
+      organization,
+      publicUserId
+    );
+    const ccp = this.loadConnectionProfile(organization);
+    const caClient = buildCAClient(FabricCAServices, ccp, `ca.${organization}`);
+    const wallet = await Wallets.newFileSystemWallet(walletPath);
+    await registerAndEnrollUser(
+      caClient,
+      wallet,
+      walletPath,
+      publicUserId,
+      "",
+      getMSPName(organization),
+      organization
+    );
+    return publicUserId;
   }
 
   validateParameters(userId, organization, channelName, chaincodeName) {
