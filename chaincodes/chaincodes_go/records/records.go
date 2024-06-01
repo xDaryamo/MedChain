@@ -3,8 +3,8 @@ package main
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 	"log"
-	"strings"
 
 	"github.com/hyperledger/fabric-contract-api-go/contractapi"
 )
@@ -16,17 +16,18 @@ type MedicalRecordsChaincode struct {
 
 // MedicalRecords represents the data structure for a medical record folder
 type MedicalRecords struct {
-	RecordID       string
-	PatienID       string
-	Allergies      []AllergyIntolerance
-	Conditions     []Condition
-	Procedures     []Procedure
-	Prescriptions  []MedicationRequest
-	ServiceRequest *Reference
+	RecordID       string               `json:"identifier,omitempty"`
+	PatientID      string               `json:"patient,omitempty"`
+	Allergies      []AllergyIntolerance `json:"allergies,omitempty"`
+	Conditions     []Condition          `json:"conditions,omitempty"`
+	Procedures     []Procedure          `json:"procedures,omitempty"`
+	Prescriptions  []MedicationRequest  `json:"prescriptions,omitempty"`
+	ServiceRequest *Reference           `json:"service,omitempty"`
+	Attachments    []Attachment         `json:"attachments,omitempty"`
 }
 
 // CreateMedicalRecords creates a new medical record folder for a patient
-func (mc *MedicalRecordsChaincode) CreateMedicalRecords(ctx contractapi.TransactionContextInterface, medicalRecordJSON string) error {
+func (mc *MedicalRecordsChaincode) CreateMedicalRecords(ctx contractapi.TransactionContextInterface, medicalRecordJSON string) (string, error) {
 
 	log.Printf("Medical record JSON from param: %s", string(medicalRecordJSON))
 
@@ -35,33 +36,33 @@ func (mc *MedicalRecordsChaincode) CreateMedicalRecords(ctx contractapi.Transact
 	err := json.Unmarshal([]byte(medicalRecordJSON), &medicalRecord)
 
 	if err != nil {
-		return errors.New("failed to unmarshal medical record: " + err.Error())
+		return "", errors.New("failed to unmarshal medical record: " + err.Error())
 	}
 
 	log.Printf("Medical record struct unmarshalled: %+v", medicalRecord)
 
 	if medicalRecord.RecordID == "" {
-		return errors.New("record ID is required")
+		return "", errors.New("record ID is required")
 	}
 
 	// Check if the medical record folder already exists
 	existingRecord, err := ctx.GetStub().GetState(medicalRecord.RecordID)
 	if err != nil {
-		return errors.New("failed to get medical record for patient " + medicalRecord.PatienID + " from wolrd state")
+		return "", errors.New("failed to get medical record for patient " + medicalRecord.PatientID + " from wolrd state")
 	}
 	if existingRecord != nil {
-		return errors.New("medical records already exist for patient " + medicalRecord.PatienID)
+		return "", errors.New("medical records already exist for patient " + medicalRecord.PatientID)
 	}
 
 	clientID, exists, err := ctx.GetClientIdentity().GetAttributeValue("userId")
 	if err != nil {
-		return errors.New("failed to get client ID attribute: " + err.Error())
+		return "", errors.New("failed to get client ID attribute: " + err.Error())
 	}
 	if !exists {
-		return errors.New("client ID attribute does not exist")
+		return "", errors.New("client ID attribute does not exist")
 	}
 
-	patientref := medicalRecord.PatienID
+	patientref := medicalRecord.PatientID
 	chaincodeName := "patient"
 	functionName := "IsAuthorized"
 
@@ -69,22 +70,28 @@ func (mc *MedicalRecordsChaincode) CreateMedicalRecords(ctx contractapi.Transact
 
 	response := ctx.GetStub().InvokeChaincode(chaincodeName, invokeArgs, ctx.GetStub().GetChannelID())
 	if response.Status != 200 {
-		return errors.New("failed to invoke chaincode: " + response.Message)
+		return "", errors.New("failed to invoke chaincode: " + response.Message)
 	}
 
 	log.Printf("Client ID: %s", clientID)
 	log.Printf("Patient ID: %s", patientref)
 
-	// Serialize the medical record folder and save it on the blockchain
 	medicalRecordJSONBytes, err := json.Marshal(medicalRecord)
 	if err != nil {
-		return errors.New("failed to marshal practitioner: " + err.Error())
+		return "", errors.New("failed to marshal practitioner: " + err.Error())
 	}
 
-	log.Printf("Medical record for patient with ID: %s created successfully", medicalRecord.PatienID)
+	log.Printf("Medical record for patient with ID: %s created successfully", medicalRecord.PatientID)
 	log.Printf("Serialized Medical record JSON: %s", string(medicalRecordJSON))
+	err = ctx.GetStub().PutState(medicalRecord.RecordID, medicalRecordJSONBytes)
 
-	return ctx.GetStub().PutState(medicalRecord.RecordID, medicalRecordJSONBytes)
+	if err != nil {
+		return "", errors.New("failed to put medical record in world state: " + err.Error())
+	}
+
+	log.Printf("Record with ID: %s created successfully", medicalRecord.RecordID)
+
+	return `{"message": "Record created successfully"}`, nil
 }
 
 // GetMedicalRecords retrieves a patient's medical record folder from the blockchain
@@ -117,7 +124,7 @@ func (mc *MedicalRecordsChaincode) ReadMedicalRecords(ctx contractapi.Transactio
 		return "", errors.New("client ID attribute does not exist")
 	}
 
-	patientref := record.PatienID
+	patientref := record.PatientID
 	chaincodeName := "patient"
 	functionName := "IsAuthorized"
 
@@ -135,30 +142,30 @@ func (mc *MedicalRecordsChaincode) ReadMedicalRecords(ctx contractapi.Transactio
 }
 
 // UpdateMedicalRecords updates an existing medical record folder for a patient
-func (mc *MedicalRecordsChaincode) UpdateMedicalRecords(ctx contractapi.TransactionContextInterface, recordID string, updatedMedicalRecordJSON string) error {
+func (mc *MedicalRecordsChaincode) UpdateMedicalRecords(ctx contractapi.TransactionContextInterface, recordID string, updatedMedicalRecordJSON string) (string, error) {
 	// Retrieve the existing Encounter record
 	existingRecord, err := ctx.GetStub().GetState(recordID)
 	if err != nil {
-		return errors.New("failed to get record: " + err.Error())
+		return "", errors.New("failed to get record: " + err.Error())
 	}
 	if existingRecord == nil {
-		return errors.New("record does not exist: " + recordID)
+		return "", errors.New("record does not exist: " + recordID)
 	}
 
 	// Deserialize the Encounter record
 	var record MedicalRecords
 	err = json.Unmarshal(existingRecord, &record)
 	if err != nil {
-		return errors.New("failed to unmarshal record: " + err.Error())
+		return "", errors.New("failed to unmarshal record: " + err.Error())
 	}
 
 	// Ottieni l'ID del client che effettua la richiesta
 	clientID, err := ctx.GetClientIdentity().GetID()
 	if err != nil {
-		return errors.New("failed to get client ID")
+		return "", errors.New("failed to get client ID")
 	}
 
-	patientref := record.PatienID
+	patientref := record.PatientID
 	chaincodeName := "patient"
 	functionName := "IsAuthorized"
 
@@ -166,7 +173,7 @@ func (mc *MedicalRecordsChaincode) UpdateMedicalRecords(ctx contractapi.Transact
 
 	response := ctx.GetStub().InvokeChaincode(chaincodeName, invokeArgs, ctx.GetStub().GetChannelID())
 	if response.Status != 200 {
-		return errors.New("failed to invoke chaincode: " + response.Message)
+		return "", errors.New("failed to invoke chaincode: " + response.Message)
 	}
 
 	log.Printf("Client ID: %s", clientID)
@@ -175,47 +182,47 @@ func (mc *MedicalRecordsChaincode) UpdateMedicalRecords(ctx contractapi.Transact
 	// Deserialize the updated JSON data into a Go data structure
 	var updatedRecord MedicalRecords
 	if err := json.Unmarshal([]byte(updatedMedicalRecordJSON), &updatedRecord); err != nil {
-		return errors.New("failed to unmarshal record: " + err.Error())
+		return "", errors.New("failed to unmarshal record: " + err.Error())
 	}
 
-	// Serialize the updated Encounter record and save it on the blockchain
+	// Serialize the updated record and save it on the blockchain
 	updatedRecordJSONBytes, err := json.Marshal(existingRecord)
 	if err != nil {
-		return errors.New("failed to marshal encounter: " + err.Error())
+		return "", errors.New("failed to marshal encounter: " + err.Error())
 	}
 
 	if err := ctx.GetStub().PutState(updatedRecord.RecordID, updatedRecordJSONBytes); err != nil {
-		return errors.New("failed to put state: " + err.Error())
+		return "", errors.New("failed to put state: " + err.Error())
 	}
 
-	return nil
+	return `{"message": "Record updated successfully"}`, nil
 }
 
 // DeleteMedicalRecords removes an existing medical record folder for a patient
-func (mc *MedicalRecordsChaincode) DeleteMedicalRecords(ctx contractapi.TransactionContextInterface, recordID string) error {
+func (mc *MedicalRecordsChaincode) DeleteMedicalRecords(ctx contractapi.TransactionContextInterface, recordID string) (string, error) {
 	// Check if the Encounter record exists
 	existingRecord, err := ctx.GetStub().GetState(recordID)
 	if err != nil {
-		return err
+		return "", errors.New("failed to get record: " + err.Error())
 	}
 	if existingRecord == nil {
-		return errors.New("medical record not found")
+		return "", errors.New("record not found: " + recordID)
 	}
 
 	// Deserialize the Encounter record
 	var record MedicalRecords
 	err = json.Unmarshal(existingRecord, &record)
 	if err != nil {
-		return errors.New("failed to unmarshal record: " + err.Error())
+		return "", errors.New("failed to unmarshal record: " + err.Error())
 	}
 
 	// Ottieni l'ID del client che effettua la richiesta
 	clientID, err := ctx.GetClientIdentity().GetID()
 	if err != nil {
-		return errors.New("failed to get client ID")
+		return "", errors.New("failed to get client ID")
 	}
 
-	patientref := record.PatienID
+	patientref := record.PatientID
 	chaincodeName := "patient"
 	functionName := "IsAuthorized"
 
@@ -223,66 +230,76 @@ func (mc *MedicalRecordsChaincode) DeleteMedicalRecords(ctx contractapi.Transact
 
 	response := ctx.GetStub().InvokeChaincode(chaincodeName, invokeArgs, ctx.GetStub().GetChannelID())
 	if response.Status != 200 {
-		return errors.New("failed to invoke chaincode: " + response.Message)
+		return "", errors.New("failed to invoke chaincode: " + response.Message)
 	}
 
 	log.Printf("Client ID: %s", clientID)
 	log.Printf("Patient ID: %s", patientref)
 
-	// Remove the Medical record from the blockchain
-	return ctx.GetStub().DelState(recordID)
+	err = ctx.GetStub().DelState(recordID)
+
+	if err != nil {
+		return "", errors.New("failed to delete record: " + err.Error())
+	}
+
+	return `{"message": "Record deleted successfully"}`, nil
 }
 
-func (mc *MedicalRecordsChaincode) SearchMedicalRecords(ctx contractapi.TransactionContextInterface, query string) ([]string, error) {
-	var results []string
+// SearchMedicalRecordsByPatientID allows searching for medical records based on the patient ID
+func (mc *MedicalRecordsChaincode) SearchMedicalRecordsByPatientID(ctx contractapi.TransactionContextInterface, patientID string) ([]string, error) {
+	queryString := fmt.Sprintf(`{"selector":{"patientID":"%s"}}`, patientID)
+	return mc.QueryMedicalRecords(ctx, queryString)
+}
 
+// queryMedicalRecords executes a CouchDB query and returns the results as a JSON string
+func (mc *MedicalRecordsChaincode) QueryMedicalRecords(ctx contractapi.TransactionContextInterface, queryString string) ([]string, error) {
+	var medicalRecords []string
+	resultsIterator, err := ctx.GetStub().GetQueryResult(queryString)
+	if err != nil {
+		return medicalRecords, err
+	}
+	defer resultsIterator.Close()
+
+	// Get the client ID
 	clientID, err := ctx.GetClientIdentity().GetID()
 	if err != nil {
-		return results, errors.New("failed to get client ID")
+		return medicalRecords, errors.New("failed to get client ID: " + err.Error())
 	}
 
-	chaincodeName := "patient"
-	functionName := "IsAuthorized"
-
-	invokeArgs := [][]byte{[]byte(functionName), []byte(query), []byte(clientID)}
-
-	response := ctx.GetStub().InvokeChaincode(chaincodeName, invokeArgs, ctx.GetStub().GetChannelID())
-	if response.Status != 200 {
-		return results, errors.New("failed to invoke chaincode: " + response.Message)
-	}
-
-	log.Printf("Client ID: %s", clientID)
-	log.Printf("Patient ID: %s", query)
-
-	iterator, err := ctx.GetStub().GetStateByRange("", "")
-	if err != nil {
-		return nil, err
-	}
-	defer iterator.Close()
-
-	for iterator.HasNext() {
-		result, err := iterator.Next()
+	for resultsIterator.HasNext() {
+		queryResponse, err := resultsIterator.Next()
 		if err != nil {
-			return nil, err
+			return medicalRecords, err
 		}
+
 		var medicalRecord MedicalRecords
-		err = json.Unmarshal(result.Value, &medicalRecord)
+		err = json.Unmarshal(queryResponse.Value, &medicalRecord)
 		if err != nil {
-			return nil, err
+			return medicalRecords, err
 		}
 
-		if strings.Compare(medicalRecord.PatienID, query) == 0 {
-			recordJSON, err := json.Marshal(medicalRecord)
-			if err != nil {
-				return nil, err
-			}
-			results = append(results, string(recordJSON))
-			break
+		// Perform the authorization check by invoking the patient chaincode
+		chaincodeName := "patient"
+		functionName := "IsAuthorized"
+		invokeArgs := [][]byte{[]byte(functionName), []byte(medicalRecord.PatientID), []byte(clientID)}
+
+		response := ctx.GetStub().InvokeChaincode(chaincodeName, invokeArgs, ctx.GetStub().GetChannelID())
+		if response.Status != 200 {
+			return medicalRecords, errors.New("failed to invoke chaincode: " + response.Message)
 		}
 
+		log.Printf("Client ID: %s", clientID)
+		log.Printf("Patient ID: %s", medicalRecord.PatientID)
+
+		medicalRecordJSON, err := json.Marshal(medicalRecord)
+		if err != nil {
+			return medicalRecords, err
+		}
+
+		medicalRecords = append(medicalRecords, string(medicalRecordJSON))
 	}
 
-	return results, nil
+	return medicalRecords, nil
 }
 
 func main() {

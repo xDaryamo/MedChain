@@ -270,6 +270,27 @@
       "lang": "golang",
       "channel": "identity-channel",
       "directory": "./chaincodes/chaincodes_go/organization"
+    },
+    {
+      "name": "labresults",
+      "version": "0.1",
+      "lang": "golang",
+      "channel": "lab-results-channel",
+      "directory": "./chaincodes/chaincodes_go/labresults"
+    },
+    {
+      "name": "practitioner",
+      "version": "0.1",
+      "lang": "golang",
+      "channel": "identity-channel",
+      "directory": "./chaincodes/chaincodes_go/practitioner"
+    },
+    {
+      "name": "records",
+      "version": "0.1",
+      "lang": "golang",
+      "channel": "patient-records-channel",
+      "directory": "./chaincodes/chaincodes_go/records"
     }
   ]
 }
