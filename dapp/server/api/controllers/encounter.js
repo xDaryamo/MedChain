@@ -2,15 +2,31 @@ const FabricNetwork = require('../../blockchain/fabric');
 const { v4: uuidv4 } = require('uuid');
 const fabric = new FabricNetwork();
 
+
 exports.createEncounter = async (req, res, next) => {
     const encounterJSON = req.body;
-    const userID = req.params.userid
+    const userID = req.user.userId;
+    const organization =  req.user.organization;
     try {
 
         const encounterID = uuidv4();
         encounterJSON.id.value = encounterID;
 
-        const organization = "patients.medchain.com";
+        const identity_channel = "identity-channel"
+        const auth_chaincode = "patient"
+
+        await fabric.init(userID, organization, identity_channel, auth_chaincode);
+        console.log("Verifying user...");
+        auth_bool = await fabric.submitTransaction('IsAuthorized',  encounterJSON.subject.reference, userID);
+        
+        if(auth_bool=false) {
+            console.log("User not approved", userID);
+            res.status(500).json({ error: "User not approved" });
+        }
+
+        console.log("User approved with success", userID);
+        fabric.disconnect()
+        
         const channel = "patient-records-channel";
         const chaincode = "encounter";
         
@@ -31,12 +47,14 @@ exports.createEncounter = async (req, res, next) => {
         console.log("Submitting transaction with encounter JSON:", encounterJSONString);
 
 
-        const result = await fabric.submitTransaction('CreateEncounter',  JSON.stringify(encounterJSON));
+        const result = await fabric.submitTransaction('CreateEncounter',  encounterJSONString);
         res
         .status(201)
         .json({ message: "Encounter created successfully", result: result });
+        
     } catch (error) {
-        res.status(500).json({ error: error.message });
+        console.error("Failed to create encounter:", error);
+        res.status(500).json({ error: "Failed to create encounter" });
     } finally {
         // Disconnetti dalla rete Fabric
         fabric.disconnect();
@@ -46,9 +64,9 @@ exports.createEncounter = async (req, res, next) => {
 
 exports.getEncounter = async (req, res, next) => {
     const encounterID = req.params.encounterid;
-    const userID = req.params.userid
+    const userID = req.user.userId;
+    const organization =  req.user.organization;
     try {
-        const organization = "patients.medchain.com";
         const channel = "patient-records-channel";
         const chaincode = "encounter";
 
@@ -56,7 +74,22 @@ exports.getEncounter = async (req, res, next) => {
         console.log("Fabric network initialized successfully.");
 
         const encounter = await fabric.evaluateTransaction('ReadEncounter', encounterID);
-        res.status(200).json({ encounter: JSON.parse(encounter) });
+
+        const identity_channel = "identity-channel"
+        const auth_chaincode = "patient"
+
+        encounter = JSON.parse(encounter)
+
+        await fabric.init(userID, organization, identity_channel, auth_chaincode);
+        console.log("Verifying user...");
+        auth_bool = await fabric.submitTransaction('IsAuthorized',  encounter.subject.reference);
+        
+        if(auth_bool=false) {
+            console.log("User not approved", userID);
+            res.status(500).json({ error: "User not approved"});
+        } 
+
+        res.status(200).json({ encounter: encounter});
     } catch (error) {
         res.status(500).json({ error: error.message });
     } finally {
@@ -69,10 +102,24 @@ exports.getEncounter = async (req, res, next) => {
 exports.updateEncounter = async (req, res, next) => {
     const encounterID = req.params.encounterid;
     const updatedEncounter = req.body;
-    const userID = req.params.userid
-
+    const userID = req.user.userId;
+    const organization =  req.user.organization;
     try {
-        const organization = "patients.medchain.com";
+
+        const identity_channel = "identity-channel"
+        const auth_chaincode = "patient"
+
+        updatedEncounter = JSON.parse(updatedEncounter)
+
+        await fabric.init(userID, organization, identity_channel, auth_chaincode);
+        console.log("Verifying user...");
+        auth_bool = await fabric.submitTransaction('IsAuthorized',  updatedEncounter.subject.reference);
+        
+        if(auth_bool=false) {
+            console.log("User not approved", userID);
+            res.status(500).json({ error: "User not approved" });
+        }
+
         const channel = "patient-records-channel";
         const chaincode = "encounter";
 
@@ -91,10 +138,11 @@ exports.updateEncounter = async (req, res, next) => {
 
 exports.deleteEncounter = async (req, res, next) => {
     const encounterID = req.params.encounterid;
-    const userID = req.params.userid
+    const userID = req.user.userId;
+    const organization =  req.user.organization;
 
     try {
-        const organization = "patients.medchain.com";
+
         const channel = "patient-records-channel";
         const chaincode = "encounter";
 
@@ -113,10 +161,10 @@ exports.deleteEncounter = async (req, res, next) => {
 
 exports.queryEncounter = async (req, res, next) => {
     const query = req.params.query;
-    const userID = req.params.userid;
+    const userID = req.user.userId;
+    const organization =  req.user.organization;
 
     try {
-        const organization = "patients.medchain.com";
         const channel = "patient-records-channel";
         const chaincode = "encounter";
 
