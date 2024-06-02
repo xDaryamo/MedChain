@@ -1,0 +1,11 @@
+{
+    "index": {
+      "fields": [
+        "authoredOn"
+      ]
+    },
+    "ddoc": "indexAuthoredOnDoc",
+    "name": "indexAuthoredOn",
+    "type": "json"
+  }
+  

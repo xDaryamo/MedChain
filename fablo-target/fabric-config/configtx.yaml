@@ -51,6 +51,29 @@ Organizations:
 
       AnchorPeers:
 
+    - &example
+      Name: exampleMSP
+      ID: exampleMSP
+      MSPDir: crypto-config/peerOrganizations/example.medchain.com/msp
+
+      Policies:
+          Readers:
+              Type: Signature
+              Rule: "OR('exampleMSP.member')"
+          Writers:
+              Type: Signature
+              Rule: "OR('exampleMSP.member')"
+          Admins:
+              Type: Signature
+              Rule: "OR('exampleMSP.admin')"
+          Endorsement:
+              Type: Signature
+              Rule: "OR('exampleMSP.member')"
+
+      AnchorPeers:
+          - Host: peer0.example.medchain.com
+            Port: 7041
+
     - &OspedaleMaresca
       Name: OspedaleMarescaMSP
       ID: OspedaleMarescaMSP
@@ -72,7 +95,7 @@ Organizations:
 
       AnchorPeers:
           - Host: peer0.ospedale-maresca.aslnapoli3.medchain.com
-            Port: 7041
+            Port: 7061
 
     - &OspedaleDelMare
       Name: OspedaleDelMareMSP
@@ -95,7 +118,7 @@ Organizations:
 
       AnchorPeers:
           - Host: peer0.ospedale-del-mare.aslnapoli1.medchain.com
-            Port: 7061
+            Port: 7081
 
     - &OspedaleSGiuliano
       Name: OspedaleSGiulianoMSP
@@ -118,7 +141,7 @@ Organizations:
 
       AnchorPeers:
           - Host: peer0.ospedale-sgiuliano.aslnapoli2.medchain.com
-            Port: 7081
+            Port: 7101
 
     - &MedicinaGeneraleNapoli
       Name: MedicinaGeneraleNapoliMSP
@@ -141,7 +164,7 @@ Organizations:
 
       AnchorPeers:
           - Host: peer0.medicina-generale-napoli.medchain.com
-            Port: 7101
+            Port: 7121
 
     - &NeurologiaNapoli
       Name: NeurologiaNapoliMSP
@@ -164,7 +187,7 @@ Organizations:
 
       AnchorPeers:
           - Host: peer0.neurologia-napoli.medchain.com
-            Port: 7121
+            Port: 7141
 
     - &FarmaciaPetrone
       Name: FarmaciaPetroneMSP
@@ -187,7 +210,7 @@ Organizations:
 
       AnchorPeers:
           - Host: peer0.farmacia-petrone.medchain.com
-            Port: 7141
+            Port: 7161
 
     - &FarmaciaCarbone
       Name: FarmaciaCarboneMSP
@@ -210,7 +233,7 @@ Organizations:
 
       AnchorPeers:
           - Host: peer0.farmacia-carbone.medchain.com
-            Port: 7161
+            Port: 7181
 
     - &LaboratorioAnalisiCmo
       Name: LaboratorioAnalisiCmoMSP
@@ -233,7 +256,7 @@ Organizations:
 
       AnchorPeers:
           - Host: peer0.laboratorio-analisi-cmo.medchain.com
-            Port: 7181
+            Port: 7201
 
     - &LaboratorioAnalisiSdn
       Name: LaboratorioAnalisiSdnMSP
@@ -256,7 +279,7 @@ Organizations:
 
       AnchorPeers:
           - Host: peer0.laboratorio-analisi-sdn.medchain.com
-            Port: 7201
+            Port: 7221
 
     - &Patients
       Name: PatientsMSP
@@ -279,7 +302,7 @@ Organizations:
 
       AnchorPeers:
           - Host: peer0.patients.medchain.com
-            Port: 7221
+            Port: 7241
 
 ################################################################################
 #   SECTION: Application
@@ -358,6 +381,7 @@ Profiles:
             SampleConsortium:
                 Organizations:
                     - *Orderer
+                    - *example
                     - *OspedaleMaresca
                     - *OspedaleDelMare
                     - *OspedaleSGiuliano
@@ -382,6 +406,7 @@ Profiles:
         Consortiums:
             SampleConsortium:
                 Organizations:
+                    - *example
                     - *OspedaleMaresca
                     - *OspedaleDelMare
                     - *OspedaleSGiuliano
@@ -391,6 +416,7 @@ Profiles:
         Application:
             <<: *ApplicationDefaults
             Organizations:
+                - *example
                 - *OspedaleMaresca
                 - *OspedaleDelMare
                 - *OspedaleSGiuliano
@@ -411,6 +437,7 @@ Profiles:
         Consortiums:
             SampleConsortium:
                 Organizations:
+                    - *example
                     - *MedicinaGeneraleNapoli
                     - *NeurologiaNapoli
                     - *FarmaciaPetrone
@@ -418,6 +445,7 @@ Profiles:
         Application:
             <<: *ApplicationDefaults
             Organizations:
+                - *example
                 - *MedicinaGeneraleNapoli
                 - *NeurologiaNapoli
                 - *FarmaciaPetrone
@@ -436,6 +464,7 @@ Profiles:
         Consortiums:
             SampleConsortium:
                 Organizations:
+                    - *example
                     - *OspedaleMaresca
                     - *MedicinaGeneraleNapoli
                     - *NeurologiaNapoli
@@ -444,6 +473,7 @@ Profiles:
         Application:
             <<: *ApplicationDefaults
             Organizations:
+                - *example
                 - *OspedaleMaresca
                 - *MedicinaGeneraleNapoli
                 - *NeurologiaNapoli
@@ -463,12 +493,14 @@ Profiles:
         Consortiums:
             SampleConsortium:
                 Organizations:
+                    - *example
                     - *OspedaleMaresca
                     - *OspedaleDelMare
                     - *OspedaleSGiuliano
         Application:
             <<: *ApplicationDefaults
             Organizations:
+                - *example
                 - *OspedaleMaresca
                 - *OspedaleDelMare
                 - *OspedaleSGiuliano
@@ -486,6 +518,7 @@ Profiles:
         Consortiums:
             SampleConsortium:
                 Organizations:
+                    - *example
                     - *OspedaleMaresca
                     - *OspedaleDelMare
                     - *OspedaleSGiuliano
@@ -499,6 +532,7 @@ Profiles:
         Application:
             <<: *ApplicationDefaults
             Organizations:
+                - *example
                 - *OspedaleMaresca
                 - *OspedaleDelMare
                 - *OspedaleSGiuliano

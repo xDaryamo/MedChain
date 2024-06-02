@@ -1,0 +1,11 @@
+{
+    "index": {
+      "fields": [
+        "patient.reference"
+      ]
+    },
+    "ddoc": "indexPatientDoc",
+    "name": "indexPatient",
+    "type": "json"
+  }
+  

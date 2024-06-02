@@ -35,7 +35,7 @@
   },
   "peers": {
     "peer0.laboratorio-analisi-sdn.medchain.com": {
-      "url": "grpc://peer0.laboratorio-analisi-sdn.medchain.com:7201",
+      "url": "grpc://peer0.laboratorio-analisi-sdn.medchain.com:7221",
       "tlsCACerts": {
         "path": "/tmp/crypto/peerOrganizations/laboratorio-analisi-sdn.medchain.com/msp/tlscacerts/tlsca.laboratorio-analisi-sdn.medchain.com-cert.pem"
       }

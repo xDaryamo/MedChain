@@ -35,7 +35,7 @@
   },
   "peers": {
     "peer0.ospedale-maresca.aslnapoli3.medchain.com": {
-      "url": "grpc://peer0.ospedale-maresca.aslnapoli3.medchain.com:7041",
+      "url": "grpc://peer0.ospedale-maresca.aslnapoli3.medchain.com:7061",
       "tlsCACerts": {
         "path": "/tmp/crypto/peerOrganizations/ospedale-maresca.aslnapoli3.medchain.com/msp/tlscacerts/tlsca.ospedale-maresca.aslnapoli3.medchain.com-cert.pem"
       }

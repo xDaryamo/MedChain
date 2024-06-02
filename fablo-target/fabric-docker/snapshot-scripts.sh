@@ -3,6 +3,7 @@
 __getOrdererAndPeerNodes() {
   echo "
       orderer0.medchain-orderergroup.orderer.medchain.com
+      peer0.example.medchain.com
       peer0.ospedale-maresca.aslnapoli3.medchain.com
       peer0.ospedale-del-mare.aslnapoli1.medchain.com
       peer0.ospedale-sgiuliano.aslnapoli2.medchain.com
@@ -19,6 +20,7 @@ __getOrdererAndPeerNodes() {
 __getCASQLiteNodes() {
   echo "
       ca.orderer.medchain.com
+      ca.example.medchain.com
       ca.ospedale-maresca.aslnapoli3.medchain.com
       ca.ospedale-del-mare.aslnapoli1.medchain.com
       ca.ospedale-sgiuliano.aslnapoli2.medchain.com

@@ -29,7 +29,7 @@ exports.getLabResultsByPatient = async (req, res, next) => {
 
 exports.getLabResult = async (req, res, next) => {
   const { resultId } = req.params;
-  const practitionerId = req.user.userId; 
+  const practitionerId = req.user.userId;
   const organization = req.user.organization;
 
   try {
@@ -65,7 +65,7 @@ exports.createLabResult = async (req, res, next) => {
     const chaincode = "labresults";
     const uniqueId = uuidv4();
 
-    labResultData.id = uniqueId;
+    labResultData.identifier.vlaue = uniqueId;
 
     await fabric.init(practitionerId, organization, channel, chaincode);
     console.log("Fabric network initialized successfully.");
@@ -91,7 +91,10 @@ exports.createLabResult = async (req, res, next) => {
 
     res
       .status(201)
-      .json({ message: "Lab result created successfully", result: resultString });
+      .json({
+        message: "Lab result created successfully",
+        result: resultString,
+      });
   } catch (error) {
     res.status(500).json({ error: error.message });
   } finally {
@@ -99,7 +102,6 @@ exports.createLabResult = async (req, res, next) => {
     console.log("Disconnected from Fabric gateway.");
   }
 };
-
 
 exports.updateLabResult = async (req, res, next) => {
   const labResultID = req.params.resultId;

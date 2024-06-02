@@ -21,6 +21,7 @@ class FabricNetwork {
 
     const ccp = this.loadConnectionProfile(organization);
     const wallet = await this.configureWallet(userId, organization, ccp);
+
     await this.connectToGateway(
       ccp,
       wallet,

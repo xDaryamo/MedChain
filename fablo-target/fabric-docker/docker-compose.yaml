@@ -49,6 +49,8 @@ services:
       - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/labresults/:/var/hyperledger/cli/labresults/"
       - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/practitioner/:/var/hyperledger/cli/practitioner/"
       - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/records/:/var/hyperledger/cli/records/"
+      - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/organization/:/var/hyperledger/cli/organization/"
+      - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/prescription/:/var/hyperledger/cli/prescription/"
     networks:
       - basic
 
@@ -76,6 +78,116 @@ services:
     networks:
       - basic
 
+  ca.example.medchain.com:
+    container_name: ca.example.medchain.com
+    image: hyperledger/fabric-ca:${FABRIC_CA_VERSION}
+    environment:
+      - FABRIC_CA_HOME=/etc/hyperledger/fabric-ca-server
+      - FABRIC_CA_SERVER_CA_NAME=ca.example.medchain.com
+      - FABRIC_CA_SERVER_CA_CERTFILE=/etc/hyperledger/fabric-ca-server/crypto/ca.example.medchain.com-cert.pem
+      - FABRIC_CA_SERVER_CA_KEYFILE=/etc/hyperledger/fabric-ca-server/crypto/priv-key.pem
+      - FABRIC_LOGGING_SPEC=${LOGGING_LEVEL}
+    ports:
+      - 7040:7054
+    working_dir: /etc/hyperledger/fabric-ca-server
+    command: sh -c 'fabric-ca-server start -b ${EXAMPLE_CA_ADMIN_NAME}:${EXAMPLE_CA_ADMIN_PASSWORD} -d'
+    volumes:
+      - ../fabric-config/crypto-config/peerOrganizations/example.medchain.com/ca/:/etc/hyperledger/fabric-ca-server/crypto
+      - ../fabric-config/fabric-ca-server-config/example.medchain.com/fabric-ca-server-config.yaml:/etc/hyperledger/fabric-ca-server/fabric-ca-server-config.yaml
+    networks:
+      - basic
+
+  cli.example.medchain.com:
+    container_name: cli.example.medchain.com
+    image: hyperledger/fabric-tools:${FABRIC_VERSION}
+    tty: true
+    environment:
+      - GOPATH=/opt/gopath
+      - CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
+      - FABRIC_LOGGING_SPEC=${LOGGING_LEVEL}
+      - CORE_PEER_ID=cli.example.medchain.com
+      - CORE_CHAINCODE_KEEPALIVE=10
+      #
+      - CORE_PEER_LOCALMSPID=exampleMSP
+      - CORE_PEER_MSPCONFIGPATH=/var/hyperledger/cli/crypto/users/Admin@example.medchain.com/msp
+      - CORE_PEER_ADDRESS=peer0.example.medchain.com:7041
+    working_dir: /var/hyperledger/cli/
+    command: /bin/bash
+    volumes:
+      - /var/run/docker.sock:/host/var/run/docker.sock
+      - ../fabric-docker/scripts/cli:/var/hyperledger/cli/scripts/
+      - ../fabric-config/config:/var/hyperledger/cli/config/ # genesis.block and channel.tx's
+      - ../fabric-config/crypto-config/peerOrganizations/example.medchain.com:/var/hyperledger/cli/crypto/
+      - ../fabric-config/chaincode-packages:/var/hyperledger/cli/chaincode-packages/
+      - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/patient/:/var/hyperledger/cli/patient/"
+      - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/labresults/:/var/hyperledger/cli/labresults/"
+      - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/practitioner/:/var/hyperledger/cli/practitioner/"
+      - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/records/:/var/hyperledger/cli/records/"
+      - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/organization/:/var/hyperledger/cli/organization/"
+      - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/prescription/:/var/hyperledger/cli/prescription/"
+    networks:
+      - basic
+
+  peer0.example.medchain.com:
+    container_name: peer0.example.medchain.com
+    image: hyperledger/fabric-peer:${FABRIC_VERSION}
+    environment:
+      - CORE_PEER_LOCALMSPID=exampleMSP
+      - CORE_PEER_ID=peer0.example.medchain.com
+      - CORE_PEER_ADDRESS=peer0.example.medchain.com:7041
+      - CORE_PEER_LISTENADDRESS=peer0.example.medchain.com:7041
+      - CORE_PEER_GOSSIP_ENDPOINT=peer0.example.medchain.com:7041
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.example.medchain.com:7041
+      - CORE_PEER_GOSSIP_BOOTSTRAP=peer0.example.medchain.com:7041
+      - CORE_PEER_CHAINCODELISTENADDRESS=peer0.example.medchain.com:7050
+      - CORE_PEER_MSPCONFIGPATH=/etc/hyperledger/fabric/peer/msp
+      - CORE_CHAINCODE_BUILDER=hyperledger/fabric-ccenv:${FABRIC_CCENV_VERSION}
+      - CORE_CHAINCODE_GOLANG_RUNTIME=hyperledger/fabric-baseos:${FABRIC_BASEOS_VERSION}
+      - CORE_CHAINCODE_JAVA_RUNTIME=hyperledger/fabric-javaenv:${FABRIC_JAVAENV_VERSION}
+      #
+      - CORE_CHAINCODE_LOGGING_LEVEL=${LOGGING_LEVEL}
+      - CORE_CHAINCODE_LOGGING_SHIM=${LOGGING_LEVEL}
+      - FABRIC_LOGGING_SPEC=${LOGGING_LEVEL}
+      # metrics
+      - CORE_OPERATIONS_LISTENADDRESS=peer0.example.medchain.com:9440
+      - CORE_METRICS_PROVIDER=prometheus
+      #
+      - CORE_VM_DOCKER_HOSTCONFIG_NETWORKMODE=${COMPOSE_PROJECT_NAME}_basic
+      - CORE_VM_DOCKER_ATTACHSTDOUT=true
+      - CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
+      - GODEBUG=netdns=go
+      # CouchDB
+      - CORE_LEDGER_STATE_STATEDATABASE=CouchDB
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS=couchdb.peer0.example.medchain.com:5984
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_USERNAME=peer0
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_PASSWORD=peer0Password
+      # enabled gateway
+      - CORE_PEER_GATEWAY_ENABLED=true
+    working_dir: /etc/hyperledger/fabric/peer/
+    command: peer node start
+    ports:
+      - 8041:9440
+      - 7041:7041
+    volumes:
+      - /var/run/docker.sock:/host/var/run/docker.sock
+      - ../fabric-config/crypto-config/peerOrganizations/example.medchain.com/peers/peer0.example.medchain.com/msp:/etc/hyperledger/fabric/peer/msp
+      - ../fabric-config/crypto-config/peerOrganizations/example.medchain.com/peers/peer0.example.medchain.com/tls:/etc/hyperledger/fabric/peer/tls
+      - ../fabric-config/crypto-config/peerOrganizations/example.medchain.com/users:/etc/hyperledger/fabric/peer/msp/users
+      - ../fabric-config/config:/etc/hyperledger/fabric/config
+    networks:
+      - basic
+
+  couchdb.peer0.example.medchain.com:
+    container_name: couchdb.peer0.example.medchain.com
+    image: couchdb:${COUCHDB_VERSION}
+    environment:
+      - COUCHDB_USER=peer0
+      - COUCHDB_PASSWORD=peer0Password
+    ports:
+      - 5100:5984
+    networks:
+      - basic
+
   ca.ospedale-maresca.aslnapoli3.medchain.com:
     container_name: ca.ospedale-maresca.aslnapoli3.medchain.com
     image: hyperledger/fabric-ca:${FABRIC_CA_VERSION}
@@ -86,7 +198,7 @@ services:
       - FABRIC_CA_SERVER_CA_KEYFILE=/etc/hyperledger/fabric-ca-server/crypto/priv-key.pem
       - FABRIC_LOGGING_SPEC=${LOGGING_LEVEL}
     ports:
-      - 7040:7054
+      - 7060:7054
     working_dir: /etc/hyperledger/fabric-ca-server
     command: sh -c 'fabric-ca-server start -b ${OSPEDALEMARESCA_CA_ADMIN_NAME}:${OSPEDALEMARESCA_CA_ADMIN_PASSWORD} -d'
     volumes:
@@ -108,7 +220,7 @@ services:
       #
       - CORE_PEER_LOCALMSPID=OspedaleMarescaMSP
       - CORE_PEER_MSPCONFIGPATH=/var/hyperledger/cli/crypto/users/Admin@ospedale-maresca.aslnapoli3.medchain.com/msp
-      - CORE_PEER_ADDRESS=peer0.ospedale-maresca.aslnapoli3.medchain.com:7041
+      - CORE_PEER_ADDRESS=peer0.ospedale-maresca.aslnapoli3.medchain.com:7061
     working_dir: /var/hyperledger/cli/
     command: /bin/bash
     volumes:
@@ -121,6 +233,8 @@ services:
       - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/labresults/:/var/hyperledger/cli/labresults/"
       - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/practitioner/:/var/hyperledger/cli/practitioner/"
       - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/records/:/var/hyperledger/cli/records/"
+      - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/organization/:/var/hyperledger/cli/organization/"
+      - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/prescription/:/var/hyperledger/cli/prescription/"
     networks:
       - basic
 
@@ -130,11 +244,11 @@ services:
     environment:
       - CORE_PEER_LOCALMSPID=OspedaleMarescaMSP
       - CORE_PEER_ID=peer0.ospedale-maresca.aslnapoli3.medchain.com
-      - CORE_PEER_ADDRESS=peer0.ospedale-maresca.aslnapoli3.medchain.com:7041
-      - CORE_PEER_LISTENADDRESS=peer0.ospedale-maresca.aslnapoli3.medchain.com:7041
-      - CORE_PEER_GOSSIP_ENDPOINT=peer0.ospedale-maresca.aslnapoli3.medchain.com:7041
-      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.ospedale-maresca.aslnapoli3.medchain.com:7041
-      - CORE_PEER_GOSSIP_BOOTSTRAP=peer0.ospedale-maresca.aslnapoli3.medchain.com:7041
+      - CORE_PEER_ADDRESS=peer0.ospedale-maresca.aslnapoli3.medchain.com:7061
+      - CORE_PEER_LISTENADDRESS=peer0.ospedale-maresca.aslnapoli3.medchain.com:7061
+      - CORE_PEER_GOSSIP_ENDPOINT=peer0.ospedale-maresca.aslnapoli3.medchain.com:7061
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.ospedale-maresca.aslnapoli3.medchain.com:7061
+      - CORE_PEER_GOSSIP_BOOTSTRAP=peer0.ospedale-maresca.aslnapoli3.medchain.com:7061
       - CORE_PEER_CHAINCODELISTENADDRESS=peer0.ospedale-maresca.aslnapoli3.medchain.com:7050
       - CORE_PEER_MSPCONFIGPATH=/etc/hyperledger/fabric/peer/msp
       - CORE_CHAINCODE_BUILDER=hyperledger/fabric-ccenv:${FABRIC_CCENV_VERSION}
@@ -162,8 +276,8 @@ services:
     working_dir: /etc/hyperledger/fabric/peer/
     command: peer node start
     ports:
-      - 8041:9440
-      - 7041:7041
+      - 8061:9440
+      - 7061:7061
     volumes:
       - /var/run/docker.sock:/host/var/run/docker.sock
       - ../fabric-config/crypto-config/peerOrganizations/ospedale-maresca.aslnapoli3.medchain.com/peers/peer0.ospedale-maresca.aslnapoli3.medchain.com/msp:/etc/hyperledger/fabric/peer/msp
@@ -180,7 +294,7 @@ services:
       - COUCHDB_USER=peer0
       - COUCHDB_PASSWORD=peer0Password
     ports:
-      - 5100:5984
+      - 5120:5984
     networks:
       - basic
 
@@ -194,7 +308,7 @@ services:
       - FABRIC_CA_SERVER_CA_KEYFILE=/etc/hyperledger/fabric-ca-server/crypto/priv-key.pem
       - FABRIC_LOGGING_SPEC=${LOGGING_LEVEL}
     ports:
-      - 7060:7054
+      - 7080:7054
     working_dir: /etc/hyperledger/fabric-ca-server
     command: sh -c 'fabric-ca-server start -b ${OSPEDALEDELMARE_CA_ADMIN_NAME}:${OSPEDALEDELMARE_CA_ADMIN_PASSWORD} -d'
     volumes:
@@ -216,7 +330,7 @@ services:
       #
       - CORE_PEER_LOCALMSPID=OspedaleDelMareMSP
       - CORE_PEER_MSPCONFIGPATH=/var/hyperledger/cli/crypto/users/Admin@ospedale-del-mare.aslnapoli1.medchain.com/msp
-      - CORE_PEER_ADDRESS=peer0.ospedale-del-mare.aslnapoli1.medchain.com:7061
+      - CORE_PEER_ADDRESS=peer0.ospedale-del-mare.aslnapoli1.medchain.com:7081
     working_dir: /var/hyperledger/cli/
     command: /bin/bash
     volumes:
@@ -229,6 +343,8 @@ services:
       - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/labresults/:/var/hyperledger/cli/labresults/"
       - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/practitioner/:/var/hyperledger/cli/practitioner/"
       - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/records/:/var/hyperledger/cli/records/"
+      - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/organization/:/var/hyperledger/cli/organization/"
+      - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/prescription/:/var/hyperledger/cli/prescription/"
     networks:
       - basic
 
@@ -238,11 +354,11 @@ services:
     environment:
       - CORE_PEER_LOCALMSPID=OspedaleDelMareMSP
       - CORE_PEER_ID=peer0.ospedale-del-mare.aslnapoli1.medchain.com
-      - CORE_PEER_ADDRESS=peer0.ospedale-del-mare.aslnapoli1.medchain.com:7061
-      - CORE_PEER_LISTENADDRESS=peer0.ospedale-del-mare.aslnapoli1.medchain.com:7061
-      - CORE_PEER_GOSSIP_ENDPOINT=peer0.ospedale-del-mare.aslnapoli1.medchain.com:7061
-      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.ospedale-del-mare.aslnapoli1.medchain.com:7061
-      - CORE_PEER_GOSSIP_BOOTSTRAP=peer0.ospedale-del-mare.aslnapoli1.medchain.com:7061
+      - CORE_PEER_ADDRESS=peer0.ospedale-del-mare.aslnapoli1.medchain.com:7081
+      - CORE_PEER_LISTENADDRESS=peer0.ospedale-del-mare.aslnapoli1.medchain.com:7081
+      - CORE_PEER_GOSSIP_ENDPOINT=peer0.ospedale-del-mare.aslnapoli1.medchain.com:7081
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.ospedale-del-mare.aslnapoli1.medchain.com:7081
+      - CORE_PEER_GOSSIP_BOOTSTRAP=peer0.ospedale-del-mare.aslnapoli1.medchain.com:7081
       - CORE_PEER_CHAINCODELISTENADDRESS=peer0.ospedale-del-mare.aslnapoli1.medchain.com:7050
       - CORE_PEER_MSPCONFIGPATH=/etc/hyperledger/fabric/peer/msp
       - CORE_CHAINCODE_BUILDER=hyperledger/fabric-ccenv:${FABRIC_CCENV_VERSION}
@@ -270,8 +386,8 @@ services:
     working_dir: /etc/hyperledger/fabric/peer/
     command: peer node start
     ports:
-      - 8061:9440
-      - 7061:7061
+      - 8081:9440
+      - 7081:7081
     volumes:
       - /var/run/docker.sock:/host/var/run/docker.sock
       - ../fabric-config/crypto-config/peerOrganizations/ospedale-del-mare.aslnapoli1.medchain.com/peers/peer0.ospedale-del-mare.aslnapoli1.medchain.com/msp:/etc/hyperledger/fabric/peer/msp
@@ -288,7 +404,7 @@ services:
       - COUCHDB_USER=peer0
       - COUCHDB_PASSWORD=peer0Password
     ports:
-      - 5120:5984
+      - 5140:5984
     networks:
       - basic
 
@@ -302,7 +418,7 @@ services:
       - FABRIC_CA_SERVER_CA_KEYFILE=/etc/hyperledger/fabric-ca-server/crypto/priv-key.pem
       - FABRIC_LOGGING_SPEC=${LOGGING_LEVEL}
     ports:
-      - 7080:7054
+      - 7100:7054
     working_dir: /etc/hyperledger/fabric-ca-server
     command: sh -c 'fabric-ca-server start -b ${OSPEDALESGIULIANO_CA_ADMIN_NAME}:${OSPEDALESGIULIANO_CA_ADMIN_PASSWORD} -d'
     volumes:
@@ -324,7 +440,7 @@ services:
       #
       - CORE_PEER_LOCALMSPID=OspedaleSGiulianoMSP
       - CORE_PEER_MSPCONFIGPATH=/var/hyperledger/cli/crypto/users/Admin@ospedale-sgiuliano.aslnapoli2.medchain.com/msp
-      - CORE_PEER_ADDRESS=peer0.ospedale-sgiuliano.aslnapoli2.medchain.com:7081
+      - CORE_PEER_ADDRESS=peer0.ospedale-sgiuliano.aslnapoli2.medchain.com:7101
     working_dir: /var/hyperledger/cli/
     command: /bin/bash
     volumes:
@@ -337,6 +453,8 @@ services:
       - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/labresults/:/var/hyperledger/cli/labresults/"
       - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/practitioner/:/var/hyperledger/cli/practitioner/"
       - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/records/:/var/hyperledger/cli/records/"
+      - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/organization/:/var/hyperledger/cli/organization/"
+      - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/prescription/:/var/hyperledger/cli/prescription/"
     networks:
       - basic
 
@@ -346,11 +464,11 @@ services:
     environment:
       - CORE_PEER_LOCALMSPID=OspedaleSGiulianoMSP
       - CORE_PEER_ID=peer0.ospedale-sgiuliano.aslnapoli2.medchain.com
-      - CORE_PEER_ADDRESS=peer0.ospedale-sgiuliano.aslnapoli2.medchain.com:7081
-      - CORE_PEER_LISTENADDRESS=peer0.ospedale-sgiuliano.aslnapoli2.medchain.com:7081
-      - CORE_PEER_GOSSIP_ENDPOINT=peer0.ospedale-sgiuliano.aslnapoli2.medchain.com:7081
-      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.ospedale-sgiuliano.aslnapoli2.medchain.com:7081
-      - CORE_PEER_GOSSIP_BOOTSTRAP=peer0.ospedale-sgiuliano.aslnapoli2.medchain.com:7081
+      - CORE_PEER_ADDRESS=peer0.ospedale-sgiuliano.aslnapoli2.medchain.com:7101
+      - CORE_PEER_LISTENADDRESS=peer0.ospedale-sgiuliano.aslnapoli2.medchain.com:7101
+      - CORE_PEER_GOSSIP_ENDPOINT=peer0.ospedale-sgiuliano.aslnapoli2.medchain.com:7101
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.ospedale-sgiuliano.aslnapoli2.medchain.com:7101
+      - CORE_PEER_GOSSIP_BOOTSTRAP=peer0.ospedale-sgiuliano.aslnapoli2.medchain.com:7101
       - CORE_PEER_CHAINCODELISTENADDRESS=peer0.ospedale-sgiuliano.aslnapoli2.medchain.com:7050
       - CORE_PEER_MSPCONFIGPATH=/etc/hyperledger/fabric/peer/msp
       - CORE_CHAINCODE_BUILDER=hyperledger/fabric-ccenv:${FABRIC_CCENV_VERSION}
@@ -378,8 +496,8 @@ services:
     working_dir: /etc/hyperledger/fabric/peer/
     command: peer node start
     ports:
-      - 8081:9440
-      - 7081:7081
+      - 8101:9440
+      - 7101:7101
     volumes:
       - /var/run/docker.sock:/host/var/run/docker.sock
       - ../fabric-config/crypto-config/peerOrganizations/ospedale-sgiuliano.aslnapoli2.medchain.com/peers/peer0.ospedale-sgiuliano.aslnapoli2.medchain.com/msp:/etc/hyperledger/fabric/peer/msp
@@ -396,7 +514,7 @@ services:
       - COUCHDB_USER=peer0
       - COUCHDB_PASSWORD=peer0Password
     ports:
-      - 5140:5984
+      - 5160:5984
     networks:
       - basic
 
@@ -410,7 +528,7 @@ services:
       - FABRIC_CA_SERVER_CA_KEYFILE=/etc/hyperledger/fabric-ca-server/crypto/priv-key.pem
       - FABRIC_LOGGING_SPEC=${LOGGING_LEVEL}
     ports:
-      - 7100:7054
+      - 7120:7054
     working_dir: /etc/hyperledger/fabric-ca-server
     command: sh -c 'fabric-ca-server start -b ${MEDICINAGENERALENAPOLI_CA_ADMIN_NAME}:${MEDICINAGENERALENAPOLI_CA_ADMIN_PASSWORD} -d'
     volumes:
@@ -432,7 +550,7 @@ services:
       #
       - CORE_PEER_LOCALMSPID=MedicinaGeneraleNapoliMSP
       - CORE_PEER_MSPCONFIGPATH=/var/hyperledger/cli/crypto/users/Admin@medicina-generale-napoli.medchain.com/msp
-      - CORE_PEER_ADDRESS=peer0.medicina-generale-napoli.medchain.com:7101
+      - CORE_PEER_ADDRESS=peer0.medicina-generale-napoli.medchain.com:7121
     working_dir: /var/hyperledger/cli/
     command: /bin/bash
     volumes:
@@ -445,6 +563,8 @@ services:
       - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/labresults/:/var/hyperledger/cli/labresults/"
       - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/practitioner/:/var/hyperledger/cli/practitioner/"
       - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/records/:/var/hyperledger/cli/records/"
+      - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/organization/:/var/hyperledger/cli/organization/"
+      - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/prescription/:/var/hyperledger/cli/prescription/"
     networks:
       - basic
 
@@ -454,11 +574,11 @@ services:
     environment:
       - CORE_PEER_LOCALMSPID=MedicinaGeneraleNapoliMSP
       - CORE_PEER_ID=peer0.medicina-generale-napoli.medchain.com
-      - CORE_PEER_ADDRESS=peer0.medicina-generale-napoli.medchain.com:7101
-      - CORE_PEER_LISTENADDRESS=peer0.medicina-generale-napoli.medchain.com:7101
-      - CORE_PEER_GOSSIP_ENDPOINT=peer0.medicina-generale-napoli.medchain.com:7101
-      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.medicina-generale-napoli.medchain.com:7101
-      - CORE_PEER_GOSSIP_BOOTSTRAP=peer0.medicina-generale-napoli.medchain.com:7101
+      - CORE_PEER_ADDRESS=peer0.medicina-generale-napoli.medchain.com:7121
+      - CORE_PEER_LISTENADDRESS=peer0.medicina-generale-napoli.medchain.com:7121
+      - CORE_PEER_GOSSIP_ENDPOINT=peer0.medicina-generale-napoli.medchain.com:7121
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.medicina-generale-napoli.medchain.com:7121
+      - CORE_PEER_GOSSIP_BOOTSTRAP=peer0.medicina-generale-napoli.medchain.com:7121
       - CORE_PEER_CHAINCODELISTENADDRESS=peer0.medicina-generale-napoli.medchain.com:7050
       - CORE_PEER_MSPCONFIGPATH=/etc/hyperledger/fabric/peer/msp
       - CORE_CHAINCODE_BUILDER=hyperledger/fabric-ccenv:${FABRIC_CCENV_VERSION}
@@ -486,8 +606,8 @@ services:
     working_dir: /etc/hyperledger/fabric/peer/
     command: peer node start
     ports:
-      - 8101:9440
-      - 7101:7101
+      - 8121:9440
+      - 7121:7121
     volumes:
       - /var/run/docker.sock:/host/var/run/docker.sock
       - ../fabric-config/crypto-config/peerOrganizations/medicina-generale-napoli.medchain.com/peers/peer0.medicina-generale-napoli.medchain.com/msp:/etc/hyperledger/fabric/peer/msp
@@ -504,7 +624,7 @@ services:
       - COUCHDB_USER=peer0
       - COUCHDB_PASSWORD=peer0Password
     ports:
-      - 5160:5984
+      - 5180:5984
     networks:
       - basic
 
@@ -518,7 +638,7 @@ services:
       - FABRIC_CA_SERVER_CA_KEYFILE=/etc/hyperledger/fabric-ca-server/crypto/priv-key.pem
       - FABRIC_LOGGING_SPEC=${LOGGING_LEVEL}
     ports:
-      - 7120:7054
+      - 7140:7054
     working_dir: /etc/hyperledger/fabric-ca-server
     command: sh -c 'fabric-ca-server start -b ${NEUROLOGIANAPOLI_CA_ADMIN_NAME}:${NEUROLOGIANAPOLI_CA_ADMIN_PASSWORD} -d'
     volumes:
@@ -540,7 +660,7 @@ services:
       #
       - CORE_PEER_LOCALMSPID=NeurologiaNapoliMSP
       - CORE_PEER_MSPCONFIGPATH=/var/hyperledger/cli/crypto/users/Admin@neurologia-napoli.medchain.com/msp
-      - CORE_PEER_ADDRESS=peer0.neurologia-napoli.medchain.com:7121
+      - CORE_PEER_ADDRESS=peer0.neurologia-napoli.medchain.com:7141
     working_dir: /var/hyperledger/cli/
     command: /bin/bash
     volumes:
@@ -553,6 +673,8 @@ services:
       - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/labresults/:/var/hyperledger/cli/labresults/"
       - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/practitioner/:/var/hyperledger/cli/practitioner/"
       - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/records/:/var/hyperledger/cli/records/"
+      - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/organization/:/var/hyperledger/cli/organization/"
+      - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/prescription/:/var/hyperledger/cli/prescription/"
     networks:
       - basic
 
@@ -562,11 +684,11 @@ services:
     environment:
       - CORE_PEER_LOCALMSPID=NeurologiaNapoliMSP
       - CORE_PEER_ID=peer0.neurologia-napoli.medchain.com
-      - CORE_PEER_ADDRESS=peer0.neurologia-napoli.medchain.com:7121
-      - CORE_PEER_LISTENADDRESS=peer0.neurologia-napoli.medchain.com:7121
-      - CORE_PEER_GOSSIP_ENDPOINT=peer0.neurologia-napoli.medchain.com:7121
-      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.neurologia-napoli.medchain.com:7121
-      - CORE_PEER_GOSSIP_BOOTSTRAP=peer0.neurologia-napoli.medchain.com:7121
+      - CORE_PEER_ADDRESS=peer0.neurologia-napoli.medchain.com:7141
+      - CORE_PEER_LISTENADDRESS=peer0.neurologia-napoli.medchain.com:7141
+      - CORE_PEER_GOSSIP_ENDPOINT=peer0.neurologia-napoli.medchain.com:7141
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.neurologia-napoli.medchain.com:7141
+      - CORE_PEER_GOSSIP_BOOTSTRAP=peer0.neurologia-napoli.medchain.com:7141
       - CORE_PEER_CHAINCODELISTENADDRESS=peer0.neurologia-napoli.medchain.com:7050
       - CORE_PEER_MSPCONFIGPATH=/etc/hyperledger/fabric/peer/msp
       - CORE_CHAINCODE_BUILDER=hyperledger/fabric-ccenv:${FABRIC_CCENV_VERSION}
@@ -594,8 +716,8 @@ services:
     working_dir: /etc/hyperledger/fabric/peer/
     command: peer node start
     ports:
-      - 8121:9440
-      - 7121:7121
+      - 8141:9440
+      - 7141:7141
     volumes:
       - /var/run/docker.sock:/host/var/run/docker.sock
       - ../fabric-config/crypto-config/peerOrganizations/neurologia-napoli.medchain.com/peers/peer0.neurologia-napoli.medchain.com/msp:/etc/hyperledger/fabric/peer/msp
@@ -612,7 +734,7 @@ services:
       - COUCHDB_USER=peer0
       - COUCHDB_PASSWORD=peer0Password
     ports:
-      - 5180:5984
+      - 5200:5984
     networks:
       - basic
 
@@ -626,7 +748,7 @@ services:
       - FABRIC_CA_SERVER_CA_KEYFILE=/etc/hyperledger/fabric-ca-server/crypto/priv-key.pem
       - FABRIC_LOGGING_SPEC=${LOGGING_LEVEL}
     ports:
-      - 7140:7054
+      - 7160:7054
     working_dir: /etc/hyperledger/fabric-ca-server
     command: sh -c 'fabric-ca-server start -b ${FARMACIAPETRONE_CA_ADMIN_NAME}:${FARMACIAPETRONE_CA_ADMIN_PASSWORD} -d'
     volumes:
@@ -648,7 +770,7 @@ services:
       #
       - CORE_PEER_LOCALMSPID=FarmaciaPetroneMSP
       - CORE_PEER_MSPCONFIGPATH=/var/hyperledger/cli/crypto/users/Admin@farmacia-petrone.medchain.com/msp
-      - CORE_PEER_ADDRESS=peer0.farmacia-petrone.medchain.com:7141
+      - CORE_PEER_ADDRESS=peer0.farmacia-petrone.medchain.com:7161
     working_dir: /var/hyperledger/cli/
     command: /bin/bash
     volumes:
@@ -661,6 +783,8 @@ services:
       - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/labresults/:/var/hyperledger/cli/labresults/"
       - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/practitioner/:/var/hyperledger/cli/practitioner/"
       - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/records/:/var/hyperledger/cli/records/"
+      - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/organization/:/var/hyperledger/cli/organization/"
+      - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/prescription/:/var/hyperledger/cli/prescription/"
     networks:
       - basic
 
@@ -670,11 +794,11 @@ services:
     environment:
       - CORE_PEER_LOCALMSPID=FarmaciaPetroneMSP
       - CORE_PEER_ID=peer0.farmacia-petrone.medchain.com
-      - CORE_PEER_ADDRESS=peer0.farmacia-petrone.medchain.com:7141
-      - CORE_PEER_LISTENADDRESS=peer0.farmacia-petrone.medchain.com:7141
-      - CORE_PEER_GOSSIP_ENDPOINT=peer0.farmacia-petrone.medchain.com:7141
-      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.farmacia-petrone.medchain.com:7141
-      - CORE_PEER_GOSSIP_BOOTSTRAP=peer0.farmacia-petrone.medchain.com:7141
+      - CORE_PEER_ADDRESS=peer0.farmacia-petrone.medchain.com:7161
+      - CORE_PEER_LISTENADDRESS=peer0.farmacia-petrone.medchain.com:7161
+      - CORE_PEER_GOSSIP_ENDPOINT=peer0.farmacia-petrone.medchain.com:7161
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.farmacia-petrone.medchain.com:7161
+      - CORE_PEER_GOSSIP_BOOTSTRAP=peer0.farmacia-petrone.medchain.com:7161
       - CORE_PEER_CHAINCODELISTENADDRESS=peer0.farmacia-petrone.medchain.com:7050
       - CORE_PEER_MSPCONFIGPATH=/etc/hyperledger/fabric/peer/msp
       - CORE_CHAINCODE_BUILDER=hyperledger/fabric-ccenv:${FABRIC_CCENV_VERSION}
@@ -702,8 +826,8 @@ services:
     working_dir: /etc/hyperledger/fabric/peer/
     command: peer node start
     ports:
-      - 8141:9440
-      - 7141:7141
+      - 8161:9440
+      - 7161:7161
     volumes:
       - /var/run/docker.sock:/host/var/run/docker.sock
       - ../fabric-config/crypto-config/peerOrganizations/farmacia-petrone.medchain.com/peers/peer0.farmacia-petrone.medchain.com/msp:/etc/hyperledger/fabric/peer/msp
@@ -720,7 +844,7 @@ services:
       - COUCHDB_USER=peer0
       - COUCHDB_PASSWORD=peer0Password
     ports:
-      - 5200:5984
+      - 5220:5984
     networks:
       - basic
 
@@ -734,7 +858,7 @@ services:
       - FABRIC_CA_SERVER_CA_KEYFILE=/etc/hyperledger/fabric-ca-server/crypto/priv-key.pem
       - FABRIC_LOGGING_SPEC=${LOGGING_LEVEL}
     ports:
-      - 7160:7054
+      - 7180:7054
     working_dir: /etc/hyperledger/fabric-ca-server
     command: sh -c 'fabric-ca-server start -b ${FARMACIACARBONE_CA_ADMIN_NAME}:${FARMACIACARBONE_CA_ADMIN_PASSWORD} -d'
     volumes:
@@ -756,7 +880,7 @@ services:
       #
       - CORE_PEER_LOCALMSPID=FarmaciaCarboneMSP
       - CORE_PEER_MSPCONFIGPATH=/var/hyperledger/cli/crypto/users/Admin@farmacia-carbone.medchain.com/msp
-      - CORE_PEER_ADDRESS=peer0.farmacia-carbone.medchain.com:7161
+      - CORE_PEER_ADDRESS=peer0.farmacia-carbone.medchain.com:7181
     working_dir: /var/hyperledger/cli/
     command: /bin/bash
     volumes:
@@ -769,6 +893,8 @@ services:
       - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/labresults/:/var/hyperledger/cli/labresults/"
       - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/practitioner/:/var/hyperledger/cli/practitioner/"
       - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/records/:/var/hyperledger/cli/records/"
+      - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/organization/:/var/hyperledger/cli/organization/"
+      - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/prescription/:/var/hyperledger/cli/prescription/"
     networks:
       - basic
 
@@ -778,11 +904,11 @@ services:
     environment:
       - CORE_PEER_LOCALMSPID=FarmaciaCarboneMSP
       - CORE_PEER_ID=peer0.farmacia-carbone.medchain.com
-      - CORE_PEER_ADDRESS=peer0.farmacia-carbone.medchain.com:7161
-      - CORE_PEER_LISTENADDRESS=peer0.farmacia-carbone.medchain.com:7161
-      - CORE_PEER_GOSSIP_ENDPOINT=peer0.farmacia-carbone.medchain.com:7161
-      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.farmacia-carbone.medchain.com:7161
-      - CORE_PEER_GOSSIP_BOOTSTRAP=peer0.farmacia-carbone.medchain.com:7161
+      - CORE_PEER_ADDRESS=peer0.farmacia-carbone.medchain.com:7181
+      - CORE_PEER_LISTENADDRESS=peer0.farmacia-carbone.medchain.com:7181
+      - CORE_PEER_GOSSIP_ENDPOINT=peer0.farmacia-carbone.medchain.com:7181
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.farmacia-carbone.medchain.com:7181
+      - CORE_PEER_GOSSIP_BOOTSTRAP=peer0.farmacia-carbone.medchain.com:7181
       - CORE_PEER_CHAINCODELISTENADDRESS=peer0.farmacia-carbone.medchain.com:7050
       - CORE_PEER_MSPCONFIGPATH=/etc/hyperledger/fabric/peer/msp
       - CORE_CHAINCODE_BUILDER=hyperledger/fabric-ccenv:${FABRIC_CCENV_VERSION}
@@ -810,8 +936,8 @@ services:
     working_dir: /etc/hyperledger/fabric/peer/
     command: peer node start
     ports:
-      - 8161:9440
-      - 7161:7161
+      - 8181:9440
+      - 7181:7181
     volumes:
       - /var/run/docker.sock:/host/var/run/docker.sock
       - ../fabric-config/crypto-config/peerOrganizations/farmacia-carbone.medchain.com/peers/peer0.farmacia-carbone.medchain.com/msp:/etc/hyperledger/fabric/peer/msp
@@ -828,7 +954,7 @@ services:
       - COUCHDB_USER=peer0
       - COUCHDB_PASSWORD=peer0Password
     ports:
-      - 5220:5984
+      - 5240:5984
     networks:
       - basic
 
@@ -842,7 +968,7 @@ services:
       - FABRIC_CA_SERVER_CA_KEYFILE=/etc/hyperledger/fabric-ca-server/crypto/priv-key.pem
       - FABRIC_LOGGING_SPEC=${LOGGING_LEVEL}
     ports:
-      - 7180:7054
+      - 7200:7054
     working_dir: /etc/hyperledger/fabric-ca-server
     command: sh -c 'fabric-ca-server start -b ${LABORATORIOANALISICMO_CA_ADMIN_NAME}:${LABORATORIOANALISICMO_CA_ADMIN_PASSWORD} -d'
     volumes:
@@ -864,7 +990,7 @@ services:
       #
       - CORE_PEER_LOCALMSPID=LaboratorioAnalisiCmoMSP
       - CORE_PEER_MSPCONFIGPATH=/var/hyperledger/cli/crypto/users/Admin@laboratorio-analisi-cmo.medchain.com/msp
-      - CORE_PEER_ADDRESS=peer0.laboratorio-analisi-cmo.medchain.com:7181
+      - CORE_PEER_ADDRESS=peer0.laboratorio-analisi-cmo.medchain.com:7201
     working_dir: /var/hyperledger/cli/
     command: /bin/bash
     volumes:
@@ -877,6 +1003,8 @@ services:
       - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/labresults/:/var/hyperledger/cli/labresults/"
       - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/practitioner/:/var/hyperledger/cli/practitioner/"
       - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/records/:/var/hyperledger/cli/records/"
+      - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/organization/:/var/hyperledger/cli/organization/"
+      - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/prescription/:/var/hyperledger/cli/prescription/"
     networks:
       - basic
 
@@ -886,11 +1014,11 @@ services:
     environment:
       - CORE_PEER_LOCALMSPID=LaboratorioAnalisiCmoMSP
       - CORE_PEER_ID=peer0.laboratorio-analisi-cmo.medchain.com
-      - CORE_PEER_ADDRESS=peer0.laboratorio-analisi-cmo.medchain.com:7181
-      - CORE_PEER_LISTENADDRESS=peer0.laboratorio-analisi-cmo.medchain.com:7181
-      - CORE_PEER_GOSSIP_ENDPOINT=peer0.laboratorio-analisi-cmo.medchain.com:7181
-      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.laboratorio-analisi-cmo.medchain.com:7181
-      - CORE_PEER_GOSSIP_BOOTSTRAP=peer0.laboratorio-analisi-cmo.medchain.com:7181
+      - CORE_PEER_ADDRESS=peer0.laboratorio-analisi-cmo.medchain.com:7201
+      - CORE_PEER_LISTENADDRESS=peer0.laboratorio-analisi-cmo.medchain.com:7201
+      - CORE_PEER_GOSSIP_ENDPOINT=peer0.laboratorio-analisi-cmo.medchain.com:7201
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.laboratorio-analisi-cmo.medchain.com:7201
+      - CORE_PEER_GOSSIP_BOOTSTRAP=peer0.laboratorio-analisi-cmo.medchain.com:7201
       - CORE_PEER_CHAINCODELISTENADDRESS=peer0.laboratorio-analisi-cmo.medchain.com:7050
       - CORE_PEER_MSPCONFIGPATH=/etc/hyperledger/fabric/peer/msp
       - CORE_CHAINCODE_BUILDER=hyperledger/fabric-ccenv:${FABRIC_CCENV_VERSION}
@@ -918,8 +1046,8 @@ services:
     working_dir: /etc/hyperledger/fabric/peer/
     command: peer node start
     ports:
-      - 8181:9440
-      - 7181:7181
+      - 8201:9440
+      - 7201:7201
     volumes:
       - /var/run/docker.sock:/host/var/run/docker.sock
       - ../fabric-config/crypto-config/peerOrganizations/laboratorio-analisi-cmo.medchain.com/peers/peer0.laboratorio-analisi-cmo.medchain.com/msp:/etc/hyperledger/fabric/peer/msp
@@ -936,7 +1064,7 @@ services:
       - COUCHDB_USER=peer0
       - COUCHDB_PASSWORD=peer0Password
     ports:
-      - 5240:5984
+      - 5260:5984
     networks:
       - basic
 
@@ -950,7 +1078,7 @@ services:
       - FABRIC_CA_SERVER_CA_KEYFILE=/etc/hyperledger/fabric-ca-server/crypto/priv-key.pem
       - FABRIC_LOGGING_SPEC=${LOGGING_LEVEL}
     ports:
-      - 7200:7054
+      - 7220:7054
     working_dir: /etc/hyperledger/fabric-ca-server
     command: sh -c 'fabric-ca-server start -b ${LABORATORIOANALISISDN_CA_ADMIN_NAME}:${LABORATORIOANALISISDN_CA_ADMIN_PASSWORD} -d'
     volumes:
@@ -972,7 +1100,7 @@ services:
       #
       - CORE_PEER_LOCALMSPID=LaboratorioAnalisiSdnMSP
       - CORE_PEER_MSPCONFIGPATH=/var/hyperledger/cli/crypto/users/Admin@laboratorio-analisi-sdn.medchain.com/msp
-      - CORE_PEER_ADDRESS=peer0.laboratorio-analisi-sdn.medchain.com:7201
+      - CORE_PEER_ADDRESS=peer0.laboratorio-analisi-sdn.medchain.com:7221
     working_dir: /var/hyperledger/cli/
     command: /bin/bash
     volumes:
@@ -985,6 +1113,8 @@ services:
       - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/labresults/:/var/hyperledger/cli/labresults/"
       - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/practitioner/:/var/hyperledger/cli/practitioner/"
       - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/records/:/var/hyperledger/cli/records/"
+      - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/organization/:/var/hyperledger/cli/organization/"
+      - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/prescription/:/var/hyperledger/cli/prescription/"
     networks:
       - basic
 
@@ -994,11 +1124,11 @@ services:
     environment:
       - CORE_PEER_LOCALMSPID=LaboratorioAnalisiSdnMSP
       - CORE_PEER_ID=peer0.laboratorio-analisi-sdn.medchain.com
-      - CORE_PEER_ADDRESS=peer0.laboratorio-analisi-sdn.medchain.com:7201
-      - CORE_PEER_LISTENADDRESS=peer0.laboratorio-analisi-sdn.medchain.com:7201
-      - CORE_PEER_GOSSIP_ENDPOINT=peer0.laboratorio-analisi-sdn.medchain.com:7201
-      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.laboratorio-analisi-sdn.medchain.com:7201
-      - CORE_PEER_GOSSIP_BOOTSTRAP=peer0.laboratorio-analisi-sdn.medchain.com:7201
+      - CORE_PEER_ADDRESS=peer0.laboratorio-analisi-sdn.medchain.com:7221
+      - CORE_PEER_LISTENADDRESS=peer0.laboratorio-analisi-sdn.medchain.com:7221
+      - CORE_PEER_GOSSIP_ENDPOINT=peer0.laboratorio-analisi-sdn.medchain.com:7221
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.laboratorio-analisi-sdn.medchain.com:7221
+      - CORE_PEER_GOSSIP_BOOTSTRAP=peer0.laboratorio-analisi-sdn.medchain.com:7221
       - CORE_PEER_CHAINCODELISTENADDRESS=peer0.laboratorio-analisi-sdn.medchain.com:7050
       - CORE_PEER_MSPCONFIGPATH=/etc/hyperledger/fabric/peer/msp
       - CORE_CHAINCODE_BUILDER=hyperledger/fabric-ccenv:${FABRIC_CCENV_VERSION}
@@ -1026,8 +1156,8 @@ services:
     working_dir: /etc/hyperledger/fabric/peer/
     command: peer node start
     ports:
-      - 8201:9440
-      - 7201:7201
+      - 8221:9440
+      - 7221:7221
     volumes:
       - /var/run/docker.sock:/host/var/run/docker.sock
       - ../fabric-config/crypto-config/peerOrganizations/laboratorio-analisi-sdn.medchain.com/peers/peer0.laboratorio-analisi-sdn.medchain.com/msp:/etc/hyperledger/fabric/peer/msp
@@ -1044,7 +1174,7 @@ services:
       - COUCHDB_USER=peer0
       - COUCHDB_PASSWORD=peer0Password
     ports:
-      - 5260:5984
+      - 5280:5984
     networks:
       - basic
 
@@ -1058,7 +1188,7 @@ services:
       - FABRIC_CA_SERVER_CA_KEYFILE=/etc/hyperledger/fabric-ca-server/crypto/priv-key.pem
       - FABRIC_LOGGING_SPEC=${LOGGING_LEVEL}
     ports:
-      - 7220:7054
+      - 7240:7054
     working_dir: /etc/hyperledger/fabric-ca-server
     command: sh -c 'fabric-ca-server start -b ${PATIENTS_CA_ADMIN_NAME}:${PATIENTS_CA_ADMIN_PASSWORD} -d'
     volumes:
@@ -1080,7 +1210,7 @@ services:
       #
       - CORE_PEER_LOCALMSPID=PatientsMSP
       - CORE_PEER_MSPCONFIGPATH=/var/hyperledger/cli/crypto/users/Admin@patients.medchain.com/msp
-      - CORE_PEER_ADDRESS=peer0.patients.medchain.com:7221
+      - CORE_PEER_ADDRESS=peer0.patients.medchain.com:7241
     working_dir: /var/hyperledger/cli/
     command: /bin/bash
     volumes:
@@ -1093,6 +1223,8 @@ services:
       - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/labresults/:/var/hyperledger/cli/labresults/"
       - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/practitioner/:/var/hyperledger/cli/practitioner/"
       - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/records/:/var/hyperledger/cli/records/"
+      - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/organization/:/var/hyperledger/cli/organization/"
+      - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/prescription/:/var/hyperledger/cli/prescription/"
     networks:
       - basic
 
@@ -1102,11 +1234,11 @@ services:
     environment:
       - CORE_PEER_LOCALMSPID=PatientsMSP
       - CORE_PEER_ID=peer0.patients.medchain.com
-      - CORE_PEER_ADDRESS=peer0.patients.medchain.com:7221
-      - CORE_PEER_LISTENADDRESS=peer0.patients.medchain.com:7221
-      - CORE_PEER_GOSSIP_ENDPOINT=peer0.patients.medchain.com:7221
-      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.patients.medchain.com:7221
-      - CORE_PEER_GOSSIP_BOOTSTRAP=peer0.patients.medchain.com:7221
+      - CORE_PEER_ADDRESS=peer0.patients.medchain.com:7241
+      - CORE_PEER_LISTENADDRESS=peer0.patients.medchain.com:7241
+      - CORE_PEER_GOSSIP_ENDPOINT=peer0.patients.medchain.com:7241
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.patients.medchain.com:7241
+      - CORE_PEER_GOSSIP_BOOTSTRAP=peer0.patients.medchain.com:7241
       - CORE_PEER_CHAINCODELISTENADDRESS=peer0.patients.medchain.com:7050
       - CORE_PEER_MSPCONFIGPATH=/etc/hyperledger/fabric/peer/msp
       - CORE_CHAINCODE_BUILDER=hyperledger/fabric-ccenv:${FABRIC_CCENV_VERSION}
@@ -1134,8 +1266,8 @@ services:
     working_dir: /etc/hyperledger/fabric/peer/
     command: peer node start
     ports:
-      - 8221:9440
-      - 7221:7221
+      - 8241:9440
+      - 7241:7241
     volumes:
       - /var/run/docker.sock:/host/var/run/docker.sock
       - ../fabric-config/crypto-config/peerOrganizations/patients.medchain.com/peers/peer0.patients.medchain.com/msp:/etc/hyperledger/fabric/peer/msp
@@ -1152,7 +1284,7 @@ services:
       - COUCHDB_USER=peer0
       - COUCHDB_PASSWORD=peer0Password
     ports:
-      - 5280:5984
+      - 5300:5984
     networks:
       - basic
 

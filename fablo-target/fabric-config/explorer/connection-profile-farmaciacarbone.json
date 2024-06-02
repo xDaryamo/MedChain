@@ -35,7 +35,7 @@
   },
   "peers": {
     "peer0.farmacia-carbone.medchain.com": {
-      "url": "grpc://peer0.farmacia-carbone.medchain.com:7161",
+      "url": "grpc://peer0.farmacia-carbone.medchain.com:7181",
       "tlsCACerts": {
         "path": "/tmp/crypto/peerOrganizations/farmacia-carbone.medchain.com/msp/tlscacerts/tlsca.farmacia-carbone.medchain.com-cert.pem"
       }

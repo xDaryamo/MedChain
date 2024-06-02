@@ -35,7 +35,7 @@
   },
   "peers": {
     "peer0.ospedale-sgiuliano.aslnapoli2.medchain.com": {
-      "url": "grpc://peer0.ospedale-sgiuliano.aslnapoli2.medchain.com:7081",
+      "url": "grpc://peer0.ospedale-sgiuliano.aslnapoli2.medchain.com:7101",
       "tlsCACerts": {
         "path": "/tmp/crypto/peerOrganizations/ospedale-sgiuliano.aslnapoli2.medchain.com/msp/tlscacerts/tlsca.ospedale-sgiuliano.aslnapoli2.medchain.com-cert.pem"
       }

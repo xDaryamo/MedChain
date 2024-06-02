@@ -1,5 +1,9 @@
 {
   "network-configs": {
+    "network-example": {
+      "name": "Network of example",
+      "profile": "/opt/explorer/app/platform/fabric/connection-profile/connection-profile-example.json"
+    },
     "network-ospedalemaresca": {
       "name": "Network of OspedaleMaresca",
       "profile": "/opt/explorer/app/platform/fabric/connection-profile/connection-profile-ospedalemaresca.json"

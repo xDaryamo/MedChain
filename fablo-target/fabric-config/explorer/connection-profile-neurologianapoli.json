@@ -35,7 +35,7 @@
   },
   "peers": {
     "peer0.neurologia-napoli.medchain.com": {
-      "url": "grpc://peer0.neurologia-napoli.medchain.com:7121",
+      "url": "grpc://peer0.neurologia-napoli.medchain.com:7141",
       "tlsCACerts": {
         "path": "/tmp/crypto/peerOrganizations/neurologia-napoli.medchain.com/msp/tlscacerts/tlsca.neurologia-napoli.medchain.com-cert.pem"
       }

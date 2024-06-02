@@ -35,7 +35,7 @@
   },
   "peers": {
     "peer0.medicina-generale-napoli.medchain.com": {
-      "url": "grpc://peer0.medicina-generale-napoli.medchain.com:7101",
+      "url": "grpc://peer0.medicina-generale-napoli.medchain.com:7121",
       "tlsCACerts": {
         "path": "/tmp/crypto/peerOrganizations/medicina-generale-napoli.medchain.com/msp/tlscacerts/tlsca.medicina-generale-napoli.medchain.com-cert.pem"
       }

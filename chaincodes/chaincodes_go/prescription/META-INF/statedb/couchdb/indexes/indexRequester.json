@@ -1,0 +1,11 @@
+{
+    "index": {
+      "fields": [
+        "requester.reference"
+      ]
+    },
+    "ddoc": "indexRequesterDoc",
+    "name": "indexRequester",
+    "type": "json"
+}
+  

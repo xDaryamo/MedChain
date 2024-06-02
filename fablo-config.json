@@ -25,6 +25,16 @@
     },
     {
       "organization": {
+        "name": "example",
+        "domain": "example.medchain.com"
+      },
+      "peer": {
+        "instances": 1,
+        "db": "CouchDb"
+      }
+    },
+    {
+      "organization": {
         "name": "OspedaleMaresca",
         "domain": "ospedale-maresca.aslnapoli3.medchain.com"
       },
@@ -129,6 +139,10 @@
       "name": "patient-records-channel",
       "orgs": [
         {
+          "name": "example",
+          "peers": ["peer0"]
+        },
+        {
           "name": "OspedaleMaresca",
           "peers": ["peer0"]
         },
@@ -158,6 +172,10 @@
       "name": "prescriptions-channel",
       "orgs": [
         {
+          "name": "example",
+          "peers": ["peer0"]
+        },
+        {
           "name": "MedicinaGeneraleNapoli",
           "peers": ["peer0"]
         },
@@ -178,6 +196,10 @@
     {
       "name": "lab-results-channel",
       "orgs": [
+        {
+          "name": "example",
+          "peers": ["peer0"]
+        },
         {
           "name": "OspedaleMaresca",
           "peers": ["peer0"]
@@ -204,6 +226,10 @@
       "name": "emergency-channel",
       "orgs": [
         {
+          "name": "example",
+          "peers": ["peer0"]
+        },
+        {
           "name": "OspedaleMaresca",
           "peers": ["peer0"]
         },
@@ -220,6 +246,10 @@
     {
       "name": "identity-channel",
       "orgs": [
+        {
+          "name": "example",
+          "peers": ["peer0"]
+        },
         {
           "name": "OspedaleMaresca",
           "peers": ["peer0"]
@@ -265,11 +295,11 @@
   ],
   "chaincodes": [
     {
-      "name": "organization",
+      "name": "patient",
       "version": "0.1",
       "lang": "golang",
       "channel": "identity-channel",
-      "directory": "./chaincodes/chaincodes_go/organization"
+      "directory": "./chaincodes/chaincodes_go/patient"
     },
     {
       "name": "labresults",
@@ -291,6 +321,20 @@
       "lang": "golang",
       "channel": "patient-records-channel",
       "directory": "./chaincodes/chaincodes_go/records"
+    },
+    {
+      "name": "organization",
+      "version": "0.1",
+      "lang": "golang",
+      "channel": "identity-channel",
+      "directory": "./chaincodes/chaincodes_go/organization"
+    },
+    {
+      "name": "prescription",
+      "version": "0.1",
+      "lang": "golang",
+      "channel": "prescriptions-channel",
+      "directory": "./chaincodes/chaincodes_go/prescription"
     }
   ]
 }
