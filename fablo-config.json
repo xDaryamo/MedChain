@@ -265,11 +265,11 @@
   ],
   "chaincodes": [
     {
-      "name": "organization",
+      "name": "patient",
       "version": "0.1",
       "lang": "golang",
       "channel": "identity-channel",
-      "directory": "./chaincodes/chaincodes_go/organization"
+      "directory": "./chaincodes/chaincodes_go/patient"
     },
     {
       "name": "labresults",
@@ -291,6 +291,13 @@
       "lang": "golang",
       "channel": "patient-records-channel",
       "directory": "./chaincodes/chaincodes_go/records"
+    },
+    {
+      "name": "encounter",
+      "version": "0.1",
+      "lang": "golang",
+      "channel": "patient-records-channel",
+      "directory": "./chaincodes/chaincodes_go/encounter"
     }
   ]
 }
