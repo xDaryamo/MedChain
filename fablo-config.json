@@ -136,39 +136,6 @@
   ],
   "channels": [
     {
-      "name": "patient-records-channel",
-      "orgs": [
-        {
-          "name": "example",
-          "peers": ["peer0"]
-        },
-        {
-          "name": "OspedaleMaresca",
-          "peers": ["peer0"]
-        },
-        {
-          "name": "OspedaleDelMare",
-          "peers": ["peer0"]
-        },
-        {
-          "name": "OspedaleSGiuliano",
-          "peers": ["peer0"]
-        },
-        {
-          "name": "MedicinaGeneraleNapoli",
-          "peers": ["peer0"]
-        },
-        {
-          "name": "NeurologiaNapoli",
-          "peers": ["peer0"]
-        },
-        {
-          "name": "Patients",
-          "peers": ["peer0"]
-        }
-      ]
-    },
-    {
       "name": "prescriptions-channel",
       "orgs": [
         {
@@ -189,56 +156,6 @@
         },
         {
           "name": "FarmaciaCarbone",
-          "peers": ["peer0"]
-        }
-      ]
-    },
-    {
-      "name": "lab-results-channel",
-      "orgs": [
-        {
-          "name": "example",
-          "peers": ["peer0"]
-        },
-        {
-          "name": "OspedaleMaresca",
-          "peers": ["peer0"]
-        },
-        {
-          "name": "MedicinaGeneraleNapoli",
-          "peers": ["peer0"]
-        },
-        {
-          "name": "NeurologiaNapoli",
-          "peers": ["peer0"]
-        },
-        {
-          "name": "LaboratorioAnalisiCmo",
-          "peers": ["peer0"]
-        },
-        {
-          "name": "LaboratorioAnalisiSdn",
-          "peers": ["peer0"]
-        }
-      ]
-    },
-    {
-      "name": "emergency-channel",
-      "orgs": [
-        {
-          "name": "example",
-          "peers": ["peer0"]
-        },
-        {
-          "name": "OspedaleMaresca",
-          "peers": ["peer0"]
-        },
-        {
-          "name": "OspedaleDelMare",
-          "peers": ["peer0"]
-        },
-        {
-          "name": "OspedaleSGiuliano",
           "peers": ["peer0"]
         }
       ]
@@ -295,32 +212,11 @@
   ],
   "chaincodes": [
     {
-      "name": "patient",
-      "version": "0.1",
-      "lang": "golang",
-      "channel": "identity-channel",
-      "directory": "./chaincodes/chaincodes_go/patient"
-    },
-    {
-      "name": "labresults",
-      "version": "0.1",
-      "lang": "golang",
-      "channel": "lab-results-channel",
-      "directory": "./chaincodes/chaincodes_go/labresults"
-    },
-    {
       "name": "practitioner",
       "version": "0.1",
       "lang": "golang",
       "channel": "identity-channel",
       "directory": "./chaincodes/chaincodes_go/practitioner"
-    },
-    {
-      "name": "records",
-      "version": "0.1",
-      "lang": "golang",
-      "channel": "patient-records-channel",
-      "directory": "./chaincodes/chaincodes_go/records"
     },
     {
       "name": "organization",
@@ -335,13 +231,6 @@
       "lang": "golang",
       "channel": "prescriptions-channel",
       "directory": "./chaincodes/chaincodes_go/prescription"
-    },
-    {
-      "name": "encounter",
-      "version": "0.1",
-      "lang": "golang",
-      "channel": "patient-records-channel",
-      "directory": "./chaincodes/chaincodes_go/encounter"
     }
   ]
 }

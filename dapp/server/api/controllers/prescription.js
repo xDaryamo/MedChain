@@ -174,7 +174,8 @@ exports.deletePrescription = async (req, res, next) => {
 };
 
 exports.searchPrescriptions = async (req, res, next) => {
-  const queryString = req.body.query;
+  const queryString = req.body.query || { selector: {} };
+
   const userId = req.user.userId;
   const organization = req.user.organization;
 
@@ -185,11 +186,23 @@ exports.searchPrescriptions = async (req, res, next) => {
     await fabric.init(userId, organization, channel, chaincode);
     console.log("Fabric network initialized successfully.");
 
-    console.log("Submitting query:", queryString);
+    let queryJSONString;
+    try {
+      queryJSONString = JSON.stringify(queryString);
+      JSON.parse(queryJSONString);
+    } catch (jsonError) {
+      console.error("Invalid JSON format:", jsonError);
+      return res.status(400).json({ error: "Invalid JSON format" });
+    }
+
+    console.log(
+      "Submitting query transaction with query JSON string:",
+      queryJSONString
+    );
 
     const resultString = await fabric.submitTransaction(
       "SearchPrescriptions",
-      queryString
+      queryJSONString
     );
 
     let results;

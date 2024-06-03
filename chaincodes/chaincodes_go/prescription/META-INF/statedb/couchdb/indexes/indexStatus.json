@@ -1,11 +1,10 @@
 {
-    "index": {
-      "fields": [
-        "status.coding.code"
-      ]
-    },
-    "ddoc": "indexStatusDoc",
-    "name": "indexStatus",
-    "type": "json"
-  }
-  
+  "index": {
+    "fields": [
+      "status.coding.code"
+    ]
+  },
+  "ddoc": "indexStatusDoc",
+  "name": "indexStatus",
+  "type": "json"
+}

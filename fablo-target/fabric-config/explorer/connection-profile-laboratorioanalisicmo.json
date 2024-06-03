@@ -42,9 +42,6 @@
     }
   },
   "channels": {
-    "lab-results-channel": {
-      "peers": {}
-    },
     "identity-channel": {
       "peers": {}
     }

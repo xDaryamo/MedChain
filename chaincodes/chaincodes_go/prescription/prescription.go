@@ -146,23 +146,39 @@ func (t *PrescriptionChaincode) DeletePrescription(ctx contractapi.TransactionCo
 	return `{"message": "Prescription deleted successfully"}`, nil
 }
 
-func (t *PrescriptionChaincode) SearchPrescriptions(ctx contractapi.TransactionContextInterface, queryString string) ([]string, error) {
+func (t *PrescriptionChaincode) SearchPrescriptions(ctx contractapi.TransactionContextInterface, queryString string) (string, error) {
+	log.Printf("Executing query: %s", queryString)
+
 	resultsIterator, err := ctx.GetStub().GetQueryResult(queryString)
 	if err != nil {
-		return nil, errors.New("failed to execute query: " + err.Error())
+		return "", errors.New("failed to execute query: " + err.Error())
 	}
 	defer resultsIterator.Close()
 
-	var prescriptions []string
+	var prescriptions []MedicationRequest
 	for resultsIterator.HasNext() {
 		queryResponse, err := resultsIterator.Next()
 		if err != nil {
-			return nil, errors.New("failed to iterate query results: " + err.Error())
+			return "", errors.New("failed to iterate query results: " + err.Error())
 		}
-		prescriptions = append(prescriptions, string(queryResponse.Value))
+
+		log.Printf("Query response: %s", string(queryResponse.Value))
+
+		var prescription MedicationRequest
+		err = json.Unmarshal(queryResponse.Value, &prescription)
+		if err != nil {
+			return "", errors.New("failed to unmarshal query response: " + err.Error())
+		}
+		prescriptions = append(prescriptions, prescription)
 	}
 
-	return prescriptions, nil
+	resultsJSON, err := json.Marshal(prescriptions)
+	if err != nil {
+		return "", errors.New("failed to encode results to JSON: " + err.Error())
+	}
+
+	log.Printf("Query results JSON: %s", string(resultsJSON))
+	return string(resultsJSON), nil
 }
 
 
