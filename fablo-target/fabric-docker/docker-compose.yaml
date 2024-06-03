@@ -45,9 +45,13 @@ services:
       - ../fabric-config/config:/var/hyperledger/cli/config/ # genesis.block and channel.tx's
       - ../fabric-config/crypto-config/peerOrganizations/orderer.medchain.com:/var/hyperledger/cli/crypto/
       - ../fabric-config/chaincode-packages:/var/hyperledger/cli/chaincode-packages/
+      - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/patient/:/var/hyperledger/cli/patient/"
+      - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/labresults/:/var/hyperledger/cli/labresults/"
       - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/practitioner/:/var/hyperledger/cli/practitioner/"
+      - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/records/:/var/hyperledger/cli/records/"
       - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/organization/:/var/hyperledger/cli/organization/"
       - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/prescription/:/var/hyperledger/cli/prescription/"
+      - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/encounter/:/var/hyperledger/cli/encounter/"
     networks:
       - basic
 
@@ -116,9 +120,13 @@ services:
       - ../fabric-config/config:/var/hyperledger/cli/config/ # genesis.block and channel.tx's
       - ../fabric-config/crypto-config/peerOrganizations/example.medchain.com:/var/hyperledger/cli/crypto/
       - ../fabric-config/chaincode-packages:/var/hyperledger/cli/chaincode-packages/
+      - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/patient/:/var/hyperledger/cli/patient/"
+      - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/labresults/:/var/hyperledger/cli/labresults/"
       - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/practitioner/:/var/hyperledger/cli/practitioner/"
+      - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/records/:/var/hyperledger/cli/records/"
       - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/organization/:/var/hyperledger/cli/organization/"
       - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/prescription/:/var/hyperledger/cli/prescription/"
+      - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/encounter/:/var/hyperledger/cli/encounter/"
     networks:
       - basic
 
@@ -223,9 +231,13 @@ services:
       - ../fabric-config/config:/var/hyperledger/cli/config/ # genesis.block and channel.tx's
       - ../fabric-config/crypto-config/peerOrganizations/ospedale-maresca.aslnapoli3.medchain.com:/var/hyperledger/cli/crypto/
       - ../fabric-config/chaincode-packages:/var/hyperledger/cli/chaincode-packages/
+      - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/patient/:/var/hyperledger/cli/patient/"
+      - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/labresults/:/var/hyperledger/cli/labresults/"
       - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/practitioner/:/var/hyperledger/cli/practitioner/"
+      - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/records/:/var/hyperledger/cli/records/"
       - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/organization/:/var/hyperledger/cli/organization/"
       - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/prescription/:/var/hyperledger/cli/prescription/"
+      - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/encounter/:/var/hyperledger/cli/encounter/"
     networks:
       - basic
 
@@ -330,9 +342,13 @@ services:
       - ../fabric-config/config:/var/hyperledger/cli/config/ # genesis.block and channel.tx's
       - ../fabric-config/crypto-config/peerOrganizations/ospedale-del-mare.aslnapoli1.medchain.com:/var/hyperledger/cli/crypto/
       - ../fabric-config/chaincode-packages:/var/hyperledger/cli/chaincode-packages/
+      - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/patient/:/var/hyperledger/cli/patient/"
+      - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/labresults/:/var/hyperledger/cli/labresults/"
       - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/practitioner/:/var/hyperledger/cli/practitioner/"
+      - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/records/:/var/hyperledger/cli/records/"
       - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/organization/:/var/hyperledger/cli/organization/"
       - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/prescription/:/var/hyperledger/cli/prescription/"
+      - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/encounter/:/var/hyperledger/cli/encounter/"
     networks:
       - basic
 
@@ -437,9 +453,13 @@ services:
       - ../fabric-config/config:/var/hyperledger/cli/config/ # genesis.block and channel.tx's
       - ../fabric-config/crypto-config/peerOrganizations/ospedale-sgiuliano.aslnapoli2.medchain.com:/var/hyperledger/cli/crypto/
       - ../fabric-config/chaincode-packages:/var/hyperledger/cli/chaincode-packages/
+      - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/patient/:/var/hyperledger/cli/patient/"
+      - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/labresults/:/var/hyperledger/cli/labresults/"
       - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/practitioner/:/var/hyperledger/cli/practitioner/"
+      - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/records/:/var/hyperledger/cli/records/"
       - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/organization/:/var/hyperledger/cli/organization/"
       - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/prescription/:/var/hyperledger/cli/prescription/"
+      - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/encounter/:/var/hyperledger/cli/encounter/"
     networks:
       - basic
 
@@ -544,9 +564,13 @@ services:
       - ../fabric-config/config:/var/hyperledger/cli/config/ # genesis.block and channel.tx's
       - ../fabric-config/crypto-config/peerOrganizations/medicina-generale-napoli.medchain.com:/var/hyperledger/cli/crypto/
       - ../fabric-config/chaincode-packages:/var/hyperledger/cli/chaincode-packages/
+      - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/patient/:/var/hyperledger/cli/patient/"
+      - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/labresults/:/var/hyperledger/cli/labresults/"
       - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/practitioner/:/var/hyperledger/cli/practitioner/"
+      - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/records/:/var/hyperledger/cli/records/"
       - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/organization/:/var/hyperledger/cli/organization/"
       - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/prescription/:/var/hyperledger/cli/prescription/"
+      - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/encounter/:/var/hyperledger/cli/encounter/"
     networks:
       - basic
 
@@ -651,9 +675,13 @@ services:
       - ../fabric-config/config:/var/hyperledger/cli/config/ # genesis.block and channel.tx's
       - ../fabric-config/crypto-config/peerOrganizations/neurologia-napoli.medchain.com:/var/hyperledger/cli/crypto/
       - ../fabric-config/chaincode-packages:/var/hyperledger/cli/chaincode-packages/
+      - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/patient/:/var/hyperledger/cli/patient/"
+      - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/labresults/:/var/hyperledger/cli/labresults/"
       - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/practitioner/:/var/hyperledger/cli/practitioner/"
+      - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/records/:/var/hyperledger/cli/records/"
       - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/organization/:/var/hyperledger/cli/organization/"
       - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/prescription/:/var/hyperledger/cli/prescription/"
+      - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/encounter/:/var/hyperledger/cli/encounter/"
     networks:
       - basic
 
@@ -758,9 +786,13 @@ services:
       - ../fabric-config/config:/var/hyperledger/cli/config/ # genesis.block and channel.tx's
       - ../fabric-config/crypto-config/peerOrganizations/farmacia-petrone.medchain.com:/var/hyperledger/cli/crypto/
       - ../fabric-config/chaincode-packages:/var/hyperledger/cli/chaincode-packages/
+      - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/patient/:/var/hyperledger/cli/patient/"
+      - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/labresults/:/var/hyperledger/cli/labresults/"
       - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/practitioner/:/var/hyperledger/cli/practitioner/"
+      - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/records/:/var/hyperledger/cli/records/"
       - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/organization/:/var/hyperledger/cli/organization/"
       - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/prescription/:/var/hyperledger/cli/prescription/"
+      - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/encounter/:/var/hyperledger/cli/encounter/"
     networks:
       - basic
 
@@ -865,9 +897,13 @@ services:
       - ../fabric-config/config:/var/hyperledger/cli/config/ # genesis.block and channel.tx's
       - ../fabric-config/crypto-config/peerOrganizations/farmacia-carbone.medchain.com:/var/hyperledger/cli/crypto/
       - ../fabric-config/chaincode-packages:/var/hyperledger/cli/chaincode-packages/
+      - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/patient/:/var/hyperledger/cli/patient/"
+      - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/labresults/:/var/hyperledger/cli/labresults/"
       - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/practitioner/:/var/hyperledger/cli/practitioner/"
+      - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/records/:/var/hyperledger/cli/records/"
       - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/organization/:/var/hyperledger/cli/organization/"
       - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/prescription/:/var/hyperledger/cli/prescription/"
+      - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/encounter/:/var/hyperledger/cli/encounter/"
     networks:
       - basic
 
@@ -972,9 +1008,13 @@ services:
       - ../fabric-config/config:/var/hyperledger/cli/config/ # genesis.block and channel.tx's
       - ../fabric-config/crypto-config/peerOrganizations/laboratorio-analisi-cmo.medchain.com:/var/hyperledger/cli/crypto/
       - ../fabric-config/chaincode-packages:/var/hyperledger/cli/chaincode-packages/
+      - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/patient/:/var/hyperledger/cli/patient/"
+      - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/labresults/:/var/hyperledger/cli/labresults/"
       - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/practitioner/:/var/hyperledger/cli/practitioner/"
+      - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/records/:/var/hyperledger/cli/records/"
       - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/organization/:/var/hyperledger/cli/organization/"
       - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/prescription/:/var/hyperledger/cli/prescription/"
+      - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/encounter/:/var/hyperledger/cli/encounter/"
     networks:
       - basic
 
@@ -1079,9 +1119,13 @@ services:
       - ../fabric-config/config:/var/hyperledger/cli/config/ # genesis.block and channel.tx's
       - ../fabric-config/crypto-config/peerOrganizations/laboratorio-analisi-sdn.medchain.com:/var/hyperledger/cli/crypto/
       - ../fabric-config/chaincode-packages:/var/hyperledger/cli/chaincode-packages/
+      - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/patient/:/var/hyperledger/cli/patient/"
+      - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/labresults/:/var/hyperledger/cli/labresults/"
       - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/practitioner/:/var/hyperledger/cli/practitioner/"
+      - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/records/:/var/hyperledger/cli/records/"
       - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/organization/:/var/hyperledger/cli/organization/"
       - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/prescription/:/var/hyperledger/cli/prescription/"
+      - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/encounter/:/var/hyperledger/cli/encounter/"
     networks:
       - basic
 
@@ -1186,9 +1230,13 @@ services:
       - ../fabric-config/config:/var/hyperledger/cli/config/ # genesis.block and channel.tx's
       - ../fabric-config/crypto-config/peerOrganizations/patients.medchain.com:/var/hyperledger/cli/crypto/
       - ../fabric-config/chaincode-packages:/var/hyperledger/cli/chaincode-packages/
+      - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/patient/:/var/hyperledger/cli/patient/"
+      - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/labresults/:/var/hyperledger/cli/labresults/"
       - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/practitioner/:/var/hyperledger/cli/practitioner/"
+      - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/records/:/var/hyperledger/cli/records/"
       - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/organization/:/var/hyperledger/cli/organization/"
       - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/prescription/:/var/hyperledger/cli/prescription/"
+      - "$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/encounter/:/var/hyperledger/cli/encounter/"
     networks:
       - basic
 

@@ -190,6 +190,10 @@
         {
           "name": "FarmaciaCarbone",
           "peers": ["peer0"]
+        },
+        {
+          "name": "Patients",
+          "peers": ["peer0"]
         }
       ]
     },
@@ -218,6 +222,10 @@
         },
         {
           "name": "LaboratorioAnalisiSdn",
+          "peers": ["peer0"]
+        },
+        {
+          "name": "Patients",
           "peers": ["peer0"]
         }
       ]

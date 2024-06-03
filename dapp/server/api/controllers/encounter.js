@@ -1,196 +1,240 @@
-const FabricNetwork = require('../../blockchain/fabric');
-const { v4: uuidv4 } = require('uuid');
+const FabricNetwork = require("../../blockchain/fabric");
+const { v4: uuidv4 } = require("uuid");
 const fabric = new FabricNetwork();
 
-
 exports.createEncounter = async (req, res, next) => {
-    const encounterJSON = req.body;
-    const userID = req.user.userId;
-    const organization =  req.user.organization;
-    try {
+  const encounterJSON = req.body;
+  const userID = req.user.userId;
+  const organization = req.user.organization;
+  try {
+    const encounterID = uuidv4();
+    const channel = "patient-records-channel";
+    const chaincode = "encounter";
 
-        const encounterID = uuidv4();
-        encounterJSON.id.value = encounterID;
+    encounterJSON.id.value = encounterID;
 
-        const identity_channel = "identity-channel"
-        const auth_chaincode = "patient"
-
-        await fabric.init(userID, organization, identity_channel, auth_chaincode);
-        console.log("Verifying user...");
-        auth_bool = await fabric.submitTransaction('IsAuthorized',  encounterJSON.subject.reference, userID);
-        
-        if(auth_bool=false) {
-            console.log("User not approved", userID);
-            res.status(500).json({ error: "User not approved" });
-        }
-
-        console.log("User approved with success", userID);
-        fabric.disconnect()
-        
-        const channel = "patient-records-channel";
-        const chaincode = "encounter";
-        
-        // Validate and stringify JSON
-        let encounterJSONString;
-        try {
-            encounterJSONString = JSON.stringify(encounterJSON);
-            JSON.parse(encounterJSONString); // This ensures the string is valid JSON
-        } catch (jsonError) {
-            console.error("Invalid JSON format:", jsonError);
-            return res.status(400).json({ error: "Invalid JSON format" });
-        }
-
-        await fabric.init(userID, organization, channel, chaincode);
-        console.log("Fabric network initialized successfully.");
-
-        // Log the JSON string
-        console.log("Submitting transaction with encounter JSON:", encounterJSONString);
-
-
-        const result = await fabric.submitTransaction('CreateEncounter',  encounterJSONString);
-        res
-        .status(201)
-        .json({ message: "Encounter created successfully", result: result });
-        
-    } catch (error) {
-        console.error("Failed to create encounter:", error);
-        res.status(500).json({ error: "Failed to create encounter" });
-    } finally {
-        // Disconnetti dalla rete Fabric
-        fabric.disconnect();
-        console.log("Disconnected from Fabric gateway.");
+    if (
+      !(await isAuthorized(
+        userID,
+        organization,
+        encounterJSON.subject.reference
+      ))
+    ) {
+      return res.status(403).json({ error: "User not approved" });
     }
+
+    // Validate and stringify JSON
+    let encounterJSONString;
+    try {
+      encounterJSONString = JSON.stringify(encounterJSON);
+      JSON.parse(encounterJSONString);
+    } catch (jsonError) {
+      console.error("Invalid JSON format:", jsonError);
+      return res.status(400).json({ error: "Invalid JSON format" });
+    }
+
+    await fabric.init(userID, organization, channel, chaincode);
+    console.log("Fabric network initialized successfully.");
+
+    const result = await fabric.submitTransaction(
+      "CreateEncounter",
+      encounterJSONString
+    );
+    res.status(201).json({ result: result });
+  } catch (error) {
+    console.error("Failed to create encounter:", error);
+    res.status(500).json({ error: "Failed to create encounter" });
+  } finally {
+    fabric.disconnect();
+    console.log("Disconnected from Fabric gateway.");
+  }
 };
 
 exports.getEncounter = async (req, res, next) => {
-    const encounterID = req.params.encounterid;
-    const userID = req.user.userId;
-    const organization =  req.user.organization;
-    try {
-        const channel = "patient-records-channel";
-        const chaincode = "encounter";
+  const encounterID = req.params.id;
+  const userID = req.user.userId;
+  const organization = req.user.organization;
+  try {
+    const channel = "patient-records-channel";
+    const chaincode = "encounter";
 
-        await fabric.init(userID, organization, channel, chaincode);
-        console.log("Fabric network initialized successfully.");
+    await fabric.init(userID, organization, channel, chaincode);
+    console.log("Fabric network initialized successfully.");
 
-        const encounter = await fabric.evaluateTransaction('ReadEncounter', encounterID);
+    const encounterString = await fabric.evaluateTransaction(
+      "ReadEncounter",
+      encounterID
+    );
 
-        const identity_channel = "identity-channel"
-        const auth_chaincode = "patient"
+    const encounter = JSON.parse(encounter);
 
-        encounter = JSON.parse(encounter)
-
-        await fabric.init(userID, organization, identity_channel, auth_chaincode);
-        console.log("Verifying user...");
-        auth_bool = await fabric.submitTransaction('IsAuthorized',  encounter.subject.reference);
-        
-        if(auth_bool=false) {
-            console.log("User not approved", userID);
-            res.status(500).json({ error: "User not approved"});
-        } 
-
-        res.status(200).json({ encounter: encounter});
-    } catch (error) {
-        res.status(500).json({ error: error.message });
-    } finally {
-        // Disconnetti dalla rete Fabric
-        fabric.disconnect();
-        console.log("Disconnected from Fabric gateway.");
+    if (
+      !(await isAuthorized(userID, organization, encounter.subject.reference))
+    ) {
+      return res.status(403).json({ error: "User not approved" });
     }
+
+    res.status(200).json({ encounter: encounter });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  } finally {
+    fabric.disconnect();
+    console.log("Disconnected from Fabric gateway.");
+  }
 };
 
 exports.updateEncounter = async (req, res, next) => {
-    const encounterID = req.params.encounterid;
-    const updatedEncounter = req.body;
-    const userID = req.user.userId;
-    const organization =  req.user.organization;
-    try {
-
-        const identity_channel = "identity-channel"
-        const auth_chaincode = "patient"
-
-        updatedEncounter = JSON.parse(updatedEncounter)
-
-        await fabric.init(userID, organization, identity_channel, auth_chaincode);
-        console.log("Verifying user...");
-        auth_bool = await fabric.submitTransaction('IsAuthorized',  updatedEncounter.subject.reference);
-        
-        if(auth_bool=false) {
-            console.log("User not approved", userID);
-            res.status(500).json({ error: "User not approved" });
-        }
-
-        const channel = "patient-records-channel";
-        const chaincode = "encounter";
-
-        await fabric.init(userID, organization, channel, chaincode);
-        console.log("Fabric network initialized successfully.");
-        const result = await fabric.submitTransaction('UpdateEncounter', encounterID, JSON.stringify(updatedEncounter));
-        res.status(200).json({ message: 'Encounter updated successfully', result });
-    } catch (error) {
-        res.status(500).json({ error: error.message });
-    } finally {
-        // Disconnetti dalla rete Fabric
-        fabric.disconnect();
-        console.log("Disconnected from Fabric gateway.");
+  const encounterID = req.params.id;
+  const updatedEncounter = req.body;
+  const userID = req.user.userId;
+  const organization = req.user.organization;
+  try {
+    if (
+      !(await isAuthorized(
+        userID,
+        organization,
+        updatedEncounter.subject.reference
+      ))
+    ) {
+      return res.status(403).json({ error: "User not approved" });
     }
+
+    const channel = "patient-records-channel";
+    const chaincode = "encounter";
+
+    let encounterJSONString;
+    try {
+      encounterJSONString = JSON.stringify(encounterJSON);
+      JSON.parse(encounterJSONString);
+    } catch (jsonError) {
+      console.error("Invalid JSON format:", jsonError);
+      return res.status(400).json({ error: "Invalid JSON format" });
+    }
+
+    await fabric.init(userID, organization, channel, chaincode);
+    console.log("Fabric network initialized successfully.");
+    const result = await fabric.submitTransaction(
+      "UpdateEncounter",
+      encounterID,
+      encounterJSONString
+    );
+
+    res.status(200).json({ result: result });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  } finally {
+    fabric.disconnect();
+    console.log("Disconnected from Fabric gateway.");
+  }
 };
 
 exports.deleteEncounter = async (req, res, next) => {
-    const encounterID = req.params.encounterid;
-    const userID = req.user.userId;
-    const organization =  req.user.organization;
+  const encounterID = req.params.id;
+  const userID = req.user.userId;
+  const organization = req.user.organization;
 
-    try {
+  try {
+    const channel = "patient-records-channel";
+    const chaincode = "encounter";
 
-        const channel = "patient-records-channel";
-        const chaincode = "encounter";
+    await fabric.init(userID, organization, channel, chaincode);
+    console.log("Fabric network initialized successfully.");
 
-        await fabric.init(userID, organization, channel, chaincode);
-        console.log("Fabric network initialized successfully.");
-        const result = await fabric.submitTransaction('DeleteEncounter', encounterID);
-        res.status(200).json({ message: 'Encounter deleted successfully', result });
-    } catch (error) {
-        res.status(500).json({ error: error.message });
-    } finally {
-        // Disconnetti dalla rete Fabric
-        fabric.disconnect();
-        console.log("Disconnected from Fabric gateway.");
+    const encounterString = await fabric.evaluateTransaction(
+      "ReadEncounter",
+      encounterID
+    );
+    const encounter = JSON.parse(encounterString);
+
+    if (
+      !(await isAuthorized(userID, organization, encounter.subject.reference))
+    ) {
+      return res.status(403).json({ error: "User not approved" });
     }
+
+    const result = await fabric.submitTransaction(
+      "DeleteEncounter",
+      encounterID
+    );
+    res.status(200).json({ result: result });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  } finally {
+    fabric.disconnect();
+    console.log("Disconnected from Fabric gateway.");
+  }
 };
 
-exports.queryEncounter = async (req, res, next) => {
-    const query = req.params.query;
-    const userID = req.user.userId;
-    const organization =  req.user.organization;
+exports.searchEncounter = async (req, res, next) => {
+  const queryString = req.params.query || { selector: {} };
 
+  const userID = req.user.userId;
+  const organization = req.user.organization;
+
+  try {
+    const channel = "patient-records-channel";
+    const chaincode = "encounter";
+
+    await fabric.init(userID, organization, channel, chaincode);
+    console.log("Fabric network initialized successfully.");
+
+    let queryJSONString;
     try {
-        const channel = "patient-records-channel";
-        const chaincode = "encounter";
-
-        await fabric.init(userID, organization, channel, chaincode);
-        console.log("Fabric network initialized successfully.");
-
-        let result;
-        if (query.startsWith("status:")) {
-            const status = query.substring(7); // Remove "status:" prefix
-            result = await fabric.evaluateTransaction('SearchEncountersByStatus', status);
-        } else if (query.startsWith("type:")) {
-            const typeCode = query.substring(5); // Remove "type:" prefix
-            result = await fabric.evaluateTransaction('SearchEncountersByType', typeCode);
-        } else {
-            return res.status(400).json({ error: "Invalid query format" });
-        }
-
-        const encounters = JSON.parse(result);
-        res.status(200).json({ encounters });
-    } catch (error) {
-        res.status(500).json({ error: error.message });
-    } finally {
-        // Disconnect from Fabric network
-        fabric.disconnect();
-        console.log("Disconnected from Fabric gateway.");
+      queryJSONString = JSON.stringify(queryString);
+      JSON.parse(queryJSONString);
+    } catch (jsonError) {
+      console.error("Invalid JSON Format: ", jsonError);
+      return res.status(400).json({ error: "Invalid JSON Format" });
     }
+
+    console.log(
+      "Submitting query transaction with query JSON string:",
+      queryJSONString
+    );
+
+    const resultString = await fabric.submitTransaction(
+      "SearchEncounters",
+      queryJSONString
+    );
+
+    let results;
+    try {
+      results = JSON.parse(resultString);
+    } catch (error) {
+      console.error("Failed to parse result string: ", error);
+      return res.status(500).json({ error: "Failed to parse result string" });
+    }
+
+    res.status(200).json({ results: results });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  } finally {
+    fabric.disconnect();
+    console.log("Disconnected from Fabric gateway.");
+  }
+};
+
+async function isAuthorized(userID, organization, patientReference) {
+  const identity_channel = "identity-channel";
+  const auth_chaincode = "patient";
+
+  const patientID = patientReference.split("/")[1];
+
+  await fabric.init(userID, organization, identity_channel, auth_chaincode);
+  console.log("Verifying user...");
+
+  const authBool = await fabric.submitTransaction(
+    "IsAuthorized",
+    patientID,
+    userID
+  );
+
+  fabric.disconnect();
+  if (authBool === "false") {
+    console.log("User not approved", userID);
+    return false;
+  }
+
+  console.log("User approved with success", userID);
+  return true;
 }
-
-

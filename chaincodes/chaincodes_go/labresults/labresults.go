@@ -14,125 +14,113 @@ type LabResultsChaincode struct {
 
 // CreateLabResult crea un nuovo risultato di laboratorio sulla blockchain
 func (t *LabResultsChaincode) CreateLabResult(ctx contractapi.TransactionContextInterface, labResultJSON string) (string, error) {
-	log.Printf("Creating lab result with JSON: %s", labResultJSON)
 
 	// Deserialize JSON data into a Go data structure
 	var labResult Observation
 	err := json.Unmarshal([]byte(labResultJSON), &labResult)
 	if err != nil {
-		return "", errors.New("failed to unmarshal lab result: " + err.Error())
+		return `{"error": "failed to unmarshal lab result: ` + err.Error() + `"}`, err
 	}
 
 	// Check if the lab result request ID is provided and if it already exists
 	if labResult.ID == "" {
-		return "", errors.New("lab result ID is required")
+		return `{"error": "lab result ID is required"}`, errors.New("lab result ID is required")
 	}
 
 	existingLabResult, err := ctx.GetStub().GetState(labResult.ID)
 	if err != nil {
-		return "", errors.New("failed to get lab result " + labResult.ID + " from world state")
+		return `{"error": "failed to get lab result ` + labResult.ID + ` from world state"}`, err
 	}
 	if existingLabResult != nil {
-		return "", errors.New("lab result already exists: " + labResult.ID)
+		return `{"error": "lab result already exists: ` + labResult.ID + `"}`, errors.New("lab result already exists")
 	}
 
 	err = ctx.GetStub().PutState(labResult.ID, []byte(labResultJSON))
 	if err != nil {
-		return "", errors.New("failed to put lab result in world state: " + err.Error())
+		return `{"error": "failed to put lab result in world state: ` + err.Error() + `"}`, err
 	}
 
-	log.Printf("Lab result with ID: %s created successfully", labResult.ID)
 	return `{"message": "Lab result created successfully"}`, nil
 }
 
 // UpdateLabResult aggiorna un risultato di laboratorio esistente sulla blockchain
 func (t *LabResultsChaincode) UpdateLabResult(ctx contractapi.TransactionContextInterface, labResultID string, labResultJSON string) (string, error) {
-	log.Printf("Updating lab result with ID: %s using JSON: %s", labResultID, labResultJSON)
 
 	labResultAsBytes, err := ctx.GetStub().GetState(labResultID)
 	if err != nil {
-		return "", errors.New("failed to read from world state")
+		return `{"error": "failed to read from world state"}`, err
 	}
 	if labResultAsBytes == nil {
-		return "", errors.New("the lab result does not exist")
+		return `{"error": "the lab result does not exist"}`, errors.New("the lab result does not exist")
 	}
 
 	var labResult Observation
 	err = json.Unmarshal([]byte(labResultJSON), &labResult)
 	if err != nil {
-		return "", errors.New("failed to decode JSON")
+		return `{"error": "failed to decode JSON: ` + err.Error() + `"}`, err
 	}
 
 	err = ctx.GetStub().PutState(labResultID, []byte(labResultJSON))
 	if err != nil {
-		return "", errors.New("failed to put lab result in world state: " + err.Error())
+		return `{"error": "failed to put lab result in world state: ` + err.Error() + `"}`, err
 	}
 
-	log.Printf("Lab result with ID: %s updated successfully", labResultID)
 	return `{"message": "Lab result updated successfully"}`, nil
 }
 
 // GetLabResult recupera uno specifico risultato di laboratorio dalla blockchain
 func (t *LabResultsChaincode) GetLabResult(ctx contractapi.TransactionContextInterface, labResultID string) (string, error) {
-	log.Printf("Retrieving lab result with ID: %s", labResultID)
 
 	labResultAsBytes, err := ctx.GetStub().GetState(labResultID)
 	if err != nil {
-		return "", errors.New("failed to read from world state")
+		return `{"error": "failed to read from world state"}`, err
 	}
 	if labResultAsBytes == nil {
-		return "", errors.New("the lab result does not exist")
+		return `{"error": "the lab result does not exist"}`, errors.New("the lab result does not exist")
 	}
 
-	log.Printf("Lab result with ID: %s retrieved successfully", labResultID)
 	return string(labResultAsBytes), nil
 }
 
-func (t *LabResultsChaincode) QueryLabResultsByPatientID(ctx contractapi.TransactionContextInterface, patientID string) (string, error) {
-	log.Printf("Querying lab results for patient ID: %s", patientID)
+func (t *LabResultsChaincode) SearchLabResults(ctx contractapi.TransactionContextInterface, queryString string) (string, error) {
 
-	// Ensure the patientID is prefixed correctly
-	patientReference := "Patient/" + patientID
-	queryString := `{"selector":{"subject.reference":"` + patientReference + `"}}`
 	resultsIterator, err := ctx.GetStub().GetQueryResult(queryString)
 	if err != nil {
-		return "", errors.New("failed to query lab results: " + err.Error())
+		return `{"error": "failed to execute query: ` + err.Error() + `"}`, err
 	}
 	defer resultsIterator.Close()
 
-	var results []Observation
+	var labResults []Observation
 	for resultsIterator.HasNext() {
 		queryResponse, err := resultsIterator.Next()
 		if err != nil {
-			return "", errors.New("failed to iterate query results: " + err.Error())
+			return `{"error": "failed to iterate query results: ` + err.Error() + `"}`, err
 		}
 
-		log.Printf("Query response: %s", string(queryResponse.Value))
 
-		var observation Observation
-		err = json.Unmarshal(queryResponse.Value, &observation)
+		var labResult Observation
+		err = json.Unmarshal(queryResponse.Value, &labResult)
 		if err != nil {
-			return "", errors.New("failed to unmarshal query response: " + err.Error())
+			return `{"error": "failed to unmarshal query response: ` + err.Error() + `"}`, err
 		}
-		results = append(results, observation)
+		labResults = append(labResults, labResult)
 	}
 
-	resultsJSON, err := json.Marshal(results)
+	resultsJSON, err := json.Marshal(labResults)
 	if err != nil {
-		return "", errors.New("failed to encode results to JSON: " + err.Error())
+		return `{"error": "failed to encode results to JSON: ` + err.Error() + `"}`, err
 	}
 
-	log.Printf("Query for patient ID: %s returned %d results", patientID, len(results))
 	return string(resultsJSON), nil
 }
 
 func main() {
 	chaincode, err := contractapi.NewChaincode(new(LabResultsChaincode))
 	if err != nil {
-		log.Panic(errors.New("Error creating lab results chaincode: " + err.Error()))
+		log.Panic("Error creating lab results chaincode: ", err)
 	}
 
 	if err := chaincode.Start(); err != nil {
-		log.Panic(errors.New("Error starting lab results chaincode: " + err.Error()))
+		log.Panic("Error starting lab results chaincode: ", err)
 	}
 }

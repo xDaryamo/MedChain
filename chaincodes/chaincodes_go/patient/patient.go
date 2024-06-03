@@ -19,142 +19,116 @@ type PatientContract struct {
 }
 
 func (c *PatientContract) CreatePatient(ctx contractapi.TransactionContextInterface, patientJSON string) (string, error) {
-
-	log.Printf("Patient JSON from param: %s", string(patientJSON))
-
 	// Deserialize JSON data into a Go data structure
 	var patient Patient
 	err := json.Unmarshal([]byte(patientJSON), &patient)
 	if err != nil {
-		return "", errors.New("failed to unmarshal patient: " + err.Error())
+		return `{"error": "failed to unmarshal patient: ` + err.Error() + `"}`, err
 	}
-
-	log.Printf("Patient struct unmarshalled: %+v", patient)
 
 	// Check if the patient request ID is provided and if it already exists
 	if patient.ID.Value == "" {
-		return "", errors.New("patient request ID is required")
+		return `{"error": "patient request ID is required"}`, errors.New("patient request ID is required")
 	}
 
 	existingPatient, err := ctx.GetStub().GetState(patient.ID.Value)
 	if err != nil {
-		return "", errors.New("failed to get patient " + patient.ID.Value + " from world state")
+		return `{"error": "failed to get patient: ` + err.Error() + `"}`, err
 	}
 	if existingPatient != nil {
-		return "", errors.New("patient already exists: " + patient.ID.Value)
+		return `{"error": "patient already exists: ` + patient.ID.Value + `"}`, errors.New("patient already exists")
 	}
 
 	// Serialize the patient and save it on the blockchain
 	patientJSONBytes, err := json.Marshal(patient)
 	if err != nil {
-		return "", errors.New("failed to marshal patient: " + err.Error())
+		return `{"error": "failed to marshal patient: ` + err.Error() + `"}`, err
 	}
 
 	// Save the new patient to the ledger
 	err = ctx.GetStub().PutState(patient.ID.Value, patientJSONBytes)
 	if err != nil {
-		return "", errors.New("failed to put state: " + err.Error())
+		return `{"error": "failed to put state: ` + err.Error() + `"}`, err
 	}
-
-	log.Printf("Patient with ID: %s created successfully", patient.ID.Value)
-	log.Printf("Serialized Patient JSON: %s", string(patientJSONBytes))
 
 	return `{"message": "Patient created successfully"}`, nil
 }
 
 func (c *PatientContract) ReadPatient(ctx contractapi.TransactionContextInterface, patientID string) (string, error) {
-	var patient Patient
-
 	patientJSON, err := ctx.GetStub().GetState(patientID)
 	if err != nil {
-		return "", errors.New("failed to read patient: " + err.Error())
+		return `{"error": "failed to read patient: ` + err.Error() + `"}`, err
 	}
 	if patientJSON == nil {
-		return "", errors.New("patient does not exist: " + patientID)
+		return `{"error": "patient does not exist: ` + patientID + `"}`, errors.New("patient does not exist")
 	}
 
-	log.Printf("Patient JSON from ledger: %s", string(patientJSON))
-
-	err = json.Unmarshal(patientJSON, &patient)
-	if err != nil {
-		return "", errors.New("failed to unmarshal patient: " + err.Error())
-	}
-
-	log.Printf("Patient object: %+v", patient)
 
 	clientID, exists, err := ctx.GetClientIdentity().GetAttributeValue("userId")
 	if err != nil {
-		return "", errors.New("failed to get client ID attribute: " + err.Error())
+		return `{"error": "failed to get client ID attribute: ` + err.Error() + `"}`, err
 	}
 	if !exists {
-		return "", errors.New("client ID attribute does not exist")
+		return `{"error": "client ID attribute does not exist"}`, errors.New("client ID attribute does not exist")
 	}
 
 	authorized, err := c.IsAuthorized(ctx, patientID, clientID)
 	if err != nil {
-		return "", err
+		return `{"error": "` + err.Error() + `"}`, err
 	}
 	if authorized {
 		return string(patientJSON), nil
 	} else {
-		return "", errors.New("unauthorized access: client is neither the patient nor an authorized entity")
+		return `{"error": "unauthorized access: client is neither the patient nor an authorized entity"}`, errors.New("unauthorized access: client is neither the patient nor an authorized entity")
 	}
 }
 
 // UpdatePatient updates an existing patient record in the ledger
 func (c *PatientContract) UpdatePatient(ctx contractapi.TransactionContextInterface, patientJSON string) (string, error) {
-	// Deserializza il JSON del paziente ricevuto
 	var patient Patient
 	if err := json.Unmarshal([]byte(patientJSON), &patient); err != nil {
-		return "", errors.New("failed to unmarshal patient: " + err.Error())
+		return `{"error": "failed to unmarshal patient: ` + err.Error() + `"}`, err
 	}
 
-	// Ottieni l'ID del paziente dal JSON deserializzato
 	patientID := patient.ID.Value
 	if patientID == "" {
-		return "", errors.New("patient ID is required in the JSON")
+		return `{"error": "patient ID is required in the JSON"}`, errors.New("patient ID is required in the JSON")
 	}
 
 	exists, err := ctx.GetStub().GetState(patientID)
 	if err != nil {
-		return "", errors.New("failed to get patient: " + err.Error())
+		return `{"error": "failed to get patient: ` + err.Error() + `"}`, err
 	}
 	if exists == nil {
-		return "", errors.New("patient does not exist: " + patientID)
+		return `{"error": "patient does not exist: ` + patientID + `"}`, errors.New("patient does not exist: " + patientID)
 	}
 
-	// Ottieni l'ID del client che effettua la richiesta dall'attributo userId
 	clientID, existsAttr, err := ctx.GetClientIdentity().GetAttributeValue("userId")
 	if err != nil {
-		return "", errors.New("failed to get client ID attribute: " + err.Error())
+		return `{"error": "failed to get client ID attribute: ` + err.Error() + `"}`, err
 	}
 	if !existsAttr {
-		return "", errors.New("client ID attribute does not exist")
+		return `{"error": "client ID attribute does not exist"}`, errors.New("client ID attribute does not exist")
 	}
-
-	log.Printf("Client ID (userId attribute): %s", clientID)
 
 	authorized, err := c.IsAuthorized(ctx, patientID, clientID)
 	if err != nil {
-		return "", err
+		return `{"error": "` + err.Error() + `"}`, err
 	}
 	if !authorized {
-		return "", errors.New("unauthorized to update patient records")
+		return `{"error": "unauthorized to update patient records"}`, errors.New("unauthorized to update patient records")
 	}
 
-	// Serializza di nuovo il paziente per l'aggiornamento
 	patientJSONBytes, err := json.Marshal(patient)
 	if err != nil {
-		return "", errors.New("failed to marshal patient: " + err.Error())
+		return `{"error": "failed to marshal patient: ` + err.Error() + `"}`, err
 	}
 
-	// Aggiorna il paziente nel ledger
 	err = ctx.GetStub().PutState(patientID, patientJSONBytes)
 	if err != nil {
-		return "", errors.New("failed to put state: " + err.Error())
+		return `{"error": "failed to put state: ` + err.Error() + `"}`, err
 	}
 
-	log.Printf("Patient with ID: %s updated successfully", patientID)
 	return `{"message": "Patient updated successfully"}`, nil
 }
 
@@ -162,20 +136,16 @@ func (c *PatientContract) UpdatePatient(ctx contractapi.TransactionContextInterf
 func (c *PatientContract) DeletePatient(ctx contractapi.TransactionContextInterface, patientID string) (string, error) {
 	exists, err := ctx.GetStub().GetState(patientID)
 	if err != nil {
-		return "", errors.New("failed to get patient: " + err.Error())
+		return `{"error": "failed to get patient: ` + err.Error() + `"}`, err
 	}
 	if exists == nil {
-		return "", errors.New("patient does not exist: " + patientID)
+		return `{"error": "patient does not exist: ` + patientID + `"}`, errors.New("patient does not exist: " + patientID)
 	}
 
 	err = ctx.GetStub().DelState(patientID)
 	if err != nil {
-		return "", errors.New("failed to delete patient: " + err.Error())
+		return `{"error": "failed to delete patient: ` + err.Error() + `"}`, err
 	}
-
-	log.Printf("Patient with ID: %s deleted successfully", patientID)
-
-	// Remove the patient record
 	return `{"message": "Patient deleted successfully"}`, nil
 }
 
@@ -188,7 +158,7 @@ func (c *PatientContract) DeletePatient(ctx contractapi.TransactionContextInterf
 func (c *PatientContract) RequestAccess(ctx contractapi.TransactionContextInterface, patientID string, requesterID string, isOrg bool) (string, error) {
 	authAsBytes, err := ctx.GetStub().GetState("auth_" + patientID)
 	if err != nil {
-		return "", err
+		return `{"error": "failed to get authorization data: ` + err.Error() + `"}`, err
 	}
 
 	var auth Authorization
@@ -206,15 +176,13 @@ func (c *PatientContract) RequestAccess(ctx contractapi.TransactionContextInterf
 
 	updatedAuthBytes, err := json.Marshal(auth)
 	if err != nil {
-		return "", err
+		return `{"error": "failed to marshal authorization data: ` + err.Error() + `"}`, err
 	}
 
 	err = ctx.GetStub().PutState("auth_"+patientID, updatedAuthBytes)
 	if err != nil {
-		return "", err
+		return `{"error": "failed to put authorization data: ` + err.Error() + `"}`, err
 	}
-
-	log.Printf("Access request for patient %s by %s recorded", patientID, requesterID)
 
 	return `{"message": "Access request recorded"}`, nil
 }
@@ -222,134 +190,127 @@ func (c *PatientContract) RequestAccess(ctx contractapi.TransactionContextInterf
 func (c *PatientContract) GrantAccess(ctx contractapi.TransactionContextInterface, patientID string, requesterID string, isOrg bool) (string, error) {
 	authAsBytes, err := ctx.GetStub().GetState("auth_" + patientID)
 	if err != nil {
-		return "", err
+		return `{"error": "failed to get authorization data: ` + err.Error() + `"}`, err
 	}
 	if authAsBytes == nil {
-		return "", errors.New("no authorization record found")
+		return `{"error": "no authorization record found"}`, errors.New("no authorization record found")
 	}
 
 	var auth Authorization
 	err = json.Unmarshal(authAsBytes, &auth)
 	if err != nil {
-		return "", errors.New("failed to unmarshal authorization: " + err.Error())
+		return `{"error": "failed to unmarshal authorization data: ` + err.Error() + `"}`, err
 	}
 
 	clientID, exists, err := ctx.GetClientIdentity().GetAttributeValue("userId")
 	if err != nil {
-		return "", err
+		return `{"error": "failed to get client ID attribute: ` + err.Error() + `"}`, err
 	}
 	if !exists {
-		return "", errors.New("client ID attribute does not exist")
+		return `{"error": "client ID attribute does not exist"}`, errors.New("client ID attribute does not exist")
 	}
 
 	if clientID != patientID {
-		return "", errors.New("only the patient can grant access")
+		return `{"error": "only the patient can grant access"}`, errors.New("only the patient can grant access")
 	}
 
 	if isOrg {
 		if _, ok := auth.AuthorizedOrgs[requesterID]; !ok {
-			return "", errors.New("no access request found for organization")
+			return `{"error": "no access request found for organization"}`, errors.New("no access request found for organization")
 		}
 		auth.AuthorizedOrgs[requesterID] = true
 
-		// Invoca il chaincode dell'organizzazione
 		invokeArgs := [][]byte{[]byte("GrantAccess"), []byte(patientID), []byte(requesterID)}
 		response := ctx.GetStub().InvokeChaincode("organization", invokeArgs, "")
 		if response.Status != 200 {
-			return "", errors.New("failed to invoke organization chaincode: " + response.Message)
+			return `{"error": "failed to invoke organization chaincode: ` + response.Message + `"}`, errors.New("failed to invoke organization chaincode: " + response.Message)
 		}
 	} else {
 		if _, ok := auth.Authorized[requesterID]; !ok {
-			return "", errors.New("no access request found for requester")
+			return `{"error": "no access request found for requester"}`, errors.New("no access request found for requester")
 		}
 		auth.Authorized[requesterID] = true
 
-		// Invoca il chaincode del practitioner
 		invokeArgs := [][]byte{[]byte("GrantAccess"), []byte(patientID), []byte(requesterID)}
 		response := ctx.GetStub().InvokeChaincode("practitioner", invokeArgs, "")
 		if response.Status != 200 {
-			return "", errors.New("failed to invoke practitioner chaincode: " + response.Message)
+			return `{"error": "failed to invoke practitioner chaincode: ` + response.Message + `"}`, errors.New("failed to invoke practitioner chaincode: " + response.Message)
 		}
 	}
 
 	updatedAuthBytes, err := json.Marshal(auth)
 	if err != nil {
-		return "", err
+		return `{"error": "failed to marshal authorization data: ` + err.Error() + `"}`, err
 	}
 
 	err = ctx.GetStub().PutState("auth_"+patientID, updatedAuthBytes)
 	if err != nil {
-		return "", err
+		return `{"error": "failed to put authorization data: ` + err.Error() + `"}`, err
 	}
-
-	log.Printf("Access granted for patient %s to %s", patientID, requesterID)
 	return `{"message": "Access granted"}`, nil
 }
 
 func (c *PatientContract) RevokeAccess(ctx contractapi.TransactionContextInterface, patientID string, requesterID string, isOrg bool) (string, error) {
 	authAsBytes, err := ctx.GetStub().GetState("auth_" + patientID)
 	if err != nil {
-		return "", err
+		return `{"error": "failed to get authorization data: ` + err.Error() + `"}`, err
 	}
 	if authAsBytes == nil {
-		return "", errors.New("no authorization record found")
+		return `{"error": "no authorization record found"}`, errors.New("no authorization record found")
 	}
 
 	var auth Authorization
 	err = json.Unmarshal(authAsBytes, &auth)
 	if err != nil {
-		return "", errors.New("failed to unmarshal authorization data: " + err.Error())
+		return `{"error": "failed to unmarshal authorization data: ` + err.Error() + `"}`, err
 	}
 
 	clientID, exists, err := ctx.GetClientIdentity().GetAttributeValue("userId")
 	if err != nil {
-		return "", err
+		return `{"error": "failed to get client ID attribute: ` + err.Error() + `"}`, err
 	}
 	if !exists {
-		return "", errors.New("client ID attribute does not exist")
+		return `{"error": "client ID attribute does not exist"}`, errors.New("client ID attribute does not exist")
 	}
 
 	if clientID != patientID {
-		return "", errors.New("only the patient can revoke access")
+		return `{"error": "only the patient can revoke access"}`, errors.New("only the patient can revoke access")
 	}
 
 	if isOrg {
 		if _, ok := auth.AuthorizedOrgs[requesterID]; !ok {
-			return "", errors.New("no authorization found for organization")
+			return `{"error": "no authorization found for organization"}`, errors.New("no authorization found for organization")
 		}
 		auth.AuthorizedOrgs[requesterID] = false
 
-		// Invoca il chaincode dell'organizzazione
 		invokeArgs := [][]byte{[]byte("RevokeAccess"), []byte(patientID), []byte(requesterID)}
 		response := ctx.GetStub().InvokeChaincode("organization", invokeArgs, "")
 		if response.Status != 200 {
-			return "", errors.New("failed to invoke organization chaincode: " + response.Message)
+			return `{"error": "failed to invoke organization chaincode: ` + response.Message + `"}`, errors.New("failed to invoke organization chaincode: " + response.Message)
 		}
 	} else {
 		if _, ok := auth.Authorized[requesterID]; !ok {
-			return "", errors.New("no authorization found for user")
+			return `{"error": "no authorization found for user"}`, errors.New("no authorization found for user")
 		}
 		auth.Authorized[requesterID] = false
 
-		// Invoca il chaincode del practitioner
 		invokeArgs := [][]byte{[]byte("RevokeAccess"), []byte(patientID), []byte(requesterID)}
 		response := ctx.GetStub().InvokeChaincode("practitioner", invokeArgs, "")
 		if response.Status != 200 {
-			return "", errors.New("failed to invoke practitioner chaincode: " + response.Message)
+			return `{"error": "failed to invoke practitioner chaincode: ` + response.Message + `"}`, errors.New("failed to invoke practitioner chaincode: " + response.Message)
 		}
 	}
 
 	updatedAuthBytes, err := json.Marshal(auth)
 	if err != nil {
-		return "", err
+		return `{"error": "failed to marshal authorization data: ` + err.Error() + `"}`, err
 	}
 
 	err = ctx.GetStub().PutState("auth_"+patientID, updatedAuthBytes)
 	if err != nil {
-		return "", err
+		return `{"error": "failed to put authorization data: ` + err.Error() + `"}`, err
 	}
 
-	log.Printf("Access revoked for patient %s from requester %s", patientID, requesterID)
 	return `{"message": "Access revoked"}`, nil
 }
 
@@ -391,14 +352,46 @@ func (c *PatientContract) IsAuthorized(ctx contractapi.TransactionContextInterfa
 	return false, nil
 }
 
+// SearchPatients allows searching for patients based on a query string
+func (c *PatientContract) SearchPatients(ctx contractapi.TransactionContextInterface, queryString string) (string, error) {
+	log.Printf("Executing query: %s", queryString)
+
+	resultsIterator, err := ctx.GetStub().GetQueryResult(queryString)
+	if err != nil {
+		return `{"error": "failed to execute query: ` + err.Error() + `"}`, err
+	}
+	defer resultsIterator.Close()
+
+	var patients []Patient
+	for resultsIterator.HasNext() {
+		queryResponse, err := resultsIterator.Next()
+		if err != nil {
+			return `{"error": "failed to iterate query results: ` + err.Error() + `"}`, err
+		}
+
+		var patient Patient
+		err = json.Unmarshal(queryResponse.Value, &patient)
+		if err != nil {
+			return `{"error": "failed to unmarshal query response: ` + err.Error() + `"}`, err
+		}
+		patients = append(patients, patient)
+	}
+
+	resultsJSON, err := json.Marshal(patients)
+	if err != nil {
+		return `{"error": "failed to encode results to JSON: ` + err.Error() + `"}`, err
+	}
+
+	return string(resultsJSON), nil
+}
+
 func main() {
 	chaincode, err := contractapi.NewChaincode(new(PatientContract))
 	if err != nil {
-		log.Panic(errors.New("Error creating patient chaincode: " + err.Error()))
+		log.Panic("Error creating patient chaincode: ", err)
 	}
 
 	if err := chaincode.Start(); err != nil {
-		log.Panic(errors.New("Error starting patient chaincode: " + err.Error()))
+		log.Panic("Error starting patient chaincode: ", err)
 	}
-
 }

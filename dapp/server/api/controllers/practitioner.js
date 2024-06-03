@@ -20,9 +20,7 @@ exports.getPractitioner = async (req, res, next) => {
     );
     const result = JSON.parse(resultString);
 
-    res
-      .status(200)
-      .json({ message: "Practitioner retrieved successfully", result: result });
+    res.status(200).json(result);
   } catch (error) {
     res.status(500).json({ error: error.message });
   } finally {
@@ -32,18 +30,19 @@ exports.getPractitioner = async (req, res, next) => {
 };
 
 exports.createPractitioner = async (req, res, next) => {
-  const { organization, fhirData } = req.body;
+  const { organization, practitionerJSON } = req.body;
+  const userId = req.user.userId;
+
   try {
     const channel = "identity-channel";
     const chaincode = "practitioner";
-    const userId = fhirData.identifier.value;
 
     await fabric.init(userId, organization, channel, chaincode);
     console.log("Fabric network initialized successfully.");
 
     let practitionerJSONString;
     try {
-      practitionerJSONString = JSON.stringify(fhirData);
+      practitionerJSONString = JSON.stringify(practitionerJSON);
       JSON.parse(practitionerJSONString);
     } catch (jsonError) {
       console.error("Invalid JSON format:", jsonError);
@@ -61,9 +60,9 @@ exports.createPractitioner = async (req, res, next) => {
     );
     const result = JSON.parse(resultString);
 
-    return { message: "Practitioner created successfully", result: result };
+    res.status(200).json(result);
   } catch (error) {
-    return { error: error.message };
+    res.status(500).json({ error: error.message });
   } finally {
     fabric.disconnect();
     console.log("Disconnected from Fabric gateway.");
@@ -72,24 +71,25 @@ exports.createPractitioner = async (req, res, next) => {
 
 exports.updatePractitioner = async (req, res, next) => {
   const practitionerId = req.params.id;
-  const fhirData = req.body;
+  const practitionerJSON = req.body;
+  const userId = req.user.userId;
+  const organization = req.user.organization;
+
   try {
     const channel = "identity-channel";
     const chaincode = "practitioner";
-    const userId = req.user.userId;
-    const organization = req.user.organization;
 
     await fabric.init(userId, organization, channel, chaincode);
     console.log("Fabric network initialized successfully.");
 
-    if (!fhirData.identifier) {
-      fhirData.identifier = {};
+    if (!practitionerJSON.identifier) {
+      practitionerJSON.identifier = {};
     }
-    fhirData.identifier.value = practitionerId;
+    practitionerJSON.identifier.value = practitionerId;
 
     let practitionerJSONString;
     try {
-      practitionerJSONString = JSON.stringify(fhirData);
+      practitionerJSONString = JSON.stringify(practitionerJSON);
       JSON.parse(practitionerJSONString);
     } catch (jsonError) {
       console.error("Invalid JSON format:", jsonError);
@@ -108,9 +108,7 @@ exports.updatePractitioner = async (req, res, next) => {
     );
 
     const result = JSON.parse(resultString);
-    res
-      .status(200)
-      .json({ message: "Practitioner updated successfully", result: result });
+    res.status(200).json(result);
   } catch (error) {
     res.status(500).json({ error: error.message });
   } finally {
@@ -122,6 +120,7 @@ exports.updatePractitioner = async (req, res, next) => {
 exports.deletePractitioner = async (req, res, next) => {
   const practitionerID = req.params.id;
   const organization = req.user.organization;
+
   try {
     const channel = "identity-channel";
     const chaincode = "practitioner";
@@ -135,9 +134,7 @@ exports.deletePractitioner = async (req, res, next) => {
     );
     const result = JSON.parse(resultString);
 
-    res
-      .status(200)
-      .json({ message: "Practitioner deleted successfully", result });
+    res.status(200).json(result);
   } catch (error) {
     res.status(500).json({ error: error.message });
   } finally {
@@ -147,12 +144,13 @@ exports.deletePractitioner = async (req, res, next) => {
 };
 
 exports.getFollowedPatients = async (req, res, next) => {
+  const practitionerId = req.user.userId;
+  const organization = req.user.organization;
+
   try {
     const channel = "identity-channel";
     const chaincode = "practitioner";
-    const organization = req.user.organization;
-    const practitionerId = req.user.userId;
-    console.log(practitionerId);
+
     await fabric.init(practitionerId, organization, channel, chaincode);
     console.log("Fabric network initialized successfully.");
 
@@ -162,10 +160,7 @@ exports.getFollowedPatients = async (req, res, next) => {
     );
     const result = JSON.parse(resultString);
 
-    res.status(200).json({
-      message: "Followed patients retrieved successfully",
-      result: result,
-    });
+    res.status(200).json(result);
   } catch (error) {
     res.status(500).json({ error: error.message });
   } finally {

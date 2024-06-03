@@ -42,6 +42,12 @@
     }
   },
   "channels": {
+    "patient-records-channel": {
+      "peers": {}
+    },
+    "emergency-channel": {
+      "peers": {}
+    },
     "identity-channel": {
       "peers": {}
     }

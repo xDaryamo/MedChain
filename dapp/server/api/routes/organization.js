@@ -4,41 +4,19 @@ const router = express.Router();
 
 const organizationController = require("../controllers/organization");
 
-router.get("/", organizationController.getAllOrganizations);
-
 // GET Organization Details
-router.get(
-  "/organization/:userid",
-  organizationController.getOrganizationDetails
-);
+router.get("/:id", organizationController.getOrganizationDetails);
+
+// POST
+router.post("/search", organizationController.searchOrganizations);
 
 // POST Register a new Organization
-router.post("/organization/:userid", organizationController.createOrganization);
+router.post("/", organizationController.createOrganization);
 
 // PATCH Update Exisisting Organization information
-router.patch(
-  "/organization/:userid",
-  organizationController.updateOrganization
-);
+router.patch("/:id", organizationController.updateOrganization);
 
 // DELETE Remove an Organization
-router.delete(
-  "/organization/:userid",
-  organizationController.deleteOrganization
-);
-
-// GET Search for organizations by type
-router.get(
-  "/organization/:userid/:query",
-  organizationController.searchOrganizationsByType
-);
-
-// GET Search for an organization by name
-router.get(
-  "/organization/:userid/:query",
-  organizationController.searchOrganizationByName
-);
-
-router.get("/initialize-ledger", organizationController.initializeLedger);
+router.delete("/:id", organizationController.deleteOrganization);
 
 module.exports = router;

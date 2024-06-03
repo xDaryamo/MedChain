@@ -72,9 +72,7 @@ exports.signup = async (req, res, next) => {
     session.endSession();
 
     res.status(201).json({
-      message: "User created",
-      userId: userId,
-      blockchainResult: createResult,
+      result: createResult,
     });
   } catch (err) {
     await session.abortTransaction();

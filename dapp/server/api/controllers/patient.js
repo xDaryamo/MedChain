@@ -20,9 +20,7 @@ exports.getPatient = async (req, res, next) => {
     );
     const result = JSON.parse(resultString);
 
-    res
-      .status(200)
-      .json({ message: "Patient retrieved successfully", result: result });
+    res.status(200).json(result);
   } catch (error) {
     res.status(500).json({ error: error.message });
   } finally {
@@ -41,17 +39,15 @@ exports.createPatient = async (req, res, next) => {
     await fabric.init(userId, organization, channel, chaincode);
     console.log("Fabric network initialized successfully.");
 
-    // Validate and stringify JSON
     let patientJSONString;
     try {
       patientJSONString = JSON.stringify(fhirData);
-      JSON.parse(patientJSONString); // This ensures the string is valid JSON
+      JSON.parse(patientJSONString);
     } catch (jsonError) {
       console.error("Invalid JSON format:", jsonError);
-      return { error: "Invalid JSON format" };
+      return res.status(400).json({ error: "Invalid JSON format" });
     }
 
-    // Log the JSON string
     console.log("Submitting transaction with patient JSON:", patientJSONString);
 
     const result = await fabric.submitTransaction(
@@ -59,9 +55,9 @@ exports.createPatient = async (req, res, next) => {
       patientJSONString
     );
 
-    return { message: "Patient created successfully", result: result };
+    res.status(200).json(JSON.parse(result));
   } catch (error) {
-    return { error: error.message };
+    res.status(500).json({ error: error.message });
   } finally {
     fabric.disconnect();
     console.log("Disconnected from Fabric gateway.");
@@ -79,9 +75,6 @@ exports.updatePatient = async (req, res, next) => {
     await fabric.init(userId, organization, channel, chaincode);
     console.log("Fabric network initialized successfully.");
 
-    if (!fhirData.identifier) {
-      fhirData.identifier = {};
-    }
     fhirData.identifier.value = userId;
 
     let patientJSONString;
@@ -99,11 +92,9 @@ exports.updatePatient = async (req, res, next) => {
       "UpdatePatient",
       patientJSONString
     );
-
     const result = JSON.parse(resultString);
-    res
-      .status(200)
-      .json({ message: "Patient updated successfully", result: result });
+
+    res.status(200).json(result);
   } catch (error) {
     res.status(500).json({ error: error.message });
   } finally {
@@ -126,9 +117,9 @@ exports.deletePatient = async (req, res, next) => {
       "DeletePatient",
       patientID
     );
-    const result = JSON.parse(resultString); // Assuming resultString is JSON string
+    const result = JSON.parse(resultString);
 
-    res.status(200).json({ message: "Patient deleted successfully", result });
+    res.status(200).json(result);
   } catch (error) {
     res.status(500).json({ error: error.message });
   } finally {
@@ -156,10 +147,8 @@ exports.requestAccess = async (req, res, next) => {
       isOrg.toString()
     );
 
-    // Log the result string for debugging
     console.log("Result from blockchain:", resultString);
 
-    // Check if resultString is valid JSON
     let result;
     if (resultString) {
       try {
@@ -174,9 +163,7 @@ exports.requestAccess = async (req, res, next) => {
       return res.status(500).json({ error: "Empty response from blockchain" });
     }
 
-    res
-      .status(200)
-      .json({ message: "Access request sent successfully", result });
+    res.status(200).json(result);
   } catch (error) {
     res.status(500).json({ error: error.message });
   } finally {
@@ -204,9 +191,9 @@ exports.grantAccess = async (req, res, next) => {
       requesterID,
       isOrg.toString()
     );
-    const result = JSON.parse(resultString); // Assuming resultString is JSON string
+    const result = JSON.parse(resultString);
 
-    res.status(200).json({ message: "Access granted successfully", result });
+    res.status(200).json(result);
   } catch (error) {
     res.status(500).json({ error: error.message });
   } finally {
@@ -232,9 +219,9 @@ exports.revokeAccess = async (req, res, next) => {
       patientID,
       requesterID
     );
-    const result = JSON.parse(resultString); // Assuming resultString is JSON string
+    const result = JSON.parse(resultString);
 
-    res.status(200).json({ message: "Access revoked successfully", result });
+    res.status(200).json(result);
   } catch (error) {
     res.status(500).json({ error: error.message });
   } finally {

@@ -3,7 +3,6 @@ package main
 import (
 	"encoding/json"
 	"errors"
-	"fmt"
 	"log"
 
 	"github.com/hyperledger/fabric-contract-api-go/contractapi"
@@ -20,252 +19,138 @@ type EncounterChaincode struct {
 ================================
 */
 
-// CreateEncounter creates a new Encounter
 func (ec *EncounterChaincode) CreateEncounter(ctx contractapi.TransactionContextInterface, encounterJSON string) (string, error) {
-
-	log.Printf("Encounter JSON from param: %s", string(encounterJSON))
-
 	// Deserialize JSON data into a Go data structure
 	var encounter Encounter
 	err := json.Unmarshal([]byte(encounterJSON), &encounter)
-
 	if err != nil {
-		return "", errors.New("failed to unmarshal encounter: " + err.Error())
+		return `{"error": "failed to unmarshal encounter: ` + err.Error() + `"}`, err
 	}
 
-	log.Printf("Encounter struct unmarshalled: %+v", encounter)
-
 	if encounter.ID.Value == "" {
-		return "", errors.New("encounter ID is required")
+		return `{"error": "encounter ID is required"}`, errors.New("encounter ID is required")
 	}
 
 	// Check if the Encounter record already exists
 	existingEncounter, err := ctx.GetStub().GetState(encounter.ID.Value)
 	if err != nil {
-		return "", errors.New("failed to get encounter " + encounter.ID.Value + " from world state")
+		return `{"error": "failed to get encounter: ` + err.Error() + `"}`, err
 	}
 	if existingEncounter != nil {
-		return "", errors.New("encounter record already exists " + encounter.ID.Value)
+		return `{"error": "encounter record already exists: ` + encounter.ID.Value + `"}`, errors.New("encounter record already exists")
 	}
 
 	// Serialize the Encounter record and save it on the blockchain
 	encounterJSONBytes, err := json.Marshal(encounter)
 	if err != nil {
-		return "", errors.New("failed to marshal encounter: " + err.Error())
+		return `{"error": "failed to marshal encounter: ` + err.Error() + `"}`, err
 	}
 
-	log.Printf("Encounter with ID: %s created successfully", encounter.ID.Value)
-	log.Printf("Serialized Encounter JSON: %s", string(encounterJSONBytes))
-
 	if err := ctx.GetStub().PutState(encounter.ID.Value, encounterJSONBytes); err != nil {
-		return "", errors.New("failed to put state: " + err.Error())
+		return `{"error": "failed to put state: ` + err.Error() + `"}`, err
 	}
 
 	return `{"message": "Encounter created successfully"}`, nil
 }
 
-// GetEncounter retrieves an Encounter from the blockchain
 func (ec *EncounterChaincode) ReadEncounter(ctx contractapi.TransactionContextInterface, encounterID string) (string, error) {
 	// Retrieve the Encounter record from the blockchain
 	encounterJSON, err := ctx.GetStub().GetState(encounterID)
 	if err != nil {
-		return "", errors.New("failed to read encounter: " + err.Error())
+		return `{"error": "failed to read encounter: ` + err.Error() + `"}`, err
 	}
 	if encounterJSON == nil {
-		return "", errors.New("encounter does not exist: " + encounterID)
+		return `{"error": "encounter does not exist: ` + encounterID + `"}`, errors.New("encounter does not exist")
 	}
-
-	log.Printf("Encounter JSON from ledger: %s", string(encounterJSON))
-
-	// Deserialize the Encounter record
-	var encounter Encounter
-	err = json.Unmarshal(encounterJSON, &encounter)
-	if err != nil {
-		return "", errors.New("failed to unmarshal encounter: " + err.Error())
-	}
-
-	log.Printf("Encounter object: %+v", encounter)
 
 	return string(encounterJSON), nil
-
 }
 
-// UpdateEncounter updates an existing Encounter
 func (ec *EncounterChaincode) UpdateEncounter(ctx contractapi.TransactionContextInterface, encounterID string, updatedEncounterJSON string) (string, error) {
 	// Retrieve the existing Encounter record
 	existingEncounter, err := ctx.GetStub().GetState(encounterID)
 	if err != nil {
-		return "", errors.New("failed to get encounter: " + err.Error())
+		return `{"error": "failed to get encounter: ` + err.Error() + `"}`, err
 	}
 	if existingEncounter == nil {
-		return "", errors.New("encounter does not exist: " + encounterID)
+		return `{"error": "encounter does not exist: ` + encounterID + `"}`, errors.New("encounter does not exist")
 	}
-
-	// Deserialize the Encounter record
-	var encounter Encounter
-	err = json.Unmarshal(existingEncounter, &encounter)
-	if err != nil {
-		return "", errors.New("failed to unmarshal encounter: " + err.Error())
-	}
-
-	// Ottieni l'ID del client che effettua la richiesta
-	clientID, err := ctx.GetClientIdentity().GetID()
-	if err != nil {
-		return "", errors.New("failed to get client ID")
-	}
-
-	patientref := encounter.Subject.Reference
-	chaincodeName := "patient"
-	functionName := "IsAuthorized"
-
-	invokeArgs := [][]byte{[]byte(functionName), []byte(patientref), []byte(clientID)}
-
-	response := ctx.GetStub().InvokeChaincode(chaincodeName, invokeArgs, ctx.GetStub().GetChannelID())
-	if response.Status != 200 {
-		return "", errors.New("failed to invoke chaincode: " + response.Message)
-	}
-
-	log.Printf("Client ID: %s", clientID)
-	log.Printf("Patient ID: %s", patientref)
 
 	// Deserialize the updated JSON data into a Go data structure
 	var updatedEncounter Encounter
 	if err := json.Unmarshal([]byte(updatedEncounterJSON), &updatedEncounter); err != nil {
-		return "", errors.New("failed to unmarshal encounter: " + err.Error())
+		return `{"error": "failed to unmarshal encounter: ` + err.Error() + `"}`, err
 	}
 
 	// Serialize the updated Encounter record and save it on the blockchain
-	updatedEncounterJSONBytes, err := json.Marshal(existingEncounter)
+	updatedEncounterJSONBytes, err := json.Marshal(updatedEncounter)
 	if err != nil {
-		return "", errors.New("failed to marshal encounter: " + err.Error())
+		return `{"error": "failed to marshal encounter: ` + err.Error() + `"}`, err
 	}
 
-	if err := ctx.GetStub().PutState(encounter.ID.Value, updatedEncounterJSONBytes); err != nil {
-		return "", errors.New("failed to put state: " + err.Error())
+	if err := ctx.GetStub().PutState(encounterID, updatedEncounterJSONBytes); err != nil {
+		return `{"error": "failed to put state: ` + err.Error() + `"}`, err
 	}
 
 	return `{"message": "Encounter updated successfully"}`, nil
 }
 
-// DeleteEncounter removes an existing Encounter
 func (ec *EncounterChaincode) DeleteEncounter(ctx contractapi.TransactionContextInterface, encounterID string) (string, error) {
 	// Check if the Encounter record exists
 	existingEncounter, err := ctx.GetStub().GetState(encounterID)
 	if err != nil {
-		return "", errors.New("failed to get encounter: " + err.Error())
+		return `{"error": "failed to get encounter: ` + err.Error() + `"}`, err
 	}
 	if existingEncounter == nil {
-		return "", errors.New("encounter not found")
+		return `{"error": "encounter not found"}`, errors.New("encounter not found")
 	}
 
-	// Deserialize the Encounter record
-	var encounter Encounter
-	err = json.Unmarshal(existingEncounter, &encounter)
-	if err != nil {
-		return "", errors.New("failed to unmarshal encounter: " + err.Error())
+	if err := ctx.GetStub().DelState(encounterID); err != nil {
+		return `{"error": "failed to delete encounter: ` + err.Error() + `"}`, err
 	}
 
-	if err := ctx.GetStub().DelState(encounter.ID.Value); err != nil {
-		return "", errors.New("failed to delete encounter: " + err.Error())
-	}
-
-	return `{"message": "Encounter updated successfully"}`, nil
+	return `{"message": "Encounter deleted successfully"}`, nil
 }
 
-// SearchEncountersByStatus allows searching for encounters based on their status
-func (ec *EncounterChaincode) SearchEncountersByStatus(ctx contractapi.TransactionContextInterface, status string) ([]string, error) {
-	queryString := fmt.Sprintf(`{"selector":{"status":{"coding":{"code":"%s"}}}}`, status)
-	return ec.QueryEncounters(ctx, queryString)
-}
+func (ec *EncounterChaincode) SearchEncounters(ctx contractapi.TransactionContextInterface, queryString string) (string, error) {
+	log.Printf("Executing query: %s", queryString)
 
-// SearchEncountersByType allows searching for encounters based on their type
-func (ec *EncounterChaincode) SearchEncountersByType(ctx contractapi.TransactionContextInterface, typeCode string) ([]string, error) {
-	queryString := fmt.Sprintf(`{"selector":{"type":{"coding":{"code":"%s"}}}}`, typeCode)
-	return ec.QueryEncounters(ctx, queryString)
-}
-
-// queryEncounters executes a CouchDB query and returns the results as a JSON string
-func (ec *EncounterChaincode) QueryEncounters(ctx contractapi.TransactionContextInterface, queryString string) ([]string, error) {
-
-	var encounters []string
 	resultsIterator, err := ctx.GetStub().GetQueryResult(queryString)
 	if err != nil {
-		return encounters, err
+		return `{"error": "failed to execute query: ` + err.Error() + `"}`, err
 	}
 	defer resultsIterator.Close()
 
-	if err != nil {
-		return encounters, errors.New("failed to get client ID")
-	}
-
+	var encounters []Encounter
 	for resultsIterator.HasNext() {
 		queryResponse, err := resultsIterator.Next()
 		if err != nil {
-			return encounters, err
+			return `{"error": "failed to iterate query results: ` + err.Error() + `"}`, err
 		}
 
 		var encounter Encounter
 		err = json.Unmarshal(queryResponse.Value, &encounter)
 		if err != nil {
-			return encounters, err
+			return `{"error": "failed to unmarshal query response: ` + err.Error() + `"}`, err
 		}
-
-		encounterJSON, err := json.Marshal(encounter)
-		if err != nil {
-			return encounters, err
-		}
-
-		encounters = append(encounters, string(encounterJSON))
+		encounters = append(encounters, encounter)
 	}
 
-	return encounters, nil
-}
-
-func (t *EncounterChaincode) QueryEncountersByPatientID(ctx contractapi.TransactionContextInterface, patientID string) (string, error) {
-	log.Printf("Querying encounters for patient ID: %s", patientID)
-
-	// Ensure the patientID is prefixed correctly
-	patientReference := "Patient/" + patientID
-	queryString := `{"selector":{"subject.reference":"` + patientReference + `"}}`
-	resultsIterator, err := ctx.GetStub().GetQueryResult(queryString)
+	resultsJSON, err := json.Marshal(encounters)
 	if err != nil {
-		return "", errors.New("failed to query encounters: " + err.Error())
-	}
-	defer resultsIterator.Close()
-
-	var results []Encounter
-	for resultsIterator.HasNext() {
-		queryResponse, err := resultsIterator.Next()
-		if err != nil {
-			return "", errors.New("failed to iterate query results: " + err.Error())
-		}
-
-		log.Printf("Query response: %s", string(queryResponse.Value))
-
-		var encounter Encounter
-		err = json.Unmarshal(queryResponse.Value, &encounter)
-		if err != nil {
-			return "", errors.New("failed to unmarshal query response: " + err.Error())
-		}
-		results = append(results, encounter)
+		return `{"error": "failed to encode results to JSON: ` + err.Error() + `"}`, err
 	}
 
-	resultsJSON, err := json.Marshal(results)
-	if err != nil {
-		return "", errors.New("failed to encode results to JSON: " + err.Error())
-	}
-
-	log.Printf("Query for patient ID: %s returned %d results", patientID, len(results))
 	return string(resultsJSON), nil
 }
 
 func main() {
 	chaincode, err := contractapi.NewChaincode(new(EncounterChaincode))
 	if err != nil {
-		log.Panic(errors.New("Error creating encounter chaincode: " + err.Error()))
+		log.Panic("Error creating encounter chaincode: ", err)
 	}
 
 	if err := chaincode.Start(); err != nil {
-		log.Panic(errors.New("Error starting encounter chaincode: " + err.Error()))
+		log.Panic("Error starting encounter chaincode: ", err)
 	}
 }

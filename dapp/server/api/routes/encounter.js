@@ -1,34 +1,16 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const encounter = require('../controllers/encounter'); 
+const encounter = require("../controllers/encounter");
 const { verifyToken, authorizeOrganization } = require("../middleware/auth");
 
-// Routes for CRUD operations
-router.post('/encounter', 
-verifyToken,
-authorizeOrganization(["ospedale-maresca.aslnapoli3.medchain.com", "patients.medchain.com"]),
-encounter.createEncounter);
+router.post("/", verifyToken, encounter.createEncounter);
 
-router.get('/encounter/:encounterid', 
-verifyToken,
-authorizeOrganization(["ospedale-maresca.aslnapoli3.medchain.com", "patients.medchain.com"]),
-encounter.getEncounter);
+router.post("/:query", verifyToken, encounter.searchEncounter);
 
-router.patch('/encounter/:encounterid', 
-verifyToken,
-authorizeOrganization(["ospedale-maresca.aslnapoli3.medchain.com", "patients.medchain.com"]),
-encounter.updateEncounter);
+router.get("/:id", verifyToken, encounter.getEncounter);
 
-router.delete('/encounter/:encounterid', 
-verifyToken,
-authorizeOrganization(["ospedale-maresca.aslnapoli3.medchain.com", "patients.medchain.com"]),
-encounter.deleteEncounter);
+router.patch("/:id", verifyToken, encounter.updateEncounter);
 
-// Routes for BUSINESS operations
-router.get('/encounter/:query', 
-verifyToken,
-authorizeOrganization(["ospedale-maresca.aslnapoli3.medchain.com", "patients.medchain.com"]),
-encounter.queryEncounter);
-
+router.delete("/:id", verifyToken, encounter.deleteEncounter);
 
 module.exports = router;
