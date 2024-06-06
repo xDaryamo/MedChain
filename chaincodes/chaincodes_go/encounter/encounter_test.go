@@ -321,23 +321,7 @@ func TestCreateEncounter(t *testing.T) {
 	ctx := new(MockTransactionContext)
 	stub := new(MockStub)
 
-	stub.On("GetChannelID").Return("testchannel")
 	ctx.On("GetStub").Return(stub)
-	clientIdentity := new(MockClientIdentity)
-	ctx.On("GetClientIdentity").Return(clientIdentity)
-
-	// Mock the GetID, GetMSPID, GetAttributeValue, and AssertAttributeValue methods
-	clientIdentity.On("GetID").Return("testClientID", nil)
-	clientIdentity.On("GetMSPID").Return("Org1MSP", nil)
-	clientIdentity.On("AssertAttributeValue", "role", "doctor").Return(nil)
-	clientIdentity.On("GetAttributeValue", "userId").Return("testUserId", true, nil)
-
-	// Mock the GetX509Certificate method
-	certPEM := []byte(`-----BEGIN CERTIFICATE-----
-MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAuW9TzzjO74odDzReLxVc
-...
------END CERTIFICATE-----`)
-	clientIdentity.On("GetX509Certificate").Return(certPEM, nil)
 
 	encounter := Encounter{
 		ID: &Identifier{
@@ -514,14 +498,9 @@ MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAuW9TzzjO74odDzReLxVc
 	stub.On("GetState", "encounter1").Return(nil, nil)
 	stub.On("PutState", "encounter1", encounterJSON).Return(nil)
 
-	invokeResponse := peer.Response{
-		Status:  200,
-		Payload: []byte(""),
-	}
-	stub.On("InvokeChaincode", "patient", mock.AnythingOfType("[][]uint8"), "testchannel").Return(invokeResponse, nil)
-
-	err := chaincode.CreateEncounter(ctx, string(encounterJSON))
+	msg, err := chaincode.CreateEncounter(ctx, string(encounterJSON))
 	assert.NoError(t, err)
+	assert.Equal(t, msg, `{"message": "Encounter created successfully"}`)
 
 	stub.AssertExpectations(t)
 	ctx.AssertExpectations(t)
@@ -533,13 +512,7 @@ func TestReadEncounter(t *testing.T) {
 	ctx := new(MockTransactionContext)
 	stub := new(MockStub)
 
-	stub.On("GetChannelID").Return("testchannel")
 	ctx.On("GetStub").Return(stub)
-	clientIdentity := new(MockClientIdentity)
-	ctx.On("GetClientIdentity").Return(clientIdentity)
-
-	// Mock the GetAttributeValue method
-	clientIdentity.On("GetAttributeValue", "userId").Return("testUserId", true, nil)
 
 	// Mock an encounter ID to read
 	encounterID := "encounter1"
@@ -715,13 +688,6 @@ func TestReadEncounter(t *testing.T) {
 	// Mock behavior for GetState to return the encounter JSON
 	stub.On("GetState", encounterID).Return(encounterJSON, nil)
 
-	// Mock behavior for InvokeChaincode (assuming it succeeds)
-	invokeResponse := peer.Response{
-		Status:  200,
-		Payload: nil,
-	}
-	stub.On("InvokeChaincode", "patient", mock.AnythingOfType("[][]uint8"), "testchannel").Return(invokeResponse, nil)
-
 	// Invoke the ReadEncounter function
 	resultJSON, err := chaincode.ReadEncounter(ctx, encounterID)
 	assert.NoError(t, err)
@@ -738,14 +704,8 @@ func TestUpdateEncounter(t *testing.T) {
 	ctx := new(MockTransactionContext)
 	stub := new(MockStub)
 
-	stub.On("GetChannelID").Return("testchannel")
 	// Mock behavior for GetStub to return the mock stub instance
 	ctx.On("GetStub").Return(stub)
-
-	// Mock behavior for GetClientIdentity to return "testUserId"
-	clientIdentity := new(MockClientIdentity)
-	ctx.On("GetClientIdentity").Return(clientIdentity)
-	clientIdentity.On("GetID").Return("testUserId", nil)
 
 	// Mock an existing encounter ID to update
 	encounterID := "encounter1"
@@ -921,21 +881,16 @@ func TestUpdateEncounter(t *testing.T) {
 	// Mock behavior for GetState to return the existing encounter JSON
 	stub.On("GetState", encounterID).Return(existingEncounterJSON, nil)
 
-	// Mock behavior for InvokeChaincode (assuming it succeeds)
-	invokeResponse := peer.Response{
-		Status:  200,
-		Payload: nil,
-	}
-	stub.On("InvokeChaincode", "patient", mock.AnythingOfType("[][]uint8"), "testchannel").Return(invokeResponse, nil)
-
 	// Mock behavior for PutState to accept any byte array and succeed
 	stub.On("PutState", encounterID, mock.AnythingOfType("[]uint8")).Return(nil)
 
 	// Invoke the UpdateEncounter function with updated JSON
-	err := chaincode.UpdateEncounter(ctx, encounterID, string(existingEncounterJSON))
+	msg, err := chaincode.UpdateEncounter(ctx, encounterID, string(existingEncounterJSON))
 	assert.NoError(t, err)
+	assert.Equal(t, msg, `{"message": "Encounter updated successfully"}`)
 
 	// Assert that all expected methods were called on the stub and context
+
 	stub.AssertExpectations(t)
 	ctx.AssertExpectations(t)
 }
@@ -947,14 +902,8 @@ func TestDeleteEncounter(t *testing.T) {
 	ctx := new(MockTransactionContext)
 	stub := new(MockStub)
 
-	stub.On("GetChannelID").Return("testchannel")
 	// Mock behavior for GetStub to return the mock stub instance
 	ctx.On("GetStub").Return(stub)
-
-	// Mock behavior for GetClientIdentity to return "testUserId"
-	clientIdentity := new(MockClientIdentity)
-	ctx.On("GetClientIdentity").Return(clientIdentity)
-	clientIdentity.On("GetID").Return("testUserId", nil)
 
 	// Mock an existing encounter ID to delete
 	encounterID := "encounter1"
@@ -1130,19 +1079,13 @@ func TestDeleteEncounter(t *testing.T) {
 	// Mock behavior for GetState to return the existing encounter JSON
 	stub.On("GetState", encounterID).Return(existingEncounterJSON, nil)
 
-	// Mock behavior for InvokeChaincode (assuming it succeeds)
-	invokeResponse := peer.Response{
-		Status:  200,
-		Payload: nil,
-	}
-	stub.On("InvokeChaincode", "patient", mock.AnythingOfType("[][]uint8"), "testchannel").Return(invokeResponse, nil)
-
 	// Mock behavior for DelState to accept encounterID and succeed
 	stub.On("DelState", encounterID).Return(nil)
 
 	// Invoke the DeleteEncounter function
-	err := chaincode.DeleteEncounter(ctx, encounterID)
+	msg, err := chaincode.DeleteEncounter(ctx, encounterID)
 	assert.NoError(t, err)
+	assert.Equal(t, msg, `{"message": "Encounter deleted successfully"}`)
 
 	// Assert that all expected methods were called on the stub and context
 	stub.AssertExpectations(t)
@@ -1151,24 +1094,14 @@ func TestDeleteEncounter(t *testing.T) {
 
 // TestSearchEncountersByType tests the SearchEncountersByType function
 func TestSearchEncountersByType(t *testing.T) {
-	// Create new instances of mocks
 	chaincode := new(EncounterChaincode)
 	ctx := new(MockTransactionContext)
 	stub := new(MockStub)
 
-	stub.On("GetChannelID").Return("testchannel")
-	// Mock behavior for GetStub to return the mock stub instance
 	ctx.On("GetStub").Return(stub)
 
-	// Mock behavior for GetClientIdentity to return "testUserId"
-	clientIdentity := new(MockClientIdentity)
-	ctx.On("GetClientIdentity").Return(clientIdentity)
-	clientIdentity.On("GetID").Return("testUserId", nil)
-
-	// Mock a type code to search for
 	typeCode := "consult"
 
-	// Mock behavior for GetQueryResult to return mock results iterator
 	queryString := fmt.Sprintf(`{"selector":{"type":{"coding":{"code":"%s"}}}}`, typeCode)
 
 	mockEncounters := []Encounter{
@@ -1346,7 +1279,6 @@ func TestSearchEncountersByType(t *testing.T) {
 	mockEncountersJSON, err := json.Marshal(mockEncounters)
 	assert.NoError(t, err)
 
-	// Create a new MockIterator and add mock records to it
 	mockIterator := new(MockIterator)
 	for _, encounter := range mockEncounters {
 		encounterJSON, err := json.Marshal(encounter)
@@ -1354,22 +1286,12 @@ func TestSearchEncountersByType(t *testing.T) {
 		mockIterator.AddRecord(encounter.ID.Value, encounterJSON)
 	}
 
-	// Mock behavior for InvokeChaincode (assuming it succeeds)
-	invokeResponse := peer.Response{
-		Status:  200,
-		Payload: nil,
-	}
-	stub.On("InvokeChaincode", "patient", mock.AnythingOfType("[][]uint8"), "testchannel").Return(invokeResponse, nil)
-
-	// Mock behavior for GetQueryResult to return mock iterator
 	stub.On("GetQueryResult", queryString).Return(mockIterator, nil)
 
-	// Invoke the SearchEncountersByType function
-	resultJSON, err := chaincode.SearchEncountersByType(ctx, typeCode)
+	resultJSON, err := chaincode.SearchEncounters(ctx, queryString)
 	assert.NoError(t, err)
 	assert.Equal(t, string(mockEncountersJSON), resultJSON)
 
-	// Assert that all expected methods were called on the stub and context
 	stub.AssertExpectations(t)
 	ctx.AssertExpectations(t)
 }

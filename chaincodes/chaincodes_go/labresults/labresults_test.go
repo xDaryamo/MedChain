@@ -324,8 +324,12 @@ func TestCreateLabResult_Successful(t *testing.T) {
 	mockStub.On("GetState", "obs1").Return(nil, nil) // Simulate that "obs1" does not exist
 	mockStub.On("PutState", "obs1", mock.Anything).Return(nil)
 
-	err := labChaincode.CreateLabResult(mockCtx, observationJSON)
+	msg, err := labChaincode.CreateLabResult(mockCtx, observationJSON)
 	assert.NoError(t, err)
+	assert.Equal(t, msg, `{"message": "Lab result created successfully"}`)
+
+	mockStub.AssertExpectations(t)
+	mockCtx.AssertExpectations(t)
 }
 
 func TestCreateLabResult_FailureDueToExistingID(t *testing.T) {
@@ -337,8 +341,11 @@ func TestCreateLabResult_FailureDueToExistingID(t *testing.T) {
 	observationJSON := sampleObservationJSON("obs1")
 	mockStub.On("GetState", "obs1").Return([]byte(observationJSON), nil) // Simulate that "obs1" exists
 
-	err := labChaincode.CreateLabResult(mockCtx, observationJSON)
-	assert.Error(t, err, "expected an error when creating a lab result with an existing ID")
+	msg, err := labChaincode.CreateLabResult(mockCtx, observationJSON)
+	assert.Equal(t, msg, `{"error": "lab result already exists: obs1"}`)
+	assert.Error(t, err, "lab result already exists")
+	mockStub.AssertExpectations(t)
+	mockCtx.AssertExpectations(t)
 }
 
 func TestUpdateLabResult_Successful(t *testing.T) {
@@ -358,8 +365,11 @@ func TestUpdateLabResult_Successful(t *testing.T) {
 	mockStub.On("GetState", "obs1").Return([]byte(originalObservationJSON), nil)
 	mockStub.On("PutState", "obs1", mock.Anything).Return(nil)
 
-	err := labChaincode.UpdateLabResult(mockCtx, "obs1", string(updatedObservationJSON))
+	msg, err := labChaincode.UpdateLabResult(mockCtx, "obs1", string(updatedObservationJSON))
+	assert.Equal(t, msg, `{"message": "Lab result updated successfully"}`)
 	assert.NoError(t, err)
+	mockStub.AssertExpectations(t)
+	mockCtx.AssertExpectations(t)
 }
 
 func TestUpdateLabResult_NonExistentResult(t *testing.T) {
@@ -372,8 +382,11 @@ func TestUpdateLabResult_NonExistentResult(t *testing.T) {
 
 	mockStub.On("GetState", "obs2").Return(nil, nil)
 
-	err := labChaincode.UpdateLabResult(mockCtx, "obs2", string(updatedObservationJSON))
+	msg, err := labChaincode.UpdateLabResult(mockCtx, "obs2", string(updatedObservationJSON))
+	assert.Equal(t, msg, `{"error": "the lab result does not exist"}`)
 	assert.Error(t, err)
+	mockStub.AssertExpectations(t)
+	mockCtx.AssertExpectations(t)
 }
 
 func TestUpdateLabResult_DecodingError(t *testing.T) {
@@ -387,8 +400,11 @@ func TestUpdateLabResult_DecodingError(t *testing.T) {
 
 	mockStub.On("GetState", "obs1").Return([]byte(originalObservationJSON), nil)
 
-	err := labChaincode.UpdateLabResult(mockCtx, "obs1", invalidJSON)
+	msg, err := labChaincode.UpdateLabResult(mockCtx, "obs1", invalidJSON)
+	assert.Equal(t, msg, `{"error": "failed to decode JSON: `+err.Error()+`"}`)
 	assert.Error(t, err)
+	mockStub.AssertExpectations(t)
+	mockCtx.AssertExpectations(t)
 }
 
 func TestGetLabResult_Successful(t *testing.T) {
@@ -403,6 +419,8 @@ func TestGetLabResult_Successful(t *testing.T) {
 	result, err := labChaincode.GetLabResult(mockCtx, "obs1")
 	assert.NoError(t, err)
 	assert.Equal(t, observationJSON, result, "The retrieved lab result should match the stored one.")
+	mockStub.AssertExpectations(t)
+	mockCtx.AssertExpectations(t)
 }
 
 func TestGetLabResult_NonExistentResult(t *testing.T) {
@@ -415,8 +433,10 @@ func TestGetLabResult_NonExistentResult(t *testing.T) {
 
 	result, err := labChaincode.GetLabResult(mockCtx, "obs2")
 	assert.Error(t, err)
-	assert.Equal(t, "", result, "The result should be an empty string when the lab result does not exist.")
+	assert.Equal(t, `{"error": "the lab result does not exist"}`, result, "The result should be an empty string when the lab result does not exist.")
 	assert.Contains(t, err.Error(), "the lab result does not exist", "Error message should indicate that the lab result does not exist.")
+	mockStub.AssertExpectations(t)
+	mockCtx.AssertExpectations(t)
 }
 
 func TestGetLabResult_AccessError(t *testing.T) {
@@ -425,15 +445,18 @@ func TestGetLabResult_AccessError(t *testing.T) {
 	mockStub := new(MockStub)
 	mockCtx.On("GetStub").Return(mockStub)
 
-	mockStub.On("GetState", "obs3").Return(nil, errors.New("ledger access error"))
+	mockStub.On("GetState", "obs3").Return(nil, errors.New("failed to read from world state"))
 
 	result, err := labChaincode.GetLabResult(mockCtx, "obs3")
 	assert.Error(t, err)
-	assert.Equal(t, "", result, "The result should be an empty string when there is an error accessing the world state.")
+	assert.Equal(t, `{"error": "failed to read from world state"}`, result, "The result should be an empty string when there is an error accessing the world state.")
 	assert.Contains(t, err.Error(), "failed to read from world state", "Error message should indicate a failure to read from the world state.")
+	mockStub.AssertExpectations(t)
+	mockCtx.AssertExpectations(t)
 }
 
 func TestQueryLabResultsByPatientID_Successful(t *testing.T) {
+
 	labChaincode := new(LabResultsChaincode)
 	mockCtx := new(MockTransactionContext)
 	mockStub := new(MockStub)
@@ -441,14 +464,28 @@ func TestQueryLabResultsByPatientID_Successful(t *testing.T) {
 
 	observation1 := sampleObservationJSONWithPatient("obs1", "patient1")
 	observation2 := sampleObservationJSONWithPatient("obs2", "patient1")
-	mockIterator := &MockIterator{}
+
+	mockIterator := new(MockIterator)
 	mockIterator.AddRecord("obs1", []byte(observation1))
 	mockIterator.AddRecord("obs2", []byte(observation2))
+
 	mockStub.On("GetQueryResult", mock.Anything).Return(mockIterator, nil)
 
-	results, err := labChaincode.QueryLabResultsByPatientID(mockCtx, "patient1")
+	resultsJSON, err := labChaincode.SearchLabResults(mockCtx, `{
+		"selector": {
+			"subject.reference": "patient1"
+		}
+	}`)
 	assert.NoError(t, err)
-	assert.Len(t, results, 2, "There should be two observations for the patient.")
+
+	var observations []Observation
+	err = json.Unmarshal([]byte(resultsJSON), &observations)
+	assert.NoError(t, err)
+
+	assert.Len(t, observations, 2, "There should be two observations for the patient.")
+
+	mockStub.AssertExpectations(t)
+	mockCtx.AssertExpectations(t)
 }
 
 func TestQueryLabResultsByPatientID_NoResults(t *testing.T) {
@@ -457,11 +494,25 @@ func TestQueryLabResultsByPatientID_NoResults(t *testing.T) {
 	mockStub := new(MockStub)
 	mockCtx.On("GetStub").Return(mockStub)
 
-	mockStub.On("GetQueryResult", mock.Anything).Return(&MockIterator{}, nil)
+	mockIterator := new(MockIterator)
 
-	results, err := labChaincode.QueryLabResultsByPatientID(mockCtx, "patient2")
+	mockStub.On("GetQueryResult", mock.Anything).Return(mockIterator, nil)
+
+	resultsJSON, err := labChaincode.SearchLabResults(mockCtx, `{
+		"selector": {
+			"subject.reference": "patient2"
+		}
+	}`)
 	assert.NoError(t, err)
-	assert.Len(t, results, 0, "There should be no observations for the patient.")
+
+	var observations []Observation
+	err = json.Unmarshal([]byte(resultsJSON), &observations)
+	assert.NoError(t, err)
+
+	assert.Len(t, observations, 0, "There should be no observations for the patient.")
+
+	mockStub.AssertExpectations(t)
+	mockCtx.AssertExpectations(t)
 }
 
 func TestQueryLabResultsByPatientID_ErrorHandling(t *testing.T) {
@@ -472,7 +523,14 @@ func TestQueryLabResultsByPatientID_ErrorHandling(t *testing.T) {
 
 	mockStub.On("GetQueryResult", mock.Anything).Return(nil, errors.New("failed to execute query"))
 
-	results, err := labChaincode.QueryLabResultsByPatientID(mockCtx, "patient3")
+	results, err := labChaincode.SearchLabResults(mockCtx, `{
+		"selector": {
+			"subject.reference": "patient3"
+		}
+	}`)
+
 	assert.Error(t, err)
-	assert.Nil(t, results, "Results should be nil when an error occurs.")
+	assert.Equal(t, results, `{"error": "failed to execute query: `+err.Error()+`"}`, "Results should be nil when an error occurs.")
+	mockStub.AssertExpectations(t)
+	mockCtx.AssertExpectations(t)
 }

@@ -339,8 +339,8 @@ func TestCreatePatient_Success(t *testing.T) {
 	stub.On("GetState", patientID).Return(nil, nil)
 	stub.On("PutState", patientID, mock.Anything).Return(nil)
 
-	err := patientContract.CreatePatient(txContext, patientJSON)
-
+	msg, err := patientContract.CreatePatient(txContext, patientJSON)
+	assert.Equal(t, msg, `{"message": "Patient created successfully"}`)
 	assert.Nil(t, err)
 
 	// Ensure all expectations on the mocks are met
@@ -360,10 +360,10 @@ func TestCreatePatient_FailureExists(t *testing.T) {
 
 	stub.On("GetState", patientID).Return([]byte("existing patient data"), nil) // Simulate that the patient already exists
 
-	err := patientContract.CreatePatient(txContext, patientJSON)
+	msg, err := patientContract.CreatePatient(txContext, patientJSON)
 
 	assert.NotNil(t, err)
-	assert.Equal(t, "patient already exists: "+patientID, err.Error())
+	assert.Equal(t, msg, `{"error": "patient already exists: `+patientID+`"}`)
 
 	txContext.AssertExpectations(t)
 	stub.AssertExpectations(t)
@@ -375,15 +375,15 @@ func TestCreatePatient_FailureJSONError(t *testing.T) {
 	stub := new(MockStub)
 	txContext := new(MockTransactionContext)
 
-	txContext.On("GetStub").Return(stub)
-	patientID := "patient-001"
 	invalidJSON := "{" // Malformed JSON
 
-	stub.On("GetState", patientID).Return(nil, nil)
-	err := patientContract.CreatePatient(txContext, invalidJSON)
+	msg, err := patientContract.CreatePatient(txContext, invalidJSON)
 
 	assert.Error(t, err)
+	assert.Equal(t, msg, `{"error": "failed to unmarshal patient: `+err.Error()+`"}`)
 
+	txContext.AssertExpectations(t)
+	stub.AssertExpectations(t)
 }
 
 func TestUpdatePatient_Success(t *testing.T) {
@@ -394,6 +394,7 @@ func TestUpdatePatient_Success(t *testing.T) {
 
 	txContext.On("GetStub").Return(stub)
 	txContext.On("GetClientIdentity").Return(clientIdentity)
+	clientIdentity.On("GetAttributeValue", "userId").Return("patient-001", true, nil)
 
 	patientID := "patient-001"
 	patientJSON := generatePatientJSON(patientID)
@@ -402,18 +403,18 @@ func TestUpdatePatient_Success(t *testing.T) {
 	// Assuming GetX509Certificate is called when certain conditions are met
 	dummyCert := &x509.Certificate{} // Prepare a dummy certificate if needed
 
-	// Mocking the conditions are met, if they depend on identity checks
-	clientIdentity.On("GetID").Return(patientID, nil)
 	// Only set this expectation if your chaincode logic definitely calls it under test conditions
 	clientIdentity.On("GetX509Certificate").Maybe().Return(dummyCert, nil) // Use Maybe() for conditional expectations
 
 	stub.On("GetState", patientID).Return(patientBytes, nil)
 	stub.On("PutState", patientID, mock.Anything).Return(nil)
 
-	err := patientContract.UpdatePatient(txContext, patientID, patientJSON)
+	msg, err := patientContract.UpdatePatient(txContext, patientJSON)
 
 	assert.Nil(t, err)
+	assert.Equal(t, msg, `{"message": "Patient updated successfully"}`)
 	clientIdentity.AssertExpectations(t)
+	txContext.AssertExpectations(t)
 	stub.AssertExpectations(t)
 }
 
@@ -425,9 +426,10 @@ func TestUpdatePatient_Unauthorized(t *testing.T) {
 
 	txContext.On("GetStub").Return(stub)
 	txContext.On("GetClientIdentity").Return(clientIdentity)
+	clientIdentity.On("GetAttributeValue", "userId").Return("unauthorized-client", true, nil)
 
 	patientID := "patient-001"
-	unauthorizedID := "unauthorized-client"
+
 	patientJSON := generatePatientJSON(patientID)
 	patientBytes := []byte(patientJSON)
 
@@ -436,15 +438,14 @@ func TestUpdatePatient_Unauthorized(t *testing.T) {
 
 	// Set up mock for authorization data retrieval
 	authKey := "auth_" + patientID
-	stub.On("GetState", authKey).Return(nil, nil) // Assuming no authorization data is found
+	stub.On("GetState", authKey).Return(nil, nil)
 
-	clientIdentity.On("GetID").Return(unauthorizedID, nil)
+	msg, err := patientContract.UpdatePatient(txContext, patientJSON)
 
-	err := patientContract.UpdatePatient(txContext, patientID, patientJSON)
-
-	assert.NotNil(t, err)
-	assert.Contains(t, err.Error(), "unauthorized to update patient records")
+	assert.Error(t, err)
+	assert.Equal(t, msg, "{\"error\": \"unauthorized to update patient records\"}")
 	stub.AssertExpectations(t)
+	txContext.AssertExpectations(t)
 	clientIdentity.AssertExpectations(t)
 }
 
@@ -462,9 +463,11 @@ func TestDeletePatient_Success(t *testing.T) {
 	stub.On("DelState", patientID).Return(nil)
 
 	// Execute the DeletePatient function
-	err := patientContract.DeletePatient(txContext, patientID)
+	msg, err := patientContract.DeletePatient(txContext, patientID)
 
 	assert.Nil(t, err)
+	assert.Equal(t, msg, `{"message": "Patient deleted successfully"}`)
+	txContext.AssertExpectations(t)
 	stub.AssertExpectations(t) // Check if all stub expectations are met
 }
 
@@ -479,13 +482,13 @@ func TestDeletePatient_NonExistent(t *testing.T) {
 	// Setup stub to simulate no patient found for this ID
 	stub.On("GetState", nonExistentID).Return(nil, nil)
 
-	err := patientContract.DeletePatient(txContext, nonExistentID)
+	msg, err := patientContract.DeletePatient(txContext, nonExistentID)
 
 	assert.NotNil(t, err)
-	assert.Contains(t, err.Error(), "patient does not exist: "+nonExistentID)
+	assert.Equal(t, msg, `{"error": "patient does not exist: `+nonExistentID+`"}`)
+	txContext.AssertExpectations(t)
 	stub.AssertExpectations(t)
 }
-
 
 func TestReadPatient_SuccessByPatient(t *testing.T) {
 	contract := new(PatientContract)
@@ -531,7 +534,6 @@ func TestReadPatient_SuccessByPatient(t *testing.T) {
 	clientIdentity.AssertExpectations(t)
 }
 
-
 func TestReadPatient_SuccessByAuthorizedUser(t *testing.T) {
 	contract := new(PatientContract)
 	stub := new(MockStub)
@@ -571,9 +573,6 @@ func TestReadPatient_SuccessByAuthorizedUser(t *testing.T) {
 	clientIdentity.AssertExpectations(t)
 }
 
-
-
-
 func TestReadPatient_UnauthorizedAccess(t *testing.T) {
 	contract := new(PatientContract)
 	stub := new(MockStub)
@@ -601,15 +600,14 @@ func TestReadPatient_UnauthorizedAccess(t *testing.T) {
 	// Assert that an error is returned
 	assert.NotNil(t, err)
 	// Assert that the patient JSON is nil
-	assert.Empty(t, patientJSON)
+	assert.Equal(t, patientJSON, "{\"error\": \"unauthorized access: client is neither the patient nor an authorized entity\"}")
 	// Assert that the error message matches the expected unauthorized access error
 	assert.Equal(t, "unauthorized access: client is neither the patient nor an authorized entity", err.Error())
-	
+
 	// Verify that all expectations were met
 	stub.AssertExpectations(t)
 	clientIdentity.AssertExpectations(t)
 }
-
 
 func TestReadPatient_NonExistentPatient(t *testing.T) {
 	contract := new(PatientContract)
@@ -628,10 +626,8 @@ func TestReadPatient_NonExistentPatient(t *testing.T) {
 
 	// Assert that an error is returned
 	assert.NotNil(t, err)
-	// Assert that the patient JSON is empty
-	assert.Empty(t, patientJSON)
 	// Assert that the error message matches the expected error message
-	assert.Equal(t, "patient does not exist: "+nonExistentPatientID, err.Error())
+	assert.Equal(t, patientJSON, "{\"error\": \"patient does not exist: "+nonExistentPatientID+"\"}")
 
 	// Verify that all expectations were met
 	stub.AssertExpectations(t)
@@ -650,9 +646,10 @@ func TestRequestAccess_NewAuthorization(t *testing.T) {
 	stub.On("GetState", "auth_"+patientID).Return(nil, nil)
 	stub.On("PutState", "auth_"+patientID, mock.Anything).Return(nil)
 
-	err := contract.RequestAccess(ctx, patientID, requesterID)
+	msg, err := contract.RequestAccess(ctx, patientID, requesterID, false)
 
 	assert.Nil(t, err)
+	assert.Equal(t, msg, `{"message": "Access request recorded"}`)
 	stub.AssertExpectations(t)
 }
 
@@ -670,9 +667,10 @@ func TestRequestAccess_ExistingAuthorization(t *testing.T) {
 	stub.On("GetState", "auth_"+patientID).Return(existingAuthBytes, nil)
 	stub.On("PutState", "auth_"+patientID, mock.Anything).Return(nil)
 
-	err := contract.RequestAccess(ctx, patientID, requesterID)
+	msg, err := contract.RequestAccess(ctx, patientID, requesterID, false)
 
 	assert.Nil(t, err)
+	assert.Equal(t, msg, `{"message": "Access request recorded"}`)
 	stub.AssertExpectations(t)
 }
 
@@ -684,6 +682,7 @@ func TestGrantAccess_Success(t *testing.T) {
 
 	ctx.On("GetStub").Return(stub)
 	ctx.On("GetClientIdentity").Return(clientIdentity)
+	clientIdentity.On("GetAttributeValue", "userId").Return("patient-001", true, nil)
 	patientID := "patient-001"
 	requesterID := "doctor-001"
 
@@ -691,11 +690,17 @@ func TestGrantAccess_Success(t *testing.T) {
 	authBytes, _ := json.Marshal(auth)
 	stub.On("GetState", "auth_"+patientID).Return(authBytes, nil)
 	stub.On("PutState", "auth_"+patientID, mock.Anything).Return(nil)
-	clientIdentity.On("GetID").Return(patientID, nil)
 
-	err := contract.GrantAccess(ctx, patientID, requesterID)
+	invokeResponse := peer.Response{
+		Status:  200,
+		Payload: []byte(""),
+	}
+	stub.On("InvokeChaincode", "practitioner", mock.AnythingOfType("[][]uint8"), "").Return(invokeResponse, nil)
+
+	msg, err := contract.GrantAccess(ctx, patientID, requesterID, false)
 
 	assert.Nil(t, err)
+	assert.Equal(t, msg, `{"message": "Access granted"}`)
 	stub.AssertExpectations(t)
 	clientIdentity.AssertExpectations(t)
 }
@@ -710,16 +715,23 @@ func TestRevokeAccess_Success(t *testing.T) {
 	ctx.On("GetClientIdentity").Return(clientIdentity)
 	patientID := "patient-001"
 	requesterID := "doctor-001"
+	clientIdentity.On("GetAttributeValue", "userId").Return("patient-001", true, nil)
 
 	auth := Authorization{PatientID: patientID, Authorized: map[string]bool{requesterID: true}}
 	authBytes, _ := json.Marshal(auth)
 	stub.On("GetState", "auth_"+patientID).Return(authBytes, nil)
 	stub.On("PutState", "auth_"+patientID, mock.Anything).Return(nil)
-	clientIdentity.On("GetID").Return(patientID, nil)
 
-	err := contract.RevokeAccess(ctx, patientID, requesterID)
+	invokeResponse := peer.Response{
+		Status:  200,
+		Payload: []byte(""),
+	}
+	stub.On("InvokeChaincode", "practitioner", mock.AnythingOfType("[][]uint8"), "").Return(invokeResponse, nil)
+
+	msg, err := contract.RevokeAccess(ctx, patientID, requesterID, false)
 
 	assert.Nil(t, err)
+	assert.Equal(t, msg, `{"message": "Access revoked"}`)
 	stub.AssertExpectations(t)
 	clientIdentity.AssertExpectations(t)
 }
