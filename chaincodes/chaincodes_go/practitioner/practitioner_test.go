@@ -421,8 +421,9 @@ func TestCreatePractitioner(t *testing.T) {
 	stub.On("GetState", "practitioner1").Return(nil, nil)
 	stub.On("PutState", "practitioner1", practitionerJSON).Return(nil)
 
-	err := cc.CreatePractitioner(mockCtx, string(practitionerJSON))
+	msg, err := cc.CreatePractitioner(mockCtx, string(practitionerJSON))
 	assert.NoError(t, err)
+	assert.Equal(t, msg, `{"message": "Practitioner created successfully"}`)
 
 	stub.AssertExpectations(t)
 	mockCtx.AssertExpectations(t)
@@ -532,9 +533,9 @@ func TestCreatePractitioner_PractitionerExists(t *testing.T) {
 	mockCtx.On("GetStub").Return(stub)
 	stub.On("GetState", "practitioner1").Return(existingPractitionerJSON, nil)
 
-	err := cc.CreatePractitioner(mockCtx, string(practitionerJSON))
+	msg, err := cc.CreatePractitioner(mockCtx, string(practitionerJSON))
 	assert.Error(t, err)
-	assert.Equal(t, "practitioner already exists: "+practitioner.ID.Value, err.Error())
+	assert.Equal(t, msg, `{"error": "practitioner already exists: `+practitioner.ID.Value+`"}`)
 
 	stub.AssertExpectations(t)
 	mockCtx.AssertExpectations(t)
@@ -579,9 +580,9 @@ func TestCreatePractitioner_InvalidJSON(t *testing.T) {
 
 	mockCtx.On("GetStub").Return(stub)
 
-	err := cc.CreatePractitioner(mockCtx, invalidJSON)
+	msg, err := cc.CreatePractitioner(mockCtx, invalidJSON)
 	assert.Error(t, err)
-	assert.Contains(t, err.Error(), "cannot unmarshal string into Go struct field Practitioner.active of type bool")
+	assert.Contains(t, msg, "cannot unmarshal string into Go struct field Practitioner.active of type bool")
 
 	// No need to assert expectations on the stub or context as GetStub() is not called due to unmarshaling error
 }
@@ -659,9 +660,10 @@ func TestUpdatePractitioner(t *testing.T) {
 
 	stub.On("PutState", practitionerID, updatedPractitionerJSON).Return(nil)
 
-	err := cc.UpdatePractitioner(mockCtx, practitionerID, string(updatedPractitionerJSON))
+	msg, err := cc.UpdatePractitioner(mockCtx, practitionerID, string(updatedPractitionerJSON))
 
 	assert.NoError(t, err)
+	assert.Equal(t, msg, `{"message": "Practitioner updated successfully"}`)
 
 	mockCtx.AssertExpectations(t)
 	stub.AssertExpectations(t)
@@ -678,10 +680,10 @@ func TestUpdatePractitioner_PractitionerNotFound(t *testing.T) {
 
 	stub.On("GetState", practitionerID).Return(nil, nil)
 
-	err := cc.UpdatePractitioner(mockCtx, practitionerID, "{}")
+	msg, err := cc.UpdatePractitioner(mockCtx, practitionerID, "{}")
 
 	assert.Error(t, err)
-	assert.Contains(t, err.Error(), "practitioner does not exist")
+	assert.Equal(t, msg, `{"error": "practitioner does not exist: `+practitionerID+`"}`)
 
 	mockCtx.AssertExpectations(t)
 	stub.AssertExpectations(t)
@@ -700,10 +702,10 @@ func TestDeletePractitioner(t *testing.T) {
 
 	stub.On("DelState", practitionerID).Return(nil)
 
-	err := cc.DeletePractitioner(mockCtx, practitionerID)
+	msg, err := cc.DeletePractitioner(mockCtx, practitionerID)
 
 	assert.NoError(t, err)
-
+	assert.Equal(t, msg, `{"message": "Practitioner deleted successfully"}`)
 	mockCtx.AssertExpectations(t)
 	stub.AssertExpectations(t)
 }
@@ -719,11 +721,10 @@ func TestDeletePractitioner_PractitionerNotFound(t *testing.T) {
 
 	stub.On("GetState", practitionerID).Return(nil, nil)
 
-	err := cc.DeletePractitioner(mockCtx, practitionerID)
+	msg, err := cc.DeletePractitioner(mockCtx, practitionerID)
 
 	assert.Error(t, err)
-	assert.Contains(t, err.Error(), "practitioner does not exist")
-
+	assert.Equal(t, msg, `{"error": "practitioner does not exist: `+practitionerID+`"}`)
 	mockCtx.AssertExpectations(t)
 	stub.AssertExpectations(t)
 }
@@ -841,11 +842,11 @@ func TestCreateProcedure_ProcedureExists(t *testing.T) {
 	}`
 
 	// Perform the CreateProcedure operation
-	err = cc.CreateProcedure(mockCtx, procedureJSON)
+	msg, err := cc.CreateProcedure(mockCtx, procedureJSON)
 
 	// Assertions
 	assert.Error(t, err)
-	assert.Contains(t, err.Error(), "procedure already exists")
+	assert.Equal(t, msg, `{"error": "procedure already exists: `+procedure.ID.Value+`"}`)
 
 	// Verify expectations
 	mockCtx.AssertExpectations(t)
@@ -906,12 +907,11 @@ func TestCreateProcedure_InvalidJSON(t *testing.T) {
     }`
 
 	// Perform the CreateProcedure operation with invalid JSON
-	err := cc.CreateProcedure(mockCtx, invalidJSON)
+	msg, err := cc.CreateProcedure(mockCtx, invalidJSON)
 
 	// Assertions
 	assert.Error(t, err)
-	assert.Contains(t, err.Error(), "failed to unmarshal procedure")
-
+	assert.Equal(t, msg, "{\"error\": \"failed to unmarshal procedure: invalid character '\"' after object key:value pair\"}")
 	// Verify expectations
 	mockCtx.AssertExpectations(t)
 }
@@ -1008,9 +1008,8 @@ func TestReadProcedure_ProcedureNotFound(t *testing.T) {
 
 	result, err := cc.ReadProcedure(mockCtx, procedureID)
 
-	assert.Empty(t, result)
 	assert.Error(t, err)
-	assert.Contains(t, err.Error(), "procedure does not exist")
+	assert.Equal(t, result, "{\"error\": \"procedure does not exist: nonExistentProcedure\"}")
 
 	mockCtx.AssertExpectations(t)
 	stub.AssertExpectations(t)
@@ -1090,10 +1089,10 @@ func TestUpdateProcedure(t *testing.T) {
 	}
 	stub.On("InvokeChaincode", "patient", mock.AnythingOfType("[][]uint8"), mock.AnythingOfType("string")).Return(invokeResponse, nil)
 
-	err := cc.UpdateProcedure(mockCtx, procedureID, updatedProcedureJSON)
+	msg, err := cc.UpdateProcedure(mockCtx, procedureID, updatedProcedureJSON)
 
 	assert.NoError(t, err)
-
+	assert.Equal(t, msg, "{\"message\": \"Procedure updated successfully\"}")
 	mockCtx.AssertExpectations(t)
 	stub.AssertExpectations(t)
 
@@ -1170,10 +1169,10 @@ func TestDeleteProcedure(t *testing.T) {
 	}
 	stub.On("InvokeChaincode", "patient", mock.AnythingOfType("[][]uint8"), mock.AnythingOfType("string")).Return(invokeResponse, nil)
 
-	err := cc.DeleteProcedure(mockCtx, procedureID)
+	msg, err := cc.DeleteProcedure(mockCtx, procedureID)
 
 	assert.NoError(t, err)
-
+	assert.Equal(t, msg, `{"message": "Procedure deleted successfully"}`)
 	mockCtx.AssertExpectations(t)
 	stub.AssertExpectations(t)
 }

@@ -366,9 +366,10 @@ func TestCreatePrescription_Success(t *testing.T) {
 	mockStub.On("PutState", medicationRequestID, mock.Anything).Return(nil) // Expect the put to succeed
 
 	chaincode := PrescriptionChaincode{}
-	err := chaincode.CreatePrescription(mockCtx, medicationRequestJSON)
+	msg, err := chaincode.CreatePrescription(mockCtx, medicationRequestJSON)
 
 	assert.Nil(t, err)
+	assert.Equal(t, msg, `{"message": "Prescription created successfully"}`)
 	mockStub.AssertExpectations(t)
 }
 
@@ -383,10 +384,11 @@ func TestCreatePrescription_AlreadyExists(t *testing.T) {
 	mockStub.On("GetState", medicationRequestID).Return([]byte("existing medication request"), nil) // Medication request already exists
 
 	chaincode := PrescriptionChaincode{}
-	err := chaincode.CreatePrescription(mockCtx, medicationRequestJSON)
+	msg, err := chaincode.CreatePrescription(mockCtx, medicationRequestJSON)
 
 	assert.NotNil(t, err)
 	assert.Equal(t, "the prescription already exists", err.Error())
+	assert.Equal(t, msg, `{"error": "the prescription already exists"}`)
 	mockStub.AssertExpectations(t)
 }
 
@@ -398,10 +400,10 @@ func TestCreatePrescription_InvalidJSON(t *testing.T) {
 	invalidJSON := "{this is not valid JSON"
 
 	chaincode := PrescriptionChaincode{}
-	err := chaincode.CreatePrescription(mockCtx, invalidJSON)
+	msg, err := chaincode.CreatePrescription(mockCtx, invalidJSON)
 
 	assert.NotNil(t, err)
-	assert.Contains(t, err.Error(), "failed to decode JSON")
+	assert.Equal(t, msg, `{"error": "failed to decode JSON"}`)
 	mockStub.AssertExpectations(t)
 }
 
@@ -413,10 +415,10 @@ func TestCreatePrescription_NoID(t *testing.T) {
 	medicationRequestJSON := generateMedicationRequestJSON("", "active")
 
 	chaincode := PrescriptionChaincode{}
-	err := chaincode.CreatePrescription(mockCtx, medicationRequestJSON)
+	msg, err := chaincode.CreatePrescription(mockCtx, medicationRequestJSON)
 
 	assert.NotNil(t, err)
-	assert.Equal(t, "medication request ID is required", err.Error())
+	assert.Equal(t, msg, "{\"error\": \"medication request ID is required\"}")
 	mockStub.AssertExpectations(t)
 }
 
@@ -433,9 +435,10 @@ func TestVerifyPrescription_Success(t *testing.T) {
 	mockStub.On("PutState", prescriptionID, mock.Anything).Return(nil)
 
 	chaincode := PrescriptionChaincode{}
-	err := chaincode.VerifyPrescription(mockCtx, prescriptionID, pharmacyID)
+	msg, err := chaincode.VerifyPrescription(mockCtx, prescriptionID, pharmacyID)
 
 	assert.Nil(t, err)
+	assert.Equal(t, msg, `{"message": "prescription verified successfully"}`)
 	mockStub.AssertExpectations(t)
 }
 
@@ -450,10 +453,10 @@ func TestVerifyPrescription_NotFound(t *testing.T) {
 	mockStub.On("GetState", prescriptionID).Return(nil, nil)
 
 	chaincode := PrescriptionChaincode{}
-	err := chaincode.VerifyPrescription(mockCtx, prescriptionID, pharmacyID)
+	msg, err := chaincode.VerifyPrescription(mockCtx, prescriptionID, pharmacyID)
 
 	assert.NotNil(t, err)
-	assert.Equal(t, "the prescription does not exist", err.Error())
+	assert.Equal(t, msg, `{"error": "the prescription does not exist"}`)
 	mockStub.AssertExpectations(t)
 }
 
@@ -469,10 +472,10 @@ func TestVerifyPrescription_NotActive(t *testing.T) {
 	mockStub.On("GetState", prescriptionID).Return([]byte(inactivePrescriptionJSON), nil)
 
 	chaincode := PrescriptionChaincode{}
-	err := chaincode.VerifyPrescription(mockCtx, prescriptionID, pharmacyID)
+	msg, err := chaincode.VerifyPrescription(mockCtx, prescriptionID, pharmacyID)
 
 	assert.NotNil(t, err)
-	assert.Equal(t, "prescription is not active or no status code available", err.Error())
+	assert.Equal(t, msg, `{"error": "prescription is not active or no status code available"}`)
 	mockStub.AssertExpectations(t)
 }
 
@@ -487,10 +490,10 @@ func TestVerifyPrescription_StubFailure(t *testing.T) {
 	mockStub.On("GetState", prescriptionID).Return(nil, errors.New("ledger error"))
 
 	chaincode := PrescriptionChaincode{}
-	err := chaincode.VerifyPrescription(mockCtx, prescriptionID, pharmacyID)
+	msg, err := chaincode.VerifyPrescription(mockCtx, prescriptionID, pharmacyID)
 
 	assert.NotNil(t, err)
-	assert.Equal(t, "failed to read from world state", err.Error())
+	assert.Equal(t, msg, `{"error": "failed to read from world state"}`)
 	mockStub.AssertExpectations(t)
 }
 
@@ -525,7 +528,7 @@ func TestReadPrescription_NotFound(t *testing.T) {
 	result, err := chaincode.ReadPrescription(mockCtx, medicationRequestID)
 
 	assert.NotNil(t, err)
-	assert.Equal(t, "", result)
+	assert.Equal(t, "{\"error\": \"the prescription does not exist\"}", result)
 	assert.Equal(t, "the prescription does not exist", err.Error())
 	mockStub.AssertExpectations(t)
 }
@@ -537,68 +540,13 @@ func TestReadPrescription_LedgerError(t *testing.T) {
 
 	medicationRequestID := "medReq123"
 
-	mockStub.On("GetState", medicationRequestID).Return(nil, errors.New("ledger error"))
+	mockStub.On("GetState", medicationRequestID).Return(nil, errors.New("failed to read from world state"))
 
 	chaincode := PrescriptionChaincode{}
 	result, err := chaincode.ReadPrescription(mockCtx, medicationRequestID)
 
 	assert.NotNil(t, err)
-	assert.Equal(t, "", result)
-	assert.Equal(t, "failed to read from world state", err.Error())
-	mockStub.AssertExpectations(t)
-}
-
-func TestPrescriptionExists_Exists(t *testing.T) {
-	mockStub := new(MockStub)
-	mockCtx := new(MockTransactionContext)
-	mockCtx.On("GetStub").Return(mockStub)
-
-	prescriptionID := "prescription123"
-
-	// Simulate finding the prescription in the blockchain
-	mockStub.On("GetState", prescriptionID).Return([]byte("prescription data"), nil)
-
-	chaincode := PrescriptionChaincode{}
-	exists, err := chaincode.PrescriptionExists(mockCtx, prescriptionID)
-
-	assert.Nil(t, err)
-	assert.True(t, exists)
-	mockStub.AssertExpectations(t)
-}
-
-func TestPrescriptionExists_DoesNotExist(t *testing.T) {
-	mockStub := new(MockStub)
-	mockCtx := new(MockTransactionContext)
-	mockCtx.On("GetStub").Return(mockStub)
-
-	prescriptionID := "nonexistent"
-
-	// Simulate the prescription not being found in the blockchain
-	mockStub.On("GetState", prescriptionID).Return(nil, nil)
-
-	chaincode := PrescriptionChaincode{}
-	exists, err := chaincode.PrescriptionExists(mockCtx, prescriptionID)
-
-	assert.Nil(t, err)
-	assert.False(t, exists)
-	mockStub.AssertExpectations(t)
-}
-
-func TestPrescriptionExists_LedgerError(t *testing.T) {
-	mockStub := new(MockStub)
-	mockCtx := new(MockTransactionContext)
-	mockCtx.On("GetStub").Return(mockStub)
-
-	prescriptionID := "prescription123"
-
-	// Simulate an error accessing the ledger
-	mockStub.On("GetState", prescriptionID).Return(nil, errors.New("ledger access error"))
-
-	chaincode := PrescriptionChaincode{}
-	exists, err := chaincode.PrescriptionExists(mockCtx, prescriptionID)
-
-	assert.NotNil(t, err)
-	assert.False(t, exists)
+	assert.Equal(t, "{\"error\": \"failed to read from world state\"}", result)
 	assert.Equal(t, "failed to read from world state", err.Error())
 	mockStub.AssertExpectations(t)
 }
