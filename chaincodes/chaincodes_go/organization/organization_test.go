@@ -381,9 +381,9 @@ func TestCreateOrganization(t *testing.T) {
 	stub.On("GetState", "org1").Return(nil, nil)
 	stub.On("PutState", "org1", organizationJSON).Return(nil)
 
-	err := cc.CreateOrganization(mockCtx, string(organizationJSON))
+	msg, err := cc.CreateOrganization(mockCtx, string(organizationJSON))
 	assert.NoError(t, err)
-
+	assert.Equal(t, msg, `{"message": "Organization created successfully"}`)
 	stub.AssertExpectations(t)
 	mockCtx.AssertExpectations(t)
 }
@@ -492,9 +492,9 @@ func TestCreateOrganization_OrganizationExists(t *testing.T) {
 	mockCtx.On("GetStub").Return(stub)
 	stub.On("GetState", "org1").Return(organizationJSON, nil)
 
-	err := cc.CreateOrganization(mockCtx, string(organizationJSON))
+	msg, err := cc.CreateOrganization(mockCtx, string(organizationJSON))
 	assert.Error(t, err)
-	assert.Equal(t, "organization already exists: "+organization.ID.Value, err.Error())
+	assert.Equal(t, msg, "{\"error\": \"organization already exists: org1\"}")
 
 	stub.AssertExpectations(t)
 	mockCtx.AssertExpectations(t)
@@ -599,11 +599,11 @@ func TestCreateOrganization_InvalidJSON(t *testing.T) {
 		]
 	}`
 
-	mockCtx.On("GetStub").Return(stub)
-
-	err := cc.CreateOrganization(mockCtx, organizationJSON)
+	msg, err := cc.CreateOrganization(mockCtx, organizationJSON)
 	assert.Error(t, err)
-	assert.Contains(t, err.Error(), "cannot unmarshal string into Go struct field")
+	assert.Equal(t, msg, "{\"error\": \"failed to unmarshal organization: json: cannot unmarshal string into Go struct field Organization.active of type bool\"}")
+	stub.AssertExpectations(t)
+	mockCtx.AssertExpectations(t)
 }
 
 func TestReadOrganization(t *testing.T) {
@@ -656,85 +656,40 @@ func TestGetOrganization_OrganizationNotFound(t *testing.T) {
 	stub.AssertExpectations(t)
 }
 
-func TestSearchOrganizationsByType(t *testing.T) {
-	cc := new(OrganizationChaincode)
-	mockCtx := new(MockTransactionContext)
-
-	// Mock organization data
-	organizationID := &Identifier{System: "exampleSystem", Value: "org1"}
-	organization1 := &Organization{ID: organizationID, Name: "Hospital A", Type: &CodeableConcept{Text: "Hospital"}}
-
-	organizationID2 := &Identifier{System: "exampleSystem", Value: "org2"}
-	organization2 := Organization{ID: organizationID2, Name: "Clinic B", Type: &CodeableConcept{Text: "Clinic"}}
-
-	organizationBytes1, _ := json.Marshal(&organization1)
-	organizationBytes2, _ := json.Marshal(&organization2)
-
-	// Mock GetStateByRange method to return organization data
-	mockIterator := &MockIterator{}
-	mockIterator.AddRecord("org1", organizationBytes1)
-	mockIterator.AddRecord("org2", organizationBytes2)
-	mockIterator.CurrentIndex = 0
-
-	mockStub := new(MockStub)
-	mockCtx.On("GetStub").Return(mockStub)
-	mockStub.On("GetStateByRange", "", "").Return(mockIterator, nil)
-
-	results, err := cc.SearchOrganizationsByType(mockCtx, "Hospital")
-
-	assert.NoError(t, err)
-	assert.Len(t, results, 1)
-
-	expectedOrganization := &Organization{
-		ID:   &Identifier{System: "exampleSystem", Value: "org1"},
-		Name: "Hospital A",
-		Type: &CodeableConcept{Text: "Hospital"},
-	}
-
-	var actualOrganization Organization
-	json.Unmarshal([]byte(results[0]), &actualOrganization)
-	assert.NoError(t, err)
-
-	assert.Equal(t, expectedOrganization, &actualOrganization)
-
-	mockCtx.AssertExpectations(t)
-	mockStub.AssertExpectations(t)
-}
-
 func TestSearchOrganizationByName(t *testing.T) {
 	cc := new(OrganizationChaincode)
 	mockCtx := new(MockTransactionContext)
 
-	// Mock organization data
-	organizationID := &Identifier{System: "exampleSystem", Value: "org1"}
-	organization1 := &Organization{ID: organizationID, Name: "Hospital A", Type: &CodeableConcept{Text: "Hospital"}}
-
 	organizationID2 := &Identifier{System: "exampleSystem", Value: "org2"}
 	organization2 := &Organization{ID: organizationID2, Name: "Clinic B", Type: &CodeableConcept{Text: "Clinic"}}
 
-	organizationBytes1, _ := json.Marshal(organization1)
 	organizationBytes2, _ := json.Marshal(organization2)
 
-	// Mock GetStateByRange method to return organization data
-	mockIterator := &MockIterator{}
-	mockIterator.AddRecord("org1", organizationBytes1)
-	mockIterator.AddRecord("org2", organizationBytes2)
-	mockIterator.CurrentIndex = 0
+	mockIterator := &MockIterator{
+		Records: []KVPair{
+			{Key: "org2", Value: organizationBytes2},
+		},
+		CurrentIndex: 0,
+	}
 
 	mockStub := new(MockStub)
 	mockCtx.On("GetStub").Return(mockStub)
-	mockStub.On("GetStateByRange", "", "").Return(mockIterator, nil)
+	mockStub.On("GetQueryResult", mock.Anything).Return(mockIterator, nil)
 
-	resultJSON, err := cc.SearchOrganizationByName(mockCtx, "Hospital A")
+	resultJSON, err := cc.SearchOrganizations(mockCtx, `{
+        "selector": {
+            "name": "Clinic B"
+        }
+    }`)
 
 	assert.NoError(t, err)
 	assert.NotNil(t, resultJSON)
 
-	var result Organization
+	var result []Organization
 	err = json.Unmarshal([]byte(resultJSON), &result)
 	assert.NoError(t, err)
 
-	assert.Equal(t, organization1, &result)
+	assert.Len(t, result, 1)
 
 	mockCtx.AssertExpectations(t)
 	mockStub.AssertExpectations(t)
@@ -846,9 +801,10 @@ func TestUpdateOrganization(t *testing.T) {
 	stub.On("GetState", organizationID).Return(updatedOrganizationJSONBytes, nil)
 	stub.On("PutState", organizationID, mock.Anything).Return(nil)
 
-	err := cc.UpdateOrganization(mockCtx, organizationID, updatedOrganizationJSON)
+	msg, err := cc.UpdateOrganization(mockCtx, organizationID, updatedOrganizationJSON)
 
 	assert.NoError(t, err)
+	assert.Equal(t, msg, `{"message": "Organization updated successfully"}`)
 
 	mockCtx.AssertExpectations(t)
 	stub.AssertExpectations(t)
@@ -959,10 +915,10 @@ func TestDeleteOrganization(t *testing.T) {
 	stub.On("GetState", organizationID).Return([]byte(existingOrganizationJSON), nil)
 	stub.On("DelState", organizationID).Return(nil)
 
-	err := cc.DeleteOrganization(mockCtx, organizationID)
+	msg, err := cc.DeleteOrganization(mockCtx, organizationID)
 
 	assert.NoError(t, err)
-
+	assert.Equal(t, msg, `{"message": "Organization deleted successfully"}`)
 	mockCtx.AssertExpectations(t)
 	stub.AssertExpectations(t)
 }

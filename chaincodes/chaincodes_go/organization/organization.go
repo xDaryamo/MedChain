@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"errors"
 	"log"
-	"strings"
 
 	"github.com/hyperledger/fabric-contract-api-go/contractapi"
 )
@@ -27,7 +26,6 @@ func (oc *OrganizationChaincode) CreateOrganization(ctx contractapi.TransactionC
 	if err != nil {
 		return `{"error": "failed to unmarshal organization: ` + err.Error() + `"}`, err
 	}
-
 
 	// Check if the organization request ID is provided and if it already exists
 	if organization.ID.Value == "" {
@@ -73,7 +71,6 @@ func (oc *OrganizationChaincode) ReadOrganization(ctx contractapi.TransactionCon
 	if err != nil {
 		return `{"error": "failed to unmarshal organization: ` + err.Error() + `"}`, err
 	}
-
 
 	return string(organizationJSON), nil
 }
@@ -125,76 +122,6 @@ func (oc *OrganizationChaincode) DeleteOrganization(ctx contractapi.TransactionC
 	}
 
 	return `{"message": "Organization deleted successfully"}`, nil
-}
-
-// SearchOrganizationsByType allows searching for organizations based on type
-func (oc *OrganizationChaincode) SearchOrganizationsByType(ctx contractapi.TransactionContextInterface, query string) ([]string, error) {
-	var results []string
-
-	// Retrieve all organizations stored on the blockchain
-	iterator, err := ctx.GetStub().GetStateByRange("", "")
-	if err != nil {
-		return nil, errors.New("failed to retrieve organizations: " + err.Error())
-	}
-	defer iterator.Close()
-
-	// Iterate through all records and filter those that match the query
-	for iterator.HasNext() {
-		result, err := iterator.Next()
-		if err != nil {
-			return nil, errors.New("failed to iterate through organizations: " + err.Error())
-		}
-		var organization Organization
-		err = json.Unmarshal(result.Value, &organization)
-		if err != nil {
-			return nil, errors.New("failed to unmarshal organization: " + err.Error())
-		}
-
-		// Check if the value of the organization's type matches the query
-		if strings.Compare(organization.Type.Text, query) == 0 {
-			resultsJSON, err := json.Marshal(organization)
-			if err != nil {
-				return nil, errors.New("failed to marshal organization: " + err.Error())
-			}
-			results = append(results, string(resultsJSON))
-		}
-	}
-
-	return results, nil
-}
-
-// SearchOrganizationByName allows searching for an organization based on name
-func (oc *OrganizationChaincode) SearchOrganizationByName(ctx contractapi.TransactionContextInterface, query string) (string, error) {
-	// Retrieve all organizations stored on the blockchain
-	iterator, err := ctx.GetStub().GetStateByRange("", "")
-	if err != nil {
-		return "", errors.New("failed to retrieve organizations: " + err.Error())
-	}
-	defer iterator.Close()
-
-	// Iterate through all records and filter those that match the query
-	for iterator.HasNext() {
-		record, err := iterator.Next()
-		if err != nil {
-			return "", errors.New("failed to iterate through organizations: " + err.Error())
-		}
-		var organization Organization
-		err = json.Unmarshal(record.Value, &organization)
-		if err != nil {
-			return "", errors.New("failed to unmarshal organization: " + err.Error())
-		}
-
-		// Check if the value of the organization's name matches the query
-		if strings.Compare(organization.Name, query) == 0 {
-			result, err := json.Marshal(organization)
-			if err != nil {
-				return "", errors.New("failed to marshal organization: " + err.Error())
-			}
-			return string(result), nil
-		}
-	}
-
-	return "", errors.New("organization not found")
 }
 
 // GetAllOrganizations retrieves all organizations from the ledger and returns them as JSON
@@ -406,7 +333,6 @@ func (oc *OrganizationChaincode) InitLedger(ctx contractapi.TransactionContextIn
 
 	return `{"message": "Ledger initialized successfully"}`, nil
 }
-
 
 func (oc *OrganizationChaincode) SearchOrganizations(ctx contractapi.TransactionContextInterface, queryString string) (string, error) {
 	log.Printf("Executing query: %s", queryString)
