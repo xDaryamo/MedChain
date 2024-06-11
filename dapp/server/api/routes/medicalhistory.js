@@ -25,7 +25,7 @@ router.get(
 router.get(
   "/:query",
   verifyToken,
-  medicalHistoryController.queryMedicalRecords
+  medicalHistoryController.searchMedicalRecords
 );
 
 // PATCH update the medical record linked to a patient
