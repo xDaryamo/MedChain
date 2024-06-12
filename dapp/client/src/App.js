@@ -1,33 +1,22 @@
-import React from 'react';
-import './App.css';
-import { BrowserRouter as Router, Route, Routes, Link } from 'react-router-dom';
-import Register from './Register';
-import Authentication from './Login';
+// src/App.js
+import React from "react";
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import Login from "./pages/Login";
+import Register from "./pages/Register";
+import Header from "./components/Header";
+import "./App.css";
 
 function App() {
   return (
-    <div className="App">
-      <Router>
-        <header className="App-header">
-          <nav>
-            <ul>
-              <li>
-                <Link to="/auth/signup">Register</Link>
-              </li>
-              <li>
-                <Link to="/auth/login">Login</Link>
-              </li>
-            </ul>
-          </nav>
-        </header>
-        <main>
-          <Routes>
-            <Route path="/auth/signup" element={<Register />} />
-            <Route path="/auth/login" element={<Authentication />} />
-          </Routes>
-        </main>
-      </Router>
-    </div>
+    <Router>
+      <div className="App">
+        <Header />
+        <Routes>
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+        </Routes>
+      </div>
+    </Router>
   );
 }
 

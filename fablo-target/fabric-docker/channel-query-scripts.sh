@@ -280,6 +280,23 @@ channelQuery() {
     peerChannelFetchBlock "prescriptions-channel" "cli.farmacia-carbone.medchain.com" "${BLOCK_NAME}" "peer0.farmacia-carbone.medchain.com:7181" "$TARGET_FILE"
 
   elif
+    [ "$1" = "getinfo" ] && [ "$2" = "prescriptions-channel" ] && [ "$3" = "patients" ] && [ "$4" = "peer0" ]
+  then
+
+    peerChannelGetInfo "prescriptions-channel" "cli.patients.medchain.com" "peer0.patients.medchain.com:7241"
+
+  elif [ "$1" = "fetch" ] && [ "$2" = "config" ] && [ "$3" = "prescriptions-channel" ] && [ "$4" = "patients" ] && [ "$5" = "peer0" ]; then
+    TARGET_FILE=${6:-"$channel-config.json"}
+
+    peerChannelFetchConfig "prescriptions-channel" "cli.patients.medchain.com" "$TARGET_FILE" "peer0.patients.medchain.com:7241"
+
+  elif [ "$1" = "fetch" ] && [ "$3" = "prescriptions-channel" ] && [ "$4" = "patients" ] && [ "$5" = "peer0" ]; then
+    BLOCK_NAME=$2
+    TARGET_FILE=${6:-"$BLOCK_NAME.block"}
+
+    peerChannelFetchBlock "prescriptions-channel" "cli.patients.medchain.com" "${BLOCK_NAME}" "peer0.patients.medchain.com:7241" "$TARGET_FILE"
+
+  elif
     [ "$1" = "getinfo" ] && [ "$2" = "lab-results-channel" ] && [ "$3" = "example" ] && [ "$4" = "peer0" ]
   then
 
@@ -380,6 +397,23 @@ channelQuery() {
     TARGET_FILE=${6:-"$BLOCK_NAME.block"}
 
     peerChannelFetchBlock "lab-results-channel" "cli.laboratorio-analisi-sdn.medchain.com" "${BLOCK_NAME}" "peer0.laboratorio-analisi-sdn.medchain.com:7221" "$TARGET_FILE"
+
+  elif
+    [ "$1" = "getinfo" ] && [ "$2" = "lab-results-channel" ] && [ "$3" = "patients" ] && [ "$4" = "peer0" ]
+  then
+
+    peerChannelGetInfo "lab-results-channel" "cli.patients.medchain.com" "peer0.patients.medchain.com:7241"
+
+  elif [ "$1" = "fetch" ] && [ "$2" = "config" ] && [ "$3" = "lab-results-channel" ] && [ "$4" = "patients" ] && [ "$5" = "peer0" ]; then
+    TARGET_FILE=${6:-"$channel-config.json"}
+
+    peerChannelFetchConfig "lab-results-channel" "cli.patients.medchain.com" "$TARGET_FILE" "peer0.patients.medchain.com:7241"
+
+  elif [ "$1" = "fetch" ] && [ "$3" = "lab-results-channel" ] && [ "$4" = "patients" ] && [ "$5" = "peer0" ]; then
+    BLOCK_NAME=$2
+    TARGET_FILE=${6:-"$BLOCK_NAME.block"}
+
+    peerChannelFetchBlock "lab-results-channel" "cli.patients.medchain.com" "${BLOCK_NAME}" "peer0.patients.medchain.com:7241" "$TARGET_FILE"
 
   elif
     [ "$1" = "getinfo" ] && [ "$2" = "emergency-channel" ] && [ "$3" = "example" ] && [ "$4" = "peer0" ]
@@ -813,6 +847,16 @@ printChannelsHelp() {
   echo -e "\t Fetch a block with given number and save it. Uses first peer 'peer0' of 'FarmaciaCarbone'".
   echo ""
 
+  echo "fablo channel getinfo prescriptions-channel patients peer0"
+  echo -e "\t Get channel info on 'peer0' of 'Patients'".
+  echo ""
+  echo "fablo channel fetch config prescriptions-channel patients peer0 [file-name.json]"
+  echo -e "\t Download latest config block and save it. Uses first peer 'peer0' of 'Patients'".
+  echo ""
+  echo "fablo channel fetch <newest|oldest|block-number> prescriptions-channel patients peer0 [file name]"
+  echo -e "\t Fetch a block with given number and save it. Uses first peer 'peer0' of 'Patients'".
+  echo ""
+
   echo "fablo channel getinfo lab-results-channel example peer0"
   echo -e "\t Get channel info on 'peer0' of 'example'".
   echo ""
@@ -871,6 +915,16 @@ printChannelsHelp() {
   echo ""
   echo "fablo channel fetch <newest|oldest|block-number> lab-results-channel laboratorioanalisisdn peer0 [file name]"
   echo -e "\t Fetch a block with given number and save it. Uses first peer 'peer0' of 'LaboratorioAnalisiSdn'".
+  echo ""
+
+  echo "fablo channel getinfo lab-results-channel patients peer0"
+  echo -e "\t Get channel info on 'peer0' of 'Patients'".
+  echo ""
+  echo "fablo channel fetch config lab-results-channel patients peer0 [file-name.json]"
+  echo -e "\t Download latest config block and save it. Uses first peer 'peer0' of 'Patients'".
+  echo ""
+  echo "fablo channel fetch <newest|oldest|block-number> lab-results-channel patients peer0 [file name]"
+  echo -e "\t Fetch a block with given number and save it. Uses first peer 'peer0' of 'Patients'".
   echo ""
 
   echo "fablo channel getinfo emergency-channel example peer0"

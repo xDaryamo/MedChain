@@ -16,10 +16,9 @@ exports.signup = async (req, res, next) => {
   try {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      const error = new Error("Validation failed.");
-      error.statusCode = 422;
-      error.data = errors.array();
-      throw error;
+      return res
+        .status(422)
+        .json({ message: "Validation failed.", data: errors.array() });
     }
 
     email = req.body.email;
@@ -29,12 +28,23 @@ exports.signup = async (req, res, next) => {
     organization = req.body.organization;
     fhirData = req.body.fhirData;
 
+    console.log("User data received:", {
+      email,
+      password,
+      username,
+      role,
+      organization,
+      fhirData,
+    });
+
     const hashedPassword = await bcrypt.hash(password, 12);
 
     const fabricNetwork = new FabricNetwork();
     userId = await fabricNetwork.registerAndEnrollUser("", organization);
 
-    fhirData.identifier = { value: userId };
+    console.log("Generated userId:", userId);
+
+    fhirData.identifier.value = userId;
 
     const user = new User({
       email: email,
@@ -64,19 +74,28 @@ exports.signup = async (req, res, next) => {
       );
     }
 
-    if (createResult.error) {
+    console.log("Create result:", createResult);
+
+    if (createResult && createResult.error) {
       throw new Error(createResult.error);
     }
 
     await session.commitTransaction();
     session.endSession();
 
-    res.status(201).json({
+    return res.status(201).json({
       result: createResult,
     });
   } catch (err) {
-    await session.abortTransaction();
-    session.endSession();
+    console.error("Error in signup process:", err);
+
+    try {
+      await session.abortTransaction();
+    } catch (transactionError) {
+      console.error("Failed to abort transaction:", transactionError.message);
+    } finally {
+      session.endSession();
+    }
 
     if (userId) {
       try {
@@ -90,10 +109,16 @@ exports.signup = async (req, res, next) => {
       }
     }
 
-    if (!err.statusCode) {
-      err.statusCode = 500;
+    if (!res.headersSent) {
+      if (!err.statusCode) {
+        err.statusCode = 500;
+      }
+      return res
+        .status(err.statusCode)
+        .json({ message: err.message, data: err.data });
+    } else {
+      next(err);
     }
-    next(err);
   }
 };
 

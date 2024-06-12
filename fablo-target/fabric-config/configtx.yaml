@@ -442,6 +442,7 @@ Profiles:
                     - *NeurologiaNapoli
                     - *FarmaciaPetrone
                     - *FarmaciaCarbone
+                    - *Patients
         Application:
             <<: *ApplicationDefaults
             Organizations:
@@ -450,6 +451,7 @@ Profiles:
                 - *NeurologiaNapoli
                 - *FarmaciaPetrone
                 - *FarmaciaCarbone
+                - *Patients
 
     # Profile used to create channeltx for lab-results-channel #
     LabResultsChannel:
@@ -470,6 +472,7 @@ Profiles:
                     - *NeurologiaNapoli
                     - *LaboratorioAnalisiCmo
                     - *LaboratorioAnalisiSdn
+                    - *Patients
         Application:
             <<: *ApplicationDefaults
             Organizations:
@@ -479,6 +482,7 @@ Profiles:
                 - *NeurologiaNapoli
                 - *LaboratorioAnalisiCmo
                 - *LaboratorioAnalisiSdn
+                - *Patients
 
     # Profile used to create channeltx for emergency-channel #
     EmergencyChannel:
