@@ -30,3 +30,32 @@ export const login = async (credentials) => {
     }
   }
 };
+
+export const getMedicalRecords = async () => {
+  const response = await axios.get(`${API_URL}/records`, {
+    params: {
+      query: JSON.stringify({ selector: {} })
+    }
+  });
+  return response.data;
+};
+
+export const getMedicalRecord = async (id) => {
+  const response = await axios.get(`${API_URL}/records/${id}`);
+  return response.data;
+};
+
+export const createMedicalRecord = async (record) => {
+  const response = await axios.post(`${API_URL}/records`, record);
+  return response.data;
+};
+
+export const updateMedicalRecord = async (id, record) => {
+  const response = await axios.patch(`${API_URL}/records/${id}`, record);
+  return response.data;
+};
+
+export const deleteMedicalRecord = async (id) => {
+  const response = await axios.delete(`${API_URL}/records/${id}`);
+  return response.data;
+};

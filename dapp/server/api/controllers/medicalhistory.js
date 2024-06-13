@@ -121,7 +121,7 @@ exports.deleteMedicalRecords = async (req, res, next) => {
 };
 
 exports.searchMedicalRecords = async (req, res, next) => {
-  const queryString = req.body.query || { selector: {} };
+  const queryString = req.body.query || JSON.stringify({ selector: {} });
 
   const userId = req.user.userId;
   const organization = req.user.organization;
