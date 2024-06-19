@@ -257,6 +257,436 @@ func (mc *MedicalRecordsChaincode) SearchMedicalRecords(ctx contractapi.Transact
 	return string(resultsJSON), nil
 }
 
+// CreateCondition adds a new condition record to the ledger
+func (c *MedicalRecordsChaincode) CreateCondition(ctx contractapi.TransactionContextInterface, conditionID string, conditionJSON string) (string, error) {
+	log.Printf("Condition JSON from param: %s", conditionJSON)
+
+	existingCondition, err := ctx.GetStub().GetState(conditionID)
+	if err != nil {
+		return `{"error": "failed to get condition: ` + err.Error() + `"}`, err
+	}
+	if existingCondition != nil {
+		return `{"error": "condition already exists: ` + conditionID + `"}`, errors.New("condition already exists")
+	}
+
+	var condition Condition
+	err = json.Unmarshal([]byte(conditionJSON), &condition)
+	if err != nil {
+		return `{"error": "failed to unmarshal condition: ` + err.Error() + `"}`, err
+	}
+
+	clientID, exists, err := ctx.GetClientIdentity().GetAttributeValue("userId")
+	if err != nil {
+		return `{"error": "failed to get client ID attribute: ` + err.Error() + `"}`, err
+	}
+	if !exists {
+		return `{"error": "client ID attribute does not exist"}`, errors.New("client ID attribute does not exist")
+	}
+
+	patientref := condition.Subject.Reference
+	chaincodeName := "patient"
+	functionName := "IsAuthorized"
+
+	invokeArgs := [][]byte{[]byte(functionName), []byte(patientref), []byte(clientID)}
+
+	response := ctx.GetStub().InvokeChaincode(chaincodeName, invokeArgs, ctx.GetStub().GetChannelID())
+	if response.Status != 200 {
+		return `{"error": "failed to invoke chaincode: ` + response.Message + `"}`, errors.New("failed to invoke chaincode: " + response.Message)
+	}
+
+	log.Printf("Client ID: %s", clientID)
+	log.Printf("Patient ID: %s", patientref)
+
+	conditionJSONBytes, err := json.Marshal(condition)
+	if err != nil {
+		return `{"error": "failed to marshal condition: ` + err.Error() + `"}`, err
+	}
+
+	err = ctx.GetStub().PutState(conditionID, conditionJSONBytes)
+	if err != nil {
+		return `{"error": "failed to put condition in world state: ` + err.Error() + `"}`, err
+	}
+
+	return `{"message": "Condition created successfully"}`, nil
+}
+
+// ReadCondition retrieves a condition record from the ledger
+func (c *MedicalRecordsChaincode) ReadCondition(ctx contractapi.TransactionContextInterface, conditionID string) (string, error) {
+	conditionJSON, err := ctx.GetStub().GetState(conditionID)
+	if err != nil {
+		return `{"error": "failed to read condition: ` + err.Error() + `"}`, err
+	}
+	if conditionJSON == nil {
+		return `{"error": "condition does not exist: ` + conditionID + `"}`, errors.New("condition does not exist")
+	}
+
+	log.Printf("Condition JSON from ledger: %s", string(conditionJSON))
+
+	var condition Condition
+	err = json.Unmarshal(conditionJSON, &condition)
+	if err != nil {
+		return `{"error": "failed to unmarshal condition: ` + err.Error() + `"}`, err
+	}
+
+	log.Printf("Condition object: %+v", condition)
+
+	clientID, exists, err := ctx.GetClientIdentity().GetAttributeValue("userId")
+	if err != nil {
+		return `{"error": "failed to get client ID attribute: ` + err.Error() + `"}`, err
+	}
+	if !exists {
+		return `{"error": "client ID attribute does not exist"}`, errors.New("client ID attribute does not exist")
+	}
+
+	patientref := condition.Subject.Reference
+	chaincodeName := "patient"
+	functionName := "IsAuthorized"
+
+	invokeArgs := [][]byte{[]byte(functionName), []byte(patientref), []byte(clientID)}
+
+	response := ctx.GetStub().InvokeChaincode(chaincodeName, invokeArgs, ctx.GetStub().GetChannelID())
+	if response.Status != 200 {
+		return `{"error": "failed to invoke chaincode: ` + response.Message + `"}`, errors.New("failed to invoke chaincode: " + response.Message)
+	}
+
+	log.Printf("Client ID: %s", clientID)
+	log.Printf("Patient ID: %s", patientref)
+
+	return string(conditionJSON), nil
+}
+
+// UpdateCondition updates an existing condition record in the ledger
+func (c *MedicalRecordsChaincode) UpdateCondition(ctx contractapi.TransactionContextInterface, conditionID string, conditionJSON string) (string, error) {
+	exists, err := ctx.GetStub().GetState(conditionID)
+	if err != nil {
+		return `{"error": "failed to get condition: ` + err.Error() + `"}`, err
+	}
+	if exists == nil {
+		return `{"error": "condition does not exist: ` + conditionID + `"}`, errors.New("condition does not exist")
+	}
+
+	var condition Condition
+	err = json.Unmarshal([]byte(conditionJSON), &condition)
+	if err != nil {
+		return `{"error": "failed to unmarshal condition: ` + err.Error() + `"}`, err
+	}
+
+	clientID, err := ctx.GetClientIdentity().GetID()
+	if err != nil {
+		return `{"error": "failed to get client ID: ` + err.Error() + `"}`, err
+	}
+
+	patientref := condition.Subject.Reference
+	chaincodeName := "patient"
+	functionName := "IsAuthorized"
+
+	invokeArgs := [][]byte{[]byte(functionName), []byte(patientref), []byte(clientID)}
+
+	response := ctx.GetStub().InvokeChaincode(chaincodeName, invokeArgs, ctx.GetStub().GetChannelID())
+	if response.Status != 200 {
+		return `{"error": "failed to invoke chaincode: ` + response.Message + `"}`, errors.New("failed to invoke chaincode: " + response.Message)
+	}
+
+	log.Printf("Client ID: %s", clientID)
+	log.Printf("Patient ID: %s", patientref)
+
+	conditionJSONBytes, err := json.Marshal(condition)
+	if err != nil {
+		return `{"error": "failed to marshal condition: ` + err.Error() + `"}`, err
+	}
+
+	err = ctx.GetStub().PutState(conditionID, conditionJSONBytes)
+	if err != nil {
+		return `{"error": "failed to update condition: ` + err.Error() + `"}`, err
+	}
+
+	return `{"message": "Condition updated successfully"}`, nil
+}
+
+// DeleteCondition removes a condition record from the ledger
+func (c *MedicalRecordsChaincode) DeleteCondition(ctx contractapi.TransactionContextInterface, conditionID string) (string, error) {
+	existingCondition, err := ctx.GetStub().GetState(conditionID)
+	if err != nil {
+		return `{"error": "failed to get condition: ` + err.Error() + `"}`, err
+	}
+	if existingCondition == nil {
+		return `{"error": "condition does not exist: ` + conditionID + `"}`, errors.New("condition does not exist")
+	}
+
+	var condition Condition
+	err = json.Unmarshal([]byte(existingCondition), &condition)
+	if err != nil {
+		return `{"error": "failed to unmarshal condition: ` + err.Error() + `"}`, err
+	}
+
+	clientID, err := ctx.GetClientIdentity().GetID()
+	if err != nil {
+		return `{"error": "failed to get client ID: ` + err.Error() + `"}`, err
+	}
+
+	patientref := condition.Subject.Reference
+	chaincodeName := "patient"
+	functionName := "IsAuthorized"
+
+	invokeArgs := [][]byte{[]byte(functionName), []byte(patientref), []byte(clientID)}
+
+	response := ctx.GetStub().InvokeChaincode(chaincodeName, invokeArgs, ctx.GetStub().GetChannelID())
+	if response.Status != 200 {
+		return `{"error": "failed to invoke chaincode: ` + response.Message + `"}`, errors.New("failed to invoke chaincode: " + response.Message)
+	}
+
+	log.Printf("Client ID: %s", clientID)
+	log.Printf("Patient ID: %s", patientref)
+
+	err = ctx.GetStub().DelState(conditionID)
+	if err != nil {
+		return `{"error": "failed to delete condition: ` + err.Error() + `"}`, err
+	}
+
+	return `{"message": "Condition deleted successfully"}`, nil
+}
+
+// CreateProcedure adds a new procedure record to the ledger
+func (c *MedicalRecordsChaincode) CreateProcedure(ctx contractapi.TransactionContextInterface, procedureJSON string) (string, error) {
+	log.Printf("Procedure JSON from param: %s", procedureJSON)
+
+	var procedure Procedure
+	err := json.Unmarshal([]byte(procedureJSON), &procedure)
+	if err != nil {
+		return `{"error": "failed to unmarshal procedure: ` + err.Error() + `"}`, err
+	}
+
+	if procedure.ID.Value == "" {
+		return `{"error": "procedure request ID is required"}`, errors.New("procedure request ID is required")
+	}
+
+	log.Printf("Procedure struct unmarshalled: %+v", procedure)
+
+	existingProcedure, err := ctx.GetStub().GetState(procedure.ID.Value)
+	if err != nil {
+		return `{"error": "failed to get procedure: ` + err.Error() + `"}`, err
+	}
+	if existingProcedure != nil {
+		return `{"error": "procedure already exists: ` + procedure.ID.Value + `"}`, errors.New("procedure already exists")
+	}
+
+	clientID, exists, err := ctx.GetClientIdentity().GetAttributeValue("userId")
+	if err != nil {
+		return `{"error": "failed to get client ID attribute: ` + err.Error() + `"}`, err
+	}
+	if !exists {
+		return `{"error": "client ID attribute does not exist"}`, errors.New("client ID attribute does not exist")
+	}
+
+	patientref := procedure.Subject.Reference
+	chaincodeName := "patient"
+	functionName := "IsAuthorized"
+
+	invokeArgs := [][]byte{[]byte(functionName), []byte(patientref), []byte(clientID)}
+
+	response := ctx.GetStub().InvokeChaincode(chaincodeName, invokeArgs, ctx.GetStub().GetChannelID())
+	if response.Status != 200 {
+		return `{"error": "failed to invoke chaincode: ` + response.Message + `"}`, errors.New("failed to invoke chaincode: " + response.Message)
+	}
+
+	log.Printf("Client ID: %s", clientID)
+	log.Printf("Patient ID: %s", patientref)
+
+	procedureJSONBytes, err := json.Marshal(procedure)
+	if err != nil {
+		return `{"error": "failed to marshal procedure: ` + err.Error() + `"}`, err
+	}
+
+	err = ctx.GetStub().PutState(procedure.ID.Value, procedureJSONBytes)
+	if err != nil {
+		return `{"error": "failed to put procedure in world state: ` + err.Error() + `"}`, err
+	}
+
+	return `{"message": "Procedure created successfully"}`, nil
+}
+
+// ReadProcedure retrieves a procedure record from the ledger
+func (c *MedicalRecordsChaincode) ReadProcedure(ctx contractapi.TransactionContextInterface, procedureID string) (string, error) {
+	procedureJSON, err := ctx.GetStub().GetState(procedureID)
+	if err != nil {
+		return `{"error": "failed to read procedure: ` + err.Error() + `"}`, err
+	}
+	if procedureJSON == nil {
+		return `{"error": "procedure does not exist: ` + procedureID + `"}`, errors.New("procedure does not exist")
+	}
+
+	log.Printf("Procedure JSON from ledger: %s", string(procedureJSON))
+
+	var procedure Procedure
+	err = json.Unmarshal(procedureJSON, &procedure)
+	if err != nil {
+		return `{"error": "failed to unmarshal procedure: ` + err.Error() + `"}`, err
+	}
+
+	log.Printf("Procedure object: %+v", procedure)
+
+	clientID, exists, err := ctx.GetClientIdentity().GetAttributeValue("userId")
+	if err != nil {
+		return `{"error": "failed to get client ID attribute: ` + err.Error() + `"}`, err
+	}
+	if !exists {
+		return `{"error": "client ID attribute does not exist"}`, errors.New("client ID attribute does not exist")
+	}
+
+	patientref := procedure.Subject.Reference
+	chaincodeName := "patient"
+	functionName := "IsAuthorized"
+
+	invokeArgs := [][]byte{[]byte(functionName), []byte(patientref), []byte(clientID)}
+
+	response := ctx.GetStub().InvokeChaincode(chaincodeName, invokeArgs, ctx.GetStub().GetChannelID())
+	if response.Status != 200 {
+		return `{"error": "failed to invoke chaincode: ` + response.Message + `"}`, errors.New("failed to invoke chaincode: " + response.Message)
+	}
+
+	log.Printf("Client ID: %s", clientID)
+	log.Printf("Patient ID: %s", patientref)
+
+	return string(procedureJSON), nil
+}
+
+// UpdateProcedure updates an existing procedure record in the ledger
+func (c *MedicalRecordsChaincode) UpdateProcedure(ctx contractapi.TransactionContextInterface, procedureID string, procedureJSON string) (string, error) {
+	existingProcedure, err := ctx.GetStub().GetState(procedureID)
+	if err != nil {
+		return `{"error": "failed to get procedure: ` + err.Error() + `"}`, err
+	}
+	if existingProcedure == nil {
+		return `{"error": "procedure does not exist: ` + procedureID + `"}`, errors.New("procedure does not exist")
+	}
+
+	var procedure Procedure
+	err = json.Unmarshal([]byte(procedureJSON), &procedure)
+	if err != nil {
+		return `{"error": "failed to unmarshal procedure: ` + err.Error() + `"}`, err
+	}
+
+	log.Printf("Procedure object: %+v", procedure)
+
+	clientID, exists, err := ctx.GetClientIdentity().GetAttributeValue("userId")
+	if err != nil {
+		return `{"error": "failed to get client ID attribute: ` + err.Error() + `"}`, err
+	}
+	if !exists {
+		return `{"error": "client ID attribute does not exist"}`, errors.New("client ID attribute does not exist")
+	}
+
+	patientref := procedure.Subject.Reference
+	chaincodeName := "patient"
+	functionName := "IsAuthorized"
+
+	invokeArgs := [][]byte{[]byte(functionName), []byte(patientref), []byte(clientID)}
+
+	response := ctx.GetStub().InvokeChaincode(chaincodeName, invokeArgs, ctx.GetStub().GetChannelID())
+	if response.Status != 200 {
+		return `{"error": "failed to invoke chaincode: ` + response.Message + `"}`, errors.New("failed to invoke chaincode: " + response.Message)
+	}
+
+	log.Printf("Client ID: %s", clientID)
+	log.Printf("Patient ID: %s", patientref)
+
+	procedureJSONBytes, err := json.Marshal(procedure)
+	if err != nil {
+		return `{"error": "failed to marshal procedure: ` + err.Error() + `"}`, err
+	}
+
+	err = ctx.GetStub().PutState(procedureID, procedureJSONBytes)
+	if err != nil {
+		return `{"error": "failed to update procedure: ` + err.Error() + `"}`, err
+	}
+
+	return `{"message": "Procedure updated successfully"}`, nil
+}
+
+// DeleteProcedure removes a procedure record from the ledger
+func (c *MedicalRecordsChaincode) DeleteProcedure(ctx contractapi.TransactionContextInterface, procedureID string) (string, error) {
+	existingProcedure, err := ctx.GetStub().GetState(procedureID)
+	if err != nil {
+		return `{"error": "failed to get procedure: ` + err.Error() + `"}`, err
+	}
+	if existingProcedure == nil {
+		return `{"error": "procedure does not exist: ` + procedureID + `"}`, errors.New("procedure does not exist")
+	}
+
+	var procedure Procedure
+	err = json.Unmarshal([]byte(existingProcedure), &procedure)
+	if err != nil {
+		return `{"error": "failed to unmarshal procedure: ` + err.Error() + `"}`, err
+	}
+
+	log.Printf("Procedure object: %+v", procedure)
+
+	clientID, exists, err := ctx.GetClientIdentity().GetAttributeValue("userId")
+	if err != nil {
+		return `{"error": "failed to get client ID attribute: ` + err.Error() + `"}`, err
+	}
+	if !exists {
+		return `{"error": "client ID attribute does not exist"}`, errors.New("client ID attribute does not exist")
+	}
+
+	patientref := procedure.Subject.Reference
+	chaincodeName := "patient"
+	functionName := "IsAuthorized"
+
+	invokeArgs := [][]byte{[]byte(functionName), []byte(patientref), []byte(clientID)}
+
+	response := ctx.GetStub().InvokeChaincode(chaincodeName, invokeArgs, ctx.GetStub().GetChannelID())
+	if response.Status != 200 {
+		return `{"error": "failed to invoke chaincode: ` + response.Message + `"}`, errors.New("failed to invoke chaincode: " + response.Message)
+	}
+
+	log.Printf("Client ID: %s", clientID)
+	log.Printf("Patient ID: %s", patientref)
+
+	err = ctx.GetStub().DelState(procedureID)
+	if err != nil {
+		return `{"error": "failed to delete procedure: ` + err.Error() + `"}`, err
+	}
+
+	return `{"message": "Procedure deleted successfully"}`, nil
+}
+
+// CreateAnnotation adds a new annotation record to the ledger
+func (c *MedicalRecordsChaincode) CreateAnnotation(ctx contractapi.TransactionContextInterface, procedureID string, annotationJSON string) (string, error) {
+	procedureJSON, err := ctx.GetStub().GetState(procedureID)
+	if err != nil {
+		return `{"error": "failed to get procedure: ` + err.Error() + `"}`, err
+	}
+	if procedureJSON == nil {
+		return `{"error": "procedure does not exist: ` + procedureID + `"}`, errors.New("procedure does not exist")
+	}
+
+	var procedure Procedure
+	err = json.Unmarshal(procedureJSON, &procedure)
+	if err != nil {
+		return `{"error": "failed to unmarshal procedure: ` + err.Error() + `"}`, err
+	}
+
+	var annotation Annotation
+	err = json.Unmarshal([]byte(annotationJSON), &annotation)
+	if err != nil {
+		return `{"error": "failed to unmarshal annotation: ` + err.Error() + `"}`, err
+	}
+
+	procedure.Note = append(procedure.Note, annotation)
+
+	updatedProcedureJSON, err := json.Marshal(procedure)
+	if err != nil {
+		return `{"error": "failed to marshal updated procedure: ` + err.Error() + `"}`, err
+	}
+
+	err = ctx.GetStub().PutState(procedureID, updatedProcedureJSON)
+	if err != nil {
+		return `{"error": "failed to update procedure: ` + err.Error() + `"}`, err
+	}
+
+	return `{"message": "Annotation created successfully"}`, nil
+}
 
 func main() {
 	chaincode, err := contractapi.NewChaincode(new(MedicalRecordsChaincode))
