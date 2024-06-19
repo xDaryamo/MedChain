@@ -1,23 +1,27 @@
-// src/components/MedicalRecordDetails.js
-import React, { useEffect } from 'react';
+import React from 'react';
 import { useParams } from 'react-router-dom';
-import { useMedicalRecords } from "../hooks/useMedicalRecords";
+import { useMedicalRecords } from '../hooks/useMedicalRecords';
 
 const MedicalRecordDetails = () => {
-    const { fetchRecord, record, loading, error } = useMedicalRecords();
     const { id } = useParams();
+    const { useFetchRecord } = useMedicalRecords();
+    const { data: record, isLoading, error } = useFetchRecord(id);
 
-    useEffect(() => {
-        fetchRecord(id);
-    }, [id, fetchRecord]);
-
-    if (loading) return <p>Loading...</p>;
-    if (error) return <p>Error: {error}</p>;
+    if (isLoading) return <p>Loading...</p>;
+    if (error) return <p>Error: {error.message}</p>;
 
     return (
         <div>
-            <h1>Medical Record Details</h1>
-            {record ? <pre>{JSON.stringify(record)}</pre> : <p>No record found</p>}
+            <h2>Record Details</h2>
+            <p>Record ID: {record.RecordID}</p>
+            <p>Patient ID: {record.PatientID}</p>
+            <p>Allergies: {record.Allergies.join(', ')}</p>
+            <p>Conditions: {record.Conditions.join(', ')}</p>
+            <p>Procedures: {record.Procedures.join(', ')}</p>
+            <p>Prescriptions: {record.Prescriptions.join(', ')}</p>
+            <p>Service Request Reference: {record.ServiceRequest.Reference}</p>
+            <p>Service Request Display: {record.ServiceRequest.Display}</p>
+            <p>Attachments: {record.Attachments.join(', ')}</p>
         </div>
     );
 };

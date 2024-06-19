@@ -1,18 +1,28 @@
-import React from "react";
-import MedicalRecordList from "../components/MedicalRecordList";
-import MedicalRecordForm from "../components/MedicalRecordForm";
-import { useMedicalRecords } from "../hooks/useMedicalRecords";
+// src/pages/RecordHome.js
+import React from 'react';
+import MedicalRecordList from '../components/MedicalRecordList';
+import MedicalRecordForm from '../components/MedicalRecordForm';
+import { useMedicalRecords } from '../hooks/useMedicalRecords';
 
 const RecordHome = () => {
-    const { records, addRecord, loading, error } = useMedicalRecords();
+    const {
+        records,
+        recordsLoading,
+        recordsError,
+        addRecordMutation,
+    } = useMedicalRecords();
+
+    const handleAddRecord = async (record) => {
+        await addRecordMutation.mutateAsync(record);
+    };
 
     return (
         <div>
             <h1>Medical Records</h1>
-            {loading && <p>Loading...</p>}
-            {error && <p>Error: {error}</p>}
-            <MedicalRecordForm onSubmit={addRecord} />
-            <MedicalRecordList records={records} />
+            {recordsLoading && <p>Loading...</p>}
+            {recordsError && <p>Error: {recordsError.message}</p>}
+            <MedicalRecordForm onSubmit={handleAddRecord} />
+            <MedicalRecordList records={records || []} />
         </div>
     );
 };

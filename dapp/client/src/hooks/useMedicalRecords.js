@@ -1,91 +1,75 @@
-import { useState, useEffect } from "react";
+import { useQuery, useMutation, useQueryClient } from 'react-query';
+import { useDispatch } from 'react-redux';
 import {
     getMedicalRecords,
     getMedicalRecord,
     createMedicalRecord,
     updateMedicalRecord,
     deleteMedicalRecord,
-} from "../api";
+} from '../api';
+import { setRecords, setRecord, setError, addRecord, updateRecord, removeRecord } from '../actions/medicalRecordsActions';
 
 export const useMedicalRecords = () => {
-    const [records, setRecords] = useState([]);
-    const [record, setRecord] = useState(null);
-    const [loading, setLoading] = useState(false);
-    const [error, setError] = useState(null);
+    const queryClient = useQueryClient();
+    const dispatch = useDispatch();
 
-    useEffect(() => {
-        fetchRecords();
-    }, []);
-
-    const fetchRecords = async () => {
-        setLoading(true);
-        try {
-            const data = await getMedicalRecords();
-            setRecords(data);
-        } catch (err) {
-            setError(err.message);
-        } finally {
-            setLoading(false);
+    const { data: records, error: recordsError, isLoading: recordsLoading } = useQuery('medicalRecords', getMedicalRecords, {
+        onSuccess: (data) => {
+            dispatch(setRecords(data));
+        },
+        onError: (error) => {
+            dispatch(setError(error.message));
         }
+    });
+
+    const useFetchRecord = (id) => {
+        return useQuery(['medicalRecord', id], () => getMedicalRecord(id), {
+            onSuccess: (data) => {
+                dispatch(setRecord(data));
+            },
+            onError: (error) => {
+                dispatch(setError(error.message));
+            }
+        });
     };
 
-    const fetchRecord = async (id) => {
-        setLoading(true);
-        try {
-            const data = await getMedicalRecord(id);
-            setRecord(data);
-        } catch (err) {
-            setError(err.message);
-        } finally {
-            setLoading(false);
+    const addRecordMutation = useMutation(createMedicalRecord, {
+        onSuccess: (data) => {
+            queryClient.invalidateQueries('medicalRecords');
+            dispatch(addRecord(data));
+        },
+        onError: (error) => {
+            dispatch(setError(error.message));
         }
-    };
+    });
 
-    const addRecord = async (record) => {
-        setLoading(true);
-        try {
-            await createMedicalRecord(record);
-            fetchRecords();
-        } catch (err) {
-            setError(err.message);
-        } finally {
-            setLoading(false);
+    const modifyRecordMutation = useMutation(({ id, record }) => updateMedicalRecord(id, record), {
+        onSuccess: (data) => {
+            queryClient.invalidateQueries('medicalRecords');
+            dispatch(updateRecord(data));
+        },
+        onError: (error) => {
+            dispatch(setError(error.message));
         }
-    };
+    });
 
-    const modifyRecord = async (id, record) => {
-        setLoading(true);
-        try {
-            await updateMedicalRecord(id, record);
-            fetchRecords();
-        } catch (err) {
-            setError(err.message);
-        } finally {
-            setLoading(false);
+    const removeRecordMutation = useMutation(deleteMedicalRecord, {
+        onSuccess: (id) => {
+            queryClient.invalidateQueries('medicalRecords');
+            dispatch(removeRecord(id));
+        },
+        onError: (error) => {
+            dispatch(setError(error.message));
         }
-    };
-
-    const removeRecord = async (id) => {
-        setLoading(true);
-        try {
-            await deleteMedicalRecord(id);
-            fetchRecords();
-        } catch (err) {
-            setError(err.message);
-        } finally {
-            setLoading(false);
-        }
-    };
+    });
 
     return {
         records,
-        record,
-        loading,
-        error,
-        fetchRecords,
-        fetchRecord,
-        addRecord,
-        modifyRecord,
-        removeRecord,
+        recordsLoading,
+        recordsError,
+        useFetchRecord,
+        addRecordMutation,
+        modifyRecordMutation,
+        removeRecordMutation,
     };
 };
