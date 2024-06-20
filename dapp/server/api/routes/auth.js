@@ -3,6 +3,7 @@ const { body } = require("express-validator");
 
 const User = require("../models/user");
 const authController = require("../controllers/auth");
+const { verifyToken } = require("../middleware/auth");
 
 const router = express.Router();
 
@@ -26,5 +27,7 @@ router.put(
 );
 
 router.post("/login", authController.login);
+
+router.get("/me", verifyToken, authController.getCurrentUser);
 
 module.exports = router;

@@ -61,12 +61,13 @@ exports.createPractitioner = async (req, res, next) => {
     );
     const result = JSON.parse(resultString);
 
-    return result; // Restituisce il risultato JSON
-  } catch (error) {
-    return { error: error.message }; // Restituisce l'errore JSON
-  } finally {
     fabric.disconnect();
     console.log("Disconnected from Fabric gateway.");
+
+    return result; // Restituisci il risultato JSON
+  } catch (error) {
+    console.error("Error creating practitioner:", error);
+    return { error: error.message }; // Restituisci l'errore JSON
   }
 };
 

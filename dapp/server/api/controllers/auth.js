@@ -16,6 +16,8 @@ exports.signup = async (req, res, next) => {
   try {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
+      await session.abortTransaction();
+      session.endSession();
       return res
         .status(422)
         .json({ message: "Validation failed.", data: errors.array() });
@@ -74,17 +76,33 @@ exports.signup = async (req, res, next) => {
       );
     }
 
-    console.log("Create result:", createResult);
-
     if (createResult && createResult.error) {
       throw new Error(createResult.error);
     }
+
+    const token = jwt.sign(
+      {
+        email: user.email,
+        userId: user.userId,
+        organization: user.organization,
+        role: user.role,
+      },
+      "somesupersecretsecret",
+      { expiresIn: "1h" }
+    );
+
+    const expireDate = new Date(Date.now() + 60 * 60 * 1000).toISOString();
 
     await session.commitTransaction();
     session.endSession();
 
     return res.status(201).json({
-      result: createResult,
+      token: token,
+      userId: user.userId,
+      organization: user.organization,
+      role: user.role,
+      username: user.username,
+      expireDate: expireDate,
     });
   } catch (err) {
     console.error("Error in signup process:", err);
@@ -110,11 +128,8 @@ exports.signup = async (req, res, next) => {
     }
 
     if (!res.headersSent) {
-      if (!err.statusCode) {
-        err.statusCode = 500;
-      }
       return res
-        .status(err.statusCode)
+        .status(err.statusCode || 500)
         .json({ message: err.message, data: err.data });
     } else {
       next(err);
@@ -155,12 +170,37 @@ exports.login = async (req, res, next) => {
       "somesupersecretsecret",
       { expiresIn: "1h" }
     );
+
+    const expireDate = new Date(Date.now() + 60 * 60 * 1000).toISOString();
+
     res.status(200).json({
       token: token,
       userId: user.userId,
       organization: user.organization,
       role: user.role,
+      username: user.username,
+      expireDate: expireDate,
     });
+  } catch (err) {
+    if (!err.statusCode) {
+      err.statusCode = 500;
+    }
+    next(err);
+  }
+};
+
+exports.getCurrentUser = async (req, res, next) => {
+  try {
+    const userId = req.userId; // Token JWT
+    const user = await User.findById(userId).select("-password"); // Exclude Password
+
+    if (!user) {
+      const error = new Error("User not found.");
+      error.statusCode = 404;
+      throw error;
+    }
+
+    res.status(200).json({ user });
   } catch (err) {
     if (!err.statusCode) {
       err.statusCode = 500;

@@ -36,6 +36,7 @@ exports.createPatient = async (req, res, next) => {
     const chaincode = "patient";
     const userId = fhirData.identifier.value;
 
+    const fabric = new FabricNetwork();
     await fabric.init(userId, organization, channel, chaincode);
     console.log("Fabric network initialized successfully.");
 
@@ -45,7 +46,7 @@ exports.createPatient = async (req, res, next) => {
       JSON.parse(patientJSONString);
     } catch (jsonError) {
       console.error("Invalid JSON format:", jsonError);
-      return res.status(400).json({ error: "Invalid JSON format" });
+      return { error: "Invalid JSON format" }; // Restituisci un errore JSON
     }
 
     console.log("Submitting transaction with patient JSON:", patientJSONString);
@@ -55,12 +56,13 @@ exports.createPatient = async (req, res, next) => {
       patientJSONString
     );
 
-    res.status(200).json(JSON.parse(result));
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  } finally {
     fabric.disconnect();
     console.log("Disconnected from Fabric gateway.");
+
+    return JSON.parse(result); // Restituisci il risultato JSON
+  } catch (error) {
+    console.error("Error creating patient:", error);
+    return { error: error.message }; // Restituisci l'errore JSON
   }
 };
 
