@@ -12,7 +12,7 @@ const Register = () => {
   });
 
   // eslint-disable-next-line no-unused-vars
-  const { register, isLoading } = useRegister();
+  const { register, isPending } = useRegister();
 
   const handleChange = (e) => {
     setFormData({
@@ -87,8 +87,8 @@ const Register = () => {
           onChange={handleChange}
         />
       </label>
-      <button type="submit" disabled={isLoading}>
-        {isLoading ? "Registering..." : "Register"}
+      <button type="submit" disabled={isPending}>
+        {isPending ? "Registering..." : "Register"}
       </button>
     </form>
   );

@@ -12,7 +12,7 @@ export const useLogin = () => {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
 
-  const { mutate: login, isLoading } = useMutation({
+  const { mutate: login, isPending } = useMutation({
     mutationFn: loginUser,
     onSuccess: (data) => {
       const { token, userId, organization, role, username, expireDate } = data;
@@ -36,7 +36,7 @@ export const useLogin = () => {
     },
   });
 
-  return { login, isLoading };
+  return { login, isPending };
 };
 
 // Hook per la registrazione
@@ -44,7 +44,7 @@ export const useRegister = () => {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
 
-  const { mutate: register, isLoading } = useMutation({
+  const { mutate: register, isPending } = useMutation({
     mutationFn: registerUser,
     onSuccess: (data) => {
       const { token, userId, organization, role, username, expireDate } = data;
@@ -68,7 +68,7 @@ export const useRegister = () => {
     },
   });
 
-  return { register, isLoading };
+  return { register, isPending };
 };
 
 // Hook per il logout
@@ -76,7 +76,7 @@ export const useLogout = () => {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
 
-  const { mutate: logout, isLoading } = useMutation({
+  const { mutate: logout, isPending } = useMutation({
     mutationFn: async () => {
       localStorage.removeItem("token");
       localStorage.removeItem("expireDate");
@@ -88,17 +88,17 @@ export const useLogout = () => {
     },
   });
 
-  return { logout, isLoading };
+  return { logout, isPending };
 };
 
 // Hook per ottenere l'utente corrente
 export const useUser = () => {
-  const { data: user, isLoading } = useQuery(["user"], getCurrentUser, {
+  const { data: user, isPending } = useQuery(["user"], getCurrentUser, {
     onError: (error) => {
       console.error("Failed to fetch user", error);
       toast.error("Failed to fetch user data");
     },
   });
 
-  return { user, isLoading };
+  return { user, isPending };
 };

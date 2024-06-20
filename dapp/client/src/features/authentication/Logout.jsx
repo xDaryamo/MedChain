@@ -1,17 +1,10 @@
 import { useLogout } from "./useAuth";
 
 function Logout() {
-  const { logout, isLoading } = useLogout();
+  const { logout, isPending } = useLogout();
 
   return (
-    <button
-      onClick={() => {
-        logout();
-        console.log(isLoading);
-      }}
-    >
-      {isLoading ? "Logging out..." : "Logout"}
-    </button>
+    <button onClick={logout}>{isPending ? "Logging out..." : "Logout"}</button>
   );
 }
 

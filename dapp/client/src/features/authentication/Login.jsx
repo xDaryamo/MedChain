@@ -7,7 +7,7 @@ const Login = () => {
     password: "",
   });
 
-  const { login, isLoading } = useLogin();
+  const { login, isPending } = useLogin();
 
   const handleChange = (e) => {
     setFormData({
@@ -42,8 +42,8 @@ const Login = () => {
           onChange={handleChange}
         />
       </label>
-      <button type="submit" disabled={isLoading}>
-        {isLoading ? "Logging in..." : "Login"}
+      <button type="submit" disabled={isPending}>
+        {isPending ? "Logging in..." : "Login"}
       </button>
     </form>
   );
