@@ -1,12 +1,12 @@
 // src/hooks/useMedicalRecords.js
-import { useQuery, useMutation, useQueryClient } from "react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
     getMedicalRecords,
     getMedicalRecord,
     createMedicalRecord,
     updateMedicalRecord,
     deleteMedicalRecord,
-} from "../apiRecords";
+} from "../../services/apiRecords";
 
 export const useMedicalRecords = () => {
     const queryClient = useQueryClient();

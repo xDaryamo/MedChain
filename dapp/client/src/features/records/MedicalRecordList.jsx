@@ -1,5 +1,5 @@
 // src/components/MedicalRecordList.js
-import { useMedicalRecords } from "../hooks/useMedicalRecords";
+import { useMedicalRecords } from "./useMedicalRecords";
 import { Link } from "react-router-dom";
 import { useUser } from "../authentication/useAuth";
 import { toast } from "react-hot-toast";

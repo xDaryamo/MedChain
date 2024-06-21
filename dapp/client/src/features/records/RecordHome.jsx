@@ -1,5 +1,5 @@
 // src/pages/RecordHome.js
-import { useMedicalRecords } from "../hooks/useMedicalRecords";
+import { useMedicalRecords } from "./useMedicalRecords";
 import MedicalRecordList from "./MedicalRecordList";
 
 const RecordHome = () => {

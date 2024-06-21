@@ -1,6 +1,6 @@
 // src/pages/RecordPage.js
 import { useParams } from "react-router-dom";
-import { useMedicalRecords } from "../hooks/useMedicalRecords";
+import { useMedicalRecords } from "./useMedicalRecords";
 import MedicalRecordDetails from "./MedicalRecordDetails";
 import MedicalRecordForm from "./MedicalRecordForm";
 

@@ -1,17 +1,21 @@
-// src/components/MedicalRecordForm.js
-import { useState, useEffect } from "react";
+
+import PropTypes from "prop-types";
+import { useState, useEffect, useMemo } from "react";
 
 const MedicalRecordForm = ({ onSubmit, record }) => {
-    const initialFormData = {
-        RecordID: "",
-        PatientID: "",
-        Allergies: [],
-        Conditions: [],
-        Procedures: [],
-        Prescriptions: [],
-        ServiceRequest: { Reference: "", Display: "" },
-        Attachments: [],
-    };
+    const initialFormData = useMemo(
+        () => ({
+            RecordID: "",
+            PatientID: "",
+            Allergies: [],
+            Conditions: [],
+            Procedures: [],
+            Prescriptions: [],
+            ServiceRequest: { Reference: "", Display: "" },
+            Attachments: [],
+        }),
+        []
+    );
 
     const [formData, setFormData] = useState(initialFormData);
 
@@ -28,7 +32,7 @@ const MedicalRecordForm = ({ onSubmit, record }) => {
                 Attachments: record.Attachments || [],
             });
         } else {
-            setFormData(initialFormData);
+            setFormData(initialFormData); // Reset form data if no record is provided
         }
     }, [record, initialFormData]);
 
@@ -50,7 +54,7 @@ const MedicalRecordForm = ({ onSubmit, record }) => {
     const handleSubmit = (e) => {
         e.preventDefault();
         onSubmit(formData);
-        setFormData(initialFormData);
+        setFormData(initialFormData); // Reset form after submission
     };
 
     return (
@@ -121,6 +125,24 @@ const MedicalRecordForm = ({ onSubmit, record }) => {
     );
 };
 
+
+MedicalRecordForm.propTypes = {
+    onSubmit: PropTypes.func.isRequired,
+    record: PropTypes.shape({
+        RecordID: PropTypes.string,
+        PatientID: PropTypes.string,
+        Allergies: PropTypes.array,
+        Conditions: PropTypes.array,
+        Procedures: PropTypes.array,
+        Prescriptions: PropTypes.array,
+        ServiceRequest: PropTypes.shape({
+            Reference: PropTypes.string,
+            Display: PropTypes.string,
+        }),
+        Attachments: PropTypes.array,
+    }),
+};
+
 const NestedFormComponent = ({ data, name, onChange }) => {
     const [nestedData, setNestedData] = useState(data);
 
@@ -143,5 +165,12 @@ const NestedFormComponent = ({ data, name, onChange }) => {
         </div>
     );
 };
+
+NestedFormComponent.propTypes = {
+    data: PropTypes.any.isRequired,
+    name: PropTypes.string.isRequired,
+    onChange: PropTypes.func.isRequired,
+};
+
 
 export default MedicalRecordForm;
