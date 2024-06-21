@@ -1,4 +1,3 @@
-// src/hooks/useMedicalRecords.js
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
     getMedicalRecords,
@@ -11,27 +10,36 @@ import {
 export const useMedicalRecords = () => {
     const queryClient = useQueryClient();
 
-    const { data: records, error: recordsError, isLoading: recordsLoading } = useQuery("medicalRecords", getMedicalRecords);
+    const { data: records, error: recordsError, isLoading: recordsLoading } = useQuery({
+        queryKey: ["medicalRecords"],
+        queryFn: getMedicalRecords,
+    });
 
     const useFetchRecord = (id) => {
-        return useQuery(["medicalRecord", id], () => getMedicalRecord(id));
+        return useQuery({
+            queryKey: ["medicalRecord", id],
+            queryFn: () => getMedicalRecord(id),
+        });
     };
 
-    const addRecordMutation = useMutation(createMedicalRecord, {
+    const addRecordMutation = useMutation({
+        mutationFn: createMedicalRecord,
         onSuccess: () => {
-            queryClient.invalidateQueries("medicalRecords");
+            queryClient.invalidateQueries({ queryKey: ["medicalRecords"] });
         },
     });
 
-    const modifyRecordMutation = useMutation(({ id, record }) => updateMedicalRecord(id, record), {
+    const modifyRecordMutation = useMutation({
+        mutationFn: ({ id, record }) => updateMedicalRecord(id, record),
         onSuccess: () => {
-            queryClient.invalidateQueries("medicalRecords");
+            queryClient.invalidateQueries({ queryKey: ["medicalRecords"] });
         },
     });
 
-    const removeRecordMutation = useMutation(deleteMedicalRecord, {
+    const removeRecordMutation = useMutation({
+        mutationFn: deleteMedicalRecord,
         onSuccess: () => {
-            queryClient.invalidateQueries("medicalRecords");
+            queryClient.invalidateQueries({ queryKey: ["medicalRecords"] });
         },
     });
 

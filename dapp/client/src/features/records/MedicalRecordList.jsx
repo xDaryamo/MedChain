@@ -1,4 +1,3 @@
-// src/components/MedicalRecordList.js
 import { useMedicalRecords } from "./useMedicalRecords";
 import { Link } from "react-router-dom";
 import { useUser } from "../authentication/useAuth";
