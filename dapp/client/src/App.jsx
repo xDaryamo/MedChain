@@ -9,6 +9,7 @@ import RecordHome from "./features/records/RecordHome";
 import Login from "./features/authentication/Login";
 import Register from "./features/authentication/Register";
 import { Toaster } from "react-hot-toast";
+import RecordPage from "./features/records/RecordPage";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -27,13 +28,13 @@ const App = () => {
         <Routes>
           <Route path="/" element={<Layout />}>
             <Route index element={<HomePage />} />
-            <Route path="medical-records" element={<RecordHome />} />
-            {/* <Route path="profile" element={<ProfilePage />} />
+            <Route path="records" element={<RecordHome />} />
+            {/* <Route path="profile" element={<ProfilePage />} />*/}
 
-          <Route
-            path="medical-records/:id"
-            element={<MedicalRecordDetailPage />}
-          /> */}
+            < Route
+              path="records/:id"
+              element={<RecordPage />}
+            />
             <Route path="login" element={<Login />} />
             <Route path="signup" element={<Register />} />
             <Route path="*" element={<ErrorPage />} />
