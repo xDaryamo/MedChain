@@ -1,75 +1,55 @@
-// import { useQuery, useMutation, useQueryClient } from 'react-query';
-// import { useDispatch } from 'react-redux';
-// import {
-//     getMedicalRecords,
-//     getMedicalRecord,
-//     createMedicalRecord,
-//     updateMedicalRecord,
-//     deleteMedicalRecord,
-// } from '../api';
-// import { setRecords, setRecord, setError, addRecord, updateRecord, removeRecord } from '../actions/medicalRecordsActions';
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import {
+    getMedicalRecords,
+    getMedicalRecord,
+    createMedicalRecord,
+    updateMedicalRecord,
+    deleteMedicalRecord,
+} from "../../services/apiRecords";
 
-// export const useMedicalRecords = () => {
-//     const queryClient = useQueryClient();
-//     const dispatch = useDispatch();
+export const useMedicalRecords = () => {
+    const queryClient = useQueryClient();
 
-//     const { data: records, error: recordsError, isLoading: recordsLoading } = useQuery('medicalRecords', getMedicalRecords, {
-//         onSuccess: (data) => {
-//             dispatch(setRecords(data));
-//         },
-//         onError: (error) => {
-//             dispatch(setError(error.message));
-//         }
-//     });
+    const { data: records, error: recordsError, isLoading: recordsLoading } = useQuery({
+        queryKey: ["medicalRecords"],
+        queryFn: getMedicalRecords,
+    });
 
-//     const useFetchRecord = (id) => {
-//         return useQuery(['medicalRecord', id], () => getMedicalRecord(id), {
-//             onSuccess: (data) => {
-//                 dispatch(setRecord(data));
-//             },
-//             onError: (error) => {
-//                 dispatch(setError(error.message));
-//             }
-//         });
-//     };
+    const useFetchRecord = (id) => {
+        return useQuery({
+            queryKey: ["medicalRecord", id],
+            queryFn: () => getMedicalRecord(id),
+        });
+    };
 
-//     const addRecordMutation = useMutation(createMedicalRecord, {
-//         onSuccess: (data) => {
-//             queryClient.invalidateQueries('medicalRecords');
-//             dispatch(addRecord(data));
-//         },
-//         onError: (error) => {
-//             dispatch(setError(error.message));
-//         }
-//     });
+    const addRecordMutation = useMutation({
+        mutationFn: createMedicalRecord,
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ["medicalRecords"] });
+        },
+    });
 
-//     const modifyRecordMutation = useMutation(({ id, record }) => updateMedicalRecord(id, record), {
-//         onSuccess: (data) => {
-//             queryClient.invalidateQueries('medicalRecords');
-//             dispatch(updateRecord(data));
-//         },
-//         onError: (error) => {
-//             dispatch(setError(error.message));
-//         }
-//     });
+    const modifyRecordMutation = useMutation({
+        mutationFn: ({ id, record }) => updateMedicalRecord(id, record),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ["medicalRecords"] });
+        },
+    });
 
-//     const removeRecordMutation = useMutation(deleteMedicalRecord, {
-//         onSuccess: (id) => {
-//             queryClient.invalidateQueries('medicalRecords');
-//             dispatch(removeRecord(id));
-//         },
-//         onError: (error) => {
-//             dispatch(setError(error.message));
-//         }
-//     });
+    const removeRecordMutation = useMutation({
+        mutationFn: deleteMedicalRecord,
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ["medicalRecords"] });
+        },
+    });
 
-//     return {
-//         records,
-//         recordsLoading,
-//         recordsError,
-//         useFetchRecord,
-//         addRecordMutation,
-//         modifyRecordMutation,
-//         removeRecordMutation,
-//     };
-// };
+    return {
+        records,
+        recordsLoading,
+        recordsError,
+        useFetchRecord,
+        addRecordMutation,
+        modifyRecordMutation,
+        removeRecordMutation,
+    };
+};

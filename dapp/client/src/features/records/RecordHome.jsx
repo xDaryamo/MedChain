@@ -1,21 +1,18 @@
 // src/pages/RecordHome.js
+import { useMedicalRecords } from "./useMedicalRecords";
+import MedicalRecordList from "./MedicalRecordList";
 
 const RecordHome = () => {
-  //   const { records, recordsLoading, recordsError, addRecordMutation } =
-  //     useMedicalRecords();
+  const { records, recordsLoading, recordsError } = useMedicalRecords();
 
-  //   const handleAddRecord = async (record) => {
-  //     await addRecordMutation.mutateAsync(record);
-  //   };
 
   return (
     <div>
-      {/* <h1>Medical Records</h1>
+      <h1>Medical Records</h1>
       {recordsLoading && <p>Loading...</p>}
       {recordsError && <p>Error: {recordsError.message}</p>}
-      <MedicalRecordForm onSubmit={handleAddRecord} />
-      <MedicalRecordList records={records || []} /> */}
-      <h1>Home record</h1>
+
+      <MedicalRecordList records={records || []} />
     </div>
   );
 };

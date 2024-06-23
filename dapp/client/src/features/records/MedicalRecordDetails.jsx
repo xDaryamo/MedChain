@@ -1,6 +1,6 @@
-import React from 'react';
-import { useParams } from 'react-router-dom';
-import { useMedicalRecords } from '../hooks/useMedicalRecords';
+// src/components/MedicalRecordDetails.js
+import { useParams } from "react-router-dom";
+import { useMedicalRecords } from "./useMedicalRecords";
 
 const MedicalRecordDetails = () => {
     const { id } = useParams();
