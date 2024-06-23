@@ -1,34 +1,24 @@
-import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
 import {
-  registerUser,
-  loginUser,
   getCurrentUser,
+  loginUser,
+  registerUser,
 } from "../../services/apiAuth";
-
 // Hook per il login
+
 export const useLogin = () => {
-  const queryClient = useQueryClient();
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
 
   const { mutate: login, isPending } = useMutation({
-    mutationFn: loginUser,
-    onSuccess: (data) => {
-      const { token, userId, organization, role, username, expireDate } = data;
-
-      localStorage.setItem("token", token);
-      localStorage.setItem("expireDate", expireDate);
-
-      queryClient.setQueryData(["user"], {
-        userId,
-        organization,
-        role,
-        username,
-      }); // Memorizza i dati necessari nella cache
+    mutationFn: (userData) => loginUser(userData),
+    onSuccess: (user) => {
+      queryClient.setQueryData(["user"], user);
 
       toast.success("User successfully logged in");
-      navigate("/home", { replace: true });
+      navigate("/", { replace: true });
     },
     onError: (error) => {
       toast.error("Provided email or password are incorrect");
@@ -40,27 +30,17 @@ export const useLogin = () => {
 };
 
 // Hook per la registrazione
-export const useRegister = () => {
+export const useSignup = () => {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
 
-  const { mutate: register, isPending } = useMutation({
-    mutationFn: registerUser,
-    onSuccess: (data) => {
-      const { token, userId, organization, role, username, expireDate } = data;
-
-      localStorage.setItem("token", token);
-      localStorage.setItem("expireDate", expireDate);
-
-      queryClient.setQueryData(["user"], {
-        userId,
-        organization,
-        role,
-        username,
-      }); // Memorizza i dati necessari nella cache
+  const { mutate: signup, isPending } = useMutation({
+    mutationFn: (userData) => registerUser(userData),
+    onSuccess: (user) => {
+      queryClient.setQueryData(["user"], user);
 
       toast.success("User successfully registered");
-      navigate("/home", { replace: true });
+      navigate("/", { replace: true });
     },
     onError: (error) => {
       toast.error(error.message);
@@ -68,37 +48,40 @@ export const useRegister = () => {
     },
   });
 
-  return { register, isPending };
+  return { signup, isPending };
 };
 
-// Hook per il logout
+// // Hook per il logout
 export const useLogout = () => {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
 
   const { mutate: logout, isPending } = useMutation({
     mutationFn: async () => {
-      localStorage.removeItem("token");
-      localStorage.removeItem("expireDate");
+      localStorage.removeItem("session");
     },
     onSuccess: () => {
-      queryClient.removeQueries(["user"]); // Rimuove i dati dalla cache
+      queryClient.removeQueries();
       toast.success("User successfully logged out");
       navigate("/login", { replace: true });
+    },
+    onError: (error) => {
+      console.error("Logout error", error);
+      toast.error("Logout failed");
     },
   });
 
   return { logout, isPending };
 };
 
-// Hook per ottenere l'utente corrente
-export const useUser = () => {
-  const { data: user, isPending } = useQuery(["user"], getCurrentUser, {
-    onError: (error) => {
-      console.error("Failed to fetch user", error);
-      toast.error("Failed to fetch user data");
-    },
+export function useUser() {
+  const { isPending, data: user } = useQuery({
+    queryKey: ["user"],
+    queryFn: getCurrentUser,
   });
-
-  return { user, isPending };
-};
+  return {
+    isPending,
+    user,
+    isAuthenticated: user?.role === "practitioner" || user?.role === "patient",
+  };
+}

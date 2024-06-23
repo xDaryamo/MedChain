@@ -1,26 +1,46 @@
-import { Link } from "react-router-dom";
+// src/ui/Navbar.jsx
+
 import Logout from "../features/authentication/Logout";
+import AppLogo from "./AppLogo";
+import { useUser } from "../features/authentication/useAuth";
+import NavLink from "./NavLink";
 
 const Navbar = () => {
+  const { isAuthenticated } = useUser();
+
   return (
-    <nav>
-      <ul>
+    <nav className="border-8 p-6">
+      <ul className="flex items-center justify-between">
         <li>
-          <Link to="/">Home</Link>
+          <NavLink to="/">
+            <div className="flex items-center gap-2 md:ml-4 md:mr-6">
+              <AppLogo isNav={true} />
+            </div>
+          </NavLink>
         </li>
-        <li>
-          <Link to="/profile">Profile</Link>
-        </li>
-        <li>
-          <Link to="/medical-records">Medical Records</Link>
-        </li>
-        <li>
-          <Link to="/login">Login</Link>
-        </li>
-        <li>
-          <Link to="/signup">Signup</Link>
-        </li>
-        <Logout />
+        {isAuthenticated && (
+          <>
+            <li>
+              <NavLink to="/profile">Profile</NavLink>
+            </li>
+            <li>
+              <NavLink to="/records">Medical Records</NavLink>
+            </li>
+            <li>
+              <Logout />
+            </li>
+          </>
+        )}
+        {!isAuthenticated && (
+          <div className="flex items-center justify-around gap-5">
+            <li>
+              <NavLink to="/login">Accedi</NavLink>
+            </li>
+            <li>
+              <NavLink to="/signup">Registrati</NavLink>
+            </li>
+          </div>
+        )}
       </ul>
     </nav>
   );

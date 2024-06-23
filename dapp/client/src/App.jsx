@@ -7,8 +7,9 @@ import HomePage from "./pages/HomePage";
 import ErrorPage from "./pages/ErrorPage";
 import RecordHome from "./features/records/RecordHome";
 import Login from "./features/authentication/Login";
-import Register from "./features/authentication/Register";
+import Signup from "./features/authentication/Signup";
 import { Toaster } from "react-hot-toast";
+import ProtectedRoute from "./ui/ProtectedRoute";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -28,16 +29,20 @@ const App = () => {
           <Route path="/" element={<Layout />}>
             <Route index element={<HomePage />} />
             <Route path="medical-records" element={<RecordHome />} />
-            {/* <Route path="profile" element={<ProfilePage />} />
 
-          <Route
-            path="medical-records/:id"
-            element={<MedicalRecordDetailPage />}
-          /> */}
-            <Route path="login" element={<Login />} />
-            <Route path="signup" element={<Register />} />
+            <Route
+              path="records"
+              element={
+                <ProtectedRoute>
+                  <RecordHome />
+                </ProtectedRoute>
+              }
+            />
+
+            <Route path="signup" element={<Signup />} />
             <Route path="*" element={<ErrorPage />} />
           </Route>
+          <Route path="login" element={<Login />} />
         </Routes>
       </Router>
       <Toaster
@@ -55,8 +60,8 @@ const App = () => {
             fontSize: "16px",
             maxWidth: "500px",
             padding: "16px 24px",
-            backgroundColor: "var(--color-grey-0)",
-            color: "var(--color-grey-700)",
+            backgroundColor: "#fff",
+            color: "#374151",
           },
         }}
       />

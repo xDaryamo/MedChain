@@ -10,9 +10,6 @@ exports.signup = async (req, res, next) => {
   const session = await User.startSession();
   session.startTransaction();
 
-  let userId;
-  let email, password, username, role, organization, fhirData;
-
   try {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -23,44 +20,27 @@ exports.signup = async (req, res, next) => {
         .json({ message: "Validation failed.", data: errors.array() });
     }
 
-    email = req.body.email;
-    password = req.body.password;
-    username = req.body.username;
-    role = req.body.role;
-    organization = req.body.organization;
-    fhirData = req.body.fhirData;
-
-    console.log("User data received:", {
-      email,
-      password,
-      username,
-      role,
-      organization,
-      fhirData,
-    });
-
+    const { email, password, username, role, organization, fhirData } =
+      req.body;
     const hashedPassword = await bcrypt.hash(password, 12);
 
     const fabricNetwork = new FabricNetwork();
-    userId = await fabricNetwork.registerAndEnrollUser("", organization);
-
-    console.log("Generated userId:", userId);
+    const userId = await fabricNetwork.registerAndEnrollUser("", organization);
 
     fhirData.identifier.value = userId;
 
     const user = new User({
-      email: email,
+      email,
       password: hashedPassword,
-      username: username,
-      role: role,
-      organization: organization,
-      userId: userId,
+      username,
+      role,
+      organization,
+      userId,
     });
 
     await user.save({ session });
 
     let createResult;
-
     if (role === "patient") {
       createResult = await patientController.createPatient(
         { body: { organization, fhirData } },
@@ -68,7 +48,6 @@ exports.signup = async (req, res, next) => {
         next
       );
     } else if (role === "practitioner") {
-      console.log("Creating practitioner...");
       createResult = await practitionerController.createPractitioner(
         { body: { organization, fhirData } },
         res,
@@ -90,6 +69,11 @@ exports.signup = async (req, res, next) => {
       "somesupersecretsecret",
       { expiresIn: "1h" }
     );
+    const refreshToken = jwt.sign(
+      { userId: user.userId },
+      "somesupersecretrefreshsecret",
+      { expiresIn: "7d" }
+    );
 
     const expireDate = new Date(Date.now() + 60 * 60 * 1000).toISOString();
 
@@ -97,57 +81,29 @@ exports.signup = async (req, res, next) => {
     session.endSession();
 
     return res.status(201).json({
-      token: token,
-      userId: user.userId,
-      organization: user.organization,
-      role: user.role,
-      username: user.username,
-      expireDate: expireDate,
+      session: {
+        access_token: token,
+        expires_at: Date.now() + 60 * 60 * 1000,
+        expires_in: 3600,
+        refresh_token: refreshToken,
+        token_type: "bearer",
+        user: { id: userId, email, username, role, organization },
+      },
     });
   } catch (err) {
-    console.error("Error in signup process:", err);
-
-    try {
-      await session.abortTransaction();
-    } catch (transactionError) {
-      console.error("Failed to abort transaction:", transactionError.message);
-    } finally {
-      session.endSession();
-    }
-
-    if (userId) {
-      try {
-        const fabricNetwork = new FabricNetwork();
-        await fabricNetwork.revokeUserEnrollment("", organization, userId);
-      } catch (revokeError) {
-        console.error(
-          "Failed to revoke enrollment for user:",
-          revokeError.message
-        );
-      }
-    }
-
-    if (!res.headersSent) {
-      return res
-        .status(err.statusCode || 500)
-        .json({ message: err.message, data: err.data });
-    } else {
-      next(err);
-    }
+    await session.abortTransaction();
+    session.endSession();
+    next(err);
   }
 };
 
 exports.login = async (req, res, next) => {
   try {
     const { email, password } = req.body;
-    const user = await User.findOne({
-      email: email,
-    });
+    const user = await User.findOne({ email });
 
     if (!user) {
-      const error = new Error(
-        "A user with this email and organization could not be found"
-      );
+      const error = new Error("A user with this email could not be found");
       error.statusCode = 401;
       throw error;
     }
@@ -170,29 +126,75 @@ exports.login = async (req, res, next) => {
       "somesupersecretsecret",
       { expiresIn: "1h" }
     );
+    const refreshToken = jwt.sign(
+      { userId: user.userId },
+      "somesupersecretrefreshsecret",
+      { expiresIn: "7d" }
+    );
 
     const expireDate = new Date(Date.now() + 60 * 60 * 1000).toISOString();
 
     res.status(200).json({
-      token: token,
-      userId: user.userId,
-      organization: user.organization,
-      role: user.role,
-      username: user.username,
-      expireDate: expireDate,
+      session: {
+        access_token: token,
+        expires_at: Date.now() + 60 * 60 * 1000,
+        expires_in: 3600,
+        refresh_token: refreshToken,
+        token_type: "bearer",
+        user: {
+          id: user.userId,
+          email,
+          username: user.username,
+          role: user.role,
+          organization: user.organization,
+        },
+      },
     });
   } catch (err) {
-    if (!err.statusCode) {
-      err.statusCode = 500;
-    }
     next(err);
+  }
+};
+
+exports.refreshToken = async (req, res, next) => {
+  const { refreshToken } = req.body;
+
+  if (!refreshToken) {
+    return res.status(403).json({ message: "Refresh token is required" });
+  }
+
+  try {
+    const decoded = jwt.verify(refreshToken, "somesupersecretrefreshsecret");
+
+    const user = await User.findById(decoded.userId);
+    if (!user) {
+      return res.status(401).json({ message: "Invalid refresh token" });
+    }
+
+    const newAccessToken = jwt.sign(
+      {
+        email: user.email,
+        userId: user.userId,
+        organization: user.organization,
+        role: user.role,
+      },
+      "somesupersecretsecret",
+      { expiresIn: "1h" }
+    );
+
+    return res.status(200).json({
+      access_token: newAccessToken,
+      expires_at: Date.now() + 60 * 60 * 1000,
+      expires_in: 3600,
+    });
+  } catch (err) {
+    return res.status(401).json({ message: "Invalid refresh token" });
   }
 };
 
 exports.getCurrentUser = async (req, res, next) => {
   try {
     const userId = req.userId; // Token JWT
-    const user = await User.findById(userId).select("-password"); // Exclude Password
+    const user = await User.findOne({ userId }).select("-password"); // Exclude Password
 
     if (!user) {
       const error = new Error("User not found.");
