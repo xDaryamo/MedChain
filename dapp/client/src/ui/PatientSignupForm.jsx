@@ -46,7 +46,7 @@ const PatientSignupForm = () => {
       fhirData: {
         identifier: {
           system: "http://hospital.smarthealthit.org",
-          value: `patient-${Date.now()}`,
+          value: ``,
         },
         active: true,
         name: {
@@ -121,7 +121,10 @@ const PatientSignupForm = () => {
 
     console.log("Final Form Data:", finalData);
     signup(finalData, {
-      onSettled: () => reset(),
+      onSettled: () => {
+        reset();
+        setStep(1);
+      },
     });
   };
 
@@ -136,7 +139,7 @@ const PatientSignupForm = () => {
       <ProgressBar currentStep={step} steps={steps} />
       <form
         onSubmit={handleSubmit(step === 3 ? onSubmit : handleNextStep)}
-        className="grid gap-4 space-y-4"
+        className="space-y-4 md:grid md:gap-4"
       >
         {step === 1 && (
           <>
