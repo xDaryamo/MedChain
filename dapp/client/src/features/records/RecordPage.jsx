@@ -1,8 +1,8 @@
-// src/pages/RecordPage.js
 import { useParams } from "react-router-dom";
 import { useMedicalRecords } from "./useMedicalRecords";
 import MedicalRecordDetails from "./MedicalRecordDetails";
 import MedicalRecordForm from "./MedicalRecordForm";
+import Spinner from "../../Spinner";
 
 const RecordPage = () => {
   const { id } = useParams();
@@ -13,7 +13,7 @@ const RecordPage = () => {
     await modifyRecordMutation.mutateAsync({ id, record: data });
   };
 
-  if (isLoading) return <p>Loading...</p>;
+  if (isLoading) return <Spinner />;
   if (error) return <p>Error: {error.message}</p>;
 
   return (

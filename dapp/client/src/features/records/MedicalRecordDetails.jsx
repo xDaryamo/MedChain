@@ -1,13 +1,13 @@
-// src/components/MedicalRecordDetails.js
 import { useParams } from "react-router-dom";
 import { useMedicalRecords } from "./useMedicalRecords";
+import Spinner from "../../ui/Spinner";
 
 const MedicalRecordDetails = () => {
     const { id } = useParams();
     const { useFetchRecord } = useMedicalRecords();
     const { data: record, isLoading, error } = useFetchRecord(id);
 
-    if (isLoading) return <p>Loading...</p>;
+    if (isLoading) return <Spinner />;
     if (error) return <p>Error: {error.message}</p>;
 
     return (

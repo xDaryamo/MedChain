@@ -170,3 +170,206 @@ exports.searchMedicalRecords = async (req, res, next) => {
     console.log("Disconnected from Fabric gateway.");
   }
 };
+
+exports.createCondition = async (req, res, next) => {
+  const conditionJSON = req.body;
+
+  try {
+    const conditionID = uuidv4();
+    conditionJSON.identifier = conditionID;
+
+    const channel = "patient-records-channel";
+    const chaincode = "records";
+
+    let conditionJSONString;
+    try {
+      conditionJSONString = JSON.stringify(conditionJSON);
+      JSON.parse(conditionJSONString);
+    } catch (jsonError) {
+      console.error("Invalid JSON format:", jsonError);
+      return res.status(400).json({ error: "Invalid JSON format" });
+    }
+
+    await fabric.init(req.user.userId, req.user.organization, channel, chaincode);
+    console.log("Fabric network initialized successfully.");
+
+    console.log("Submitting transaction with condition JSON:", conditionJSONString);
+
+    const result = await fabric.submitTransaction(
+      "CreateCondition",
+      conditionID,
+      conditionJSONString
+    );
+    res.status(201).json({ message: "Condition created successfully", result });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  } finally {
+    fabric.disconnect();
+    console.log("Disconnected from Fabric gateway.");
+  }
+};
+
+exports.readCondition = async (req, res, next) => {
+  const conditionID = req.params.id;
+
+  try {
+    const channel = "patient-records-channel";
+    const chaincode = "records";
+
+    await fabric.init(req.user.userId, req.user.organization, channel, chaincode);
+    console.log("Fabric network initialized successfully.");
+
+    const result = await fabric.evaluateTransaction(
+      "ReadCondition",
+      conditionID
+    );
+    res.status(200).json({ condition: JSON.parse(result) });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  } finally {
+    fabric.disconnect();
+    console.log("Disconnected from Fabric gateway.");
+  }
+};
+
+exports.updateCondition = async (req, res, next) => {
+  const conditionID = req.params.id;
+  const updatedCondition = req.body;
+
+  try {
+    const channel = "patient-records-channel";
+    const chaincode = "records";
+
+    await fabric.init(req.user.userId, req.user.organization, channel, chaincode);
+    console.log("Fabric network initialized successfully.");
+
+    const result = await fabric.submitTransaction(
+      "UpdateCondition",
+      conditionID,
+      JSON.stringify(updatedCondition)
+    );
+    res.status(200).json({ message: "Condition updated successfully", result });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  } finally {
+    fabric.disconnect();
+    console.log("Disconnected from Fabric gateway.");
+  }
+};
+
+exports.deleteCondition = async (req, res, next) => {
+  const conditionID = req.params.id;
+
+  try {
+    const channel = "patient-records-channel";
+    const chaincode = "records";
+
+    await fabric.init(req.user.userId, req.user.organization, channel, chaincode);
+    console.log("Fabric network initialized successfully.");
+
+    const result = await fabric.submitTransaction(
+      "DeleteCondition",
+      conditionID
+    );
+    res.status(200).json({ message: "Condition deleted successfully", result });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  } finally {
+    fabric.disconnect();
+    console.log("Disconnected from Fabric gateway.");
+  }
+};
+
+exports.createProcedure = async (req, res, next) => {
+  const procedureData = req.body;
+
+  try {
+    const channel = "patient-records-channel";
+    const chaincode = "records";
+
+    await fabric.init(req.user.userId, req.user.organization, channel, chaincode);
+    console.log("Fabric network initialized successfully.");
+
+    const result = await fabric.submitTransaction(
+      "CreateProcedure",
+      JSON.stringify(procedureData)
+    );
+    res.status(201).json({ message: "Procedure created successfully", result });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  } finally {
+    fabric.disconnect();
+    console.log("Disconnected from Fabric gateway.");
+  }
+};
+
+exports.readProcedure = async (req, res, next) => {
+  const procedureID = req.params.id;
+
+  try {
+    const channel = "patient-records-channel";
+    const chaincode = "records";
+
+    await fabric.init(req.user.userId, req.user.organization, channel, chaincode);
+    console.log("Fabric network initialized successfully.");
+
+    const result = await fabric.evaluateTransaction(
+      "ReadProcedure",
+      procedureID
+    );
+    res.status(200).json({ procedure: JSON.parse(result) });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  } finally {
+    fabric.disconnect();
+    console.log("Disconnected from Fabric gateway.");
+  }
+};
+
+exports.updateProcedure = async (req, res, next) => {
+  const procedureID = req.params.id;
+  const updatedProcedure = req.body;
+
+  try {
+    const channel = "patient-records-channel";
+    const chaincode = "records";
+
+    await fabric.init(req.user.userId, req.user.organization, channel, chaincode);
+    console.log("Fabric network initialized successfully.");
+
+    const result = await fabric.submitTransaction(
+      "UpdateProcedure",
+      procedureID,
+      JSON.stringify(updatedProcedure)
+    );
+    res.status(200).json({ message: "Procedure updated successfully", result });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  } finally {
+    fabric.disconnect();
+    console.log("Disconnected from Fabric gateway.");
+  }
+};
+
+exports.deleteProcedure = async (req, res, next) => {
+  const procedureID = req.params.id;
+
+  try {
+    const channel = "patient-records-channel";
+    const chaincode = "records";
+
+    await fabric.init(req.user.userId, req.user.organization, channel, chaincode);
+    console.log("Fabric network initialized successfully.");
+
+    const result = await fabric.submitTransaction(
+      "DeleteProcedure",
+      procedureID
+    );
+    res.status(200).json({ message: "Procedure deleted successfully", result });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  } finally {
+    fabric.disconnect();
+    console.log("Disconnected from Fabric gateway.");
+  }
+};
