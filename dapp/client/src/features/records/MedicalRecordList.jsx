@@ -3,12 +3,14 @@ import { Link } from "react-router-dom";
 import { useUser } from "../authentication/useAuth";
 import { toast } from "react-hot-toast";
 import MedicalRecordForm from "./MedicalRecordForm";
+import Spinner from "../../Spinner";
+import Button from "../../Button";
 
 const MedicalRecordList = () => {
   const { records, recordsLoading, recordsError, addRecordMutation, removeRecordMutation } = useMedicalRecords();
   const { user, isPending: userLoading, error: userError } = useUser();
 
-  if (recordsLoading || userLoading) return <div>Loading...</div>;
+  if (recordsLoading || userLoading) return <Spinner />;
   if (recordsError || userError) return <div>Error loading medical records or user data</div>;
 
   const userRole = user.role;
@@ -44,7 +46,7 @@ const MedicalRecordList = () => {
               {record.type.text} - {record.date}
             </Link>
             {userRole === "practitioner" ? (
-              <button onClick={() => handleRemoveRecord(record.id)}>Delete</button>
+              <Button onClick={() => handleRemoveRecord(record.id)}>Delete</Button>
             ) : (
               user.id === record.patientId && <p>You can only view your own records</p>
             )}
