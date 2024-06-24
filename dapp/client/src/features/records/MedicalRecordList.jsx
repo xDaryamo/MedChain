@@ -27,7 +27,7 @@ const MedicalRecordList = () => {
 
   const handleAddRecord = async (record) => {
     try {
-      await addRecord(record);
+      addRecord(record);
     } catch (error) {
       console.error("Add medical record error", error);
     }
