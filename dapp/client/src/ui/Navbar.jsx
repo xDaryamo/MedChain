@@ -27,6 +27,9 @@ const Navbar = () => {
               <NavLink to="/records">Medical Records</NavLink>
             </li>
             <li>
+              <NavLink to="/labresults">Lab Results</NavLink>
+            </li>
+            <li>
               <Logout />
             </li>
           </>

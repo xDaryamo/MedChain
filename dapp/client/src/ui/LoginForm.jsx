@@ -24,7 +24,7 @@ const LoginForm = ({ onSubmit, isPending, formData, setFormData }) => {
   return (
     <div className="flex max-w-sm flex-col items-center justify-center gap-3 rounded-lg bg-white p-8 shadow-lg md:w-full md:max-w-xl">
       <div className="absolute left-4 top-4">
-        <BackButton onClick={() => navigate(-1)}>Indietro</BackButton>
+        <BackButton onClick={() => navigate("/")}>Indietro</BackButton>
       </div>
       <div className="mb-6 flex flex-col items-center gap-2">
         <AppLogo isNav={false} />

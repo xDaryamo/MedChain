@@ -30,18 +30,13 @@ exports.getMedicalRecordsDetails = async (req, res, next) => {
 
 exports.createMedicalRecords = async (req, res, next) => {
   const recordJSON = req.body;
+  console.log(req.body);
 
   const organization = req.user.organization;
 
   const userID = req.user.userId;
 
-  if (
-    !(await isAuthorized(
-      userID,
-      organization,
-      recordJSON.patientID
-    ))
-  ) {
+  if (!(await isAuthorized(userID, organization, recordJSON.patientID))) {
     return res.status(403).json({ error: "User not approved" });
   }
 
@@ -88,16 +83,9 @@ exports.updateMedicalRecords = async (req, res, next) => {
   const organization = req.user.organization;
   const userID = req.user.userId;
 
-  if (
-    !(await isAuthorized(
-      userID,
-      organization,
-      updatedRecord.patientID
-    ))
-  ) {
+  if (!(await isAuthorized(userID, organization, updatedRecord.patientID))) {
     return res.status(403).json({ error: "User not approved" });
   }
-
 
   try {
     const channel = "patient-records-channel";
@@ -138,9 +126,7 @@ exports.deleteMedicalRecords = async (req, res, next) => {
     );
     const record = JSON.parse(recordString);
 
-    if (
-      !(await isAuthorized(userID, organization, record.patientID))
-    ) {
+    if (!(await isAuthorized(userID, organization, record.patientID))) {
       return res.status(403).json({ error: "User not approved" });
     }
 
@@ -215,11 +201,7 @@ exports.createCondition = async (req, res, next) => {
   const organization = req.user.organization;
 
   if (
-    !(await isAuthorized(
-      userId,
-      organization,
-      conditionJSON.subject.reference
-    ))
+    !(await isAuthorized(userId, organization, conditionJSON.subject.reference))
   ) {
     return res.status(403).json({ error: "User not approved" });
   }
@@ -292,11 +274,7 @@ exports.readCondition = async (req, res, next) => {
     const condition = JSON.parse(result);
 
     if (
-      !(await isAuthorized(
-        userId,
-        organization,
-        condition.subject.reference
-      ))
+      !(await isAuthorized(userId, organization, condition.subject.reference))
     ) {
       return res.status(403).json({ error: "User not approved" });
     }
@@ -361,12 +339,7 @@ exports.deleteCondition = async (req, res, next) => {
     const channel = "patient-records-channel";
     const chaincode = "records";
 
-    await fabric.init(
-      userId,
-      organization,
-      channel,
-      chaincode
-    );
+    await fabric.init(userId, organization, channel, chaincode);
     console.log("Fabric network initialized successfully.");
 
     const conditionString = await fabric.evaluateTransaction(
@@ -400,11 +373,7 @@ exports.createProcedure = async (req, res, next) => {
   const organization = req.user.organization;
 
   if (
-    !(await isAuthorized(
-      userId,
-      organization,
-      procedureData.subject.reference
-    ))
+    !(await isAuthorized(userId, organization, procedureData.subject.reference))
   ) {
     return res.status(403).json({ error: "User not approved" });
   }
@@ -459,11 +428,7 @@ exports.readProcedure = async (req, res, next) => {
     const procedure = JSON.parse(result);
 
     if (
-      !(await isAuthorized(
-        userId,
-        organization,
-        procedure.subject.reference
-      ))
+      !(await isAuthorized(userId, organization, procedure.subject.reference))
     ) {
       return res.status(403).json({ error: "User not approved" });
     }
@@ -564,9 +529,9 @@ exports.deleteProcedure = async (req, res, next) => {
 async function isAuthorized(userID, organization, patientReference) {
   const identity_channel = "identity-channel";
   const auth_chaincode = "patient";
+  console.log(patientReference);
 
   const patientID = patientReference.split("/")[1];
-
   await fabric.init(userID, organization, identity_channel, auth_chaincode);
   console.log("Verifying user...");
 

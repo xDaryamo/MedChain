@@ -21,9 +21,8 @@ api.interceptors.request.use(
   (error) => Promise.reject(error),
 );
 
-export const getMedicalRecords = async () => {
-  const response = await api.post("/records/search");
-  console.log(response.data);
+export const getMedicalRecords = async (query) => {
+  const response = await api.post("/records/search", { query });
   return response.data.results || [];
 };
 
@@ -33,6 +32,8 @@ export const getMedicalRecord = async (id) => {
 };
 
 export const createMedicalRecord = async (record) => {
+  console.log(record);
+
   const response = await api.post("/records", record);
   return response.data;
 };

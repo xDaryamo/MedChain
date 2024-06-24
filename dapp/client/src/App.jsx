@@ -10,6 +10,7 @@ import Login from "./features/authentication/Login";
 import Signup from "./features/authentication/Signup";
 import { Toaster } from "react-hot-toast";
 import ProtectedRoute from "./ui/ProtectedRoute";
+import LabResultList from "./features/labresults/LabResultList";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -38,6 +39,7 @@ const App = () => {
                 </ProtectedRoute>
               }
             />
+            <Route path="labresults" element={<LabResultList />} />
 
             <Route path="signup" element={<Signup />} />
             <Route path="*" element={<ErrorPage />} />

@@ -12,10 +12,10 @@ import {
 } from "../../services/apiRecords";
 import toast from "react-hot-toast";
 
-export const useGetMedicalRecords = () => {
+export const useGetMedicalRecords = (query) => {
   const { data: records, isPending } = useQuery({
-    queryKey: ["medicalRecords"],
-    queryFn: getMedicalRecords,
+    queryKey: ["medicalRecords", query],
+    queryFn: getMedicalRecords(query),
   });
   return {
     isPending,
