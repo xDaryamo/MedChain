@@ -45,25 +45,6 @@ func (mc *MedicalRecordsChaincode) CreateMedicalRecords(ctx contractapi.Transact
 		return `{"error": "medical records already exist for patient ` + medicalRecord.PatientID + `"}`, errors.New("medical records already exist")
 	}
 
-	clientID, exists, err := ctx.GetClientIdentity().GetAttributeValue("userId")
-	if err != nil {
-		return `{"error": "failed to get client ID attribute: ` + err.Error() + `"}`, err
-	}
-	if !exists {
-		return `{"error": "client ID attribute does not exist"}`, errors.New("client ID attribute does not exist")
-	}
-
-	patientref := medicalRecord.PatientID
-	chaincodeName := "patient"
-	functionName := "IsAuthorized"
-
-	invokeArgs := [][]byte{[]byte(functionName), []byte(patientref), []byte(clientID)}
-
-	response := ctx.GetStub().InvokeChaincode(chaincodeName, invokeArgs, ctx.GetStub().GetChannelID())
-	if response.Status != 200 {
-		return `{"error": "failed to invoke chaincode: ` + response.Message + `"}`, errors.New("failed to invoke chaincode: " + response.Message)
-	}
-
 	medicalRecordJSONBytes, err := json.Marshal(medicalRecord)
 	if err != nil {
 		return `{"error": "failed to marshal medical record: ` + err.Error() + `"}`, err
@@ -93,25 +74,6 @@ func (mc *MedicalRecordsChaincode) ReadMedicalRecords(ctx contractapi.Transactio
 		return `{"error": "failed to unmarshal medical record: ` + err.Error() + `"}`, err
 	}
 
-	clientID, exists, err := ctx.GetClientIdentity().GetAttributeValue("userId")
-	if err != nil {
-		return `{"error": "failed to get client ID attribute: ` + err.Error() + `"}`, err
-	}
-	if !exists {
-		return `{"error": "client ID attribute does not exist"}`, errors.New("client ID attribute does not exist")
-	}
-
-	patientref := record.PatientID
-	chaincodeName := "patient"
-	functionName := "IsAuthorized"
-
-	invokeArgs := [][]byte{[]byte(functionName), []byte(patientref), []byte(clientID)}
-
-	response := ctx.GetStub().InvokeChaincode(chaincodeName, invokeArgs, ctx.GetStub().GetChannelID())
-	if response.Status != 200 {
-		return `{"error": "failed to invoke chaincode: ` + response.Message + `"}`, errors.New("failed to invoke chaincode: " + response.Message)
-	}
-
 	return string(recordJSON), nil
 }
 
@@ -129,22 +91,6 @@ func (mc *MedicalRecordsChaincode) UpdateMedicalRecords(ctx contractapi.Transact
 	err = json.Unmarshal(existingRecord, &record)
 	if err != nil {
 		return `{"error": "failed to unmarshal record: ` + err.Error() + `"}`, err
-	}
-
-	clientID, err := ctx.GetClientIdentity().GetID()
-	if err != nil {
-		return `{"error": "failed to get client ID: ` + err.Error() + `"}`, err
-	}
-
-	patientref := record.PatientID
-	chaincodeName := "patient"
-	functionName := "IsAuthorized"
-
-	invokeArgs := [][]byte{[]byte(functionName), []byte(patientref), []byte(clientID)}
-
-	response := ctx.GetStub().InvokeChaincode(chaincodeName, invokeArgs, ctx.GetStub().GetChannelID())
-	if response.Status != 200 {
-		return `{"error": "failed to invoke chaincode: ` + response.Message + `"}`, errors.New("failed to invoke chaincode: " + response.Message)
 	}
 
 	var updatedRecord MedicalRecords
@@ -180,22 +126,6 @@ func (mc *MedicalRecordsChaincode) DeleteMedicalRecords(ctx contractapi.Transact
 		return `{"error": "failed to unmarshal record: ` + err.Error() + `"}`, err
 	}
 
-	clientID, err := ctx.GetClientIdentity().GetID()
-	if err != nil {
-		return `{"error": "failed to get client ID: ` + err.Error() + `"}`, err
-	}
-
-	patientref := record.PatientID
-	chaincodeName := "patient"
-	functionName := "IsAuthorized"
-
-	invokeArgs := [][]byte{[]byte(functionName), []byte(patientref), []byte(clientID)}
-
-	response := ctx.GetStub().InvokeChaincode(chaincodeName, invokeArgs, ctx.GetStub().GetChannelID())
-	if response.Status != 200 {
-		return `{"error": "failed to invoke chaincode: ` + response.Message + `"}`, errors.New("failed to invoke chaincode: " + response.Message)
-	}
-
 	err = ctx.GetStub().DelState(recordID)
 	if err != nil {
 		return `{"error": "failed to delete record: ` + err.Error() + `"}`, err
@@ -227,25 +157,6 @@ func (mc *MedicalRecordsChaincode) SearchMedicalRecords(ctx contractapi.Transact
 			return `{"error": "failed to unmarshal query response: ` + err.Error() + `"}`, err
 		}
 
-		// Get the client ID
-		clientID, exists, err := ctx.GetClientIdentity().GetAttributeValue("userId")
-		if err != nil {
-			return `{"error": "failed to get client ID attribute: ` + err.Error() + `"}`, err
-		}
-		if !exists {
-			return `{"error": "client ID attribute does not exist"}`, errors.New("client ID attribute does not exist")
-		}
-
-		// Perform the authorization check by invoking the patient chaincode
-		chaincodeName := "patient"
-		functionName := "IsAuthorized"
-		invokeArgs := [][]byte{[]byte(functionName), []byte(medicalRecord.PatientID), []byte(clientID)}
-
-		response := ctx.GetStub().InvokeChaincode(chaincodeName, invokeArgs, ctx.GetStub().GetChannelID())
-		if response.Status != 200 {
-			return `{"error": "failed to invoke chaincode: ` + response.Message + `"}`, errors.New("failed to invoke chaincode: " + response.Message)
-		}
-
 		medicalRecords = append(medicalRecords, medicalRecord)
 	}
 
@@ -274,28 +185,6 @@ func (c *MedicalRecordsChaincode) CreateCondition(ctx contractapi.TransactionCon
 	if err != nil {
 		return `{"error": "failed to unmarshal condition: ` + err.Error() + `"}`, err
 	}
-
-	clientID, exists, err := ctx.GetClientIdentity().GetAttributeValue("userId")
-	if err != nil {
-		return `{"error": "failed to get client ID attribute: ` + err.Error() + `"}`, err
-	}
-	if !exists {
-		return `{"error": "client ID attribute does not exist"}`, errors.New("client ID attribute does not exist")
-	}
-
-	patientref := condition.Subject.Reference
-	chaincodeName := "patient"
-	functionName := "IsAuthorized"
-
-	invokeArgs := [][]byte{[]byte(functionName), []byte(patientref), []byte(clientID)}
-
-	response := ctx.GetStub().InvokeChaincode(chaincodeName, invokeArgs, ctx.GetStub().GetChannelID())
-	if response.Status != 200 {
-		return `{"error": "failed to invoke chaincode: ` + response.Message + `"}`, errors.New("failed to invoke chaincode: " + response.Message)
-	}
-
-	log.Printf("Client ID: %s", clientID)
-	log.Printf("Patient ID: %s", patientref)
 
 	conditionJSONBytes, err := json.Marshal(condition)
 	if err != nil {
@@ -330,28 +219,6 @@ func (c *MedicalRecordsChaincode) ReadCondition(ctx contractapi.TransactionConte
 
 	log.Printf("Condition object: %+v", condition)
 
-	clientID, exists, err := ctx.GetClientIdentity().GetAttributeValue("userId")
-	if err != nil {
-		return `{"error": "failed to get client ID attribute: ` + err.Error() + `"}`, err
-	}
-	if !exists {
-		return `{"error": "client ID attribute does not exist"}`, errors.New("client ID attribute does not exist")
-	}
-
-	patientref := condition.Subject.Reference
-	chaincodeName := "patient"
-	functionName := "IsAuthorized"
-
-	invokeArgs := [][]byte{[]byte(functionName), []byte(patientref), []byte(clientID)}
-
-	response := ctx.GetStub().InvokeChaincode(chaincodeName, invokeArgs, ctx.GetStub().GetChannelID())
-	if response.Status != 200 {
-		return `{"error": "failed to invoke chaincode: ` + response.Message + `"}`, errors.New("failed to invoke chaincode: " + response.Message)
-	}
-
-	log.Printf("Client ID: %s", clientID)
-	log.Printf("Patient ID: %s", patientref)
-
 	return string(conditionJSON), nil
 }
 
@@ -370,25 +237,6 @@ func (c *MedicalRecordsChaincode) UpdateCondition(ctx contractapi.TransactionCon
 	if err != nil {
 		return `{"error": "failed to unmarshal condition: ` + err.Error() + `"}`, err
 	}
-
-	clientID, err := ctx.GetClientIdentity().GetID()
-	if err != nil {
-		return `{"error": "failed to get client ID: ` + err.Error() + `"}`, err
-	}
-
-	patientref := condition.Subject.Reference
-	chaincodeName := "patient"
-	functionName := "IsAuthorized"
-
-	invokeArgs := [][]byte{[]byte(functionName), []byte(patientref), []byte(clientID)}
-
-	response := ctx.GetStub().InvokeChaincode(chaincodeName, invokeArgs, ctx.GetStub().GetChannelID())
-	if response.Status != 200 {
-		return `{"error": "failed to invoke chaincode: ` + response.Message + `"}`, errors.New("failed to invoke chaincode: " + response.Message)
-	}
-
-	log.Printf("Client ID: %s", clientID)
-	log.Printf("Patient ID: %s", patientref)
 
 	conditionJSONBytes, err := json.Marshal(condition)
 	if err != nil {
@@ -418,25 +266,6 @@ func (c *MedicalRecordsChaincode) DeleteCondition(ctx contractapi.TransactionCon
 	if err != nil {
 		return `{"error": "failed to unmarshal condition: ` + err.Error() + `"}`, err
 	}
-
-	clientID, err := ctx.GetClientIdentity().GetID()
-	if err != nil {
-		return `{"error": "failed to get client ID: ` + err.Error() + `"}`, err
-	}
-
-	patientref := condition.Subject.Reference
-	chaincodeName := "patient"
-	functionName := "IsAuthorized"
-
-	invokeArgs := [][]byte{[]byte(functionName), []byte(patientref), []byte(clientID)}
-
-	response := ctx.GetStub().InvokeChaincode(chaincodeName, invokeArgs, ctx.GetStub().GetChannelID())
-	if response.Status != 200 {
-		return `{"error": "failed to invoke chaincode: ` + response.Message + `"}`, errors.New("failed to invoke chaincode: " + response.Message)
-	}
-
-	log.Printf("Client ID: %s", clientID)
-	log.Printf("Patient ID: %s", patientref)
 
 	err = ctx.GetStub().DelState(conditionID)
 	if err != nil {
@@ -469,28 +298,6 @@ func (c *MedicalRecordsChaincode) CreateProcedure(ctx contractapi.TransactionCon
 	if existingProcedure != nil {
 		return `{"error": "procedure already exists: ` + procedure.ID.Value + `"}`, errors.New("procedure already exists")
 	}
-
-	clientID, exists, err := ctx.GetClientIdentity().GetAttributeValue("userId")
-	if err != nil {
-		return `{"error": "failed to get client ID attribute: ` + err.Error() + `"}`, err
-	}
-	if !exists {
-		return `{"error": "client ID attribute does not exist"}`, errors.New("client ID attribute does not exist")
-	}
-
-	patientref := procedure.Subject.Reference
-	chaincodeName := "patient"
-	functionName := "IsAuthorized"
-
-	invokeArgs := [][]byte{[]byte(functionName), []byte(patientref), []byte(clientID)}
-
-	response := ctx.GetStub().InvokeChaincode(chaincodeName, invokeArgs, ctx.GetStub().GetChannelID())
-	if response.Status != 200 {
-		return `{"error": "failed to invoke chaincode: ` + response.Message + `"}`, errors.New("failed to invoke chaincode: " + response.Message)
-	}
-
-	log.Printf("Client ID: %s", clientID)
-	log.Printf("Patient ID: %s", patientref)
 
 	procedureJSONBytes, err := json.Marshal(procedure)
 	if err != nil {
@@ -525,28 +332,6 @@ func (c *MedicalRecordsChaincode) ReadProcedure(ctx contractapi.TransactionConte
 
 	log.Printf("Procedure object: %+v", procedure)
 
-	clientID, exists, err := ctx.GetClientIdentity().GetAttributeValue("userId")
-	if err != nil {
-		return `{"error": "failed to get client ID attribute: ` + err.Error() + `"}`, err
-	}
-	if !exists {
-		return `{"error": "client ID attribute does not exist"}`, errors.New("client ID attribute does not exist")
-	}
-
-	patientref := procedure.Subject.Reference
-	chaincodeName := "patient"
-	functionName := "IsAuthorized"
-
-	invokeArgs := [][]byte{[]byte(functionName), []byte(patientref), []byte(clientID)}
-
-	response := ctx.GetStub().InvokeChaincode(chaincodeName, invokeArgs, ctx.GetStub().GetChannelID())
-	if response.Status != 200 {
-		return `{"error": "failed to invoke chaincode: ` + response.Message + `"}`, errors.New("failed to invoke chaincode: " + response.Message)
-	}
-
-	log.Printf("Client ID: %s", clientID)
-	log.Printf("Patient ID: %s", patientref)
-
 	return string(procedureJSON), nil
 }
 
@@ -567,28 +352,6 @@ func (c *MedicalRecordsChaincode) UpdateProcedure(ctx contractapi.TransactionCon
 	}
 
 	log.Printf("Procedure object: %+v", procedure)
-
-	clientID, exists, err := ctx.GetClientIdentity().GetAttributeValue("userId")
-	if err != nil {
-		return `{"error": "failed to get client ID attribute: ` + err.Error() + `"}`, err
-	}
-	if !exists {
-		return `{"error": "client ID attribute does not exist"}`, errors.New("client ID attribute does not exist")
-	}
-
-	patientref := procedure.Subject.Reference
-	chaincodeName := "patient"
-	functionName := "IsAuthorized"
-
-	invokeArgs := [][]byte{[]byte(functionName), []byte(patientref), []byte(clientID)}
-
-	response := ctx.GetStub().InvokeChaincode(chaincodeName, invokeArgs, ctx.GetStub().GetChannelID())
-	if response.Status != 200 {
-		return `{"error": "failed to invoke chaincode: ` + response.Message + `"}`, errors.New("failed to invoke chaincode: " + response.Message)
-	}
-
-	log.Printf("Client ID: %s", clientID)
-	log.Printf("Patient ID: %s", patientref)
 
 	procedureJSONBytes, err := json.Marshal(procedure)
 	if err != nil {
@@ -620,28 +383,6 @@ func (c *MedicalRecordsChaincode) DeleteProcedure(ctx contractapi.TransactionCon
 	}
 
 	log.Printf("Procedure object: %+v", procedure)
-
-	clientID, exists, err := ctx.GetClientIdentity().GetAttributeValue("userId")
-	if err != nil {
-		return `{"error": "failed to get client ID attribute: ` + err.Error() + `"}`, err
-	}
-	if !exists {
-		return `{"error": "client ID attribute does not exist"}`, errors.New("client ID attribute does not exist")
-	}
-
-	patientref := procedure.Subject.Reference
-	chaincodeName := "patient"
-	functionName := "IsAuthorized"
-
-	invokeArgs := [][]byte{[]byte(functionName), []byte(patientref), []byte(clientID)}
-
-	response := ctx.GetStub().InvokeChaincode(chaincodeName, invokeArgs, ctx.GetStub().GetChannelID())
-	if response.Status != 200 {
-		return `{"error": "failed to invoke chaincode: ` + response.Message + `"}`, errors.New("failed to invoke chaincode: " + response.Message)
-	}
-
-	log.Printf("Client ID: %s", clientID)
-	log.Printf("Patient ID: %s", patientref)
 
 	err = ctx.GetStub().DelState(procedureID)
 	if err != nil {

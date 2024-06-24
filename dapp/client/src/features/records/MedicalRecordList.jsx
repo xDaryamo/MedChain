@@ -43,7 +43,7 @@ const MedicalRecordList = () => {
 
   return (
     <div>
-      <h1>Medical Records</h1>
+      <h1>Medical Records List</h1>
       {userRole === "practitioner" && (
         <MedicalRecordForm onSubmit={handleAddRecord} />
       )}

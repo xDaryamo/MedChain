@@ -7,7 +7,6 @@ const RecordHome = () => {
 
   return (
     <div>
-      <h1>Medical Records</h1>
       {recordsLoading && <Spinner />}
       {recordsError && <p>Error: {recordsError.message}</p>}
 
