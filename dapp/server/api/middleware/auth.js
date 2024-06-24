@@ -20,7 +20,12 @@ exports.verifyToken = (req, res, next) => {
     error.statusCode = 401;
     throw error;
   }
-  req.userId = decodedToken.userId;
+  req.user = {
+    userId: decodedToken.userId,
+    organization: decodedToken.organization,
+    role: decodedToken.role,
+  };
+
   next();
 };
 

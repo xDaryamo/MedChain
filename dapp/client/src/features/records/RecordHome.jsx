@@ -1,9 +1,9 @@
-import { useMedicalRecords } from "./useMedicalRecords";
+import { useGetMedicalRecords } from "./useMedicalRecords";
 import MedicalRecordList from "./MedicalRecordList";
-import Spinner from "../../Spinner";
+import Spinner from "../../ui/Spinner";
 
 const RecordHome = () => {
-  const { records, recordsLoading, recordsError } = useMedicalRecords();
+  const { records, recordsLoading, recordsError } = useGetMedicalRecords();
 
   return (
     <div>

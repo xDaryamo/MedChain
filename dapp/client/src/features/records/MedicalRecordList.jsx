@@ -1,36 +1,42 @@
-import { useMedicalRecords } from "./useMedicalRecords";
+import {
+  useGetMedicalRecords,
+  useAddRecord,
+  useRemoveRecord,
+} from "./useMedicalRecords";
 import { Link } from "react-router-dom";
 import { useUser } from "../authentication/useAuth";
-import { toast } from "react-hot-toast";
 import MedicalRecordForm from "./MedicalRecordForm";
-import Spinner from "../../Spinner";
-import Button from "../../Button";
+import Spinner from "../../ui/Spinner";
+import Button from "../../ui/Button";
 
 const MedicalRecordList = () => {
-  const { records, recordsLoading, recordsError, addRecordMutation, removeRecordMutation } = useMedicalRecords();
+  const {
+    records = [], // Initialize records to an empty array if undefined
+    isPending: recordsLoading,
+    error: recordsError,
+  } = useGetMedicalRecords();
+  const { addRecord } = useAddRecord();
+  const { removeRecord, isPending: removeRecordLoading } = useRemoveRecord();
   const { user, isPending: userLoading, error: userError } = useUser();
 
   if (recordsLoading || userLoading) return <Spinner />;
-  if (recordsError || userError) return <div>Error loading medical records or user data</div>;
+  if (recordsError || userError)
+    return <div>Error loading medical records or user data</div>;
 
   const userRole = user.role;
 
   const handleAddRecord = async (record) => {
     try {
-      await addRecordMutation.mutateAsync(record);
-      toast.success("Medical record added successfully");
+      await addRecord(record);
     } catch (error) {
-      toast.error("Failed to add medical record");
       console.error("Add medical record error", error);
     }
   };
 
   const handleRemoveRecord = async (id) => {
     try {
-      await removeRecordMutation.mutateAsync(id);
-      toast.success("Medical record deleted successfully");
+      await removeRecord(id);
     } catch (error) {
-      toast.error("Failed to delete medical record");
       console.error("Delete medical record error", error);
     }
   };
@@ -38,7 +44,9 @@ const MedicalRecordList = () => {
   return (
     <div>
       <h1>Medical Records</h1>
-      {userRole === "practitioner" && <MedicalRecordForm onSubmit={handleAddRecord} />}
+      {userRole === "practitioner" && (
+        <MedicalRecordForm onSubmit={handleAddRecord} />
+      )}
       <ul>
         {records.map((record) => (
           <li key={record.id}>
@@ -46,9 +54,16 @@ const MedicalRecordList = () => {
               {record.type.text} - {record.date}
             </Link>
             {userRole === "practitioner" ? (
-              <Button onClick={() => handleRemoveRecord(record.id)}>Delete</Button>
+              <Button
+                onClick={() => handleRemoveRecord(record.id)}
+                disabled={removeRecordLoading}
+              >
+                Delete
+              </Button>
             ) : (
-              user.id === record.patientId && <p>You can only view your own records</p>
+              user.id === record.patientId && (
+                <p>You can only view your own records</p>
+              )
             )}
           </li>
         ))}

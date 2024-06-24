@@ -20,6 +20,7 @@ class FabricNetwork {
     this.validateParameters(userId, organization, channelName, chaincodeName);
 
     const ccp = this.loadConnectionProfile(organization);
+
     const wallet = await this.configureWallet(userId, organization, ccp);
 
     await this.connectToGateway(
@@ -87,10 +88,12 @@ class FabricNetwork {
   async configureWallet(userId, organization, ccp) {
     const walletPath = path.join(__dirname, "wallet", organization, userId);
     const wallet = await Wallets.newInMemoryWallet(walletPath);
+
     const identity = await this.loadIdentity(
       walletPath,
       getMSPName(organization)
     );
+
     await wallet.put(userId, identity);
     return wallet;
   }

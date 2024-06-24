@@ -29,7 +29,9 @@ exports.getMedicalRecordsDetails = async (req, res, next) => {
 
 exports.createMedicalRecords = async (req, res, next) => {
   const recordJSON = req.body;
+
   const organization = req.user.organization;
+
   const userID = req.user.userId;
   try {
     const recordID = uuidv4();
@@ -121,7 +123,7 @@ exports.deleteMedicalRecords = async (req, res, next) => {
 };
 
 exports.searchMedicalRecords = async (req, res, next) => {
-  const queryString = req.body.query || JSON.stringify({ selector: {} });
+  const queryString = req.body.query || { selector: {} };
 
   const userId = req.user.userId;
   const organization = req.user.organization;
@@ -190,10 +192,18 @@ exports.createCondition = async (req, res, next) => {
       return res.status(400).json({ error: "Invalid JSON format" });
     }
 
-    await fabric.init(req.user.userId, req.user.organization, channel, chaincode);
+    await fabric.init(
+      req.user.userId,
+      req.user.organization,
+      channel,
+      chaincode
+    );
     console.log("Fabric network initialized successfully.");
 
-    console.log("Submitting transaction with condition JSON:", conditionJSONString);
+    console.log(
+      "Submitting transaction with condition JSON:",
+      conditionJSONString
+    );
 
     const result = await fabric.submitTransaction(
       "CreateCondition",
@@ -216,7 +226,12 @@ exports.readCondition = async (req, res, next) => {
     const channel = "patient-records-channel";
     const chaincode = "records";
 
-    await fabric.init(req.user.userId, req.user.organization, channel, chaincode);
+    await fabric.init(
+      req.user.userId,
+      req.user.organization,
+      channel,
+      chaincode
+    );
     console.log("Fabric network initialized successfully.");
 
     const result = await fabric.evaluateTransaction(
@@ -240,7 +255,12 @@ exports.updateCondition = async (req, res, next) => {
     const channel = "patient-records-channel";
     const chaincode = "records";
 
-    await fabric.init(req.user.userId, req.user.organization, channel, chaincode);
+    await fabric.init(
+      req.user.userId,
+      req.user.organization,
+      channel,
+      chaincode
+    );
     console.log("Fabric network initialized successfully.");
 
     const result = await fabric.submitTransaction(
@@ -264,7 +284,12 @@ exports.deleteCondition = async (req, res, next) => {
     const channel = "patient-records-channel";
     const chaincode = "records";
 
-    await fabric.init(req.user.userId, req.user.organization, channel, chaincode);
+    await fabric.init(
+      req.user.userId,
+      req.user.organization,
+      channel,
+      chaincode
+    );
     console.log("Fabric network initialized successfully.");
 
     const result = await fabric.submitTransaction(
@@ -287,7 +312,12 @@ exports.createProcedure = async (req, res, next) => {
     const channel = "patient-records-channel";
     const chaincode = "records";
 
-    await fabric.init(req.user.userId, req.user.organization, channel, chaincode);
+    await fabric.init(
+      req.user.userId,
+      req.user.organization,
+      channel,
+      chaincode
+    );
     console.log("Fabric network initialized successfully.");
 
     const result = await fabric.submitTransaction(
@@ -310,7 +340,12 @@ exports.readProcedure = async (req, res, next) => {
     const channel = "patient-records-channel";
     const chaincode = "records";
 
-    await fabric.init(req.user.userId, req.user.organization, channel, chaincode);
+    await fabric.init(
+      req.user.userId,
+      req.user.organization,
+      channel,
+      chaincode
+    );
     console.log("Fabric network initialized successfully.");
 
     const result = await fabric.evaluateTransaction(
@@ -334,7 +369,12 @@ exports.updateProcedure = async (req, res, next) => {
     const channel = "patient-records-channel";
     const chaincode = "records";
 
-    await fabric.init(req.user.userId, req.user.organization, channel, chaincode);
+    await fabric.init(
+      req.user.userId,
+      req.user.organization,
+      channel,
+      chaincode
+    );
     console.log("Fabric network initialized successfully.");
 
     const result = await fabric.submitTransaction(
@@ -358,7 +398,12 @@ exports.deleteProcedure = async (req, res, next) => {
     const channel = "patient-records-channel";
     const chaincode = "records";
 
-    await fabric.init(req.user.userId, req.user.organization, channel, chaincode);
+    await fabric.init(
+      req.user.userId,
+      req.user.organization,
+      channel,
+      chaincode
+    );
     console.log("Fabric network initialized successfully.");
 
     const result = await fabric.submitTransaction(

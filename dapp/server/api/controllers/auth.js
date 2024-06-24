@@ -193,7 +193,7 @@ exports.refreshToken = async (req, res, next) => {
 
 exports.getCurrentUser = async (req, res, next) => {
   try {
-    const userId = req.userId; // Token JWT
+    const userId = req.user.userId; // Token JWT
     const user = await User.findOne({ userId }).select("-password"); // Exclude Password
 
     if (!user) {
