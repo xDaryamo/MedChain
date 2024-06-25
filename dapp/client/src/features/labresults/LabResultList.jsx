@@ -5,7 +5,8 @@ import List from "../../ui/List";
 
 const LabResultList = () => {
   const { labResults = [], isPending, error } = useSearchLabResults();
-  const { deleteLabResult, isPending: isDeleting } = useDeleteLabResult();
+  const { mutate: deleteLabResult, isPending: isDeleting } =
+    useDeleteLabResult();
   const { user, isPending: userLoading, error: userError } = useUser();
 
   if (isPending || userLoading) return <Spinner />;

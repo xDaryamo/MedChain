@@ -20,13 +20,6 @@ router.post(
   medicalHistoryController.searchMedicalRecords
 );
 
-// GET Retrieve medical records based on a query
-router.post(
-  "/search",
-  verifyToken,
-  medicalHistoryController.searchMedicalRecords
-);
-
 // PATCH update the medical record linked to a patient
 router.patch(
   "/:id",

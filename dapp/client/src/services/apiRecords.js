@@ -21,7 +21,7 @@ api.interceptors.request.use(
   (error) => Promise.reject(error),
 );
 
-export const getMedicalRecords = async (query) => {
+export const searchMedicalRecords = async (query) => {
   const response = await api.post("/records/search", { query });
   return response.data.results || [];
 };

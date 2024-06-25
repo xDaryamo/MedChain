@@ -30,6 +30,6 @@ router.post("/login", authController.login);
 
 router.get("/user", verifyToken, authController.getCurrentUser);
 
-router.get("/refresh-token", authController.refreshToken);
+router.post("/refresh-token", authController.refreshToken);
 
 module.exports = router;

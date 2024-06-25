@@ -9,24 +9,27 @@ import {
 import toast from "react-hot-toast";
 
 export const useGetLabResult = (id) => {
-  return useQuery({
+  const { data: labResult, isPending } = useQuery({
     queryKey: ["labResult", id],
     queryFn: () => getLabResult(id),
   });
+  return { labResult, isPending };
 };
 
 export const useSearchLabResults = (query) => {
   const queryKey = query ? ["labResults", query] : ["labResults"];
 
-  return useQuery({
+  const { data: labResults, isPending } = useQuery({
     queryKey,
-    queryFn: (query) => searchLabResults(query),
+    queryFn: () => searchLabResults(query),
   });
+
+  return { labResults, isPending };
 };
 
 export const useCreateLabResult = () => {
   const queryClient = useQueryClient();
-  return useMutation({
+  const { mutate: createResult, isPending } = useMutation({
     mutationFn: createLabResult,
     onSuccess: () => {
       queryClient.invalidateQueries(["labResults"]);
@@ -37,11 +40,12 @@ export const useCreateLabResult = () => {
       console.error("Create lab result error", error);
     },
   });
+  return { createResult, isPending };
 };
 
 export const useUpdateLabResult = () => {
   const queryClient = useQueryClient();
-  return useMutation({
+  const { mutate: updateResult, isPending } = useMutation({
     mutationFn: ({ id, labResult }) => updateLabResult(id, labResult),
     onSuccess: () => {
       queryClient.invalidateQueries(["labResults"]);
@@ -52,11 +56,12 @@ export const useUpdateLabResult = () => {
       console.error("Update lab result error", error);
     },
   });
+  return { updateResult, isPending };
 };
 
 export const useDeleteLabResult = () => {
   const queryClient = useQueryClient();
-  return useMutation({
+  const { mutate: deleteResult, isPending } = useMutation({
     mutationFn: deleteLabResult,
     onSuccess: () => {
       queryClient.invalidateQueries(["labResults"]);
@@ -67,4 +72,5 @@ export const useDeleteLabResult = () => {
       console.error("Delete lab result error", error);
     },
   });
+  return { deleteResult, isPending };
 };

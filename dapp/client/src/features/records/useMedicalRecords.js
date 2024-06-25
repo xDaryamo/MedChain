@@ -1,6 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
-  getMedicalRecords,
   getMedicalRecord,
   createMedicalRecord,
   updateMedicalRecord,
@@ -9,13 +8,15 @@ import {
   createProcedure,
   updateCondition,
   updateProcedure,
+  searchMedicalRecords,
 } from "../../services/apiRecords";
 import toast from "react-hot-toast";
 
-export const useGetMedicalRecords = (query) => {
-  const { data: records, isPending } = useQuery({
-    queryKey: ["medicalRecords", query],
-    queryFn: getMedicalRecords(query),
+export const useSearchMedicalRecords = (query) => {
+  const queryKey = query ? ["medicalRecords", query] : ["medicalRecords"];
+  const { data: records, isLoading: isPending } = useQuery({
+    queryKey,
+    queryFn: () => searchMedicalRecords(query),
   });
   return {
     isPending,
@@ -24,9 +25,9 @@ export const useGetMedicalRecords = (query) => {
 };
 
 export const useGetMedicalRecord = (id) => {
-  const { data: record, isPending } = useQuery({
+  const { data: record, isLoading: isPending } = useQuery({
     queryKey: ["medicalRecord", id],
-    queryFn: (id) => getMedicalRecord(id),
+    queryFn: () => getMedicalRecord(id),
   });
   return {
     isPending,
@@ -40,17 +41,21 @@ export const useAddRecord = () => {
   const { mutate: addRecord, isPending } = useMutation({
     mutationFn: async (record) => {
       const createdConditions = await Promise.all(
-        record.Conditions.map((condition) => createCondition(condition)),
+        (record.conditions || []).map((condition) =>
+          createCondition(condition),
+        ),
       );
 
       const createdProcedures = await Promise.all(
-        record.Procedures.map((procedure) => createProcedure(procedure)),
+        (record.procedures || []).map((procedure) =>
+          createProcedure(procedure),
+        ),
       );
 
       const updatedRecord = {
         ...record,
-        Conditions: createdConditions.map((cond) => cond.id),
-        Procedures: createdProcedures.map((proc) => proc.id),
+        conditions: createdConditions.map((cond) => cond.id),
+        procedures: createdProcedures.map((proc) => proc.id),
       };
 
       await createMedicalRecord(updatedRecord);
@@ -71,7 +76,7 @@ export const useAddRecord = () => {
 export const useUpdateRecord = () => {
   const queryClient = useQueryClient();
 
-  const { mutate: updateRecord, isPending } = useMutation({
+  const { mutate: updateRecord, isLoading: isPending } = useMutation({
     mutationFn: async ({ id, record }) => {
       await Promise.all(
         record.Conditions.map((condition) =>
@@ -103,7 +108,7 @@ export const useUpdateRecord = () => {
 export const useRemoveRecord = () => {
   const queryClient = useQueryClient();
 
-  const { mutate: removeRecord, isPending } = useMutation({
+  const { mutate: removeRecord, isLoading: isPending } = useMutation({
     mutationFn: deleteMedicalRecord,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["medicalRecords"] });
