@@ -40,6 +40,11 @@ router.post(
   verifyToken,
   medicalHistoryController.createCondition
 );
+router.post(
+  "conditions/search",
+  verifyToken,
+  medicalHistoryController.searchConditions
+);
 router.get(
   "/conditions/:id",
   verifyToken,
@@ -62,6 +67,11 @@ router.post(
   verifyToken,
   medicalHistoryController.createProcedure
 );
+router.post(
+  "procedures/search",
+  verifyToken,
+  medicalHistoryController.searchProcedures
+);
 router.get(
   "/procedures/:id",
   verifyToken,
@@ -79,22 +89,25 @@ router.delete(
 );
 
 // Allergies Routes
-router.post("/allergies", verifyToken, medicalHistoryController.createAllergy);
-
 router.post(
-  "allergies/:query",
+  "/allergies",
+  verifyToken,
+  medicalHistoryController.createAllerg);
+router.post(
+  "allergies/search",
   verifyToken,
   medicalHistoryController.searchAllergies
 );
-
-router.get("allergies/:id", verifyToken, medicalHistoryController.getAllergy);
-
+router.get(
+  "allergies/:id",
+  verifyToken,
+  medicalHistoryController.getAllergy
+);
 router.patch(
   "allergies/:id",
   verifyToken,
   medicalHistoryController.updateAllergy
 );
-
 router.delete(
   "allergies/:id",
   verifyToken,

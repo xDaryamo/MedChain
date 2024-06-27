@@ -370,6 +370,55 @@ exports.deleteCondition = async (req, res, next) => {
   }
 };
 
+exports.searchConditions = async (req, res, next) => {
+  const queryString = req.params.query || { selector: {} };
+
+  const userID = req.user.userId;
+  const organization = req.user.organization;
+
+  try {
+    const channel = "patient-records-channel";
+    const chaincode = "records";
+
+    await fabric.init(userID, organization, channel, chaincode);
+    console.log("Fabric network initialized successfully.");
+
+    let queryJSONString;
+    try {
+      queryJSONString = JSON.stringify(queryString);
+      JSON.parse(queryJSONString);
+    } catch (jsonError) {
+      console.error("Invalid JSON Format: ", jsonError);
+      return res.status(400).json({ error: "Invalid JSON Format" });
+    }
+
+    console.log(
+      "Submitting query transaction with query JSON string:",
+      queryJSONString
+    );
+
+    const resultString = await fabric.submitTransaction(
+      "SearchConditions",
+      queryJSONString
+    );
+
+    let results;
+    try {
+      results = JSON.parse(resultString);
+    } catch (error) {
+      console.error("Failed to parse result string: ", error);
+      return res.status(500).json({ error: "Failed to parse result string" });
+    }
+
+    res.status(200).json({ results: results });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  } finally {
+    fabric.disconnect();
+    console.log("Disconnected from Fabric gateway.");
+  }
+};
+
 exports.createProcedure = async (req, res, next) => {
   const procedureData = req.body;
   const userId = req.user.userId;
@@ -524,6 +573,55 @@ exports.deleteProcedure = async (req, res, next) => {
       procedureID
     );
     res.status(200).json({ message: "Procedure deleted successfully", result });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  } finally {
+    fabric.disconnect();
+    console.log("Disconnected from Fabric gateway.");
+  }
+};
+
+exports.searchProcedures = async (req, res, next) => {
+  const queryString = req.params.query || { selector: {} };
+
+  const userID = req.user.userId;
+  const organization = req.user.organization;
+
+  try {
+    const channel = "patient-records-channel";
+    const chaincode = "records";
+
+    await fabric.init(userID, organization, channel, chaincode);
+    console.log("Fabric network initialized successfully.");
+
+    let queryJSONString;
+    try {
+      queryJSONString = JSON.stringify(queryString);
+      JSON.parse(queryJSONString);
+    } catch (jsonError) {
+      console.error("Invalid JSON Format: ", jsonError);
+      return res.status(400).json({ error: "Invalid JSON Format" });
+    }
+
+    console.log(
+      "Submitting query transaction with query JSON string:",
+      queryJSONString
+    );
+
+    const resultString = await fabric.submitTransaction(
+      "SearchProcedures",
+      queryJSONString
+    );
+
+    let results;
+    try {
+      results = JSON.parse(resultString);
+    } catch (error) {
+      console.error("Failed to parse result string: ", error);
+      return res.status(500).json({ error: "Failed to parse result string" });
+    }
+
+    res.status(200).json({ results: results });
   } catch (error) {
     res.status(500).json({ error: error.message });
   } finally {

@@ -46,6 +46,11 @@ export const deleteMedicalRecord = async (id) => {
   return response.data;
 };
 
+export const searchProcedures = async (query) => {
+  const response = await api.post("/procedures/search", { query });
+  return response.data.results || [];
+};
+
 export const createProcedure = async (procedure) => {
   const response = await api.post("/procedures", procedure);
   return response.data;
@@ -66,6 +71,11 @@ export const deleteProcedure = async (id) => {
   return response.data;
 };
 
+export const searchConditions = async (query) => {
+  const response = await api.post("/conditions/search", { query });
+  return response.data.results || [];
+};
+
 export const createCondition = async (condition) => {
   const response = await api.post("/conditions", condition);
   return response.data;
@@ -83,5 +93,30 @@ export const updateCondition = async (id, condition) => {
 
 export const deleteCondition = async (id) => {
   const response = await api.delete(`/conditions/${id}`);
+  return response.data;
+};
+
+export const searchAllergies = async (query) => {
+  const response = await api.post("/allergies/search", { query });
+  return response.data.results || [];
+};
+
+export const createAllergy = async (condition) => {
+  const response = await api.post("/allergies", condition);
+  return response.data;
+};
+
+export const readAllergy = async (id) => {
+  const response = await api.get(`/allergies/${id}`);
+  return response.data;
+};
+
+export const updateAllergy = async (id, condition) => {
+  const response = await api.patch(`/allergies/${id}`, condition);
+  return response.data;
+};
+
+export const deleteAllergy = async (id) => {
+  const response = await api.delete(`/allergies/${id}`);
   return response.data;
 };
