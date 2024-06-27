@@ -5,7 +5,6 @@ import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import Layout from "./ui/Layout";
 import HomePage from "./pages/HomePage";
 import ErrorPage from "./pages/ErrorPage";
-import RecordHome from "./features/records/RecordHome";
 import Login from "./features/authentication/Login";
 import Signup from "./features/authentication/Signup";
 import { Toaster } from "react-hot-toast";
@@ -31,7 +30,6 @@ const App = () => {
         <Routes>
           <Route path="/" element={<Layout />}>
             <Route index element={<HomePage />} />
-            <Route path="medical-records" element={<RecordHome />} />
 
             <Route
               path="records"
@@ -42,7 +40,7 @@ const App = () => {
               }
             />
             <Route path="labresults" element={<LabResultList />} />
-
+            <Route path="medical-records" element={<MedicalRecordList />} />
             <Route path="signup" element={<Signup />} />
             <Route path="records/:id" element={<RecordPage />} />
             <Route path="*" element={<ErrorPage />} />

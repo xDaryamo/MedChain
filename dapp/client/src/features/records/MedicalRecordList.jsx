@@ -5,7 +5,8 @@ import { useUser } from "../authentication/useAuth";
 import List from "../../ui/List";
 import AddMedicalRecordForm from "./AddMedicalRecordForm";
 import Modal from "../../ui/Modal";
-import Button from "../../ui/Button";
+import Heading from "../../ui/Heading";
+import { Toaster } from "react-hot-toast";
 
 const MedicalRecordList = () => {
   const { records = [], isPending, error } = useSearchMedicalRecords();
@@ -35,24 +36,22 @@ const MedicalRecordList = () => {
 
   return (
     <div>
-      <h1>Medical Records List</h1>
+      <Heading title="Medical Records List" />
       <List
         items={records}
         itemKey="identifier"
-        itemLink="/records"
         itemText={itemText}
         onDelete={handleRemoveRecord}
         isDeleting={isDeleting}
         user={user}
+        onAddNew={() => setModalOpen(true)}
       />
       {user.role === "practitioner" && (
-        <>
-          <Button onClick={() => setModalOpen(true)}>Add New Record</Button>
-          <Modal isOpen={isModalOpen} onClose={handleModalClose}>
-            <AddMedicalRecordForm onSubmitSuccess={handleModalClose} />
-          </Modal>
-        </>
+        <Modal isOpen={isModalOpen} onClose={handleModalClose}>
+          <AddMedicalRecordForm onSubmitSuccess={handleModalClose} />
+        </Modal>
       )}
+      <Toaster />
     </div>
   );
 };
