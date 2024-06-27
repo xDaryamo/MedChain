@@ -28,12 +28,10 @@ export const searchMedicalRecords = async (query) => {
 
 export const getMedicalRecord = async (id) => {
   const response = await api.get(`/records/${id}`);
-  return response.data;
+  return response.data.record;
 };
 
 export const createMedicalRecord = async (record) => {
-  console.log(record);
-
   const response = await api.post("/records", record);
   return response.data;
 };

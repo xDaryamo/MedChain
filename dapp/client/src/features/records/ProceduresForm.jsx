@@ -4,7 +4,7 @@ import FormRow from "../../ui/FormRow";
 import FormInput from "../../ui/FormInput";
 import Button from "../../ui/Button";
 
-const ProceduresForm = ({ control, register }) => {
+const ProceduresForm = ({ control, register, errors }) => {
   const { fields, append, remove } = useFieldArray({
     control,
     name: "procedures",
@@ -16,7 +16,10 @@ const ProceduresForm = ({ control, register }) => {
       {fields.map((field, index) => (
         <div key={field.id} className="space-y-4">
           {/* Subject */}
-          <FormRow label="Subject Reference:">
+          <FormRow
+            label="Subject Reference:"
+            error={errors?.procedures?.[index]?.subject?.reference?.message}
+          >
             <FormInput
               {...register(`procedures.${index}.subject.reference`, {
                 required: "Subject reference is required",
@@ -24,7 +27,10 @@ const ProceduresForm = ({ control, register }) => {
               placeholder="Patient/67890"
             />
           </FormRow>
-          <FormRow label="Subject Display:">
+          <FormRow
+            label="Subject Display:"
+            error={errors?.procedures?.[index]?.subject?.display?.message}
+          >
             <FormInput
               {...register(`procedures.${index}.subject.display`, {
                 required: "Subject display is required",
@@ -34,7 +40,12 @@ const ProceduresForm = ({ control, register }) => {
           </FormRow>
 
           {/* Code */}
-          <FormRow label="Code System:">
+          <FormRow
+            label="Code System:"
+            error={
+              errors?.procedures?.[index]?.code?.coding?.[0]?.system?.message
+            }
+          >
             <FormInput
               {...register(`procedures.${index}.code.coding.[0].system`, {
                 required: "Code system is required",
@@ -42,7 +53,12 @@ const ProceduresForm = ({ control, register }) => {
               placeholder="http://snomed.info/sct"
             />
           </FormRow>
-          <FormRow label="Code Value:">
+          <FormRow
+            label="Code Value:"
+            error={
+              errors?.procedures?.[index]?.code?.coding?.[0]?.code?.message
+            }
+          >
             <FormInput
               {...register(`procedures.${index}.code.coding.[0].code`, {
                 required: "Code value is required",
@@ -50,7 +66,12 @@ const ProceduresForm = ({ control, register }) => {
               placeholder="80146002"
             />
           </FormRow>
-          <FormRow label="Code Display:">
+          <FormRow
+            label="Code Display:"
+            error={
+              errors?.procedures?.[index]?.code?.coding?.[0]?.display?.message
+            }
+          >
             <FormInput
               {...register(`procedures.${index}.code.coding.[0].display`, {
                 required: "Code display is required",
@@ -58,7 +79,10 @@ const ProceduresForm = ({ control, register }) => {
               placeholder="Appendectomy"
             />
           </FormRow>
-          <FormRow label="Code Text:">
+          <FormRow
+            label="Code Text:"
+            error={errors?.procedures?.[index]?.code?.text?.message}
+          >
             <FormInput
               {...register(`procedures.${index}.code.text`, {
                 required: "Code text is required",
@@ -68,7 +92,12 @@ const ProceduresForm = ({ control, register }) => {
           </FormRow>
 
           {/* Status */}
-          <FormRow label="Status System:">
+          <FormRow
+            label="Status System:"
+            error={
+              errors?.procedures?.[index]?.status?.coding?.[0]?.system?.message
+            }
+          >
             <FormInput
               {...register(`procedures.${index}.status.coding.[0].system`, {
                 required: "Status system is required",
@@ -76,7 +105,12 @@ const ProceduresForm = ({ control, register }) => {
               placeholder="http://terminology.hl7.org/CodeSystem/event-status"
             />
           </FormRow>
-          <FormRow label="Status Code:">
+          <FormRow
+            label="Status Code:"
+            error={
+              errors?.procedures?.[index]?.status?.coding?.[0]?.code?.message
+            }
+          >
             <FormInput
               {...register(`procedures.${index}.status.coding.[0].code`, {
                 required: "Status code is required",
@@ -84,7 +118,12 @@ const ProceduresForm = ({ control, register }) => {
               placeholder="completed"
             />
           </FormRow>
-          <FormRow label="Status Display:">
+          <FormRow
+            label="Status Display:"
+            error={
+              errors?.procedures?.[index]?.status?.coding?.[0]?.display?.message
+            }
+          >
             <FormInput
               {...register(`procedures.${index}.status.coding.[0].display`, {
                 required: "Status display is required",
@@ -92,7 +131,10 @@ const ProceduresForm = ({ control, register }) => {
               placeholder="Completed"
             />
           </FormRow>
-          <FormRow label="Status Text:">
+          <FormRow
+            label="Status Text:"
+            error={errors?.procedures?.[index]?.status?.text?.message}
+          >
             <FormInput
               {...register(`procedures.${index}.status.text`, {
                 required: "Status text is required",
@@ -102,7 +144,13 @@ const ProceduresForm = ({ control, register }) => {
           </FormRow>
 
           {/* Category */}
-          <FormRow label="Category System:">
+          <FormRow
+            label="Category System:"
+            error={
+              errors?.procedures?.[index]?.category?.coding?.[0]?.system
+                ?.message
+            }
+          >
             <FormInput
               {...register(`procedures.${index}.category.coding.[0].system`, {
                 required: "Category system is required",
@@ -110,7 +158,12 @@ const ProceduresForm = ({ control, register }) => {
               placeholder="http://snomed.info/sct"
             />
           </FormRow>
-          <FormRow label="Category Code:">
+          <FormRow
+            label="Category Code:"
+            error={
+              errors?.procedures?.[index]?.category?.coding?.[0]?.code?.message
+            }
+          >
             <FormInput
               {...register(`procedures.${index}.category.coding.[0].code`, {
                 required: "Category code is required",
@@ -118,7 +171,13 @@ const ProceduresForm = ({ control, register }) => {
               placeholder="387713003"
             />
           </FormRow>
-          <FormRow label="Category Display:">
+          <FormRow
+            label="Category Display:"
+            error={
+              errors?.procedures?.[index]?.category?.coding?.[0]?.display
+                ?.message
+            }
+          >
             <FormInput
               {...register(`procedures.${index}.category.coding.[0].display`, {
                 required: "Category display is required",
@@ -126,7 +185,10 @@ const ProceduresForm = ({ control, register }) => {
               placeholder="Surgical procedure"
             />
           </FormRow>
-          <FormRow label="Category Text:">
+          <FormRow
+            label="Category Text:"
+            error={errors?.procedures?.[index]?.category?.text?.message}
+          >
             <FormInput
               {...register(`procedures.${index}.category.text`, {
                 required: "Category text is required",
@@ -136,7 +198,10 @@ const ProceduresForm = ({ control, register }) => {
           </FormRow>
 
           {/* Performed Period */}
-          <FormRow label="Performed Start:">
+          <FormRow
+            label="Performed Start:"
+            error={errors?.procedures?.[index]?.performedPeriod?.start?.message}
+          >
             <FormInput
               type="datetime-local"
               {...register(`procedures.${index}.performedPeriod.start`, {
@@ -144,7 +209,10 @@ const ProceduresForm = ({ control, register }) => {
               })}
             />
           </FormRow>
-          <FormRow label="Performed End:">
+          <FormRow
+            label="Performed End:"
+            error={errors?.procedures?.[index]?.performedPeriod?.end?.message}
+          >
             <FormInput
               type="datetime-local"
               {...register(`procedures.${index}.performedPeriod.end`, {
@@ -154,7 +222,13 @@ const ProceduresForm = ({ control, register }) => {
           </FormRow>
 
           {/* Performer */}
-          <FormRow label="Performer Actor Reference:">
+          <FormRow
+            label="Performer Actor Reference:"
+            error={
+              errors?.procedures?.[index]?.performer?.[0]?.actor?.reference
+                ?.message
+            }
+          >
             <FormInput
               {...register(
                 `procedures.${index}.performer.[0].actor.reference`,
@@ -165,7 +239,13 @@ const ProceduresForm = ({ control, register }) => {
               placeholder="Practitioner/123"
             />
           </FormRow>
-          <FormRow label="Performer Actor Display:">
+          <FormRow
+            label="Performer Actor Display:"
+            error={
+              errors?.procedures?.[index]?.performer?.[0]?.actor?.display
+                ?.message
+            }
+          >
             <FormInput
               {...register(`procedures.${index}.performer.[0].actor.display`, {
                 required: "Performer actor display is required",
@@ -173,7 +253,13 @@ const ProceduresForm = ({ control, register }) => {
               placeholder="Dr. Smith"
             />
           </FormRow>
-          <FormRow label="Performer Role System:">
+          <FormRow
+            label="Performer Role System:"
+            error={
+              errors?.procedures?.[index]?.performer?.[0]?.role?.coding?.[0]
+                ?.system?.message
+            }
+          >
             <FormInput
               {...register(
                 `procedures.${index}.performer.[0].role.coding.[0].system`,
@@ -184,7 +270,13 @@ const ProceduresForm = ({ control, register }) => {
               placeholder="http://terminology.hl7.org/CodeSystem/v2-0912"
             />
           </FormRow>
-          <FormRow label="Performer Role Code:">
+          <FormRow
+            label="Performer Role Code:"
+            error={
+              errors?.procedures?.[index]?.performer?.[0]?.role?.coding?.[0]
+                ?.code?.message
+            }
+          >
             <FormInput
               {...register(
                 `procedures.${index}.performer.[0].role.coding.[0].code`,
@@ -195,7 +287,13 @@ const ProceduresForm = ({ control, register }) => {
               placeholder="PPRF"
             />
           </FormRow>
-          <FormRow label="Performer Role Display:">
+          <FormRow
+            label="Performer Role Display:"
+            error={
+              errors?.procedures?.[index]?.performer?.[0]?.role?.coding?.[0]
+                ?.display?.message
+            }
+          >
             <FormInput
               {...register(
                 `procedures.${index}.performer.[0].role.coding.[0].display`,
@@ -206,7 +304,12 @@ const ProceduresForm = ({ control, register }) => {
               placeholder="Primary surgeon"
             />
           </FormRow>
-          <FormRow label="Performer Role Text:">
+          <FormRow
+            label="Performer Role Text:"
+            error={
+              errors?.procedures?.[index]?.performer?.[0]?.role?.text?.message
+            }
+          >
             <FormInput
               {...register(`procedures.${index}.performer.[0].role.text`, {
                 required: "Performer role text is required",
@@ -216,7 +319,10 @@ const ProceduresForm = ({ control, register }) => {
           </FormRow>
 
           {/* Encounter */}
-          <FormRow label="Encounter Reference:">
+          <FormRow
+            label="Encounter Reference:"
+            error={errors?.procedures?.[index]?.encounter?.reference?.message}
+          >
             <FormInput
               {...register(`procedures.${index}.encounter.reference`, {
                 required: "Encounter reference is required",
@@ -224,7 +330,10 @@ const ProceduresForm = ({ control, register }) => {
               placeholder="Encounter/345"
             />
           </FormRow>
-          <FormRow label="Encounter Display:">
+          <FormRow
+            label="Encounter Display:"
+            error={errors?.procedures?.[index]?.encounter?.display?.message}
+          >
             <FormInput
               {...register(`procedures.${index}.encounter.display`, {
                 required: "Encounter display is required",
@@ -234,7 +343,10 @@ const ProceduresForm = ({ control, register }) => {
           </FormRow>
 
           {/* Location */}
-          <FormRow label="Location Reference:">
+          <FormRow
+            label="Location Reference:"
+            error={errors?.procedures?.[index]?.location?.reference?.message}
+          >
             <FormInput
               {...register(`procedures.${index}.location.reference`, {
                 required: "Location reference is required",
@@ -242,7 +354,10 @@ const ProceduresForm = ({ control, register }) => {
               placeholder="Location/1"
             />
           </FormRow>
-          <FormRow label="Location Display:">
+          <FormRow
+            label="Location Display:"
+            error={errors?.procedures?.[index]?.location?.display?.message}
+          >
             <FormInput
               {...register(`procedures.${index}.location.display`, {
                 required: "Location display is required",
@@ -252,7 +367,13 @@ const ProceduresForm = ({ control, register }) => {
           </FormRow>
 
           {/* Reason Code */}
-          <FormRow label="Reason Code System:">
+          <FormRow
+            label="Reason Code System:"
+            error={
+              errors?.procedures?.[index]?.reasonCode?.[0]?.coding?.[0]?.system
+                ?.message
+            }
+          >
             <FormInput
               {...register(
                 `procedures.${index}.reasonCode.[0].coding.[0].system`,
@@ -263,7 +384,13 @@ const ProceduresForm = ({ control, register }) => {
               placeholder="http://snomed.info/sct"
             />
           </FormRow>
-          <FormRow label="Reason Code Value:">
+          <FormRow
+            label="Reason Code Value:"
+            error={
+              errors?.procedures?.[index]?.reasonCode?.[0]?.coding?.[0]?.code
+                ?.message
+            }
+          >
             <FormInput
               {...register(
                 `procedures.${index}.reasonCode.[0].coding.[0].code`,
@@ -274,7 +401,13 @@ const ProceduresForm = ({ control, register }) => {
               placeholder="233604007"
             />
           </FormRow>
-          <FormRow label="Reason Code Display:">
+          <FormRow
+            label="Reason Code Display:"
+            error={
+              errors?.procedures?.[index]?.reasonCode?.[0]?.coding?.[0]?.display
+                ?.message
+            }
+          >
             <FormInput
               {...register(
                 `procedures.${index}.reasonCode.[0].coding.[0].display`,
@@ -285,7 +418,10 @@ const ProceduresForm = ({ control, register }) => {
               placeholder="Acute appendicitis"
             />
           </FormRow>
-          <FormRow label="Reason Code Text:">
+          <FormRow
+            label="Reason Code Text:"
+            error={errors?.procedures?.[index]?.reasonCode?.[0]?.text?.message}
+          >
             <FormInput
               {...register(`procedures.${index}.reasonCode.[0].text`, {
                 required: "Reason code text is required",
@@ -295,7 +431,13 @@ const ProceduresForm = ({ control, register }) => {
           </FormRow>
 
           {/* Note */}
-          <FormRow label="Note Author Reference:">
+          <FormRow
+            label="Note Author Reference:"
+            error={
+              errors?.procedures?.[index]?.note?.[0]?.authorReference?.reference
+                ?.message
+            }
+          >
             <FormInput
               {...register(
                 `procedures.${index}.note.[0].authorReference.reference`,
@@ -306,7 +448,13 @@ const ProceduresForm = ({ control, register }) => {
               placeholder="Practitioner/123"
             />
           </FormRow>
-          <FormRow label="Note Author Display:">
+          <FormRow
+            label="Note Author Display:"
+            error={
+              errors?.procedures?.[index]?.note?.[0]?.authorReference?.display
+                ?.message
+            }
+          >
             <FormInput
               {...register(
                 `procedures.${index}.note.[0].authorReference.display`,
@@ -317,7 +465,10 @@ const ProceduresForm = ({ control, register }) => {
               placeholder="Dr. Smith"
             />
           </FormRow>
-          <FormRow label="Note Time:">
+          <FormRow
+            label="Note Time:"
+            error={errors?.procedures?.[index]?.note?.[0]?.time?.message}
+          >
             <FormInput
               type="datetime-local"
               {...register(`procedures.${index}.note.[0].time`, {
@@ -325,7 +476,10 @@ const ProceduresForm = ({ control, register }) => {
               })}
             />
           </FormRow>
-          <FormRow label="Note Text:">
+          <FormRow
+            label="Note Text:"
+            error={errors?.procedures?.[index]?.note?.[0]?.text?.message}
+          >
             <FormInput
               {...register(`procedures.${index}.note.[0].text`, {
                 required: "Note text is required",
@@ -335,7 +489,13 @@ const ProceduresForm = ({ control, register }) => {
           </FormRow>
 
           {/* Follow-up */}
-          <FormRow label="Follow-up System:">
+          <FormRow
+            label="Follow-up System:"
+            error={
+              errors?.procedures?.[index]?.followUp?.[0]?.coding?.[0]?.system
+                ?.message
+            }
+          >
             <FormInput
               {...register(
                 `procedures.${index}.followUp.[0].coding.[0].system`,
@@ -346,7 +506,13 @@ const ProceduresForm = ({ control, register }) => {
               placeholder="http://terminology.hl7.org/CodeSystem/v2-0936"
             />
           </FormRow>
-          <FormRow label="Follow-up Code:">
+          <FormRow
+            label="Follow-up Code:"
+            error={
+              errors?.procedures?.[index]?.followUp?.[0]?.coding?.[0]?.code
+                ?.message
+            }
+          >
             <FormInput
               {...register(`procedures.${index}.followUp.[0].coding.[0].code`, {
                 required: "Follow-up code is required",
@@ -354,7 +520,13 @@ const ProceduresForm = ({ control, register }) => {
               placeholder="F01"
             />
           </FormRow>
-          <FormRow label="Follow-up Display:">
+          <FormRow
+            label="Follow-up Display:"
+            error={
+              errors?.procedures?.[index]?.followUp?.[0]?.coding?.[0]?.display
+                ?.message
+            }
+          >
             <FormInput
               {...register(
                 `procedures.${index}.followUp.[0].coding.[0].display`,
@@ -365,7 +537,10 @@ const ProceduresForm = ({ control, register }) => {
               placeholder="Follow-up visit"
             />
           </FormRow>
-          <FormRow label="Follow-up Text:">
+          <FormRow
+            label="Follow-up Text:"
+            error={errors?.procedures?.[index]?.followUp?.[0]?.text?.message}
+          >
             <FormInput
               {...register(`procedures.${index}.followUp.[0].text`, {
                 required: "Follow-up text is required",
@@ -375,7 +550,10 @@ const ProceduresForm = ({ control, register }) => {
           </FormRow>
 
           {/* Report */}
-          <FormRow label="Report Reference:">
+          <FormRow
+            label="Report Reference:"
+            error={errors?.procedures?.[index]?.report?.[0]?.reference?.message}
+          >
             <FormInput
               {...register(`procedures.${index}.report.[0].reference`, {
                 required: "Report reference is required",
@@ -383,7 +561,10 @@ const ProceduresForm = ({ control, register }) => {
               placeholder="DiagnosticReport/5678"
             />
           </FormRow>
-          <FormRow label="Report Display:">
+          <FormRow
+            label="Report Display:"
+            error={errors?.procedures?.[index]?.report?.[0]?.display?.message}
+          >
             <FormInput
               {...register(`procedures.${index}.report.[0].display`, {
                 required: "Report display is required",
@@ -393,7 +574,13 @@ const ProceduresForm = ({ control, register }) => {
           </FormRow>
 
           {/* Complication */}
-          <FormRow label="Complication System:">
+          <FormRow
+            label="Complication System:"
+            error={
+              errors?.procedures?.[index]?.complication?.[0]?.coding?.[0]
+                ?.system?.message
+            }
+          >
             <FormInput
               {...register(
                 `procedures.${index}.complication.[0].coding.[0].system`,
@@ -404,7 +591,13 @@ const ProceduresForm = ({ control, register }) => {
               placeholder="http://snomed.info/sct"
             />
           </FormRow>
-          <FormRow label="Complication Code:">
+          <FormRow
+            label="Complication Code:"
+            error={
+              errors?.procedures?.[index]?.complication?.[0]?.coding?.[0]?.code
+                ?.message
+            }
+          >
             <FormInput
               {...register(
                 `procedures.${index}.complication.[0].coding.[0].code`,
@@ -415,7 +608,13 @@ const ProceduresForm = ({ control, register }) => {
               placeholder="116223007"
             />
           </FormRow>
-          <FormRow label="Complication Display:">
+          <FormRow
+            label="Complication Display:"
+            error={
+              errors?.procedures?.[index]?.complication?.[0]?.coding?.[0]
+                ?.display?.message
+            }
+          >
             <FormInput
               {...register(
                 `procedures.${index}.complication.[0].coding.[0].display`,
@@ -426,7 +625,12 @@ const ProceduresForm = ({ control, register }) => {
               placeholder="Postoperative wound infection"
             />
           </FormRow>
-          <FormRow label="Complication Text:">
+          <FormRow
+            label="Complication Text:"
+            error={
+              errors?.procedures?.[index]?.complication?.[0]?.text?.message
+            }
+          >
             <FormInput
               {...register(`procedures.${index}.complication.[0].text`, {
                 required: "Complication text is required",
@@ -436,7 +640,13 @@ const ProceduresForm = ({ control, register }) => {
           </FormRow>
 
           {/* Body Site */}
-          <FormRow label="Body Site System:">
+          <FormRow
+            label="Body Site System:"
+            error={
+              errors?.procedures?.[index]?.bodySite?.[0]?.coding?.[0]?.system
+                ?.message
+            }
+          >
             <FormInput
               {...register(
                 `procedures.${index}.bodySite.[0].coding.[0].system`,
@@ -447,7 +657,13 @@ const ProceduresForm = ({ control, register }) => {
               placeholder="http://snomed.info/sct"
             />
           </FormRow>
-          <FormRow label="Body Site Code:">
+          <FormRow
+            label="Body Site Code:"
+            error={
+              errors?.procedures?.[index]?.bodySite?.[0]?.coding?.[0]?.code
+                ?.message
+            }
+          >
             <FormInput
               {...register(`procedures.${index}.bodySite.[0].coding.[0].code`, {
                 required: "Body site code is required",
@@ -455,7 +671,13 @@ const ProceduresForm = ({ control, register }) => {
               placeholder="66754008"
             />
           </FormRow>
-          <FormRow label="Body Site Display:">
+          <FormRow
+            label="Body Site Display:"
+            error={
+              errors?.procedures?.[index]?.bodySite?.[0]?.coding?.[0]?.display
+                ?.message
+            }
+          >
             <FormInput
               {...register(
                 `procedures.${index}.bodySite.[0].coding.[0].display`,
@@ -466,7 +688,10 @@ const ProceduresForm = ({ control, register }) => {
               placeholder="Appendix structure"
             />
           </FormRow>
-          <FormRow label="Body Site Text:">
+          <FormRow
+            label="Body Site Text:"
+            error={errors?.procedures?.[index]?.bodySite?.[0]?.text?.message}
+          >
             <FormInput
               {...register(`procedures.${index}.bodySite.[0].text`, {
                 required: "Body site text is required",

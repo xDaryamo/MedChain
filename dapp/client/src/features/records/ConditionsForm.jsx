@@ -4,7 +4,7 @@ import FormRow from "../../ui/FormRow";
 import FormInput from "../../ui/FormInput";
 import Button from "../../ui/Button";
 
-const ConditionsForm = ({ control, register }) => {
+const ConditionsForm = ({ control, register, errors }) => {
   const { fields, append, remove } = useFieldArray({
     control,
     name: "conditions",
@@ -16,7 +16,13 @@ const ConditionsForm = ({ control, register }) => {
       {fields.map((field, index) => (
         <div key={field.id} className="space-y-4">
           {/* Clinical Status */}
-          <FormRow label="Clinical Status System:">
+          <FormRow
+            label="Clinical Status System:"
+            error={
+              errors?.conditions?.[index]?.clinicalStatus?.coding?.[0]?.system
+                ?.message
+            }
+          >
             <FormInput
               {...register(
                 `conditions.${index}.clinicalStatus.coding.[0].system`,
@@ -27,7 +33,13 @@ const ConditionsForm = ({ control, register }) => {
               placeholder="http://terminology.hl7.org/CodeSystem/condition-clinical"
             />
           </FormRow>
-          <FormRow label="Clinical Status Code:">
+          <FormRow
+            label="Clinical Status Code:"
+            error={
+              errors?.conditions?.[index]?.clinicalStatus?.coding?.[0]?.code
+                ?.message
+            }
+          >
             <FormInput
               {...register(
                 `conditions.${index}.clinicalStatus.coding.[0].code`,
@@ -38,7 +50,13 @@ const ConditionsForm = ({ control, register }) => {
               placeholder="active"
             />
           </FormRow>
-          <FormRow label="Clinical Status Display:">
+          <FormRow
+            label="Clinical Status Display:"
+            error={
+              errors?.conditions?.[index]?.clinicalStatus?.coding?.[0]?.display
+                ?.message
+            }
+          >
             <FormInput
               {...register(
                 `conditions.${index}.clinicalStatus.coding.[0].display`,
@@ -49,7 +67,10 @@ const ConditionsForm = ({ control, register }) => {
               placeholder="Active"
             />
           </FormRow>
-          <FormRow label="Clinical Status Text:">
+          <FormRow
+            label="Clinical Status Text:"
+            error={errors?.conditions?.[index]?.clinicalStatus?.text?.message}
+          >
             <FormInput
               {...register(`conditions.${index}.clinicalStatus.text`, {
                 required: "Clinical status text is required",
@@ -59,7 +80,13 @@ const ConditionsForm = ({ control, register }) => {
           </FormRow>
 
           {/* Verification Status */}
-          <FormRow label="Verification Status System:">
+          <FormRow
+            label="Verification Status System:"
+            error={
+              errors?.conditions?.[index]?.verificationStatus?.coding?.[0]
+                ?.system?.message
+            }
+          >
             <FormInput
               {...register(
                 `conditions.${index}.verificationStatus.coding.[0].system`,
@@ -70,7 +97,13 @@ const ConditionsForm = ({ control, register }) => {
               placeholder="http://terminology.hl7.org/CodeSystem/condition-ver-status"
             />
           </FormRow>
-          <FormRow label="Verification Status Code:">
+          <FormRow
+            label="Verification Status Code:"
+            error={
+              errors?.conditions?.[index]?.verificationStatus?.coding?.[0]?.code
+                ?.message
+            }
+          >
             <FormInput
               {...register(
                 `conditions.${index}.verificationStatus.coding.[0].code`,
@@ -81,7 +114,13 @@ const ConditionsForm = ({ control, register }) => {
               placeholder="confirmed"
             />
           </FormRow>
-          <FormRow label="Verification Status Display:">
+          <FormRow
+            label="Verification Status Display:"
+            error={
+              errors?.conditions?.[index]?.verificationStatus?.coding?.[0]
+                ?.display?.message
+            }
+          >
             <FormInput
               {...register(
                 `conditions.${index}.verificationStatus.coding.[0].display`,
@@ -92,7 +131,12 @@ const ConditionsForm = ({ control, register }) => {
               placeholder="Confirmed"
             />
           </FormRow>
-          <FormRow label="Verification Status Text:">
+          <FormRow
+            label="Verification Status Text:"
+            error={
+              errors?.conditions?.[index]?.verificationStatus?.text?.message
+            }
+          >
             <FormInput
               {...register(`conditions.${index}.verificationStatus.text`, {
                 required: "Verification status text is required",
@@ -102,7 +146,13 @@ const ConditionsForm = ({ control, register }) => {
           </FormRow>
 
           {/* Category */}
-          <FormRow label="Category System:">
+          <FormRow
+            label="Category System:"
+            error={
+              errors?.conditions?.[index]?.category?.[0]?.coding?.[0]?.system
+                ?.message
+            }
+          >
             <FormInput
               {...register(
                 `conditions.${index}.category.[0].coding.[0].system`,
@@ -113,7 +163,13 @@ const ConditionsForm = ({ control, register }) => {
               placeholder="http://terminology.hl7.org/CodeSystem/condition-category"
             />
           </FormRow>
-          <FormRow label="Category Code:">
+          <FormRow
+            label="Category Code:"
+            error={
+              errors?.conditions?.[index]?.category?.[0]?.coding?.[0]?.code
+                ?.message
+            }
+          >
             <FormInput
               {...register(`conditions.${index}.category.[0].coding.[0].code`, {
                 required: "Category code is required",
@@ -121,7 +177,13 @@ const ConditionsForm = ({ control, register }) => {
               placeholder="problem-list-item"
             />
           </FormRow>
-          <FormRow label="Category Display:">
+          <FormRow
+            label="Category Display:"
+            error={
+              errors?.conditions?.[index]?.category?.[0]?.coding?.[0]?.display
+                ?.message
+            }
+          >
             <FormInput
               {...register(
                 `conditions.${index}.category.[0].coding.[0].display`,
@@ -132,7 +194,10 @@ const ConditionsForm = ({ control, register }) => {
               placeholder="Problem List Item"
             />
           </FormRow>
-          <FormRow label="Category Text:">
+          <FormRow
+            label="Category Text:"
+            error={errors?.conditions?.[index]?.category?.[0]?.text?.message}
+          >
             <FormInput
               {...register(`conditions.${index}.category.[0].text`, {
                 required: "Category text is required",
@@ -142,7 +207,13 @@ const ConditionsForm = ({ control, register }) => {
           </FormRow>
 
           {/* Severity */}
-          <FormRow label="Severity System:">
+          <FormRow
+            label="Severity System:"
+            error={
+              errors?.conditions?.[index]?.severity?.coding?.[0]?.system
+                ?.message
+            }
+          >
             <FormInput
               {...register(`conditions.${index}.severity.coding.[0].system`, {
                 required: "Severity system is required",
@@ -150,7 +221,12 @@ const ConditionsForm = ({ control, register }) => {
               placeholder="http://snomed.info/sct"
             />
           </FormRow>
-          <FormRow label="Severity Code:">
+          <FormRow
+            label="Severity Code:"
+            error={
+              errors?.conditions?.[index]?.severity?.coding?.[0]?.code?.message
+            }
+          >
             <FormInput
               {...register(`conditions.${index}.severity.coding.[0].code`, {
                 required: "Severity code is required",
@@ -158,7 +234,13 @@ const ConditionsForm = ({ control, register }) => {
               placeholder="24484000"
             />
           </FormRow>
-          <FormRow label="Severity Display:">
+          <FormRow
+            label="Severity Display:"
+            error={
+              errors?.conditions?.[index]?.severity?.coding?.[0]?.display
+                ?.message
+            }
+          >
             <FormInput
               {...register(`conditions.${index}.severity.coding.[0].display`, {
                 required: "Severity display is required",
@@ -166,7 +248,10 @@ const ConditionsForm = ({ control, register }) => {
               placeholder="Severe"
             />
           </FormRow>
-          <FormRow label="Severity Text:">
+          <FormRow
+            label="Severity Text:"
+            error={errors?.conditions?.[index]?.severity?.text?.message}
+          >
             <FormInput
               {...register(`conditions.${index}.severity.text`, {
                 required: "Severity text is required",
@@ -176,7 +261,12 @@ const ConditionsForm = ({ control, register }) => {
           </FormRow>
 
           {/* Code */}
-          <FormRow label="Code System:">
+          <FormRow
+            label="Code System:"
+            error={
+              errors?.conditions?.[index]?.code?.coding?.[0]?.system?.message
+            }
+          >
             <FormInput
               {...register(`conditions.${index}.code.coding.[0].system`, {
                 required: "Code system is required",
@@ -184,7 +274,12 @@ const ConditionsForm = ({ control, register }) => {
               placeholder="http://snomed.info/sct"
             />
           </FormRow>
-          <FormRow label="Code Value:">
+          <FormRow
+            label="Code Value:"
+            error={
+              errors?.conditions?.[index]?.code?.coding?.[0]?.code?.message
+            }
+          >
             <FormInput
               {...register(`conditions.${index}.code.coding.[0].code`, {
                 required: "Code value is required",
@@ -192,7 +287,12 @@ const ConditionsForm = ({ control, register }) => {
               placeholder="44054006"
             />
           </FormRow>
-          <FormRow label="Code Display:">
+          <FormRow
+            label="Code Display:"
+            error={
+              errors?.conditions?.[index]?.code?.coding?.[0]?.display?.message
+            }
+          >
             <FormInput
               {...register(`conditions.${index}.code.coding.[0].display`, {
                 required: "Code display is required",
@@ -200,7 +300,10 @@ const ConditionsForm = ({ control, register }) => {
               placeholder="Diabetes mellitus type 2"
             />
           </FormRow>
-          <FormRow label="Code Text:">
+          <FormRow
+            label="Code Text:"
+            error={errors?.conditions?.[index]?.code?.text?.message}
+          >
             <FormInput
               {...register(`conditions.${index}.code.text`, {
                 required: "Code text is required",
@@ -210,7 +313,10 @@ const ConditionsForm = ({ control, register }) => {
           </FormRow>
 
           {/* Subject */}
-          <FormRow label="Subject Reference:">
+          <FormRow
+            label="Subject Reference:"
+            error={errors?.conditions?.[index]?.subject?.reference?.message}
+          >
             <FormInput
               {...register(`conditions.${index}.subject.reference`, {
                 required: "Subject reference is required",
@@ -218,7 +324,10 @@ const ConditionsForm = ({ control, register }) => {
               placeholder="Patient/67890"
             />
           </FormRow>
-          <FormRow label="Subject Display:">
+          <FormRow
+            label="Subject Display:"
+            error={errors?.conditions?.[index]?.subject?.display?.message}
+          >
             <FormInput
               {...register(`conditions.${index}.subject.display`, {
                 required: "Subject display is required",
@@ -228,7 +337,10 @@ const ConditionsForm = ({ control, register }) => {
           </FormRow>
 
           {/* Onset DateTime */}
-          <FormRow label="Onset DateTime:">
+          <FormRow
+            label="Onset DateTime:"
+            error={errors?.conditions?.[index]?.onsetDateTime?.message}
+          >
             <FormInput
               type="datetime-local"
               {...register(`conditions.${index}.onsetDateTime`, {
@@ -238,7 +350,10 @@ const ConditionsForm = ({ control, register }) => {
           </FormRow>
 
           {/* Abatement DateTime */}
-          <FormRow label="Abatement DateTime:">
+          <FormRow
+            label="Abatement DateTime:"
+            error={errors?.conditions?.[index]?.abatementDateTime?.message}
+          >
             <FormInput
               type="datetime-local"
               {...register(`conditions.${index}.abatementDateTime`, {
@@ -248,7 +363,10 @@ const ConditionsForm = ({ control, register }) => {
           </FormRow>
 
           {/* Recorded Date */}
-          <FormRow label="Recorded Date:">
+          <FormRow
+            label="Recorded Date:"
+            error={errors?.conditions?.[index]?.recordedDate?.message}
+          >
             <FormInput
               type="datetime-local"
               {...register(`conditions.${index}.recordedDate`, {
@@ -258,7 +376,10 @@ const ConditionsForm = ({ control, register }) => {
           </FormRow>
 
           {/* Recorder */}
-          <FormRow label="Recorder Reference:">
+          <FormRow
+            label="Recorder Reference:"
+            error={errors?.conditions?.[index]?.recorder?.reference?.message}
+          >
             <FormInput
               {...register(`conditions.${index}.recorder.reference`, {
                 required: "Recorder reference is required",
@@ -266,7 +387,10 @@ const ConditionsForm = ({ control, register }) => {
               placeholder="Practitioner/123"
             />
           </FormRow>
-          <FormRow label="Recorder Display:">
+          <FormRow
+            label="Recorder Display:"
+            error={errors?.conditions?.[index]?.recorder?.display?.message}
+          >
             <FormInput
               {...register(`conditions.${index}.recorder.display`, {
                 required: "Recorder display is required",
@@ -276,7 +400,10 @@ const ConditionsForm = ({ control, register }) => {
           </FormRow>
 
           {/* Asserter */}
-          <FormRow label="Asserter Reference:">
+          <FormRow
+            label="Asserter Reference:"
+            error={errors?.conditions?.[index]?.asserter?.reference?.message}
+          >
             <FormInput
               {...register(`conditions.${index}.asserter.reference`, {
                 required: "Asserter reference is required",
@@ -284,7 +411,10 @@ const ConditionsForm = ({ control, register }) => {
               placeholder="Practitioner/123"
             />
           </FormRow>
-          <FormRow label="Asserter Display:">
+          <FormRow
+            label="Asserter Display:"
+            error={errors?.conditions?.[index]?.asserter?.display?.message}
+          >
             <FormInput
               {...register(`conditions.${index}.asserter.display`, {
                 required: "Asserter display is required",
@@ -294,7 +424,13 @@ const ConditionsForm = ({ control, register }) => {
           </FormRow>
 
           {/* Evidence */}
-          <FormRow label="Evidence Code System:">
+          <FormRow
+            label="Evidence Code System:"
+            error={
+              errors?.conditions?.[index]?.evidence?.[0]?.code?.coding?.[0]
+                ?.system?.message
+            }
+          >
             <FormInput
               {...register(
                 `conditions.${index}.evidence.[0].code.coding.[0].system`,
@@ -305,7 +441,13 @@ const ConditionsForm = ({ control, register }) => {
               placeholder="http://snomed.info/sct"
             />
           </FormRow>
-          <FormRow label="Evidence Code:">
+          <FormRow
+            label="Evidence Code:"
+            error={
+              errors?.conditions?.[index]?.evidence?.[0]?.code?.coding?.[0]
+                ?.code?.message
+            }
+          >
             <FormInput
               {...register(
                 `conditions.${index}.evidence.[0].code.coding.[0].code`,
@@ -316,7 +458,13 @@ const ConditionsForm = ({ control, register }) => {
               placeholder="271807003"
             />
           </FormRow>
-          <FormRow label="Evidence Display:">
+          <FormRow
+            label="Evidence Display:"
+            error={
+              errors?.conditions?.[index]?.evidence?.[0]?.code?.coding?.[0]
+                ?.display?.message
+            }
+          >
             <FormInput
               {...register(
                 `conditions.${index}.evidence.[0].code.coding.[0].display`,
@@ -327,7 +475,12 @@ const ConditionsForm = ({ control, register }) => {
               placeholder="Increased blood glucose level"
             />
           </FormRow>
-          <FormRow label="Evidence Text:">
+          <FormRow
+            label="Evidence Text:"
+            error={
+              errors?.conditions?.[index]?.evidence?.[0]?.code?.text?.message
+            }
+          >
             <FormInput
               {...register(`conditions.${index}.evidence.[0].code.text`, {
                 required: "Evidence text is required",
@@ -335,7 +488,13 @@ const ConditionsForm = ({ control, register }) => {
               placeholder="Increased blood glucose level"
             />
           </FormRow>
-          <FormRow label="Evidence Detail Reference:">
+          <FormRow
+            label="Evidence Detail Reference:"
+            error={
+              errors?.conditions?.[index]?.evidence?.[0]?.detail?.[0]?.reference
+                ?.message
+            }
+          >
             <FormInput
               {...register(
                 `conditions.${index}.evidence.[0].detail.[0].reference`,
@@ -346,7 +505,13 @@ const ConditionsForm = ({ control, register }) => {
               placeholder="Observation/789"
             />
           </FormRow>
-          <FormRow label="Evidence Detail Display:">
+          <FormRow
+            label="Evidence Detail Display:"
+            error={
+              errors?.conditions?.[index]?.evidence?.[0]?.detail?.[0]?.display
+                ?.message
+            }
+          >
             <FormInput
               {...register(
                 `conditions.${index}.evidence.[0].detail.[0].display`,
@@ -359,7 +524,13 @@ const ConditionsForm = ({ control, register }) => {
           </FormRow>
 
           {/* Note */}
-          <FormRow label="Note Author Reference:">
+          <FormRow
+            label="Note Author Reference:"
+            error={
+              errors?.conditions?.[index]?.note?.[0]?.authorReference?.reference
+                ?.message
+            }
+          >
             <FormInput
               {...register(
                 `conditions.${index}.note.[0].authorReference.reference`,
@@ -370,7 +541,13 @@ const ConditionsForm = ({ control, register }) => {
               placeholder="Practitioner/123"
             />
           </FormRow>
-          <FormRow label="Note Author Display:">
+          <FormRow
+            label="Note Author Display:"
+            error={
+              errors?.conditions?.[index]?.note?.[0]?.authorReference?.display
+                ?.message
+            }
+          >
             <FormInput
               {...register(
                 `conditions.${index}.note.[0].authorReference.display`,
@@ -381,7 +558,10 @@ const ConditionsForm = ({ control, register }) => {
               placeholder="Dr. Smith"
             />
           </FormRow>
-          <FormRow label="Note Time:">
+          <FormRow
+            label="Note Time:"
+            error={errors?.conditions?.[index]?.note?.[0]?.time?.message}
+          >
             <FormInput
               type="datetime-local"
               {...register(`conditions.${index}.note.[0].time`, {
@@ -389,7 +569,10 @@ const ConditionsForm = ({ control, register }) => {
               })}
             />
           </FormRow>
-          <FormRow label="Note Text:">
+          <FormRow
+            label="Note Text:"
+            error={errors?.conditions?.[index]?.note?.[0]?.text?.message}
+          >
             <FormInput
               {...register(`conditions.${index}.note.[0].text`, {
                 required: "Note text is required",

@@ -61,6 +61,7 @@ exports.createMedicalRecords = async (req, res, next) => {
 
     console.log("Submitting transaction with record JSON:", recordJSONString);
 
+    console.log(recordJSONString);
     const result = await fabric.submitTransaction(
       "CreateMedicalRecords",
       JSON.stringify(recordJSON)
@@ -176,6 +177,8 @@ exports.searchMedicalRecords = async (req, res, next) => {
       queryJSONString
     );
 
+    console.log("Result string from Fabric transaction:", resultString);
+
     let results;
     try {
       results = JSON.parse(resultString);
@@ -208,7 +211,7 @@ exports.createCondition = async (req, res, next) => {
 
   try {
     const conditionID = uuidv4();
-    conditionJSON.identifier = conditionID;
+    conditionJSON.identifier.value = conditionID;
 
     const channel = "patient-records-channel";
     const chaincode = "records";
@@ -379,6 +382,9 @@ exports.createProcedure = async (req, res, next) => {
   }
 
   try {
+    const procedureID = uuidv4();
+    procedureData.identifier.value = procedureID;
+
     const channel = "patient-records-channel";
     const chaincode = "records";
 
@@ -518,6 +524,211 @@ exports.deleteProcedure = async (req, res, next) => {
       procedureID
     );
     res.status(200).json({ message: "Procedure deleted successfully", result });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  } finally {
+    fabric.disconnect();
+    console.log("Disconnected from Fabric gateway.");
+  }
+};
+
+exports.createAllergy = async (req, res, next) => {
+  const allergyJSON = req.body;
+  const userID = req.user.userId;
+  const organization = req.user.organization;
+  try {
+    const allergyID = uuidv4();
+    allergyJSON.identifier.value = allergyID;
+
+    const channel = "patient-records-channel";
+    const chaincode = "records";
+
+    if (
+      !(await isAuthorized(userID, organization, allergyJSON.patient.reference))
+    ) {
+      return res.status(403).json({ error: "User not approved" });
+    }
+
+    // Validate and stringify JSON
+    let allergyJSONString;
+    try {
+      allergyJSONString = JSON.stringify(allergyJSON);
+      JSON.parse(allergyJSONString);
+    } catch (jsonError) {
+      console.error("Invalid JSON format:", jsonError);
+      return res.status(400).json({ error: "Invalid JSON format" });
+    }
+
+    await fabric.init(userID, organization, channel, chaincode);
+    console.log("Fabric network initialized successfully.");
+
+    const result = await fabric.submitTransaction(
+      "CreateAllergy",
+      allergyJSONString
+    );
+    res.status(201).json({ result: result });
+  } catch (error) {
+    console.error("Failed to create allergy:", error);
+    res.status(500).json({ error: "Failed to create allergy" });
+  } finally {
+    fabric.disconnect();
+    console.log("Disconnected from Fabric gateway.");
+  }
+};
+
+exports.getAllergy = async (req, res, next) => {
+  const allergyID = req.params.id;
+  const userID = req.user.userId;
+  const organization = req.user.organization;
+  try {
+    const channel = "patient-records-channel";
+    const chaincode = "records";
+
+    await fabric.init(userID, organization, channel, chaincode);
+    console.log("Fabric network initialized successfully.");
+
+    const allergyString = await fabric.evaluateTransaction(
+      "ReadAllergy",
+      allergyID
+    );
+
+    const allergy = JSON.parse(allergyString);
+
+    if (
+      !(await isAuthorized(userID, organization, allergy.patient.reference))
+    ) {
+      return res.status(403).json({ error: "User not approved" });
+    }
+
+    res.status(200).json({ allergy: allergy });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  } finally {
+    fabric.disconnect();
+    console.log("Disconnected from Fabric gateway.");
+  }
+};
+
+exports.updateAllergy = async (req, res, next) => {
+  const allergyID = req.params.id;
+  const updatedallergy = req.body;
+  const userID = req.user.userId;
+  const organization = req.user.organization;
+  try {
+    if (
+      !(await isAuthorized(
+        userID,
+        organization,
+        updatedallergy.patient.reference
+      ))
+    ) {
+      return res.status(403).json({ error: "User not approved" });
+    }
+
+    const channel = "patient-records-channel";
+    const chaincode = "records";
+
+    let allergyJSONString;
+    try {
+      allergyJSONString = JSON.stringify(allergyJSON);
+      JSON.parse(allergyJSONString);
+    } catch (jsonError) {
+      console.error("Invalid JSON format:", jsonError);
+      return res.status(400).json({ error: "Invalid JSON format" });
+    }
+
+    await fabric.init(userID, organization, channel, chaincode);
+    console.log("Fabric network initialized successfully.");
+    const result = await fabric.submitTransaction(
+      "UpdateAllergy",
+      allergyID,
+      allergyJSONString
+    );
+
+    res.status(200).json({ result: result });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  } finally {
+    fabric.disconnect();
+    console.log("Disconnected from Fabric gateway.");
+  }
+};
+
+exports.deleteAllergy = async (req, res, next) => {
+  const allergyID = req.params.id;
+  const userID = req.user.userId;
+  const organization = req.user.organization;
+
+  try {
+    const channel = "patient-records-channel";
+    const chaincode = "records";
+
+    await fabric.init(userID, organization, channel, chaincode);
+    console.log("Fabric network initialized successfully.");
+
+    const allergyString = await fabric.evaluateTransaction(
+      "ReadAllergy",
+      allergyID
+    );
+    const allergy = JSON.parse(allergyString);
+
+    if (
+      !(await isAuthorized(userID, organization, allergy.subject.reference))
+    ) {
+      return res.status(403).json({ error: "User not approved" });
+    }
+
+    const result = await fabric.submitTransaction("DeleteAllergy", allergyID);
+    res.status(200).json({ result: result });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  } finally {
+    fabric.disconnect();
+    console.log("Disconnected from Fabric gateway.");
+  }
+};
+
+exports.searchAllergies = async (req, res, next) => {
+  const queryString = req.params.query || { selector: {} };
+
+  const userID = req.user.userId;
+  const organization = req.user.organization;
+
+  try {
+    const channel = "patient-records-channel";
+    const chaincode = "records";
+
+    await fabric.init(userID, organization, channel, chaincode);
+    console.log("Fabric network initialized successfully.");
+
+    let queryJSONString;
+    try {
+      queryJSONString = JSON.stringify(queryString);
+      JSON.parse(queryJSONString);
+    } catch (jsonError) {
+      console.error("Invalid JSON Format: ", jsonError);
+      return res.status(400).json({ error: "Invalid JSON Format" });
+    }
+
+    console.log(
+      "Submitting query transaction with query JSON string:",
+      queryJSONString
+    );
+
+    const resultString = await fabric.submitTransaction(
+      "SearchAllergies",
+      queryJSONString
+    );
+
+    let results;
+    try {
+      results = JSON.parse(resultString);
+    } catch (error) {
+      console.error("Failed to parse result string: ", error);
+      return res.status(500).json({ error: "Failed to parse result string" });
+    }
+
+    res.status(200).json({ results: results });
   } catch (error) {
     res.status(500).json({ error: error.message });
   } finally {

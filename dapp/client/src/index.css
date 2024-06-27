@@ -135,6 +135,10 @@ button:focus-visible {
   }
 }
 
+.body-no-scroll {
+  overflow: hidden;
+}
+
 /* Spinner CSS */
 .lds-circle {
   color: #f1f1f1;

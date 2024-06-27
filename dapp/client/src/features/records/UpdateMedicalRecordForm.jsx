@@ -1,58 +1,61 @@
 /* eslint-disable react/prop-types */
 import { useForm } from "react-hook-form";
+import { useUpdateRecord } from "./useMedicalRecords";
+import Spinner from "../../ui/Spinner";
+import Button from "../../ui/Button";
 import FormRow from "../../ui/FormRow";
 import FormInput from "../../ui/FormInput";
-import Button from "../../ui/Button";
-import { useAddRecord } from "./useMedicalRecords";
 import AllergiesForm from "./AllergiesForm";
 import ConditionsForm from "./ConditionsForm";
 import ProceduresForm from "./ProceduresForm";
 import MedicationRequestsForm from "./MedicationRequestsForm";
-import Spinner from "../../ui/Spinner";
 
-const AddMedicalRecordForm = ({ onSubmitSuccess }) => {
+const UpdateMedicalRecordForm = ({ record, onUpdate, onCancel }) => {
   const {
     register,
     handleSubmit,
     control,
     formState: { errors },
     reset,
-  } = useForm();
-  const { addRecord, isPending } = useAddRecord();
+  } = useForm({
+    defaultValues: {
+      patientID: record.patientID,
+      allergies: record.allergies,
+      conditions: record.conditions,
+      procedures: record.procedures,
+      prescriptions: record.prescriptions,
+      serviceRequestReference: record.serviceRequest?.reference,
+      serviceRequestDisplay: record.serviceRequest?.display,
+      attachments: JSON.stringify(record.attachments),
+    },
+  });
+  const { updateRecord, isPending: isUpdating } = useUpdateRecord();
 
-  const onSubmit = (data) => {
-    const record = {
-      patientID: data.patientID,
-      allergies: data.allergies,
-      conditions: data.conditions,
-      procedures: data.procedures,
-      prescriptions: data.prescriptions,
+  const onSubmit = async (data) => {
+    const updatedRecord = {
+      allergies: data.allergies || [],
+      conditions: data.conditions || [],
+      procedures: data.procedures || [],
+      prescriptions: data.prescriptions || [],
       serviceRequest: {
         reference: data.serviceRequestReference,
         display: data.serviceRequestDisplay,
       },
-      attachments: data.attachments,
+      attachments: JSON.parse(data.attachments || "[]"),
     };
 
-    addRecord(record, {
-      onSettled: () => {
-        reset();
-        onSubmitSuccess();
-      },
-    });
+    try {
+      updateRecord(record.id, updatedRecord);
+      reset();
+      onUpdate();
+    } catch (err) {
+      console.error("Error updating record:", err.message);
+    }
   };
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-      <h2 className="mb-4 text-2xl font-bold">Add New Medical Record</h2>
-
-      <FormRow label="Patient ID" error={errors.patientID?.message}>
-        <FormInput
-          type="text"
-          id="patientID"
-          {...register("patientID", { required: "Patient ID is required" })}
-        />
-      </FormRow>
+      <h2 className="mb-4 text-2xl font-bold">Update Medical Record</h2>
 
       <AllergiesForm control={control} register={register} />
       <ConditionsForm control={control} register={register} />
@@ -94,11 +97,16 @@ const AddMedicalRecordForm = ({ onSubmitSuccess }) => {
         />
       </FormRow>
 
-      <Button type="submit" disabled={isPending}>
-        {isPending ? <Spinner /> : "Add Record"}
-      </Button>
+      <div className="flex space-x-4">
+        <Button type="submit" disabled={isUpdating}>
+          {isUpdating ? <Spinner /> : "Update Record"}
+        </Button>
+        <Button type="button" onClick={onCancel}>
+          Cancel
+        </Button>
+      </div>
     </form>
   );
 };
 
-export default AddMedicalRecordForm;
+export default UpdateMedicalRecordForm;

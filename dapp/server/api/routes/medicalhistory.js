@@ -78,4 +78,27 @@ router.delete(
   medicalHistoryController.deleteProcedure
 );
 
+// Allergies Routes
+router.post("/allergies", verifyToken, medicalHistoryController.createAllergy);
+
+router.post(
+  "allergies/:query",
+  verifyToken,
+  medicalHistoryController.searchAllergies
+);
+
+router.get("allergies/:id", verifyToken, medicalHistoryController.getAllergy);
+
+router.patch(
+  "allergies/:id",
+  verifyToken,
+  medicalHistoryController.updateAllergy
+);
+
+router.delete(
+  "allergies/:id",
+  verifyToken,
+  medicalHistoryController.deleteAllergy
+);
+
 module.exports = router;

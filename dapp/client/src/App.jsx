@@ -12,6 +12,7 @@ import { Toaster } from "react-hot-toast";
 import ProtectedRoute from "./ui/ProtectedRoute";
 import LabResultList from "./features/labresults/LabResultList";
 import MedicalRecordList from "./features/records/MedicalRecordList";
+import RecordPage from "./features/records/RecordPage";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -43,6 +44,7 @@ const App = () => {
             <Route path="labresults" element={<LabResultList />} />
 
             <Route path="signup" element={<Signup />} />
+            <Route path="records/:id" element={<RecordPage />} />
             <Route path="*" element={<ErrorPage />} />
           </Route>
           <Route path="login" element={<Login />} />

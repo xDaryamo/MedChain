@@ -4,7 +4,7 @@ import FormRow from "../../ui/FormRow";
 import FormInput from "../../ui/FormInput";
 import Button from "../../ui/Button";
 
-const AllergiesForm = ({ control, register }) => {
+const AllergiesForm = ({ control, register, errors }) => {
   const { fields, append, remove } = useFieldArray({
     control,
     name: "allergies",
@@ -15,7 +15,10 @@ const AllergiesForm = ({ control, register }) => {
       <h3 className="text-xl font-semibold">Allergies</h3>
       {fields.map((field, index) => (
         <div key={field.id} className="mb-2 space-y-2 border p-2">
-          <FormRow label="System">
+          <FormRow
+            label="System"
+            error={errors?.allergies?.[index]?.identifier?.system?.message}
+          >
             <FormInput
               {...register(`allergies.${index}.identifier.system`, {
                 required: "System is required",
@@ -23,7 +26,10 @@ const AllergiesForm = ({ control, register }) => {
               placeholder="http://hospital.smarthealth.org/allergies"
             />
           </FormRow>
-          <FormRow label="Value">
+          <FormRow
+            label="Value"
+            error={errors?.allergies?.[index]?.identifier?.value?.message}
+          >
             <FormInput
               {...register(`allergies.${index}.identifier.value`, {
                 required: "Value is required",
@@ -31,7 +37,13 @@ const AllergiesForm = ({ control, register }) => {
               placeholder="12345"
             />
           </FormRow>
-          <FormRow label="Clinical Status Code">
+          <FormRow
+            label="Clinical Status Code"
+            error={
+              errors?.allergies?.[index]?.clinicalStatus?.coding?.[0]?.code
+                ?.message
+            }
+          >
             <FormInput
               {...register(`allergies.${index}.clinicalStatus.coding[0].code`, {
                 required: "Code is required",
@@ -39,7 +51,13 @@ const AllergiesForm = ({ control, register }) => {
               placeholder="active"
             />
           </FormRow>
-          <FormRow label="Clinical Status Display">
+          <FormRow
+            label="Clinical Status Display"
+            error={
+              errors?.allergies?.[index]?.clinicalStatus?.coding?.[0]?.display
+                ?.message
+            }
+          >
             <FormInput
               {...register(
                 `allergies.${index}.clinicalStatus.coding[0].display`,
@@ -48,7 +66,13 @@ const AllergiesForm = ({ control, register }) => {
               placeholder="Active"
             />
           </FormRow>
-          <FormRow label="Verification Status Code">
+          <FormRow
+            label="Verification Status Code"
+            error={
+              errors?.allergies?.[index]?.verificationStatus?.coding?.[0]?.code
+                ?.message
+            }
+          >
             <FormInput
               {...register(
                 `allergies.${index}.verificationStatus.coding[0].code`,
@@ -57,7 +81,13 @@ const AllergiesForm = ({ control, register }) => {
               placeholder="confirmed"
             />
           </FormRow>
-          <FormRow label="Verification Status Display">
+          <FormRow
+            label="Verification Status Display"
+            error={
+              errors?.allergies?.[index]?.verificationStatus?.coding?.[0]
+                ?.display?.message
+            }
+          >
             <FormInput
               {...register(
                 `allergies.${index}.verificationStatus.coding[0].display`,
@@ -66,7 +96,10 @@ const AllergiesForm = ({ control, register }) => {
               placeholder="Confirmed"
             />
           </FormRow>
-          <FormRow label="Type">
+          <FormRow
+            label="Type"
+            error={errors?.allergies?.[index]?.type?.message}
+          >
             <FormInput
               {...register(`allergies.${index}.type`, {
                 required: "Type is required",
@@ -74,7 +107,10 @@ const AllergiesForm = ({ control, register }) => {
               placeholder="allergy"
             />
           </FormRow>
-          <FormRow label="Category">
+          <FormRow
+            label="Category"
+            error={errors?.allergies?.[index]?.category?.[0]?.message}
+          >
             <FormInput
               {...register(`allergies.${index}.category[0]`, {
                 required: "Category is required",
@@ -82,7 +118,10 @@ const AllergiesForm = ({ control, register }) => {
               placeholder="medication"
             />
           </FormRow>
-          <FormRow label="Criticality">
+          <FormRow
+            label="Criticality"
+            error={errors?.allergies?.[index]?.criticality?.message}
+          >
             <FormInput
               {...register(`allergies.${index}.criticality`, {
                 required: "Criticality is required",
@@ -90,7 +129,10 @@ const AllergiesForm = ({ control, register }) => {
               placeholder="high"
             />
           </FormRow>
-          <FormRow label="Patient Reference">
+          <FormRow
+            label="Patient Reference"
+            error={errors?.allergies?.[index]?.patient?.reference?.message}
+          >
             <FormInput
               {...register(`allergies.${index}.patient.reference`, {
                 required: "Patient reference is required",
@@ -98,7 +140,10 @@ const AllergiesForm = ({ control, register }) => {
               placeholder="Patient/67890"
             />
           </FormRow>
-          <FormRow label="Patient Display">
+          <FormRow
+            label="Patient Display"
+            error={errors?.allergies?.[index]?.patient?.display?.message}
+          >
             <FormInput
               {...register(`allergies.${index}.patient.display`, {
                 required: "Patient display is required",
@@ -106,7 +151,12 @@ const AllergiesForm = ({ control, register }) => {
               placeholder="John Doe"
             />
           </FormRow>
-          <FormRow label="Code System">
+          <FormRow
+            label="Code System"
+            error={
+              errors?.allergies?.[index]?.code?.coding?.[0]?.system?.message
+            }
+          >
             <FormInput
               {...register(`allergies.${index}.code.coding[0].system`, {
                 required: "Code system is required",
@@ -114,7 +164,10 @@ const AllergiesForm = ({ control, register }) => {
               placeholder="http://www.nlm.nih.gov/research/umls/rxnorm"
             />
           </FormRow>
-          <FormRow label="Code">
+          <FormRow
+            label="Code"
+            error={errors?.allergies?.[index]?.code?.coding?.[0]?.code?.message}
+          >
             <FormInput
               {...register(`allergies.${index}.code.coding[0].code`, {
                 required: "Code is required",
@@ -122,7 +175,12 @@ const AllergiesForm = ({ control, register }) => {
               placeholder="2670"
             />
           </FormRow>
-          <FormRow label="Code Display">
+          <FormRow
+            label="Code Display"
+            error={
+              errors?.allergies?.[index]?.code?.coding?.[0]?.display?.message
+            }
+          >
             <FormInput
               {...register(`allergies.${index}.code.coding[0].display`, {
                 required: "Display is required",
@@ -130,7 +188,13 @@ const AllergiesForm = ({ control, register }) => {
               placeholder="Penicillin"
             />
           </FormRow>
-          <FormRow label="Reaction Manifestation">
+          <FormRow
+            label="Reaction Manifestation"
+            error={
+              errors?.allergies?.[index]?.reaction?.[0]?.manifestation?.[0]
+                ?.coding?.[0]?.display?.message
+            }
+          >
             <FormInput
               {...register(
                 `allergies.${index}.reaction[0].manifestation[0].coding[0].display`,
@@ -139,7 +203,10 @@ const AllergiesForm = ({ control, register }) => {
               placeholder="Anaphylactic reaction"
             />
           </FormRow>
-          <FormRow label="Reaction Severity">
+          <FormRow
+            label="Reaction Severity"
+            error={errors?.allergies?.[index]?.reaction?.[0]?.severity?.message}
+          >
             <FormInput
               {...register(`allergies.${index}.reaction[0].severity`, {
                 required: "Reaction severity is required",
