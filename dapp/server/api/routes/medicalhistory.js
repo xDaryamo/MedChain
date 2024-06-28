@@ -89,20 +89,13 @@ router.delete(
 );
 
 // Allergies Routes
-router.post(
-  "/allergies",
-  verifyToken,
-  medicalHistoryController.createAllerg);
+router.post("/allergies", verifyToken, medicalHistoryController.createAllergy);
 router.post(
   "allergies/search",
   verifyToken,
   medicalHistoryController.searchAllergies
 );
-router.get(
-  "allergies/:id",
-  verifyToken,
-  medicalHistoryController.getAllergy
-);
+router.get("allergies/:id", verifyToken, medicalHistoryController.getAllergy);
 router.patch(
   "allergies/:id",
   verifyToken,
