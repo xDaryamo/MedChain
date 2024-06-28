@@ -1,8 +1,10 @@
 /* eslint-disable react/prop-types */
 import { useFieldArray } from "react-hook-form";
+import { useEffect, useRef } from "react";
 import FormRow from "../../ui/FormRow";
 import FormInput from "../../ui/FormInput";
 import Button from "../../ui/Button";
+import { FaTrash, FaPlus } from "react-icons/fa";
 
 const ConditionsForm = ({ control, register, errors }) => {
   const { fields, append, remove } = useFieldArray({
@@ -10,12 +12,28 @@ const ConditionsForm = ({ control, register, errors }) => {
     name: "conditions",
   });
 
+  const newInputRef = useRef(null);
+
+  useEffect(() => {
+    if (newInputRef.current) {
+      newInputRef.current.focus();
+    }
+  }, [fields]);
+
+  const handleAddCondition = () => {
+    append({});
+    setTimeout(() => {
+      if (newInputRef.current) {
+        newInputRef.current.focus();
+      }
+    }, 100);
+  };
+
   return (
     <div>
-      <h3>Conditions</h3>
       {fields.map((field, index) => (
-        <div key={field.id} className="space-y-4">
-          {/* Clinical Status */}
+        <div key={field.id} className="mb-2 space-y-2 border p-2">
+          <h4 className="text-lg font-medium">Condition {index + 1}</h4>
           <FormRow
             label="Clinical Status System:"
             error={
@@ -31,6 +49,7 @@ const ConditionsForm = ({ control, register, errors }) => {
                 },
               )}
               placeholder="http://terminology.hl7.org/CodeSystem/condition-clinical"
+              ref={index === fields.length - 1 ? newInputRef : null}
             />
           </FormRow>
           <FormRow
@@ -581,18 +600,28 @@ const ConditionsForm = ({ control, register, errors }) => {
             />
           </FormRow>
 
-          <Button
-            type="button"
-            onClick={() => remove(index)}
-            aria-label={`Remove condition ${index + 1}`}
-          >
-            -
-          </Button>
+          <div className="flex justify-end">
+            <Button
+              type="button"
+              onClick={() => remove(index)}
+              variant="delete"
+              size="small"
+            >
+              <FaTrash />
+            </Button>
+          </div>
         </div>
       ))}
-      <Button type="button" onClick={() => append({})}>
-        Add Condition
-      </Button>
+      <div className="flex justify-center">
+        <Button
+          type="button"
+          onClick={handleAddCondition}
+          variant="secondary"
+          size="small"
+        >
+          <FaPlus className="mr-1" /> Add Condition
+        </Button>
+      </div>
     </div>
   );
 };

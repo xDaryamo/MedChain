@@ -1,7 +1,9 @@
 /* eslint-disable react/prop-types */
 import { useFieldArray } from "react-hook-form";
+import { useEffect, useRef } from "react";
 import FormRow from "../../ui/FormRow";
 import FormInput from "../../ui/FormInput";
+import { FaPlus, FaTrash } from "react-icons/fa";
 import Button from "../../ui/Button";
 
 const AllergiesForm = ({ control, register, errors }) => {
@@ -10,11 +12,28 @@ const AllergiesForm = ({ control, register, errors }) => {
     name: "allergies",
   });
 
+  const newInputRef = useRef(null);
+
+  useEffect(() => {
+    if (newInputRef.current) {
+      newInputRef.current.focus();
+    }
+  }, [fields]);
+
+  const handleAddAllergy = () => {
+    append({});
+    setTimeout(() => {
+      if (newInputRef.current) {
+        newInputRef.current.focus();
+      }
+    }, 100);
+  };
+
   return (
     <div>
-      <h3 className="text-xl font-semibold">Allergies</h3>
       {fields.map((field, index) => (
         <div key={field.id} className="mb-2 space-y-2 border p-2">
+          <h4 className="text-lg font-medium">Allergy {index + 1}</h4>
           <FormRow
             label="System"
             error={errors?.allergies?.[index]?.identifier?.system?.message}
@@ -24,6 +43,7 @@ const AllergiesForm = ({ control, register, errors }) => {
                 required: "System is required",
               })}
               placeholder="http://hospital.smarthealth.org/allergies"
+              ref={index === fields.length - 1 ? newInputRef : null}
             />
           </FormRow>
           <FormRow
@@ -214,14 +234,28 @@ const AllergiesForm = ({ control, register, errors }) => {
               placeholder="severe"
             />
           </FormRow>
-          <Button type="button" onClick={() => remove(index)}>
-            -
-          </Button>
+          <div className="flex justify-end">
+            <Button
+              type="button"
+              onClick={() => remove(index)}
+              variant="delete"
+              size="small"
+            >
+              <FaTrash />
+            </Button>
+          </div>
         </div>
       ))}
-      <Button type="button" onClick={() => append({})}>
-        Add Allergy
-      </Button>
+      <div className="flex justify-center">
+        <Button
+          type="button"
+          onClick={handleAddAllergy}
+          variant="secondary"
+          size="small"
+        >
+          <FaPlus className="mr-1" /> Aggiungi Allergia
+        </Button>
+      </div>
     </div>
   );
 };

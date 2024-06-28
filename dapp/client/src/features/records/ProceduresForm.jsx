@@ -1,8 +1,10 @@
 /* eslint-disable react/prop-types */
 import { useFieldArray } from "react-hook-form";
+import { useEffect, useRef } from "react";
 import FormRow from "../../ui/FormRow";
 import FormInput from "../../ui/FormInput";
 import Button from "../../ui/Button";
+import { FaTrash, FaPlus } from "react-icons/fa";
 
 const ProceduresForm = ({ control, register, errors }) => {
   const { fields, append, remove } = useFieldArray({
@@ -10,12 +12,28 @@ const ProceduresForm = ({ control, register, errors }) => {
     name: "procedures",
   });
 
+  const newInputRef = useRef(null);
+
+  useEffect(() => {
+    if (newInputRef.current) {
+      newInputRef.current.focus();
+    }
+  }, [fields]);
+
+  const handleAddProcedure = () => {
+    append({});
+    setTimeout(() => {
+      if (newInputRef.current) {
+        newInputRef.current.focus();
+      }
+    }, 100);
+  };
+
   return (
     <div>
-      <h3>Procedures</h3>
       {fields.map((field, index) => (
-        <div key={field.id} className="space-y-4">
-          {/* Subject */}
+        <div key={field.id} className="mb-2 space-y-2 border p-2">
+          <h4 className="text-lg font-medium">Procedure {index + 1}</h4>
           <FormRow
             label="Subject Reference:"
             error={errors?.procedures?.[index]?.subject?.reference?.message}
@@ -25,6 +43,7 @@ const ProceduresForm = ({ control, register, errors }) => {
                 required: "Subject reference is required",
               })}
               placeholder="Patient/67890"
+              ref={index === fields.length - 1 ? newInputRef : null}
             />
           </FormRow>
           <FormRow
@@ -700,18 +719,28 @@ const ProceduresForm = ({ control, register, errors }) => {
             />
           </FormRow>
 
-          <Button
-            type="button"
-            onClick={() => remove(index)}
-            aria-label={`Remove procedure ${index + 1}`}
-          >
-            -
-          </Button>
+          <div className="flex justify-end">
+            <Button
+              type="button"
+              onClick={() => remove(index)}
+              variant="delete"
+              size="small"
+            >
+              <FaTrash />
+            </Button>
+          </div>
         </div>
       ))}
-      <Button type="button" onClick={() => append({})}>
-        Add Procedure
-      </Button>
+      <div className="flex justify-center">
+        <Button
+          type="button"
+          onClick={handleAddProcedure}
+          variant="secondary"
+          size="small"
+        >
+          <FaPlus className="mr-1" /> Add Procedure
+        </Button>
+      </div>
     </div>
   );
 };

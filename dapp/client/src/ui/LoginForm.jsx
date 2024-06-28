@@ -58,7 +58,12 @@ const LoginForm = ({ onSubmit, isPending, formData, setFormData }) => {
           </FormRow>
         </div>
         <div className="mt-8">
-          <Button>{isPending ? <SmallSpinner /> : "Login"}</Button>
+          <div className="flex items-center justify-center">
+            {" "}
+            <Button type="submit" variant="primary" size="large">
+              {isPending ? <SmallSpinner /> : "Login"}
+            </Button>
+          </div>
         </div>
       </form>
     </div>

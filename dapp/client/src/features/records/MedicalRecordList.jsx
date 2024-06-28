@@ -36,7 +36,7 @@ const MedicalRecordList = () => {
 
   return (
     <div>
-      <Heading title="Medical Records List" />
+      <Heading>Medical Records List</Heading>
       <List
         items={records}
         itemKey="identifier"

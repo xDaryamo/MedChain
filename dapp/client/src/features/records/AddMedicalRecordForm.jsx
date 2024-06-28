@@ -43,60 +43,90 @@ const AddMedicalRecordForm = ({ onSubmitSuccess }) => {
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-      <h2 className="mb-4 text-2xl font-bold">Add New Medical Record</h2>
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+      <h2 className="mb-6 text-2xl font-bold">Add New Medical Record</h2>
 
-      <FormRow label="Patient ID" error={errors.patientID?.message}>
-        <FormInput
-          type="text"
-          id="patientID"
-          {...register("patientID", { required: "Patient ID is required" })}
-        />
-      </FormRow>
+      <div className="mb-4 border-b pb-4">
+        <FormRow label="Patient ID" error={errors.patientID?.message}>
+          <FormInput
+            type="text"
+            id="patientID"
+            {...register("patientID", { required: "Patient ID is required" })}
+          />
+        </FormRow>
+      </div>
 
-      <AllergiesForm control={control} register={register} />
-      <ConditionsForm control={control} register={register} />
-      <ProceduresForm control={control} register={register} />
-      <MedicationRequestsForm control={control} register={register} />
+      <div className="mb-4 border-b pb-4">
+        <h3 className="mb-4 text-xl font-semibold">Allergies</h3>
+        <AllergiesForm control={control} register={register} />
+      </div>
 
-      <FormRow
-        label="Service Request Reference"
-        error={errors.serviceRequestReference?.message}
-      >
-        <FormInput
-          type="text"
-          id="serviceRequestReference"
-          {...register("serviceRequestReference", {
-            required: "Service Request Reference is required",
-          })}
-        />
-      </FormRow>
+      <div className="mb-4 border-b pb-4">
+        <h3 className="mb-4 text-xl font-semibold">Conditions</h3>
+        <ConditionsForm control={control} register={register} />
+      </div>
 
-      <FormRow
-        label="Service Request Display"
-        error={errors.serviceRequestDisplay?.message}
-      >
-        <FormInput
-          type="text"
-          id="serviceRequestDisplay"
-          {...register("serviceRequestDisplay", {
-            required: "Service Request Display is required",
-          })}
-        />
-      </FormRow>
+      <div className="mb-4 border-b pb-4">
+        <h3 className="mb-4 text-xl font-semibold">Procedures</h3>
+        <ProceduresForm control={control} register={register} />
+      </div>
 
-      <FormRow label="Attachments (JSON)" error={errors.attachments?.message}>
-        <FormInput
-          type="text"
-          id="attachments"
-          {...register("attachments")}
-          placeholder='[{"url": "attachment1"}, {"url": "attachment2"}]'
-        />
-      </FormRow>
+      <div className="mb-4 border-b pb-4">
+        <h3 className="mb-4 text-xl font-semibold">Medication Requests</h3>
+        <MedicationRequestsForm control={control} register={register} />
+      </div>
 
-      <Button type="submit" disabled={isPending}>
-        {isPending ? <Spinner /> : "Add Record"}
-      </Button>
+      <div className="mb-4 border-b pb-4">
+        <h3 className="mb-4 text-xl font-semibold">Service Request</h3>
+        <FormRow
+          label="Service Request Reference"
+          error={errors.serviceRequestReference?.message}
+        >
+          <FormInput
+            type="text"
+            id="serviceRequestReference"
+            {...register("serviceRequestReference", {
+              required: "Service Request Reference is required",
+            })}
+          />
+        </FormRow>
+
+        <FormRow
+          label="Service Request Display"
+          error={errors.serviceRequestDisplay?.message}
+        >
+          <FormInput
+            type="text"
+            id="serviceRequestDisplay"
+            {...register("serviceRequestDisplay", {
+              required: "Service Request Display is required",
+            })}
+          />
+        </FormRow>
+      </div>
+
+      <div className="mb-4 border-b pb-4">
+        <h3 className="mb-4 text-xl font-semibold">Attachments</h3>
+        <FormRow label="Attachments (JSON)" error={errors.attachments?.message}>
+          <FormInput
+            type="text"
+            id="attachments"
+            {...register("attachments")}
+            placeholder='[{"url": "attachment1"}, {"url": "attachment2"}]'
+          />
+        </FormRow>
+      </div>
+
+      <div className="flex w-full justify-center">
+        <Button
+          type="submit"
+          disabled={isPending}
+          variant="primary"
+          size="large"
+        >
+          {isPending ? <Spinner /> : "Add Record"}
+        </Button>
+      </div>
     </form>
   );
 };

@@ -1,8 +1,10 @@
 /* eslint-disable react/prop-types */
 import { useFieldArray } from "react-hook-form";
+import { useEffect, useRef } from "react";
 import FormRow from "../../ui/FormRow";
 import FormInput from "../../ui/FormInput";
 import Button from "../../ui/Button";
+import { FaTrash, FaPlus } from "react-icons/fa";
 
 const MedicationRequestsForm = ({ control, register, errors }) => {
   const { fields, append, remove } = useFieldArray({
@@ -10,11 +12,30 @@ const MedicationRequestsForm = ({ control, register, errors }) => {
     name: "medicationRequests",
   });
 
+  const newInputRef = useRef(null);
+
+  useEffect(() => {
+    if (newInputRef.current) {
+      newInputRef.current.focus();
+    }
+  }, [fields]);
+
+  const handleAddMedicationRequest = () => {
+    append({});
+    setTimeout(() => {
+      if (newInputRef.current) {
+        newInputRef.current.focus();
+      }
+    }, 100);
+  };
+
   return (
     <div>
-      <h3>Medication Requests</h3>
       {fields.map((field, index) => (
-        <div key={field.id} className="space-y-4">
+        <div key={field.id} className="mb-2 space-y-2 border p-2">
+          <h4 className="text-lg font-medium">
+            Medication Request {index + 1}
+          </h4>
           {/* Medication Codeable Concept */}
           <FormRow
             label="Medication Code System:"
@@ -31,6 +52,7 @@ const MedicationRequestsForm = ({ control, register, errors }) => {
                 },
               )}
               placeholder="http://snomed.info/sct"
+              ref={index === fields.length - 1 ? newInputRef : null}
             />
           </FormRow>
           <FormRow
@@ -320,21 +342,28 @@ const MedicationRequestsForm = ({ control, register, errors }) => {
             />
           </FormRow>
 
-          {/* Remove Button */}
-          <Button
-            type="button"
-            onClick={() => remove(index)}
-            aria-label={`Remove medication request ${index + 1}`}
-          >
-            -
-          </Button>
+          <div className="flex justify-end">
+            <Button
+              type="button"
+              onClick={() => remove(index)}
+              variant="delete"
+              size="small"
+            >
+              <FaTrash />
+            </Button>
+          </div>
         </div>
       ))}
-
-      {/* Add Button */}
-      <Button type="button" onClick={() => append({})}>
-        Add Medication Request
-      </Button>
+      <div className="flex justify-center">
+        <Button
+          type="button"
+          onClick={handleAddMedicationRequest}
+          variant="secondary"
+          size="small"
+        >
+          <FaPlus className="mr-1" /> Add Medication Request
+        </Button>
+      </div>
     </div>
   );
 };
