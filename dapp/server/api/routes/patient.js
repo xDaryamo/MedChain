@@ -23,6 +23,21 @@ router.post(
   authorizeOrganization(["patients.medchain.com"]),
   patientController.createPatient
 );
+
+router.post(
+  "/search",
+  verifyToken,
+  authorizeOrganization([
+    "patients.medchain.com",
+    "ospedale-maresca.aslnapoli3.medchain.com",
+    "ospedale-del-mare.aslnapoli1.medchain.com",
+    "ospedale-sgiuliano.aslnapoli2.medchain.com",
+    "medicina-generale-napoli.medchain.com",
+    "neurologia-napoli.medchain.com",
+  ]),
+  patientController.searchPatients
+);
+
 router.patch(
   "/:id",
   verifyToken,

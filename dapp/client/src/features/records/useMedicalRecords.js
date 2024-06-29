@@ -42,11 +42,8 @@ export const useAddRecord = () => {
 
   const { mutate: addRecord, isPending } = useMutation({
     mutationFn: async (record) => {
-
       const createdAllergies = await Promise.all(
-        (record.allergies || []).map((allergy) =>
-          createAllergy(allergy),
-        ),
+        (record.allergies || []).map((allergy) => createAllergy(allergy)),
       );
 
       const createdConditions = await Promise.all(
@@ -63,9 +60,10 @@ export const useAddRecord = () => {
 
       const updatedRecord = {
         ...record,
-        allegies: createdAllergies.map((allergy) => allergy.id),
+        allergies: createdAllergies.map((allergy) => allergy.id),
         conditions: createdConditions.map((cond) => cond.id),
         procedures: createdProcedures.map((proc) => proc.id),
+        attachments: record.attachments || [],
       };
 
       await createMedicalRecord(updatedRecord);
@@ -88,11 +86,8 @@ export const useUpdateRecord = () => {
 
   const { mutate: updateRecord, isLoading: isPending } = useMutation({
     mutationFn: async ({ id, record }) => {
-
       await Promise.all(
-        record.Allergies.map((allergy) =>
-          updateAllergy(allergy.id, allergy),
-        ),
+        record.Allergies.map((allergy) => updateAllergy(allergy.id, allergy)),
       );
 
       await Promise.all(

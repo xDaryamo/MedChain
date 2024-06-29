@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import PropTypes from "prop-types";
 import { createPortal } from "react-dom";
+import { FaTimesCircle } from "react-icons/fa";
 
 const useBodyScrollLock = (isOpen) => {
   useEffect(() => {
@@ -28,7 +29,7 @@ const Modal = ({ isOpen, onClose, children }) => {
           onClick={onClose}
           aria-label="Close modal"
         >
-          X
+          <FaTimesCircle className="mt-2 h-6 w-6 text-red-700 transition-all duration-300 hover:text-red-500" />
         </button>
         {children}
       </div>

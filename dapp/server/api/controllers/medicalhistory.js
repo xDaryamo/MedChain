@@ -838,15 +838,13 @@ exports.searchAllergies = async (req, res, next) => {
 async function isAuthorized(userID, organization, patientReference) {
   const identity_channel = "identity-channel";
   const auth_chaincode = "patient";
-  console.log(patientReference);
 
-  const patientID = patientReference.split("/")[1];
   await fabric.init(userID, organization, identity_channel, auth_chaincode);
   console.log("Verifying user...");
 
   const authBool = await fabric.submitTransaction(
     "IsAuthorized",
-    patientID,
+    patientReference,
     userID
   );
 

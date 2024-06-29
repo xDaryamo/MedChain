@@ -23,6 +23,7 @@ api.interceptors.request.use(
 
 export const searchMedicalRecords = async (query) => {
   const response = await api.post("/records/search", { query });
+  console.log(response.data.results);
   return response.data.results || [];
 };
 
@@ -33,6 +34,7 @@ export const getMedicalRecord = async (id) => {
 
 export const createMedicalRecord = async (record) => {
   const response = await api.post("/records", record);
+  console.log(record);
   return response.data;
 };
 

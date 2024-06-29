@@ -20,11 +20,14 @@ type PatientContract struct {
 
 func (c *PatientContract) CreatePatient(ctx contractapi.TransactionContextInterface, patientJSON string) (string, error) {
 	// Deserialize JSON data into a Go data structure
+	log.Printf("Received patient: " + patientJSON)
 	var patient Patient
 	err := json.Unmarshal([]byte(patientJSON), &patient)
 	if err != nil {
 		return `{"error": "failed to unmarshal patient: ` + err.Error() + `"}`, err
 	}
+	log.Printf("Unmarshalled patient: %+v", patient)
+
 
 	// Check if the patient request ID is provided and if it already exists
 	if patient.ID.Value == "" {

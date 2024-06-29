@@ -41,7 +41,7 @@ type Patient struct {
 	Name                 *HumanName       `json:"name,omitempty"`                 // A name associated with the patient
 	Telecom              []ContactPoint  `json:"telecom,omitempty"`              // A contact detail for the individual
 	Gender               *Code            `json:"gender,omitempty"`               // Gender of the patient
-	BirthDate            *time.Time       `json:"date,omitempty"`                 // The birth date for the patient
+	BirthDate            time.Time       `json:"date,omitempty"`                 // The birth date for the patient
 	Deceased             bool            `json:"deceased,omitempty"`             // Indicates if the patient is deceased
 	Address              []Address       `json:"address,omitempty"`              // Addresses for the individual
 	MaritalStatus        *CodeableConcept `json:"maritalstatus,omitempty"`        // Marital (civil) status of a patient

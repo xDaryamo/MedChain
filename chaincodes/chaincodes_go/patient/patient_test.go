@@ -320,7 +320,7 @@ func generatePatientJSON(id string) string {
 		ID:        &Identifier{Value: id},
 		Name:      &HumanName{Family: "Smith", Given: []string{"John"}},
 		Gender:    &Code{Coding: []Coding{{System: "http://hl7.org/fhir/ValueSet/administrative-gender", Code: "male", Display: "Male"}}},
-		BirthDate: &now,
+		BirthDate: now,
 	}
 	patientJSON, _ := json.Marshal(patient)
 	return string(patientJSON)
