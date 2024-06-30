@@ -104,7 +104,7 @@ exports.updateEncounter = async (req, res, next) => {
 
     let encounterJSONString;
     try {
-      encounterJSONString = JSON.stringify(encounterJSON);
+      encounterJSONString = JSON.stringify(updatedEncounter);
       JSON.parse(encounterJSONString);
     } catch (jsonError) {
       console.error("Invalid JSON format:", jsonError);

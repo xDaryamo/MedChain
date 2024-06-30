@@ -140,31 +140,45 @@
       "orgs": [
         {
           "name": "example",
-          "peers": ["peer0"]
+          "peers": [
+            "peer0"
+          ]
         },
         {
           "name": "OspedaleMaresca",
-          "peers": ["peer0"]
+          "peers": [
+            "peer0"
+          ]
         },
         {
           "name": "OspedaleDelMare",
-          "peers": ["peer0"]
+          "peers": [
+            "peer0"
+          ]
         },
         {
           "name": "OspedaleSGiuliano",
-          "peers": ["peer0"]
+          "peers": [
+            "peer0"
+          ]
         },
         {
           "name": "MedicinaGeneraleNapoli",
-          "peers": ["peer0"]
+          "peers": [
+            "peer0"
+          ]
         },
         {
           "name": "NeurologiaNapoli",
-          "peers": ["peer0"]
+          "peers": [
+            "peer0"
+          ]
         },
         {
           "name": "Patients",
-          "peers": ["peer0"]
+          "peers": [
+            "peer0"
+          ]
         }
       ]
     },
@@ -173,27 +187,39 @@
       "orgs": [
         {
           "name": "example",
-          "peers": ["peer0"]
+          "peers": [
+            "peer0"
+          ]
         },
         {
           "name": "MedicinaGeneraleNapoli",
-          "peers": ["peer0"]
+          "peers": [
+            "peer0"
+          ]
         },
         {
           "name": "NeurologiaNapoli",
-          "peers": ["peer0"]
+          "peers": [
+            "peer0"
+          ]
         },
         {
           "name": "FarmaciaPetrone",
-          "peers": ["peer0"]
+          "peers": [
+            "peer0"
+          ]
         },
         {
           "name": "FarmaciaCarbone",
-          "peers": ["peer0"]
+          "peers": [
+            "peer0"
+          ]
         },
         {
           "name": "Patients",
-          "peers": ["peer0"]
+          "peers": [
+            "peer0"
+          ]
         }
       ]
     },
@@ -202,31 +228,45 @@
       "orgs": [
         {
           "name": "example",
-          "peers": ["peer0"]
+          "peers": [
+            "peer0"
+          ]
         },
         {
           "name": "OspedaleMaresca",
-          "peers": ["peer0"]
+          "peers": [
+            "peer0"
+          ]
         },
         {
           "name": "MedicinaGeneraleNapoli",
-          "peers": ["peer0"]
+          "peers": [
+            "peer0"
+          ]
         },
         {
           "name": "NeurologiaNapoli",
-          "peers": ["peer0"]
+          "peers": [
+            "peer0"
+          ]
         },
         {
           "name": "LaboratorioAnalisiCmo",
-          "peers": ["peer0"]
+          "peers": [
+            "peer0"
+          ]
         },
         {
           "name": "LaboratorioAnalisiSdn",
-          "peers": ["peer0"]
+          "peers": [
+            "peer0"
+          ]
         },
         {
           "name": "Patients",
-          "peers": ["peer0"]
+          "peers": [
+            "peer0"
+          ]
         }
       ]
     },
@@ -235,19 +275,27 @@
       "orgs": [
         {
           "name": "example",
-          "peers": ["peer0"]
+          "peers": [
+            "peer0"
+          ]
         },
         {
           "name": "OspedaleMaresca",
-          "peers": ["peer0"]
+          "peers": [
+            "peer0"
+          ]
         },
         {
           "name": "OspedaleDelMare",
-          "peers": ["peer0"]
+          "peers": [
+            "peer0"
+          ]
         },
         {
           "name": "OspedaleSGiuliano",
-          "peers": ["peer0"]
+          "peers": [
+            "peer0"
+          ]
         }
       ]
     },
@@ -256,47 +304,69 @@
       "orgs": [
         {
           "name": "example",
-          "peers": ["peer0"]
+          "peers": [
+            "peer0"
+          ]
         },
         {
           "name": "OspedaleMaresca",
-          "peers": ["peer0"]
+          "peers": [
+            "peer0"
+          ]
         },
         {
           "name": "OspedaleDelMare",
-          "peers": ["peer0"]
+          "peers": [
+            "peer0"
+          ]
         },
         {
           "name": "OspedaleSGiuliano",
-          "peers": ["peer0"]
+          "peers": [
+            "peer0"
+          ]
         },
         {
           "name": "MedicinaGeneraleNapoli",
-          "peers": ["peer0"]
+          "peers": [
+            "peer0"
+          ]
         },
         {
           "name": "NeurologiaNapoli",
-          "peers": ["peer0"]
+          "peers": [
+            "peer0"
+          ]
         },
         {
           "name": "FarmaciaPetrone",
-          "peers": ["peer0"]
+          "peers": [
+            "peer0"
+          ]
         },
         {
           "name": "FarmaciaCarbone",
-          "peers": ["peer0"]
+          "peers": [
+            "peer0"
+          ]
         },
         {
           "name": "LaboratorioAnalisiCmo",
-          "peers": ["peer0"]
+          "peers": [
+            "peer0"
+          ]
         },
         {
           "name": "LaboratorioAnalisiSdn",
-          "peers": ["peer0"]
+          "peers": [
+            "peer0"
+          ]
         },
         {
           "name": "Patients",
-          "peers": ["peer0"]
+          "peers": [
+            "peer0"
+          ]
         }
       ]
     }
@@ -350,6 +420,13 @@
       "lang": "golang",
       "channel": "patient-records-channel",
       "directory": "./chaincodes/chaincodes_go/encounter"
+    },
+    {
+      "name": "observation",
+      "version": "0.1",
+      "lang": "golang",
+      "channel": "patient-records-channel",
+      "directory": "./chaincodes/chaincodes_go/observation"
     }
   ]
 }
