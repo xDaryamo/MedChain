@@ -35,7 +35,7 @@
   },
   "peers": {
     "peer0.patients.medchain.com": {
-      "url": "grpc://peer0.patients.medchain.com:7241",
+      "url": "grpc://peer0.patients.medchain.com:7141",
       "tlsCACerts": {
         "path": "/tmp/crypto/peerOrganizations/patients.medchain.com/msp/tlscacerts/tlsca.patients.medchain.com-cert.pem"
       }

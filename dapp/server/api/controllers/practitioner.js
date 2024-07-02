@@ -4,7 +4,7 @@ const fabric = new FabricNetwork();
 
 exports.getPractitioner = async (req, res, next) => {
   const practitionerId = req.params.id;
-
+  console.log(practitionerId);
   try {
     const channel = "identity-channel";
     const chaincode = "practitioner";

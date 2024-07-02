@@ -8,37 +8,17 @@
       "name": "Network of OspedaleMaresca",
       "profile": "/opt/explorer/app/platform/fabric/connection-profile/connection-profile-ospedalemaresca.json"
     },
-    "network-ospedaledelmare": {
-      "name": "Network of OspedaleDelMare",
-      "profile": "/opt/explorer/app/platform/fabric/connection-profile/connection-profile-ospedaledelmare.json"
-    },
-    "network-ospedalesgiuliano": {
-      "name": "Network of OspedaleSGiuliano",
-      "profile": "/opt/explorer/app/platform/fabric/connection-profile/connection-profile-ospedalesgiuliano.json"
-    },
     "network-medicinageneralenapoli": {
       "name": "Network of MedicinaGeneraleNapoli",
       "profile": "/opt/explorer/app/platform/fabric/connection-profile/connection-profile-medicinageneralenapoli.json"
-    },
-    "network-neurologianapoli": {
-      "name": "Network of NeurologiaNapoli",
-      "profile": "/opt/explorer/app/platform/fabric/connection-profile/connection-profile-neurologianapoli.json"
     },
     "network-farmaciapetrone": {
       "name": "Network of FarmaciaPetrone",
       "profile": "/opt/explorer/app/platform/fabric/connection-profile/connection-profile-farmaciapetrone.json"
     },
-    "network-farmaciacarbone": {
-      "name": "Network of FarmaciaCarbone",
-      "profile": "/opt/explorer/app/platform/fabric/connection-profile/connection-profile-farmaciacarbone.json"
-    },
     "network-laboratorioanalisicmo": {
       "name": "Network of LaboratorioAnalisiCmo",
       "profile": "/opt/explorer/app/platform/fabric/connection-profile/connection-profile-laboratorioanalisicmo.json"
-    },
-    "network-laboratorioanalisisdn": {
-      "name": "Network of LaboratorioAnalisiSdn",
-      "profile": "/opt/explorer/app/platform/fabric/connection-profile/connection-profile-laboratorioanalisisdn.json"
     },
     "network-patients": {
       "name": "Network of Patients",

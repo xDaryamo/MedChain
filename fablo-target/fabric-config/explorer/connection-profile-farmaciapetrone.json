@@ -35,7 +35,7 @@
   },
   "peers": {
     "peer0.farmacia-petrone.medchain.com": {
-      "url": "grpc://peer0.farmacia-petrone.medchain.com:7161",
+      "url": "grpc://peer0.farmacia-petrone.medchain.com:7101",
       "tlsCACerts": {
         "path": "/tmp/crypto/peerOrganizations/farmacia-petrone.medchain.com/msp/tlscacerts/tlsca.farmacia-petrone.medchain.com-cert.pem"
       }

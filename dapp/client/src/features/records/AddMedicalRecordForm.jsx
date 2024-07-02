@@ -1,5 +1,5 @@
 /* eslint-disable react/prop-types */
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import FormRow from "../../ui/FormRow";
 import FormInput from "../../ui/FormInput";
 import Button from "../../ui/Button";
@@ -8,6 +8,7 @@ import AllergiesForm from "./AllergiesForm";
 import ConditionsForm from "./ConditionsForm";
 import ProceduresForm from "./ProceduresForm";
 import MedicationRequestsForm from "./MedicationRequestsForm";
+import LabResultsForm from "./LabResultsForm";
 import Spinner from "../../ui/Spinner";
 
 const AddMedicalRecordForm = ({ onSubmitSuccess }) => {
@@ -20,6 +21,11 @@ const AddMedicalRecordForm = ({ onSubmitSuccess }) => {
   } = useForm();
   const { addRecord, isPending } = useAddRecord();
 
+  const patientID = useWatch({
+    control,
+    name: "patientID",
+  });
+
   const onSubmit = (data) => {
     const record = {
       patientID: data.patientID,
@@ -27,6 +33,7 @@ const AddMedicalRecordForm = ({ onSubmitSuccess }) => {
       conditions: data.conditions,
       procedures: data.procedures,
       prescriptions: data.prescriptions,
+      observationIDs: data.labResultsIDs.map((result) => result.id),
       serviceRequest: {
         reference: data.serviceRequestReference,
         display: data.serviceRequestDisplay,
@@ -74,6 +81,16 @@ const AddMedicalRecordForm = ({ onSubmitSuccess }) => {
       <div className="mb-4 border-b pb-4">
         <h3 className="mb-4 text-xl font-semibold">Medication Requests</h3>
         <MedicationRequestsForm control={control} register={register} />
+      </div>
+
+      <div className="mb-4 border-b pb-4">
+        <h3 className="mb-4 text-xl font-semibold">Lab Results</h3>
+        <LabResultsForm
+          control={control}
+          register={register}
+          errors={errors}
+          patientID={patientID} // Pass patientID to LabResultsForm
+        />
       </div>
 
       <div className="mb-4 border-b pb-4">

@@ -1,8 +1,0 @@
-PeerOrgs:
-  - Name: FarmaciaCarbone
-    Domain: farmacia-carbone.medchain.com
-    Specs:
-    Template:
-      Count: 1
-    Users:
-      Count: 1

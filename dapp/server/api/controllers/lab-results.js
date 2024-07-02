@@ -16,7 +16,7 @@ exports.getLabResult = async (req, res, next) => {
     console.log("Fabric network initialized successfully.");
 
     const labResultJSONString = await fabric.evaluateTransaction(
-      "GetLabResult",
+      "ReadLabResult",
       resultId
     );
 

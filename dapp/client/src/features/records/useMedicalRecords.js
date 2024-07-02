@@ -16,7 +16,7 @@ import toast from "react-hot-toast";
 
 export const useSearchMedicalRecords = (query) => {
   const queryKey = query ? ["medicalRecords", query] : ["medicalRecords"];
-  const { data: records, isLoading: isPending } = useQuery({
+  const { data: records, isPending } = useQuery({
     queryKey,
     queryFn: () => searchMedicalRecords(query),
   });
@@ -27,7 +27,7 @@ export const useSearchMedicalRecords = (query) => {
 };
 
 export const useGetMedicalRecord = (id) => {
-  const { data: record, isLoading: isPending } = useQuery({
+  const { data: record, isPending } = useQuery({
     queryKey: ["medicalRecord", id],
     queryFn: () => getMedicalRecord(id),
   });
@@ -84,7 +84,7 @@ export const useAddRecord = () => {
 export const useUpdateRecord = () => {
   const queryClient = useQueryClient();
 
-  const { mutate: updateRecord, isLoading: isPending } = useMutation({
+  const { mutate: updateRecord, isPending } = useMutation({
     mutationFn: async ({ id, record }) => {
       await Promise.all(
         record.Allergies.map((allergy) => updateAllergy(allergy.id, allergy)),
@@ -120,7 +120,7 @@ export const useUpdateRecord = () => {
 export const useRemoveRecord = () => {
   const queryClient = useQueryClient();
 
-  const { mutate: removeRecord, isLoading: isPending } = useMutation({
+  const { mutate: removeRecord, isPending } = useMutation({
     mutationFn: deleteMedicalRecord,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["medicalRecords"] });

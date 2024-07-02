@@ -14,7 +14,6 @@ type LabResultsChaincode struct {
 
 // CreateLabResult crea un nuovo risultato di laboratorio sulla blockchain
 func (t *LabResultsChaincode) CreateLabResult(ctx contractapi.TransactionContextInterface, labResultJSON string) (string, error) {
-
 	// Deserialize JSON data into a Go data structure
 	var labResult Observation
 	err := json.Unmarshal([]byte(labResultJSON), &labResult)
@@ -23,19 +22,19 @@ func (t *LabResultsChaincode) CreateLabResult(ctx contractapi.TransactionContext
 	}
 
 	// Check if the lab result request ID is provided and if it already exists
-	if labResult.ID == "" {
+	if labResult.ID == nil || labResult.ID.Value == "" {
 		return `{"error": "lab result ID is required"}`, errors.New("lab result ID is required")
 	}
 
-	existingLabResult, err := ctx.GetStub().GetState(labResult.ID)
+	existingLabResult, err := ctx.GetStub().GetState(labResult.ID.Value)
 	if err != nil {
-		return `{"error": "failed to get lab result ` + labResult.ID + ` from world state"}`, err
+		return `{"error": "failed to get lab result ` + labResult.ID.Value + ` from world state"}`, err
 	}
 	if existingLabResult != nil {
-		return `{"error": "lab result already exists: ` + labResult.ID + `"}`, errors.New("lab result already exists")
+		return `{"error": "lab result already exists: ` + labResult.ID.Value + `"}`, errors.New("lab result already exists")
 	}
 
-	err = ctx.GetStub().PutState(labResult.ID, []byte(labResultJSON))
+	err = ctx.GetStub().PutState(labResult.ID.Value, []byte(labResultJSON))
 	if err != nil {
 		return `{"error": "failed to put lab result in world state: ` + err.Error() + `"}`, err
 	}
@@ -45,7 +44,6 @@ func (t *LabResultsChaincode) CreateLabResult(ctx contractapi.TransactionContext
 
 // UpdateLabResult aggiorna un risultato di laboratorio esistente sulla blockchain
 func (t *LabResultsChaincode) UpdateLabResult(ctx contractapi.TransactionContextInterface, labResultID string, labResultJSON string) (string, error) {
-
 	labResultAsBytes, err := ctx.GetStub().GetState(labResultID)
 	if err != nil {
 		return `{"error": "failed to read from world state"}`, err
@@ -69,8 +67,7 @@ func (t *LabResultsChaincode) UpdateLabResult(ctx contractapi.TransactionContext
 }
 
 // GetLabResult recupera uno specifico risultato di laboratorio dalla blockchain
-func (t *LabResultsChaincode) GetLabResult(ctx contractapi.TransactionContextInterface, labResultID string) (string, error) {
-
+func (t *LabResultsChaincode) ReadLabResult(ctx contractapi.TransactionContextInterface, labResultID string) (string, error) {
 	labResultAsBytes, err := ctx.GetStub().GetState(labResultID)
 	if err != nil {
 		return `{"error": "failed to read from world state"}`, err
@@ -82,8 +79,8 @@ func (t *LabResultsChaincode) GetLabResult(ctx contractapi.TransactionContextInt
 	return string(labResultAsBytes), nil
 }
 
+// SearchLabResults esegue una ricerca dei risultati di laboratorio sulla blockchain
 func (t *LabResultsChaincode) SearchLabResults(ctx contractapi.TransactionContextInterface, queryString string) (string, error) {
-
 	resultsIterator, err := ctx.GetStub().GetQueryResult(queryString)
 	if err != nil {
 		return `{"error": "failed to execute query: ` + err.Error() + `"}`, err
@@ -96,7 +93,6 @@ func (t *LabResultsChaincode) SearchLabResults(ctx contractapi.TransactionContex
 		if err != nil {
 			return `{"error": "failed to iterate query results: ` + err.Error() + `"}`, err
 		}
-
 
 		var labResult Observation
 		err = json.Unmarshal(queryResponse.Value, &labResult)

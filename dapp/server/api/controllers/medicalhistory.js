@@ -30,7 +30,6 @@ exports.getMedicalRecordsDetails = async (req, res, next) => {
 
 exports.createMedicalRecords = async (req, res, next) => {
   const recordJSON = req.body;
-  console.log(req.body);
 
   const organization = req.user.organization;
 
@@ -61,10 +60,9 @@ exports.createMedicalRecords = async (req, res, next) => {
 
     console.log("Submitting transaction with record JSON:", recordJSONString);
 
-    console.log(recordJSONString);
     const result = await fabric.submitTransaction(
       "CreateMedicalRecords",
-      JSON.stringify(recordJSON)
+      recordJSONString
     );
     res
       .status(201)

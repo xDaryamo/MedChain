@@ -1,9 +1,0 @@
-{
-  "network-configs": {
-    "network-laboratorioanalisisdn": {
-      "name": "Network of LaboratorioAnalisiSdn",
-      "profile": "/opt/explorer/app/platform/fabric/connection-profile/connection-profile-laboratorioanalisisdn.json"
-    }
-  },
-  "license": "Apache-2.0"
-}

@@ -13,7 +13,6 @@ const practitionerRoutes = require("./api/routes/practitioner");
 const recordRoutes = require("./api/routes/medicalhistory");
 const encounterRoutes = require("./api/routes/encounter");
 const prescriptionRoutes = require("./api/routes/prescription");
-const observationRoutes = require("./api/routes/observation");
 
 const FabricNetwork = require("./blockchain/fabric");
 const fabric = new FabricNetwork();
@@ -41,7 +40,6 @@ app.use("/labresults", labResultsRoutes);
 app.use("/records", recordRoutes);
 app.use("/encounters", encounterRoutes);
 app.use("/prescription", prescriptionRoutes);
-app.use("/observation", observationRoutes);
 
 app.use((err, req, res, next) => {
   console.error(err);

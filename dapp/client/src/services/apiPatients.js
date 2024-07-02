@@ -24,10 +24,8 @@ export const getPatient = async (id) => {
   // Controlla se l'id è nel formato "patient/{id}"
   const match = id.match(/^patient\/(.+)$/);
   const actualId = match ? match[1] : id;
-  console.log(actualId);
 
   const response = await api.get(`/patient/${actualId}`);
-  console.log(response.data);
   return response.data;
 };
 

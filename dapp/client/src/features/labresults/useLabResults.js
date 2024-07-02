@@ -12,6 +12,7 @@ export const useGetLabResult = (id) => {
   const { data: labResult, isPending } = useQuery({
     queryKey: ["labResult", id],
     queryFn: () => getLabResult(id),
+    enabled: !!id,
   });
   return { labResult, isPending };
 };
@@ -19,12 +20,20 @@ export const useGetLabResult = (id) => {
 export const useSearchLabResults = (query) => {
   const queryKey = query ? ["labResults", query] : ["labResults"];
 
-  const { data: labResults, isPending } = useQuery({
+  const {
+    data: labResults,
+    isPending,
+    error,
+  } = useQuery({
     queryKey,
     queryFn: () => searchLabResults(query),
+    onError: (error) => {
+      toast.error("Failed to fetch lab results");
+      console.error("Fetch lab results error", error);
+    },
   });
-
-  return { labResults, isPending };
+  console.log(labResults);
+  return { labResults: labResults || [], isPending, error };
 };
 
 export const useCreateLabResult = () => {

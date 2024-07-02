@@ -21,6 +21,7 @@ type MedicalRecords struct {
 	Conditions     []Condition          `json:"conditions,omitempty"`
 	Procedures     []Procedure          `json:"procedures,omitempty"`
 	Prescriptions  []MedicationRequest  `json:"prescriptions,omitempty"`
+	LabResultsIDs  []string             `json:"observationIDs,omitempty"` 
 	ServiceRequest *Reference           `json:"serviceRequest,omitempty"`
 	Attachments    []Attachment         `json:"attachments,omitempty"`
 }

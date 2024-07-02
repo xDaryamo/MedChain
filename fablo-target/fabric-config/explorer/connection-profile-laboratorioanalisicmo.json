@@ -35,7 +35,7 @@
   },
   "peers": {
     "peer0.laboratorio-analisi-cmo.medchain.com": {
-      "url": "grpc://peer0.laboratorio-analisi-cmo.medchain.com:7201",
+      "url": "grpc://peer0.laboratorio-analisi-cmo.medchain.com:7121",
       "tlsCACerts": {
         "path": "/tmp/crypto/peerOrganizations/laboratorio-analisi-cmo.medchain.com/msp/tlscacerts/tlsca.laboratorio-analisi-cmo.medchain.com-cert.pem"
       }

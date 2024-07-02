@@ -12,36 +12,12 @@ router.get("/:id", verifyToken, prescriptionController.getMedicationRequest);
 router.post("/search", verifyToken, prescriptionController.searchPrescriptions);
 
 // POST Create a new prescription
-router.post(
-  "/",
-  verifyToken,
-  authorizeOrganization([
-    "medicina-generale-napoli.medchain.com",
-    "neurologia-napoli.medchain.com",
-  ]),
-  prescriptionController.createMedicationRequest
-);
+router.post("/", verifyToken, prescriptionController.createMedicationRequest);
 
 // PATCH Update status of an existing prescription
-router.patch(
-  "/:id",
-  verifyToken,
-  authorizeOrganization([
-    "medicina-generale-napoli.medchain.com",
-    "neurologia-napoli.medchain.com",
-  ]),
-  prescriptionController.updatePrescription
-);
+router.patch("/:id", verifyToken, prescriptionController.updatePrescription);
 
 // DELETE Remove a prescription
-router.delete(
-  "/:id",
-  verifyToken,
-  authorizeOrganization([
-    "medicina-generale-napoli.medchain.com",
-    "neurologia-napoli.medchain.com",
-  ]),
-  prescriptionController.deletePrescription
-);
+router.delete("/:id", verifyToken, prescriptionController.deletePrescription);
 
 module.exports = router;

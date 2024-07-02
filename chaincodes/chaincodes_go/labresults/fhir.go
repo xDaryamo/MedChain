@@ -73,10 +73,15 @@ type ObservationComponent struct {
 	ValueRatio           *Ratio             `json:"valueRatio,omitempty"`           // The result of the component
 	Interpretation       []CodeableConcept `json:"interpretation,omitempty"`       // Interpretation of the component
 }
+// Identifier is used to identify a specific instance of a resource
+type Identifier struct {
+	System string `json:"system,omitempty"` // The namespace for the identifier
+	Value  string `json:"value,omitempty"`  // The value of the identifier
+}
 
 // Observation represents measurements or simple assertions made about a patient
 type Observation struct {
-	ID              string                 `json:"id"`                        // Unique identifier for this Observation
+	ID              *Identifier            `json:"identifier"`                // Unique identifier for this Observation
 	Status          string                 `json:"status"`                    // The status of the observation (registered | preliminary | final | amended +)
 	Category        []CodeableConcept      `json:"category,omitempty"`        // Classification of the observation (e.g., laboratory, vital signs)
 	Code            *CodeableConcept        `json:"code"`                      // Describes what was observed

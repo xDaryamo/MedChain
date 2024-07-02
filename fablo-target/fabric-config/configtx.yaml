@@ -97,52 +97,6 @@ Organizations:
           - Host: peer0.ospedale-maresca.aslnapoli3.medchain.com
             Port: 7061
 
-    - &OspedaleDelMare
-      Name: OspedaleDelMareMSP
-      ID: OspedaleDelMareMSP
-      MSPDir: crypto-config/peerOrganizations/ospedale-del-mare.aslnapoli1.medchain.com/msp
-
-      Policies:
-          Readers:
-              Type: Signature
-              Rule: "OR('OspedaleDelMareMSP.member')"
-          Writers:
-              Type: Signature
-              Rule: "OR('OspedaleDelMareMSP.member')"
-          Admins:
-              Type: Signature
-              Rule: "OR('OspedaleDelMareMSP.admin')"
-          Endorsement:
-              Type: Signature
-              Rule: "OR('OspedaleDelMareMSP.member')"
-
-      AnchorPeers:
-          - Host: peer0.ospedale-del-mare.aslnapoli1.medchain.com
-            Port: 7081
-
-    - &OspedaleSGiuliano
-      Name: OspedaleSGiulianoMSP
-      ID: OspedaleSGiulianoMSP
-      MSPDir: crypto-config/peerOrganizations/ospedale-sgiuliano.aslnapoli2.medchain.com/msp
-
-      Policies:
-          Readers:
-              Type: Signature
-              Rule: "OR('OspedaleSGiulianoMSP.member')"
-          Writers:
-              Type: Signature
-              Rule: "OR('OspedaleSGiulianoMSP.member')"
-          Admins:
-              Type: Signature
-              Rule: "OR('OspedaleSGiulianoMSP.admin')"
-          Endorsement:
-              Type: Signature
-              Rule: "OR('OspedaleSGiulianoMSP.member')"
-
-      AnchorPeers:
-          - Host: peer0.ospedale-sgiuliano.aslnapoli2.medchain.com
-            Port: 7101
-
     - &MedicinaGeneraleNapoli
       Name: MedicinaGeneraleNapoliMSP
       ID: MedicinaGeneraleNapoliMSP
@@ -164,30 +118,7 @@ Organizations:
 
       AnchorPeers:
           - Host: peer0.medicina-generale-napoli.medchain.com
-            Port: 7121
-
-    - &NeurologiaNapoli
-      Name: NeurologiaNapoliMSP
-      ID: NeurologiaNapoliMSP
-      MSPDir: crypto-config/peerOrganizations/neurologia-napoli.medchain.com/msp
-
-      Policies:
-          Readers:
-              Type: Signature
-              Rule: "OR('NeurologiaNapoliMSP.member')"
-          Writers:
-              Type: Signature
-              Rule: "OR('NeurologiaNapoliMSP.member')"
-          Admins:
-              Type: Signature
-              Rule: "OR('NeurologiaNapoliMSP.admin')"
-          Endorsement:
-              Type: Signature
-              Rule: "OR('NeurologiaNapoliMSP.member')"
-
-      AnchorPeers:
-          - Host: peer0.neurologia-napoli.medchain.com
-            Port: 7141
+            Port: 7081
 
     - &FarmaciaPetrone
       Name: FarmaciaPetroneMSP
@@ -210,30 +141,7 @@ Organizations:
 
       AnchorPeers:
           - Host: peer0.farmacia-petrone.medchain.com
-            Port: 7161
-
-    - &FarmaciaCarbone
-      Name: FarmaciaCarboneMSP
-      ID: FarmaciaCarboneMSP
-      MSPDir: crypto-config/peerOrganizations/farmacia-carbone.medchain.com/msp
-
-      Policies:
-          Readers:
-              Type: Signature
-              Rule: "OR('FarmaciaCarboneMSP.member')"
-          Writers:
-              Type: Signature
-              Rule: "OR('FarmaciaCarboneMSP.member')"
-          Admins:
-              Type: Signature
-              Rule: "OR('FarmaciaCarboneMSP.admin')"
-          Endorsement:
-              Type: Signature
-              Rule: "OR('FarmaciaCarboneMSP.member')"
-
-      AnchorPeers:
-          - Host: peer0.farmacia-carbone.medchain.com
-            Port: 7181
+            Port: 7101
 
     - &LaboratorioAnalisiCmo
       Name: LaboratorioAnalisiCmoMSP
@@ -256,30 +164,7 @@ Organizations:
 
       AnchorPeers:
           - Host: peer0.laboratorio-analisi-cmo.medchain.com
-            Port: 7201
-
-    - &LaboratorioAnalisiSdn
-      Name: LaboratorioAnalisiSdnMSP
-      ID: LaboratorioAnalisiSdnMSP
-      MSPDir: crypto-config/peerOrganizations/laboratorio-analisi-sdn.medchain.com/msp
-
-      Policies:
-          Readers:
-              Type: Signature
-              Rule: "OR('LaboratorioAnalisiSdnMSP.member')"
-          Writers:
-              Type: Signature
-              Rule: "OR('LaboratorioAnalisiSdnMSP.member')"
-          Admins:
-              Type: Signature
-              Rule: "OR('LaboratorioAnalisiSdnMSP.admin')"
-          Endorsement:
-              Type: Signature
-              Rule: "OR('LaboratorioAnalisiSdnMSP.member')"
-
-      AnchorPeers:
-          - Host: peer0.laboratorio-analisi-sdn.medchain.com
-            Port: 7221
+            Port: 7121
 
     - &Patients
       Name: PatientsMSP
@@ -302,7 +187,7 @@ Organizations:
 
       AnchorPeers:
           - Host: peer0.patients.medchain.com
-            Port: 7241
+            Port: 7141
 
 ################################################################################
 #   SECTION: Application
@@ -383,14 +268,9 @@ Profiles:
                     - *Orderer
                     - *example
                     - *OspedaleMaresca
-                    - *OspedaleDelMare
-                    - *OspedaleSGiuliano
                     - *MedicinaGeneraleNapoli
-                    - *NeurologiaNapoli
                     - *FarmaciaPetrone
-                    - *FarmaciaCarbone
                     - *LaboratorioAnalisiCmo
-                    - *LaboratorioAnalisiSdn
                     - *Patients
 
     # Profile used to create channeltx for patient-records-channel #
@@ -408,20 +288,14 @@ Profiles:
                 Organizations:
                     - *example
                     - *OspedaleMaresca
-                    - *OspedaleDelMare
-                    - *OspedaleSGiuliano
                     - *MedicinaGeneraleNapoli
-                    - *NeurologiaNapoli
                     - *Patients
         Application:
             <<: *ApplicationDefaults
             Organizations:
                 - *example
                 - *OspedaleMaresca
-                - *OspedaleDelMare
-                - *OspedaleSGiuliano
                 - *MedicinaGeneraleNapoli
-                - *NeurologiaNapoli
                 - *Patients
 
     # Profile used to create channeltx for prescriptions-channel #
@@ -439,18 +313,14 @@ Profiles:
                 Organizations:
                     - *example
                     - *MedicinaGeneraleNapoli
-                    - *NeurologiaNapoli
                     - *FarmaciaPetrone
-                    - *FarmaciaCarbone
                     - *Patients
         Application:
             <<: *ApplicationDefaults
             Organizations:
                 - *example
                 - *MedicinaGeneraleNapoli
-                - *NeurologiaNapoli
                 - *FarmaciaPetrone
-                - *FarmaciaCarbone
                 - *Patients
 
     # Profile used to create channeltx for lab-results-channel #
@@ -469,9 +339,7 @@ Profiles:
                     - *example
                     - *OspedaleMaresca
                     - *MedicinaGeneraleNapoli
-                    - *NeurologiaNapoli
                     - *LaboratorioAnalisiCmo
-                    - *LaboratorioAnalisiSdn
                     - *Patients
         Application:
             <<: *ApplicationDefaults
@@ -479,35 +347,8 @@ Profiles:
                 - *example
                 - *OspedaleMaresca
                 - *MedicinaGeneraleNapoli
-                - *NeurologiaNapoli
                 - *LaboratorioAnalisiCmo
-                - *LaboratorioAnalisiSdn
                 - *Patients
-
-    # Profile used to create channeltx for emergency-channel #
-    EmergencyChannel:
-        <<: *ChannelDefaults
-        Orderer:
-            <<: *Medchain-orderergroupDefaults
-            Organizations:
-                - *Orderer
-            Capabilities:
-                <<: *ApplicationCapabilities
-        Consortium: SampleConsortium
-        Consortiums:
-            SampleConsortium:
-                Organizations:
-                    - *example
-                    - *OspedaleMaresca
-                    - *OspedaleDelMare
-                    - *OspedaleSGiuliano
-        Application:
-            <<: *ApplicationDefaults
-            Organizations:
-                - *example
-                - *OspedaleMaresca
-                - *OspedaleDelMare
-                - *OspedaleSGiuliano
 
     # Profile used to create channeltx for identity-channel #
     IdentityChannel:
@@ -524,26 +365,16 @@ Profiles:
                 Organizations:
                     - *example
                     - *OspedaleMaresca
-                    - *OspedaleDelMare
-                    - *OspedaleSGiuliano
                     - *MedicinaGeneraleNapoli
-                    - *NeurologiaNapoli
                     - *FarmaciaPetrone
-                    - *FarmaciaCarbone
                     - *LaboratorioAnalisiCmo
-                    - *LaboratorioAnalisiSdn
                     - *Patients
         Application:
             <<: *ApplicationDefaults
             Organizations:
                 - *example
                 - *OspedaleMaresca
-                - *OspedaleDelMare
-                - *OspedaleSGiuliano
                 - *MedicinaGeneraleNapoli
-                - *NeurologiaNapoli
                 - *FarmaciaPetrone
-                - *FarmaciaCarbone
                 - *LaboratorioAnalisiCmo
-                - *LaboratorioAnalisiSdn
                 - *Patients

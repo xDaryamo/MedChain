@@ -5,14 +5,9 @@ __getOrdererAndPeerNodes() {
       orderer0.medchain-orderergroup.orderer.medchain.com
       peer0.example.medchain.com
       peer0.ospedale-maresca.aslnapoli3.medchain.com
-      peer0.ospedale-del-mare.aslnapoli1.medchain.com
-      peer0.ospedale-sgiuliano.aslnapoli2.medchain.com
       peer0.medicina-generale-napoli.medchain.com
-      peer0.neurologia-napoli.medchain.com
       peer0.farmacia-petrone.medchain.com
-      peer0.farmacia-carbone.medchain.com
       peer0.laboratorio-analisi-cmo.medchain.com
-      peer0.laboratorio-analisi-sdn.medchain.com
       peer0.patients.medchain.com
   "
 }
@@ -22,14 +17,9 @@ __getCASQLiteNodes() {
       ca.orderer.medchain.com
       ca.example.medchain.com
       ca.ospedale-maresca.aslnapoli3.medchain.com
-      ca.ospedale-del-mare.aslnapoli1.medchain.com
-      ca.ospedale-sgiuliano.aslnapoli2.medchain.com
       ca.medicina-generale-napoli.medchain.com
-      ca.neurologia-napoli.medchain.com
       ca.farmacia-petrone.medchain.com
-      ca.farmacia-carbone.medchain.com
       ca.laboratorio-analisi-cmo.medchain.com
-      ca.laboratorio-analisi-sdn.medchain.com
       ca.patients.medchain.com
   "
 }
