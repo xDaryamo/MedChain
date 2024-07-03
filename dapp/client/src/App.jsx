@@ -12,6 +12,7 @@ import ProtectedRoute from "./ui/ProtectedRoute";
 import LabResultList from "./features/labresults/LabResultList";
 import MedicalRecordList from "./features/records/MedicalRecordList";
 import RecordPage from "./features/records/RecordPage";
+import FollowedPatientsList from "./features/users/FollowedPatientsList";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -39,6 +40,7 @@ const App = () => {
                 </ProtectedRoute>
               }
             />
+            <Route path="patients" element={<FollowedPatientsList />} />
             <Route path="labresults" element={<LabResultList />} />
             <Route path="medical-records" element={<MedicalRecordList />} />
             <Route path="signup" element={<Signup />} />

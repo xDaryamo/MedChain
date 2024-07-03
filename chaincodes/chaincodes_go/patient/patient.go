@@ -6,6 +6,7 @@ import (
 	"log"
 
 	"github.com/hyperledger/fabric-contract-api-go/contractapi"
+	"github.com/hyperledger/fabric-protos-go/peer"
 )
 
 type Authorization struct {
@@ -159,6 +160,15 @@ func (c *PatientContract) DeletePatient(ctx contractapi.TransactionContextInterf
 */
 
 func (c *PatientContract) RequestAccess(ctx contractapi.TransactionContextInterface, patientID string, requesterID string, isOrg bool) (string, error) {
+	// Check if the patient exists
+	existingPatient, err := ctx.GetStub().GetState(patientID)
+	if err != nil {
+		return `{"error": "failed to get patient: ` + err.Error() + `"}`, err
+	}
+	if existingPatient == nil {
+		return `{"error": "patient does not exist: ` + patientID + `"}`, errors.New("patient does not exist: " + patientID)
+	}
+
 	authAsBytes, err := ctx.GetStub().GetState("auth_" + patientID)
 	if err != nil {
 		return `{"error": "failed to get authorization data: ` + err.Error() + `"}`, err
@@ -190,7 +200,27 @@ func (c *PatientContract) RequestAccess(ctx contractapi.TransactionContextInterf
 	return `{"message": "Access request recorded"}`, nil
 }
 
+// Funzione GrantAccess aggiornata
 func (c *PatientContract) GrantAccess(ctx contractapi.TransactionContextInterface, patientID string, requesterID string, isOrg bool) (string, error) {
+	// Check if the requester exists (organization or practitioner)
+	var invokeArgs [][]byte
+	if isOrg {
+		invokeArgs = [][]byte{[]byte("CheckOrganizationExists"), []byte(requesterID)}
+	} else {
+		invokeArgs = [][]byte{[]byte("CheckPractitionerExists"), []byte(requesterID)}
+	}
+
+	var response peer.Response
+	if isOrg {
+		response = ctx.GetStub().InvokeChaincode("organization", invokeArgs, "")
+	} else {
+		response = ctx.GetStub().InvokeChaincode("practitioner", invokeArgs, "")
+	}
+
+	if response.Status != 200 {
+		return `{"error": "failed to invoke chaincode: ` + response.Message + `"}`, errors.New("failed to invoke chaincode: " + response.Message)
+	}
+
 	authAsBytes, err := ctx.GetStub().GetState("auth_" + patientID)
 	if err != nil {
 		return `{"error": "failed to get authorization data: ` + err.Error() + `"}`, err
@@ -222,7 +252,6 @@ func (c *PatientContract) GrantAccess(ctx contractapi.TransactionContextInterfac
 			return `{"error": "no access request found for organization"}`, errors.New("no access request found for organization")
 		}
 		auth.AuthorizedOrgs[requesterID] = true
-
 		invokeArgs := [][]byte{[]byte("GrantAccess"), []byte(patientID), []byte(requesterID)}
 		response := ctx.GetStub().InvokeChaincode("organization", invokeArgs, "")
 		if response.Status != 200 {
@@ -233,7 +262,6 @@ func (c *PatientContract) GrantAccess(ctx contractapi.TransactionContextInterfac
 			return `{"error": "no access request found for requester"}`, errors.New("no access request found for requester")
 		}
 		auth.Authorized[requesterID] = true
-
 		invokeArgs := [][]byte{[]byte("GrantAccess"), []byte(patientID), []byte(requesterID)}
 		response := ctx.GetStub().InvokeChaincode("practitioner", invokeArgs, "")
 		if response.Status != 200 {
@@ -253,7 +281,27 @@ func (c *PatientContract) GrantAccess(ctx contractapi.TransactionContextInterfac
 	return `{"message": "Access granted"}`, nil
 }
 
+// Funzione RevokeAccess aggiornata
 func (c *PatientContract) RevokeAccess(ctx contractapi.TransactionContextInterface, patientID string, requesterID string, isOrg bool) (string, error) {
+	// Check if the requester exists (organization or practitioner)
+	var invokeArgs [][]byte
+	if isOrg {
+		invokeArgs = [][]byte{[]byte("CheckOrganizationExists"), []byte(requesterID)}
+	} else {
+		invokeArgs = [][]byte{[]byte("CheckPractitionerExists"), []byte(requesterID)}
+	}
+
+	var response peer.Response
+	if isOrg {
+		response = ctx.GetStub().InvokeChaincode("organization", invokeArgs, "")
+	} else {
+		response = ctx.GetStub().InvokeChaincode("practitioner", invokeArgs, "")
+	}
+
+	if response.Status != 200 {
+		return `{"error": "failed to invoke chaincode: ` + response.Message + `"}`, errors.New("failed to invoke chaincode: " + response.Message)
+	}
+
 	authAsBytes, err := ctx.GetStub().GetState("auth_" + patientID)
 	if err != nil {
 		return `{"error": "failed to get authorization data: ` + err.Error() + `"}`, err
@@ -285,7 +333,6 @@ func (c *PatientContract) RevokeAccess(ctx contractapi.TransactionContextInterfa
 			return `{"error": "no authorization found for organization"}`, errors.New("no authorization found for organization")
 		}
 		auth.AuthorizedOrgs[requesterID] = false
-
 		invokeArgs := [][]byte{[]byte("RevokeAccess"), []byte(patientID), []byte(requesterID)}
 		response := ctx.GetStub().InvokeChaincode("organization", invokeArgs, "")
 		if response.Status != 200 {
@@ -296,7 +343,6 @@ func (c *PatientContract) RevokeAccess(ctx contractapi.TransactionContextInterfa
 			return `{"error": "no authorization found for user"}`, errors.New("no authorization found for user")
 		}
 		auth.Authorized[requesterID] = false
-
 		invokeArgs := [][]byte{[]byte("RevokeAccess"), []byte(patientID), []byte(requesterID)}
 		response := ctx.GetStub().InvokeChaincode("practitioner", invokeArgs, "")
 		if response.Status != 200 {

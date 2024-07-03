@@ -30,6 +30,9 @@ const Navbar = () => {
               <NavLink to="/labresults">Lab Results</NavLink>
             </li>
             <li>
+              <NavLink to="/patients">Patients</NavLink>
+            </li>
+            <li>
               <Logout />
             </li>
           </>

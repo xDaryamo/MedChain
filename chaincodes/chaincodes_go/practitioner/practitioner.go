@@ -349,6 +349,18 @@ func (c *PractitionerContract) SearchPractitioners(ctx contractapi.TransactionCo
 	return string(resultsJSON), nil
 }
 
+// CheckPractitionerExists checks if a practitioner exists in the ledger
+func (c *PractitionerContract) CheckPractitionerExists(ctx contractapi.TransactionContextInterface, practitionerID string) (bool, error) {
+	practitionerJSON, err := ctx.GetStub().GetState(practitionerID)
+	if err != nil {
+		return false, errors.New("failed to read practitioner: " + err.Error())
+	}
+	if practitionerJSON == nil {
+		return false, nil // practitioner does not exist
+	}
+	return true, nil // practitioner exists
+}
+
 func main() {
 	chaincode, err := contractapi.NewChaincode(new(PractitionerContract))
 	if err != nil {

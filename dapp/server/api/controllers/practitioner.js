@@ -156,13 +156,39 @@ exports.getFollowedPatients = async (req, res, next) => {
     await fabric.init(practitionerId, organization, channel, chaincode);
     console.log("Fabric network initialized successfully.");
 
+    // Ottieni gli ID dei pazienti seguiti
     const resultString = await fabric.evaluateTransaction(
       "GetFollowedPatients",
       practitionerId
     );
-    const result = JSON.parse(resultString);
+    const patientIds = JSON.parse(resultString);
 
-    res.status(200).json(result);
+    // Recupera i dettagli di ogni paziente
+    const patientDetails = await Promise.all(
+      patientIds.map(async (patientId) => {
+        try {
+          await fabric.init(practitionerId, organization, channel, "patient");
+          const patientResultString = await fabric.evaluateTransaction(
+            "ReadPatient",
+            patientId
+          );
+          return JSON.parse(patientResultString);
+        } catch (error) {
+          console.error(
+            `Failed to retrieve details for patient ${patientId}:`,
+            error
+          );
+          return null;
+        }
+      })
+    );
+
+    // Filtra eventuali pazienti nulli (che non sono stati recuperati correttamente)
+    const validPatientDetails = patientDetails.filter(
+      (patient) => patient !== null
+    );
+
+    res.status(200).json(validPatientDetails);
   } catch (error) {
     res.status(500).json({ error: error.message });
   } finally {

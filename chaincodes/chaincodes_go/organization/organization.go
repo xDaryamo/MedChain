@@ -365,6 +365,17 @@ func (oc *OrganizationChaincode) SearchOrganizations(ctx contractapi.Transaction
 
 	return string(resultsJSON), nil
 }
+// CheckOrganizationExists checks if an organization exists in the ledger
+func (oc *OrganizationChaincode) CheckOrganizationExists(ctx contractapi.TransactionContextInterface, organizationID string) (bool, error) {
+	organizationJSON, err := ctx.GetStub().GetState(organizationID)
+	if err != nil {
+		return false, errors.New("failed to read organization: " + err.Error())
+	}
+	if organizationJSON == nil {
+		return false, nil // organization does not exist
+	}
+	return true, nil // organization exists
+}
 
 func main() {
 	chaincode, err := contractapi.NewChaincode(new(OrganizationChaincode))

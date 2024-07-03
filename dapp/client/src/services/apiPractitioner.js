@@ -42,7 +42,8 @@ export const deletePractitioner = async (id) => {
 
 export const getFollowedPatients = async () => {
   const response = await api.get(`/practitioner/followed-patients`);
-  return response.data;
+
+  return response.data || [];
 };
 
 export default api;
