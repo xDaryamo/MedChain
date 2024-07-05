@@ -32,7 +32,6 @@ export const useSearchLabResults = (query) => {
       console.error("Fetch lab results error", error);
     },
   });
-  console.log(labResults);
   return { labResults: labResults || [], isPending, error };
 };
 

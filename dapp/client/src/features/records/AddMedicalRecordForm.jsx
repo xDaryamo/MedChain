@@ -1,5 +1,5 @@
 /* eslint-disable react/prop-types */
-import { useForm, useWatch } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import FormRow from "../../ui/FormRow";
 import FormInput from "../../ui/FormInput";
 import Button from "../../ui/Button";
@@ -10,6 +10,7 @@ import ProceduresForm from "./ProceduresForm";
 import MedicationRequestsForm from "./MedicationRequestsForm";
 import LabResultsForm from "./LabResultsForm";
 import Spinner from "../../ui/Spinner";
+import { useParams } from "react-router-dom";
 
 const AddMedicalRecordForm = ({ onSubmitSuccess }) => {
   const {
@@ -21,24 +22,24 @@ const AddMedicalRecordForm = ({ onSubmitSuccess }) => {
   } = useForm();
   const { addRecord, isPending } = useAddRecord();
 
-  const patientID = useWatch({
-    control,
-    name: "patientID",
-  });
+  const { id: patientID } = useParams();
 
   const onSubmit = (data) => {
+    const labResultsIDs = data.labResultsIDs.map((lr) => lr.id);
     const record = {
-      patientID: data.patientID,
+      patientID,
       allergies: data.allergies,
       conditions: data.conditions,
       procedures: data.procedures,
       prescriptions: data.prescriptions,
-      observationIDs: data.labResultsIDs.map((result) => result.id),
-      serviceRequest: {
-        reference: data.serviceRequestReference,
-        display: data.serviceRequestDisplay,
-      },
-      attachments: data.attachments,
+      labResultsIDs,
+      serviceRequest: data.serviceRequestReference
+        ? {
+            reference: data.serviceRequestReference,
+            display: data.serviceRequestDisplay,
+          }
+        : null,
+      attachments: data.attachments ? JSON.parse(data.attachments) : [],
     };
 
     addRecord(record, {
@@ -52,16 +53,6 @@ const AddMedicalRecordForm = ({ onSubmitSuccess }) => {
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
       <h2 className="mb-6 text-2xl font-bold">Add New Medical Record</h2>
-
-      <div className="mb-4 border-b pb-4">
-        <FormRow label="Patient ID" error={errors.patientID?.message}>
-          <FormInput
-            type="text"
-            id="patientID"
-            {...register("patientID", { required: "Patient ID is required" })}
-          />
-        </FormRow>
-      </div>
 
       <div className="mb-4 border-b pb-4">
         <h3 className="mb-4 text-xl font-semibold">Allergies</h3>
@@ -102,9 +93,7 @@ const AddMedicalRecordForm = ({ onSubmitSuccess }) => {
           <FormInput
             type="text"
             id="serviceRequestReference"
-            {...register("serviceRequestReference", {
-              required: "Service Request Reference is required",
-            })}
+            {...register("serviceRequestReference")}
           />
         </FormRow>
 
@@ -115,9 +104,7 @@ const AddMedicalRecordForm = ({ onSubmitSuccess }) => {
           <FormInput
             type="text"
             id="serviceRequestDisplay"
-            {...register("serviceRequestDisplay", {
-              required: "Service Request Display is required",
-            })}
+            {...register("serviceRequestDisplay")}
           />
         </FormRow>
       </div>

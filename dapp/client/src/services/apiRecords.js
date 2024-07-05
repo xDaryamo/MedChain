@@ -22,8 +22,7 @@ api.interceptors.request.use(
 );
 
 export const searchMedicalRecords = async (query) => {
-  const response = await api.post("/records/search", { query });
-  console.log(response.data.results);
+  const response = await api.post("/records/search", query);
   return response.data.results || [];
 };
 

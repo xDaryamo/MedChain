@@ -28,8 +28,6 @@ export const getLabResult = async (id) => {
 
 export const searchLabResults = async (query) => {
   const response = await api.post(`/labresults/search`, query);
-  console.log(response.data.results || []);
-
   return response.data.results || [];
 };
 

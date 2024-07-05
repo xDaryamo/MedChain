@@ -5,9 +5,11 @@ import List from "../../ui/List";
 import Heading from "../../ui/Heading";
 import { Toaster } from "react-hot-toast";
 import PatientCard from "./PatientCard";
+import { useUser } from "../authentication/useAuth";
 
 const FollowedPatientsList = () => {
   const { followedPatients = [], isPending, error } = useGetFollowedPatients();
+  const { user, isPending: userLoading, error: userError } = useUser();
 
   if (isPending) return <Spinner />;
   if (error) return <p>Error loading followed patients data</p>;
@@ -15,8 +17,14 @@ const FollowedPatientsList = () => {
   return (
     <div>
       <Heading>Followed Patients List</Heading>
-      {/* <List items={followedPatients} itemKey="id" ItemComponent={PatientCard} />
-      <Toaster /> */}
+      <List
+        items={followedPatients}
+        itemKey="id"
+        ItemComponent={PatientCard}
+        user={user}
+        hasAddBtn={false}
+      />
+      <Toaster />
     </div>
   );
 };

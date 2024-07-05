@@ -10,14 +10,26 @@ import Modal from "../../ui/Modal";
 import Heading from "../../ui/Heading";
 import { Toaster } from "react-hot-toast";
 import MedicalRecordCard from "./MedicalRecordCard";
+import { useParams } from "react-router-dom";
 
 const MedicalRecordList = () => {
-  const { records = [], isPending, error } = useSearchMedicalRecords();
+  const { id } = useParams();
+
+  const defaultQuery = {
+    query: {
+      selector: {
+        patientID: `${id}`,
+      },
+    },
+  };
+
+  const [query, setQuery] = useState(defaultQuery);
+
+  const { records = [], isPending, error } = useSearchMedicalRecords(query);
   const { removeRecord, isPending: isDeleting } = useRemoveRecord();
   const { user, isPending: userLoading, error: userError } = useUser();
   const [isModalOpen, setModalOpen] = useState(false);
 
-  // if (isPending || userLoading) return <Spinner />;
   if (error || userError)
     return <p>Error loading medical records or user data</p>;
 
@@ -32,15 +44,24 @@ const MedicalRecordList = () => {
   return (
     <div>
       <Heading>Medical Records List</Heading>
-      <List
-        items={records}
-        itemKey="identifier"
-        ItemComponent={MedicalRecordCard}
-        onDelete={handleRemoveRecord}
-        isDeleting={isDeleting}
-        user={user}
-        onAddNew={() => setModalOpen(true)}
-      />
+
+      {isPending ? (
+        <div className="flex h-full items-center justify-center">
+          <Spinner />
+        </div>
+      ) : (
+        <List
+          items={records}
+          itemKey="identifier"
+          ItemComponent={MedicalRecordCard}
+          onDelete={handleRemoveRecord}
+          isDeleting={isDeleting}
+          user={user}
+          onAddNew={() => setModalOpen(true)}
+          hasAddBtn={true}
+        />
+      )}
+
       {user.role === "practitioner" && (
         <Modal isOpen={isModalOpen} onClose={handleModalClose}>
           <AddMedicalRecordForm onSubmitSuccess={handleModalClose} />

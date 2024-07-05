@@ -156,7 +156,7 @@ exports.deleteLabResult = async (req, res, next) => {
 };
 
 exports.searchLabResults = async (req, res, next) => {
-  const queryString = req.params.query || { selector: {} };
+  const queryString = req.body.query || { selector: {} };
 
   const userID = req.user.userId;
   const organization = req.user.organization;

@@ -1,8 +1,15 @@
+/* eslint-disable react/prop-types */
 import { forwardRef } from "react";
 
-/* eslint-disable react/prop-types */
 const FormSelect = forwardRef(function FormSelect(
-  { id, label, options, className = "", ...props },
+  {
+    id,
+    label,
+    options,
+    disableDefaultOption = false,
+    className = "",
+    ...props
+  },
   ref,
 ) {
   return (
@@ -22,7 +29,11 @@ const FormSelect = forwardRef(function FormSelect(
         {...props}
       >
         {options.map((option) => (
-          <option key={option.value} value={option.value}>
+          <option
+            key={option.value}
+            value={option.value}
+            disabled={option.disabled && disableDefaultOption}
+          >
             {option.label}
           </option>
         ))}
