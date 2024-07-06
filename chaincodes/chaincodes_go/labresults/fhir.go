@@ -63,16 +63,17 @@ type Ratio struct {
 
 // ObservationComponent represents a component of the observation
 type ObservationComponent struct {
-	Code                 *CodeableConcept   `json:"code"`                           // Describes what was observed
-	ValueQuantity        *Quantity          `json:"valueQuantity,omitempty"`        // The result of the component
-	ValueCodeableConcept *CodeableConcept   `json:"valueCodeableConcept,omitempty"` // The result of the component
+	Code                 *CodeableConcept  `json:"code"`                           // Describes what was observed
+	ValueQuantity        *Quantity         `json:"valueQuantity,omitempty"`        // The result of the component
+	ValueCodeableConcept *CodeableConcept  `json:"valueCodeableConcept,omitempty"` // The result of the component
 	ValueString          string            `json:"valueString,omitempty"`          // The result of the component
 	ValueBoolean         bool              `json:"valueBoolean,omitempty"`         // The result of the component
 	ValueInteger         int               `json:"valueInteger,omitempty"`         // The result of the component
-	ValueRange           *Range             `json:"valueRange,omitempty"`           // The result of the component
-	ValueRatio           *Ratio             `json:"valueRatio,omitempty"`           // The result of the component
+	ValueRange           *Range            `json:"valueRange,omitempty"`           // The result of the component
+	ValueRatio           *Ratio            `json:"valueRatio,omitempty"`           // The result of the component
 	Interpretation       []CodeableConcept `json:"interpretation,omitempty"`       // Interpretation of the component
 }
+
 // Identifier is used to identify a specific instance of a resource
 type Identifier struct {
 	System string `json:"system,omitempty"` // The namespace for the identifier
@@ -84,13 +85,13 @@ type Observation struct {
 	ID              *Identifier            `json:"identifier"`                // Unique identifier for this Observation
 	Status          string                 `json:"status"`                    // The status of the observation (registered | preliminary | final | amended +)
 	Category        []CodeableConcept      `json:"category,omitempty"`        // Classification of the observation (e.g., laboratory, vital signs)
-	Code            *CodeableConcept        `json:"code"`                      // Describes what was observed
+	Code            *CodeableConcept       `json:"code"`                      // Describes what was observed
 	Subject         *Reference             `json:"subject"`                   // Who and/or what the observation is about
 	Encounter       *Reference             `json:"encounter,omitempty"`       // The healthcare event (e.g., a patient encounter) during which the observation was made
-	EffectivePeriod *Period                 `json:"effectivePeriod,omitempty"` // A period of time during which the observation was made
+	EffectivePeriod *Period                `json:"effectivePeriod,omitempty"` // A period of time during which the observation was made
 	Issued          time.Time              `json:"issued,omitempty"`          // The date and time this observation was made available
 	Performer       []Reference            `json:"performer,omitempty"`       // Who made the observation
 	Interpretation  []CodeableConcept      `json:"interpretation,omitempty"`  // High-level interpretation of observation
 	Note            []Annotation           `json:"note,omitempty"`            // Comments about the observation
-	Component       []ObservationComponent `json:"component,omitempty"`       // Provides a specific result
+	Component       []ObservationComponent `json:"components,omitempty"`      // Provides a specific result
 }

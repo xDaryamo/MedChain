@@ -6,7 +6,7 @@ import { useAddEncounter } from "./useEncounters";
 import Spinner from "../../ui/Spinner";
 
 const AddEncounterForm = ({ onAdd, onCancel }) => {
-    const { register, handleSubmit, control, formState: { errors } } = useForm();
+    const { register, handleSubmit, control, reset, formState: { errors } } = useForm();
 
     const { addEncounter, isPending } = useAddEncounter();
 
@@ -36,8 +36,32 @@ const AddEncounterForm = ({ onAdd, onCancel }) => {
     });
 
     const onSubmit = async (data) => {
-        await addEncounter(data);
-        onAdd();
+        const encounterData = {
+            status: data.status,
+            class: { code: data.class?.code },
+            type: data.type,
+            serviceType: { coding: [{ code: data.serviceType?.coding[0]?.code }] },
+            priority: { coding: [{ code: data.priority?.coding[0]?.code }] },
+            subject: { reference: data.subject?.reference },
+            basedOn: data.basedOn,
+            participant: data.participant,
+            appointment: { reference: data.appointment?.reference },
+            period: data.period,
+            length: data.length,
+            reasonCode: { coding: [{ code: data.reasonCode?.coding[0]?.code }] },
+            reasonReference: data.reasonReference,
+            diagnosis: data.diagnosis,
+            location: data.location,
+            serviceProvider: { reference: data.serviceProvider?.reference },
+            partOf: { reference: data.partOf?.reference },
+        };
+
+        await addEncounter(encounterData, {
+            onSettled: () => {
+                reset();
+                onAdd();
+            }
+        });
     };
 
     return (
@@ -49,9 +73,7 @@ const AddEncounterForm = ({ onAdd, onCancel }) => {
                 error={errors.status?.message}
             >
                 <FormInput
-                    {...register("status", {
-                        required: "Status is required",
-                    })}
+                    {...register("status", { required: "Status is required" })}
                     placeholder="planned"
                 />
             </FormRow>
@@ -105,9 +127,7 @@ const AddEncounterForm = ({ onAdd, onCancel }) => {
                 error={errors.subject?.reference?.message}
             >
                 <FormInput
-                    {...register("subject.reference", {
-                        required: "Subject reference is required",
-                    })}
+                    {...register("subject.reference", { required: "Subject reference is required" })}
                     placeholder="Patient/67890"
                 />
             </FormRow>
@@ -157,9 +177,7 @@ const AddEncounterForm = ({ onAdd, onCancel }) => {
                         error={errors.participant?.[index]?.individual?.reference?.message}
                     >
                         <FormInput
-                            {...register(`participant.${index}.individual.reference`, {
-                                required: "Individual reference is required",
-                            })}
+                            {...register(`participant.${index}.individual.reference`, { required: "Individual reference is required" })}
                             placeholder="Practitioner/123"
                         />
                     </FormRow>
@@ -168,24 +186,12 @@ const AddEncounterForm = ({ onAdd, onCancel }) => {
             <Button type="button" onClick={() => appendParticipant({})}>Add Participant</Button>
 
             <FormRow
-                label="Appointment Reference:"
-                error={errors.appointment?.reference?.message}
-            >
-                <FormInput
-                    {...register("appointment.reference")}
-                    placeholder="Appointment/123"
-                />
-            </FormRow>
-
-            <FormRow
                 label="Period Start:"
                 error={errors.period?.start?.message}
             >
                 <input
                     type="datetime-local"
-                    {...register("period.start", {
-                        required: "Period start is required",
-                    })}
+                    {...register("period.start", { required: "Period start is required" })}
                 />
             </FormRow>
 
@@ -195,9 +201,7 @@ const AddEncounterForm = ({ onAdd, onCancel }) => {
             >
                 <input
                     type="datetime-local"
-                    {...register("period.end", {
-                        required: "Period end is required",
-                    })}
+                    {...register("period.end", { required: "Period end is required" })}
                 />
             </FormRow>
 
@@ -286,9 +290,7 @@ const AddEncounterForm = ({ onAdd, onCancel }) => {
                         error={errors.location?.[index]?.name?.message}
                     >
                         <FormInput
-                            {...register(`location.${index}.name`, {
-                                required: "Location name is required",
-                            })}
+                            {...register(`location.${index}.name`, { required: "Location name is required" })}
                             placeholder="Main Hospital"
                         />
                     </FormRow>
@@ -342,9 +344,7 @@ const AddEncounterForm = ({ onAdd, onCancel }) => {
                         error={errors.location?.[index]?.address?.line?.[0]?.message}
                     >
                         <FormInput
-                            {...register(`location.${index}.address.line[0]`, {
-                                required: "Location address is required",
-                            })}
+                            {...register(`location.${index}.address.line[0]`, { required: "Location address is required" })}
                             placeholder="123 Main St"
                         />
                     </FormRow>

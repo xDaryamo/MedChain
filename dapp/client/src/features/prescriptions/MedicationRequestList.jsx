@@ -7,9 +7,23 @@ import AddMedicationRequestForm from "./AddMedicationRequestForm";
 import Modal from "../../ui/Modal";
 import Heading from "../../ui/Heading";
 import { Toaster } from "react-hot-toast";
+import MedicationRequestCard from "./MedicationRequestCard";
+import { useParams } from "react-router-dom";
 
 const MedicationRequestList = () => {
-    const { medicationRequests = [], isPending, error } = useSearchMedicationRequests();
+    const { id } = useParams();
+
+    const defaultQuery = {
+        query: {
+            selector: {
+                reference: `${id}`,
+            },
+        },
+    };
+
+    const [query, setQuery] = useState(defaultQuery);
+    const { medicationRequests = [], isPending, error } = useSearchMedicationRequests(query);
+
     const { removeMedicationRequest, isPending: isDeleting } = useRemoveMedicationRequest();
     const { user, isPending: userLoading, error: userError } = useUser();
     const [isModalOpen, setModalOpen] = useState(false);
@@ -26,25 +40,18 @@ const MedicationRequestList = () => {
         setModalOpen(false);
     };
 
-    const itemText = (item) => {
-        const id = item.id;
-        const medication = item.medicationCodeableConcept?.text || "Unknown Medication";
-        const status = item.status?.text || "Unknown Status";
-        const requester = item.requester?.display || "Unknown Requester";
-        return `ID: ${id} - Medication: ${medication} - Status: ${status} - Requester: ${requester}`;
-    };
-
     return (
         <div>
             <Heading>Medication Requests List</Heading>
             <List
                 items={medicationRequests}
                 itemKey="id"
-                itemText={itemText}
+                ItemComponent={MedicationRequestCard}
                 onDelete={handleRemoveMedicationRequest}
                 isDeleting={isDeleting}
                 user={user}
                 onAddNew={() => setModalOpen(true)}
+                hasAddBtn={true}
             />
             {user.role === "practitioner" && (
                 <Modal isOpen={isModalOpen} onClose={handleModalClose}>

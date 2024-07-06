@@ -1,15 +1,11 @@
 import { useForm, useFieldArray } from "react-hook-form";
-import { useAddObservation } from "./useObservations";
-import { useState } from "react";
-import { useHistory } from "react-router-dom";
-import { Button, Input, Select, TextArea } from "../../ui";
+import { useCreateLabResult } from "./useLabResults";
+import { Button } from "../../ui";
 import Spinner from "../../ui/Spinner";
 
-const AddObservationForm = ({ onSubmitSuccess, onCancel }) => {
+const AddLabResultForm = ({ onSubmitSuccess, onCancel }) => {
     const { register, handleSubmit, control, formState: { errors } } = useForm();
-    const { addObservation, isPending } = useAddObservation();
-    const [error, setError] = useState(null);
-    const history = useHistory();
+    const { addLabResult, isPending } = useCreateLabResult();
 
     const { fields: categoryFields, append: appendCategory } = useFieldArray({
         control,
@@ -32,13 +28,29 @@ const AddObservationForm = ({ onSubmitSuccess, onCancel }) => {
     });
 
     const onSubmit = async (data) => {
-        try {
-            await addObservation(data);
-            onSubmitSuccess();
-            history.push("/observation");
-        } catch (error) {
-            setError(error.message);
-        }
+        const labresult = {
+            status: data.status,
+            category: data.category.map(cat => ({ text: cat.text })),
+            code: { text: data.code.text },
+            subject: { reference: data.subject.reference },
+            encounter: { reference: data.encounter.reference },
+            effectivePeriod: {
+                start: data.effectivePeriod.start,
+                end: data.effectivePeriod.end
+            },
+            issued: data.issued,
+            interpretation: data.interpretation.map(inter => ({ text: inter.text })),
+            note: data.note.map(note => ({ text: note.text })),
+            component: data.component.map(comp => ({ code: { text: comp.code.text } }))
+        };
+
+        await addLabResult(labresult, {
+            onSettled: () => {
+                reset();
+                onSubmitSuccess();
+            }
+        });
+
     };
 
     return (
@@ -189,4 +201,4 @@ const AddObservationForm = ({ onSubmitSuccess, onCancel }) => {
     );
 };
 
-export default AddObservationForm;
+export default AddLabResultForm;

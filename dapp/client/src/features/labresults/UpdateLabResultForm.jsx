@@ -1,56 +1,20 @@
 /* eslint-disable react/prop-types */
 import { useForm } from "react-hook-form";
-import { useUpdateObservation } from "./useObservations"; // Assuming you have a custom hook for updating observations
+import { useUpdateLabResult } from "./useLabResults";
 import Spinner from "../../ui/Spinner";
 import Button from "../../ui/Button";
 import FormRow from "../../ui/FormRow";
 import FormInput from "../../ui/FormInput";
-import { useEffect } from "react";
 
-const UpdateObservationForm = ({ observation, onUpdate, onCancel }) => {
-    const {
-        register,
-        handleSubmit,
-        formState: { errors },
-        reset,
-    } = useForm({
-        defaultValues: {
-            identifier: observation.identifier || [],
-            status: observation.status || {},
-            category: observation.category || [],
-            code: observation.code || {},
-            subject: observation.subject || {},
-            encounter: observation.encounter || {},
-            effectivePeriod: observation.effectivePeriod || {},
-            issued: observation.issued || null,
-            performer: observation.performer || [],
-            interpretation: observation.interpretation || [],
-            note: observation.note || [],
-            component: observation.component || [],
-        },
+const UpdateLabResultForm = ({ labresult, onUpdate, onCancel }) => {
+    const { register, handleSubmit, formState: { errors } } = useForm({
+        defaultValues: labresult,
     });
 
-    const { updateObservation, isUpdating } = useUpdateObservation();
-
-    useEffect(() => {
-        reset({
-            identifier: observation.identifier || [],
-            status: observation.status || {},
-            category: observation.category || [],
-            code: observation.code || {},
-            subject: observation.subject || {},
-            encounter: observation.encounter || {},
-            effectivePeriod: observation.effectivePeriod || {},
-            issued: observation.issued || null,
-            performer: observation.performer || [],
-            interpretation: observation.interpretation || [],
-            note: observation.note || [],
-            component: observation.component || [],
-        });
-    }, [observation, reset]);
+    const { updateLabresult, isUpdating } = useUpdateLabResult();
 
     const onSubmit = async (data) => {
-        const updatedObservation = {
+        const updatedLabResult = {
             identifier: data.identifier || [],
             status: data.status || {},
             category: data.category || [],
@@ -66,11 +30,11 @@ const UpdateObservationForm = ({ observation, onUpdate, onCancel }) => {
         };
 
         try {
-            await updateObservation(observation.id, updatedObservation);
+            await updateLabresult(labresult.id, updatedLabResult);
             reset();
             onUpdate();
         } catch (err) {
-            console.error("Error updating observation:", err.message);
+            console.error("Error updating labresult:", err.message);
         }
     };
 
@@ -220,4 +184,4 @@ const UpdateObservationForm = ({ observation, onUpdate, onCancel }) => {
     );
 };
 
-export default UpdateObservationForm;
+export default UpdateLabResultForm;
