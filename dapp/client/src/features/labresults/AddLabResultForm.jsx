@@ -5,8 +5,6 @@ import Button from "../../ui/Button";
 import FormInput from "../../ui/FormInput";
 import FormRow from "../../ui/FormRow";
 import Spinner from "../../ui/Spinner";
-import FormRow from "../../ui/FormRow";
-import FormInput from "../../ui/FormInput";
 
 const AddLabResultForm = ({ onSubmitSuccess, onCancel }) => {
   const {
