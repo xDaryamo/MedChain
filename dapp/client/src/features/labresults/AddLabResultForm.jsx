@@ -2,6 +2,8 @@
 import { useForm, useFieldArray } from "react-hook-form";
 import { useCreateLabResult } from "./useLabResults";
 import Button from "../../ui/Button";
+import FormInput from "../../ui/FormInput";
+import FormRow from "../../ui/FormRow";
 import Spinner from "../../ui/Spinner";
 import FormRow from "../../ui/FormRow";
 import FormInput from "../../ui/FormInput";
