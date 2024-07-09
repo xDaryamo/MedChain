@@ -312,6 +312,7 @@ Profiles:
             SampleConsortium:
                 Organizations:
                     - *example
+                    - *OspedaleMaresca
                     - *MedicinaGeneraleNapoli
                     - *FarmaciaPetrone
                     - *Patients
@@ -319,6 +320,7 @@ Profiles:
             <<: *ApplicationDefaults
             Organizations:
                 - *example
+                - *OspedaleMaresca
                 - *MedicinaGeneraleNapoli
                 - *FarmaciaPetrone
                 - *Patients

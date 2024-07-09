@@ -61,6 +61,8 @@ installChannels() {
   printHeadline "Creating 'prescriptions-channel' on example/peer0" "U1F63B"
   docker exec -i cli.example.medchain.com bash -c "source scripts/channel_fns.sh; createChannelAndJoin 'prescriptions-channel' 'exampleMSP' 'peer0.example.medchain.com:7041' 'crypto/users/Admin@example.medchain.com/msp' 'orderer0.medchain-orderergroup.orderer.medchain.com:7030';"
 
+  printItalics "Joining 'prescriptions-channel' on  OspedaleMaresca/peer0" "U1F638"
+  docker exec -i cli.ospedale-maresca.aslnapoli3.medchain.com bash -c "source scripts/channel_fns.sh; fetchChannelAndJoin 'prescriptions-channel' 'OspedaleMarescaMSP' 'peer0.ospedale-maresca.aslnapoli3.medchain.com:7061' 'crypto/users/Admin@ospedale-maresca.aslnapoli3.medchain.com/msp' 'orderer0.medchain-orderergroup.orderer.medchain.com:7030';"
   printItalics "Joining 'prescriptions-channel' on  MedicinaGeneraleNapoli/peer0" "U1F638"
   docker exec -i cli.medicina-generale-napoli.medchain.com bash -c "source scripts/channel_fns.sh; fetchChannelAndJoin 'prescriptions-channel' 'MedicinaGeneraleNapoliMSP' 'peer0.medicina-generale-napoli.medchain.com:7081' 'crypto/users/Admin@medicina-generale-napoli.medchain.com/msp' 'orderer0.medchain-orderergroup.orderer.medchain.com:7030';"
   printItalics "Joining 'prescriptions-channel' on  FarmaciaPetrone/peer0" "U1F638"
@@ -232,6 +234,9 @@ installChaincodes() {
     chaincodePackage "cli.example.medchain.com" "peer0.example.medchain.com:7041" "prescription" "$version" "golang" printHeadline "Installing 'prescription' for example" "U1F60E"
     chaincodeInstall "cli.example.medchain.com" "peer0.example.medchain.com:7041" "prescription" "$version" ""
     chaincodeApprove "cli.example.medchain.com" "peer0.example.medchain.com:7041" "prescriptions-channel" "prescription" "$version" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "" ""
+    printHeadline "Installing 'prescription' for OspedaleMaresca" "U1F60E"
+    chaincodeInstall "cli.ospedale-maresca.aslnapoli3.medchain.com" "peer0.ospedale-maresca.aslnapoli3.medchain.com:7061" "prescription" "$version" ""
+    chaincodeApprove "cli.ospedale-maresca.aslnapoli3.medchain.com" "peer0.ospedale-maresca.aslnapoli3.medchain.com:7061" "prescriptions-channel" "prescription" "$version" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "" ""
     printHeadline "Installing 'prescription' for MedicinaGeneraleNapoli" "U1F60E"
     chaincodeInstall "cli.medicina-generale-napoli.medchain.com" "peer0.medicina-generale-napoli.medchain.com:7081" "prescription" "$version" ""
     chaincodeApprove "cli.medicina-generale-napoli.medchain.com" "peer0.medicina-generale-napoli.medchain.com:7081" "prescriptions-channel" "prescription" "$version" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "" ""
@@ -242,7 +247,7 @@ installChaincodes() {
     chaincodeInstall "cli.patients.medchain.com" "peer0.patients.medchain.com:7141" "prescription" "$version" ""
     chaincodeApprove "cli.patients.medchain.com" "peer0.patients.medchain.com:7141" "prescriptions-channel" "prescription" "$version" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "" ""
     printItalics "Committing chaincode 'prescription' on channel 'prescriptions-channel' as 'example'" "U1F618"
-    chaincodeCommit "cli.example.medchain.com" "peer0.example.medchain.com:7041" "prescriptions-channel" "prescription" "$version" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "" "peer0.example.medchain.com:7041,peer0.medicina-generale-napoli.medchain.com:7081,peer0.farmacia-petrone.medchain.com:7101,peer0.patients.medchain.com:7141" "" ""
+    chaincodeCommit "cli.example.medchain.com" "peer0.example.medchain.com:7041" "prescriptions-channel" "prescription" "$version" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "" "peer0.example.medchain.com:7041,peer0.ospedale-maresca.aslnapoli3.medchain.com:7061,peer0.medicina-generale-napoli.medchain.com:7081,peer0.farmacia-petrone.medchain.com:7101,peer0.patients.medchain.com:7141" "" ""
   else
     echo "Warning! Skipping chaincode 'prescription' installation. Chaincode directory is empty."
     echo "Looked in dir: '$CHAINCODES_BASE_DIR/./chaincodes/chaincodes_go/prescription'"
@@ -433,6 +438,9 @@ installChaincode() {
       chaincodePackage "cli.example.medchain.com" "peer0.example.medchain.com:7041" "prescription" "$version" "golang" printHeadline "Installing 'prescription' for example" "U1F60E"
       chaincodeInstall "cli.example.medchain.com" "peer0.example.medchain.com:7041" "prescription" "$version" ""
       chaincodeApprove "cli.example.medchain.com" "peer0.example.medchain.com:7041" "prescriptions-channel" "prescription" "$version" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "" ""
+      printHeadline "Installing 'prescription' for OspedaleMaresca" "U1F60E"
+      chaincodeInstall "cli.ospedale-maresca.aslnapoli3.medchain.com" "peer0.ospedale-maresca.aslnapoli3.medchain.com:7061" "prescription" "$version" ""
+      chaincodeApprove "cli.ospedale-maresca.aslnapoli3.medchain.com" "peer0.ospedale-maresca.aslnapoli3.medchain.com:7061" "prescriptions-channel" "prescription" "$version" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "" ""
       printHeadline "Installing 'prescription' for MedicinaGeneraleNapoli" "U1F60E"
       chaincodeInstall "cli.medicina-generale-napoli.medchain.com" "peer0.medicina-generale-napoli.medchain.com:7081" "prescription" "$version" ""
       chaincodeApprove "cli.medicina-generale-napoli.medchain.com" "peer0.medicina-generale-napoli.medchain.com:7081" "prescriptions-channel" "prescription" "$version" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "" ""
@@ -443,7 +451,7 @@ installChaincode() {
       chaincodeInstall "cli.patients.medchain.com" "peer0.patients.medchain.com:7141" "prescription" "$version" ""
       chaincodeApprove "cli.patients.medchain.com" "peer0.patients.medchain.com:7141" "prescriptions-channel" "prescription" "$version" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "" ""
       printItalics "Committing chaincode 'prescription' on channel 'prescriptions-channel' as 'example'" "U1F618"
-      chaincodeCommit "cli.example.medchain.com" "peer0.example.medchain.com:7041" "prescriptions-channel" "prescription" "$version" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "" "peer0.example.medchain.com:7041,peer0.medicina-generale-napoli.medchain.com:7081,peer0.farmacia-petrone.medchain.com:7101,peer0.patients.medchain.com:7141" "" ""
+      chaincodeCommit "cli.example.medchain.com" "peer0.example.medchain.com:7041" "prescriptions-channel" "prescription" "$version" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "" "peer0.example.medchain.com:7041,peer0.ospedale-maresca.aslnapoli3.medchain.com:7061,peer0.medicina-generale-napoli.medchain.com:7081,peer0.farmacia-petrone.medchain.com:7101,peer0.patients.medchain.com:7141" "" ""
 
     else
       echo "Warning! Skipping chaincode 'prescription' install. Chaincode directory is empty."
@@ -571,6 +579,8 @@ runDevModeChaincode() {
     local version="0.1"
     printHeadline "Approving 'prescription' for example (dev mode)" "U1F60E"
     chaincodeApprove "cli.example.medchain.com" "peer0.example.medchain.com:7041" "prescriptions-channel" "prescription" "0.1" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "" ""
+    printHeadline "Approving 'prescription' for OspedaleMaresca (dev mode)" "U1F60E"
+    chaincodeApprove "cli.ospedale-maresca.aslnapoli3.medchain.com" "peer0.ospedale-maresca.aslnapoli3.medchain.com:7061" "prescriptions-channel" "prescription" "0.1" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "" ""
     printHeadline "Approving 'prescription' for MedicinaGeneraleNapoli (dev mode)" "U1F60E"
     chaincodeApprove "cli.medicina-generale-napoli.medchain.com" "peer0.medicina-generale-napoli.medchain.com:7081" "prescriptions-channel" "prescription" "0.1" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "" ""
     printHeadline "Approving 'prescription' for FarmaciaPetrone (dev mode)" "U1F60E"
@@ -578,7 +588,7 @@ runDevModeChaincode() {
     printHeadline "Approving 'prescription' for Patients (dev mode)" "U1F60E"
     chaincodeApprove "cli.patients.medchain.com" "peer0.patients.medchain.com:7141" "prescriptions-channel" "prescription" "0.1" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "" ""
     printItalics "Committing chaincode 'prescription' on channel 'prescriptions-channel' as 'example' (dev mode)" "U1F618"
-    chaincodeCommit "cli.example.medchain.com" "peer0.example.medchain.com:7041" "prescriptions-channel" "prescription" "0.1" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "" "peer0.example.medchain.com:7041,peer0.medicina-generale-napoli.medchain.com:7081,peer0.farmacia-petrone.medchain.com:7101,peer0.patients.medchain.com:7141" "" ""
+    chaincodeCommit "cli.example.medchain.com" "peer0.example.medchain.com:7041" "prescriptions-channel" "prescription" "0.1" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "" "peer0.example.medchain.com:7041,peer0.ospedale-maresca.aslnapoli3.medchain.com:7061,peer0.medicina-generale-napoli.medchain.com:7081,peer0.farmacia-petrone.medchain.com:7101,peer0.patients.medchain.com:7141" "" ""
 
   fi
   if [ "$chaincodeName" = "encounter" ]; then
@@ -758,6 +768,9 @@ upgradeChaincode() {
       chaincodePackage "cli.example.medchain.com" "peer0.example.medchain.com:7041" "prescription" "$version" "golang" printHeadline "Installing 'prescription' for example" "U1F60E"
       chaincodeInstall "cli.example.medchain.com" "peer0.example.medchain.com:7041" "prescription" "$version" ""
       chaincodeApprove "cli.example.medchain.com" "peer0.example.medchain.com:7041" "prescriptions-channel" "prescription" "$version" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "" ""
+      printHeadline "Installing 'prescription' for OspedaleMaresca" "U1F60E"
+      chaincodeInstall "cli.ospedale-maresca.aslnapoli3.medchain.com" "peer0.ospedale-maresca.aslnapoli3.medchain.com:7061" "prescription" "$version" ""
+      chaincodeApprove "cli.ospedale-maresca.aslnapoli3.medchain.com" "peer0.ospedale-maresca.aslnapoli3.medchain.com:7061" "prescriptions-channel" "prescription" "$version" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "" ""
       printHeadline "Installing 'prescription' for MedicinaGeneraleNapoli" "U1F60E"
       chaincodeInstall "cli.medicina-generale-napoli.medchain.com" "peer0.medicina-generale-napoli.medchain.com:7081" "prescription" "$version" ""
       chaincodeApprove "cli.medicina-generale-napoli.medchain.com" "peer0.medicina-generale-napoli.medchain.com:7081" "prescriptions-channel" "prescription" "$version" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "" ""
@@ -768,7 +781,7 @@ upgradeChaincode() {
       chaincodeInstall "cli.patients.medchain.com" "peer0.patients.medchain.com:7141" "prescription" "$version" ""
       chaincodeApprove "cli.patients.medchain.com" "peer0.patients.medchain.com:7141" "prescriptions-channel" "prescription" "$version" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "" ""
       printItalics "Committing chaincode 'prescription' on channel 'prescriptions-channel' as 'example'" "U1F618"
-      chaincodeCommit "cli.example.medchain.com" "peer0.example.medchain.com:7041" "prescriptions-channel" "prescription" "$version" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "" "peer0.example.medchain.com:7041,peer0.medicina-generale-napoli.medchain.com:7081,peer0.farmacia-petrone.medchain.com:7101,peer0.patients.medchain.com:7141" "" ""
+      chaincodeCommit "cli.example.medchain.com" "peer0.example.medchain.com:7041" "prescriptions-channel" "prescription" "$version" "orderer0.medchain-orderergroup.orderer.medchain.com:7030" "" "false" "" "peer0.example.medchain.com:7041,peer0.ospedale-maresca.aslnapoli3.medchain.com:7061,peer0.medicina-generale-napoli.medchain.com:7081,peer0.farmacia-petrone.medchain.com:7101,peer0.patients.medchain.com:7141" "" ""
 
     else
       echo "Warning! Skipping chaincode 'prescription' upgrade. Chaincode directory is empty."
@@ -808,6 +821,7 @@ notifyOrgsAboutChannels() {
   createNewChannelUpdateTx "patient-records-channel" "MedicinaGeneraleNapoliMSP" "PatientRecordsChannel" "$FABLO_NETWORK_ROOT/fabric-config" "$FABLO_NETWORK_ROOT/fabric-config/config"
   createNewChannelUpdateTx "patient-records-channel" "PatientsMSP" "PatientRecordsChannel" "$FABLO_NETWORK_ROOT/fabric-config" "$FABLO_NETWORK_ROOT/fabric-config/config"
   createNewChannelUpdateTx "prescriptions-channel" "exampleMSP" "PrescriptionsChannel" "$FABLO_NETWORK_ROOT/fabric-config" "$FABLO_NETWORK_ROOT/fabric-config/config"
+  createNewChannelUpdateTx "prescriptions-channel" "OspedaleMarescaMSP" "PrescriptionsChannel" "$FABLO_NETWORK_ROOT/fabric-config" "$FABLO_NETWORK_ROOT/fabric-config/config"
   createNewChannelUpdateTx "prescriptions-channel" "MedicinaGeneraleNapoliMSP" "PrescriptionsChannel" "$FABLO_NETWORK_ROOT/fabric-config" "$FABLO_NETWORK_ROOT/fabric-config/config"
   createNewChannelUpdateTx "prescriptions-channel" "FarmaciaPetroneMSP" "PrescriptionsChannel" "$FABLO_NETWORK_ROOT/fabric-config" "$FABLO_NETWORK_ROOT/fabric-config/config"
   createNewChannelUpdateTx "prescriptions-channel" "PatientsMSP" "PrescriptionsChannel" "$FABLO_NETWORK_ROOT/fabric-config" "$FABLO_NETWORK_ROOT/fabric-config/config"
@@ -829,6 +843,7 @@ notifyOrgsAboutChannels() {
   notifyOrgAboutNewChannel "patient-records-channel" "MedicinaGeneraleNapoliMSP" "cli.medicina-generale-napoli.medchain.com" "peer0.medicina-generale-napoli.medchain.com" "orderer0.medchain-orderergroup.orderer.medchain.com:7030"
   notifyOrgAboutNewChannel "patient-records-channel" "PatientsMSP" "cli.patients.medchain.com" "peer0.patients.medchain.com" "orderer0.medchain-orderergroup.orderer.medchain.com:7030"
   notifyOrgAboutNewChannel "prescriptions-channel" "exampleMSP" "cli.example.medchain.com" "peer0.example.medchain.com" "orderer0.medchain-orderergroup.orderer.medchain.com:7030"
+  notifyOrgAboutNewChannel "prescriptions-channel" "OspedaleMarescaMSP" "cli.ospedale-maresca.aslnapoli3.medchain.com" "peer0.ospedale-maresca.aslnapoli3.medchain.com" "orderer0.medchain-orderergroup.orderer.medchain.com:7030"
   notifyOrgAboutNewChannel "prescriptions-channel" "MedicinaGeneraleNapoliMSP" "cli.medicina-generale-napoli.medchain.com" "peer0.medicina-generale-napoli.medchain.com" "orderer0.medchain-orderergroup.orderer.medchain.com:7030"
   notifyOrgAboutNewChannel "prescriptions-channel" "FarmaciaPetroneMSP" "cli.farmacia-petrone.medchain.com" "peer0.farmacia-petrone.medchain.com" "orderer0.medchain-orderergroup.orderer.medchain.com:7030"
   notifyOrgAboutNewChannel "prescriptions-channel" "PatientsMSP" "cli.patients.medchain.com" "peer0.patients.medchain.com" "orderer0.medchain-orderergroup.orderer.medchain.com:7030"
@@ -850,6 +865,7 @@ notifyOrgsAboutChannels() {
   deleteNewChannelUpdateTx "patient-records-channel" "MedicinaGeneraleNapoliMSP" "cli.medicina-generale-napoli.medchain.com"
   deleteNewChannelUpdateTx "patient-records-channel" "PatientsMSP" "cli.patients.medchain.com"
   deleteNewChannelUpdateTx "prescriptions-channel" "exampleMSP" "cli.example.medchain.com"
+  deleteNewChannelUpdateTx "prescriptions-channel" "OspedaleMarescaMSP" "cli.ospedale-maresca.aslnapoli3.medchain.com"
   deleteNewChannelUpdateTx "prescriptions-channel" "MedicinaGeneraleNapoliMSP" "cli.medicina-generale-napoli.medchain.com"
   deleteNewChannelUpdateTx "prescriptions-channel" "FarmaciaPetroneMSP" "cli.farmacia-petrone.medchain.com"
   deleteNewChannelUpdateTx "prescriptions-channel" "PatientsMSP" "cli.patients.medchain.com"
@@ -1102,6 +1118,14 @@ networkDown() {
     docker rm -f "$container" || echo "docker rm of $container failed. Check if all fabric dockers properly was deleted"
   done
   for image in $(docker images "dev-peer0.example.medchain.com-prescription*" -q); do
+    echo "Removing image $image..."
+    docker rmi "$image" || echo "docker rmi of $image failed. Check if all fabric dockers properly was deleted"
+  done
+  for container in $(docker ps -a | grep "dev-peer0.ospedale-maresca.aslnapoli3.medchain.com-prescription" | awk '{print $1}'); do
+    echo "Removing container $container..."
+    docker rm -f "$container" || echo "docker rm of $container failed. Check if all fabric dockers properly was deleted"
+  done
+  for image in $(docker images "dev-peer0.ospedale-maresca.aslnapoli3.medchain.com-prescription*" -q); do
     echo "Removing image $image..."
     docker rmi "$image" || echo "docker rmi of $image failed. Check if all fabric dockers properly was deleted"
   done

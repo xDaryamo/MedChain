@@ -131,6 +131,23 @@ channelQuery() {
     peerChannelFetchBlock "prescriptions-channel" "cli.example.medchain.com" "${BLOCK_NAME}" "peer0.example.medchain.com:7041" "$TARGET_FILE"
 
   elif
+    [ "$1" = "getinfo" ] && [ "$2" = "prescriptions-channel" ] && [ "$3" = "ospedalemaresca" ] && [ "$4" = "peer0" ]
+  then
+
+    peerChannelGetInfo "prescriptions-channel" "cli.ospedale-maresca.aslnapoli3.medchain.com" "peer0.ospedale-maresca.aslnapoli3.medchain.com:7061"
+
+  elif [ "$1" = "fetch" ] && [ "$2" = "config" ] && [ "$3" = "prescriptions-channel" ] && [ "$4" = "ospedalemaresca" ] && [ "$5" = "peer0" ]; then
+    TARGET_FILE=${6:-"$channel-config.json"}
+
+    peerChannelFetchConfig "prescriptions-channel" "cli.ospedale-maresca.aslnapoli3.medchain.com" "$TARGET_FILE" "peer0.ospedale-maresca.aslnapoli3.medchain.com:7061"
+
+  elif [ "$1" = "fetch" ] && [ "$3" = "prescriptions-channel" ] && [ "$4" = "ospedalemaresca" ] && [ "$5" = "peer0" ]; then
+    BLOCK_NAME=$2
+    TARGET_FILE=${6:-"$BLOCK_NAME.block"}
+
+    peerChannelFetchBlock "prescriptions-channel" "cli.ospedale-maresca.aslnapoli3.medchain.com" "${BLOCK_NAME}" "peer0.ospedale-maresca.aslnapoli3.medchain.com:7061" "$TARGET_FILE"
+
+  elif
     [ "$1" = "getinfo" ] && [ "$2" = "prescriptions-channel" ] && [ "$3" = "medicinageneralenapoli" ] && [ "$4" = "peer0" ]
   then
 
@@ -453,6 +470,16 @@ printChannelsHelp() {
   echo ""
   echo "fablo channel fetch <newest|oldest|block-number> prescriptions-channel example peer0 [file name]"
   echo -e "\t Fetch a block with given number and save it. Uses first peer 'peer0' of 'example'".
+  echo ""
+
+  echo "fablo channel getinfo prescriptions-channel ospedalemaresca peer0"
+  echo -e "\t Get channel info on 'peer0' of 'OspedaleMaresca'".
+  echo ""
+  echo "fablo channel fetch config prescriptions-channel ospedalemaresca peer0 [file-name.json]"
+  echo -e "\t Download latest config block and save it. Uses first peer 'peer0' of 'OspedaleMaresca'".
+  echo ""
+  echo "fablo channel fetch <newest|oldest|block-number> prescriptions-channel ospedalemaresca peer0 [file name]"
+  echo -e "\t Fetch a block with given number and save it. Uses first peer 'peer0' of 'OspedaleMaresca'".
   echo ""
 
   echo "fablo channel getinfo prescriptions-channel medicinageneralenapoli peer0"

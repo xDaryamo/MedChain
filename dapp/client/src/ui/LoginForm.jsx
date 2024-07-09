@@ -42,7 +42,7 @@ const LoginForm = ({ onSubmit, isPending, formData, setFormData }) => {
               autoComplete="username"
               value={formData.email}
               onChange={handleChange}
-              required="true"
+              required={true}
             />
           </FormRow>
           <FormRow label="Password">
@@ -53,7 +53,7 @@ const LoginForm = ({ onSubmit, isPending, formData, setFormData }) => {
               autoComplete="password"
               value={formData.password}
               onChange={handleChange}
-              required="true"
+              required={true}
             />
           </FormRow>
         </div>

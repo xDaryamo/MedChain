@@ -19,7 +19,7 @@ const FollowedPatientsList = () => {
       <Heading>Followed Patients List</Heading>
       <List
         items={followedPatients}
-        itemKey="id"
+        itemKey="identifier.value"
         ItemComponent={PatientCard}
         user={user}
         hasAddBtn={false}

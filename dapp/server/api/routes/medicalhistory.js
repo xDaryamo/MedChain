@@ -41,7 +41,7 @@ router.post(
   medicalHistoryController.createCondition
 );
 router.post(
-  "conditions/search",
+  "/conditions/search",
   verifyToken,
   medicalHistoryController.searchConditions
 );
@@ -61,6 +61,23 @@ router.delete(
   medicalHistoryController.deleteCondition
 );
 
+// Batch Condition Routes
+router.post(
+  "/conditions/batch",
+  verifyToken,
+  medicalHistoryController.createConditionsBatch
+);
+router.patch(
+  "/conditions/batch",
+  verifyToken,
+  medicalHistoryController.updateConditionsBatch
+);
+router.delete(
+  "/conditions/batch",
+  verifyToken,
+  medicalHistoryController.deleteConditionsBatch
+);
+
 // Procedure Routes
 router.post(
   "/procedures",
@@ -68,7 +85,7 @@ router.post(
   medicalHistoryController.createProcedure
 );
 router.post(
-  "procedures/search",
+  "/procedures/search",
   verifyToken,
   medicalHistoryController.searchProcedures
 );
@@ -88,23 +105,57 @@ router.delete(
   medicalHistoryController.deleteProcedure
 );
 
+// Batch Procedure Routes
+router.post(
+  "/procedures/batch",
+  verifyToken,
+  medicalHistoryController.createProceduresBatch
+);
+router.patch(
+  "/procedures/batch",
+  verifyToken,
+  medicalHistoryController.updateProceduresBatch
+);
+router.delete(
+  "/procedures/batch",
+  verifyToken,
+  medicalHistoryController.deleteProceduresBatch
+);
+
 // Allergies Routes
 router.post("/allergies", verifyToken, medicalHistoryController.createAllergy);
 router.post(
-  "allergies/search",
+  "/allergies/search",
   verifyToken,
   medicalHistoryController.searchAllergies
 );
-router.get("allergies/:id", verifyToken, medicalHistoryController.getAllergy);
+router.get("/allergies/:id", verifyToken, medicalHistoryController.getAllergy);
 router.patch(
-  "allergies/:id",
+  "/allergies/:id",
   verifyToken,
   medicalHistoryController.updateAllergy
 );
 router.delete(
-  "allergies/:id",
+  "/allergies/:id",
   verifyToken,
   medicalHistoryController.deleteAllergy
+);
+
+// Batch Allergy Routes
+router.post(
+  "/allergies/batch",
+  verifyToken,
+  medicalHistoryController.createAllergiesBatch
+);
+router.patch(
+  "/allergies/batch",
+  verifyToken,
+  medicalHistoryController.updateAllergiesBatch
+);
+router.delete(
+  "/allergies/batch",
+  verifyToken,
+  medicalHistoryController.deleteAllergiesBatch
 );
 
 module.exports = router;

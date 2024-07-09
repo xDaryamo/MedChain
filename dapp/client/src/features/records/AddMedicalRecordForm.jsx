@@ -1,7 +1,5 @@
 /* eslint-disable react/prop-types */
 import { useForm } from "react-hook-form";
-import FormRow from "../../ui/FormRow";
-import FormInput from "../../ui/FormInput";
 import Button from "../../ui/Button";
 import { useAddRecord } from "./useMedicalRecords";
 import AllergiesForm from "./AllergiesForm";
@@ -11,6 +9,9 @@ import MedicationRequestsForm from "./MedicationRequestsForm";
 import LabResultsForm from "./LabResultsForm";
 import Spinner from "../../ui/Spinner";
 import { useParams } from "react-router-dom";
+import { useGetPatient } from "../users/usePatients";
+import { useUser } from "../authentication/useAuth";
+import { useGetPractitioner } from "../users/usePractitioner";
 
 const AddMedicalRecordForm = ({ onSubmitSuccess }) => {
   const {
@@ -19,35 +20,181 @@ const AddMedicalRecordForm = ({ onSubmitSuccess }) => {
     control,
     formState: { errors },
     reset,
+    setValue,
   } = useForm();
   const { addRecord, isPending } = useAddRecord();
-
   const { id: patientID } = useParams();
+  const { patient } = useGetPatient(patientID);
+  const { user } = useUser();
+  const { practitioner } = useGetPractitioner(user.userId);
 
-  const onSubmit = (data) => {
-    const labResultsIDs = data.labResultsIDs.map((lr) => lr.id);
-    const record = {
-      patientID,
-      allergies: data.allergies,
-      conditions: data.conditions,
-      procedures: data.procedures,
-      prescriptions: data.prescriptions,
-      labResultsIDs,
-      serviceRequest: data.serviceRequestReference
-        ? {
-            reference: data.serviceRequestReference,
-            display: data.serviceRequestDisplay,
-          }
-        : null,
-      attachments: data.attachments ? JSON.parse(data.attachments) : [],
-    };
+  const onSubmit = async (data) => {
+    try {
+      const labResultsIDs = data.labResultsIDs?.map((lr) => lr.id) || [];
+      const record = {
+        patientID,
 
-    addRecord(record, {
-      onSettled: () => {
-        reset();
-        onSubmitSuccess();
-      },
-    });
+        allergies: data.allergies.map((allergy) => ({
+          ...allergy,
+          identifier: {
+            system: "urn:ietf:rfc:3986",
+          },
+          patient: {
+            reference: patientID,
+            display: patient?.name?.text || "Unknown",
+          },
+          clinicalStatus: {
+            coding: [
+              {
+                system:
+                  "http://terminology.hl7.org/CodeSystem/allergy-clinical-status",
+                code: "active",
+                display: "Active",
+              },
+            ],
+          },
+          verificationStatus: {
+            coding: [
+              {
+                system:
+                  "http://terminology.hl7.org/CodeSystem/allergy-verification-status",
+                code: "confirmed",
+                display: "Confirmed",
+              },
+            ],
+            text: "Confirmed",
+          },
+          code: {
+            coding: [
+              {
+                system: "http://www.nlm.nih.gov/research/umls/rxnorm",
+                code: allergy.code.coding[0].code,
+                display: allergy.code.coding[0].display,
+              },
+            ],
+            text: allergy.code.coding[0].display,
+          },
+          reaction: allergy.reaction.map((reaction) => ({
+            ...reaction,
+            substance: {
+              ...reaction.substance,
+              coding: reaction.substance.coding.map((coding) => ({
+                ...coding,
+                system: "http://www.nlm.nih.gov/research/umls/rxnorm",
+              })),
+            },
+          })),
+        })),
+
+        conditions: data.conditions.map((condition) => ({
+          ...condition,
+          identifier: {
+            system: "urn:ietf:rfc:3986",
+          },
+          clinicalStatus: {
+            coding: [
+              {
+                system:
+                  "http://terminology.hl7.org/CodeSystem/condition-clinical",
+                code: "active",
+                display: "Active",
+              },
+            ],
+            text: "Active",
+          },
+          verificationStatus: {
+            coding: [
+              {
+                system:
+                  "http://terminology.hl7.org/CodeSystem/condition-ver-status",
+                code: "confirmed",
+                display: "Confirmed",
+              },
+            ],
+            text: "Confirmed",
+          },
+          subject: {
+            reference: patientID,
+            display: patient?.name?.text || "Unknown",
+          },
+          recordedDate: new Date().toISOString(),
+          recorder: {
+            reference: practitioner.identifier.value,
+            display: practitioner.name[0].text,
+          },
+          asserter: {
+            reference: practitioner.identifier.value,
+            display: practitioner.name[0].text,
+          },
+        })),
+        procedures: data.procedures.map((procedure) => ({
+          ...procedure,
+          subject: {
+            reference: patientID,
+            display: patient?.name?.text || "Unknown",
+          },
+          status: {
+            coding: [
+              {
+                system:
+                  "http://terminology.hl7.org/CodeSystem/procedure-status",
+                code: "completed",
+                display: "Completed",
+              },
+            ],
+            text: "Completed",
+          },
+          performed: {
+            reference: practitioner.identifier.value,
+            display: practitioner.name[0].text,
+          },
+        })),
+        prescriptions: (data.prescriptions || []).map((prescription) => ({
+          ...prescription,
+          status: {
+            coding: [
+              {
+                system:
+                  "http://terminology.hl7.org/CodeSystem/medication-request-status",
+                code: "active",
+                display: "Active",
+              },
+            ],
+            text: "Active",
+          },
+          intent: {
+            coding: [
+              {
+                system:
+                  "http://terminology.hl7.org/CodeSystem/medication-request-intent",
+                code: "order",
+                display: "Order",
+              },
+            ],
+            text: "Order",
+          },
+          subject: {
+            reference: patientID,
+            display: patient?.name?.text || "Unknown",
+          },
+          authoredOn: new Date().toISOString(),
+          requester: {
+            reference: practitioner.identifier.value,
+            display: practitioner.name[0].text,
+          },
+        })),
+        labResultsIDs,
+      };
+
+      addRecord(record, {
+        onSettled: () => {
+          reset();
+          onSubmitSuccess();
+        },
+      });
+    } catch (error) {
+      console.error("Add medical record error", error);
+    }
   };
 
   return (
@@ -56,22 +203,31 @@ const AddMedicalRecordForm = ({ onSubmitSuccess }) => {
 
       <div className="mb-4 border-b pb-4">
         <h3 className="mb-4 text-xl font-semibold">Allergies</h3>
-        <AllergiesForm control={control} register={register} />
+        <AllergiesForm
+          control={control}
+          register={register}
+          errors={errors}
+          setValue={setValue}
+        />
       </div>
 
       <div className="mb-4 border-b pb-4">
         <h3 className="mb-4 text-xl font-semibold">Conditions</h3>
-        <ConditionsForm control={control} register={register} />
+        <ConditionsForm control={control} register={register} errors={errors} />
       </div>
 
       <div className="mb-4 border-b pb-4">
         <h3 className="mb-4 text-xl font-semibold">Procedures</h3>
-        <ProceduresForm control={control} register={register} />
+        <ProceduresForm control={control} register={register} errors={errors} />
       </div>
 
       <div className="mb-4 border-b pb-4">
         <h3 className="mb-4 text-xl font-semibold">Medication Requests</h3>
-        <MedicationRequestsForm control={control} register={register} />
+        <MedicationRequestsForm
+          control={control}
+          register={register}
+          errors={errors}
+        />
       </div>
 
       <div className="mb-4 border-b pb-4">
@@ -84,43 +240,6 @@ const AddMedicalRecordForm = ({ onSubmitSuccess }) => {
         />
       </div>
 
-      <div className="mb-4 border-b pb-4">
-        <h3 className="mb-4 text-xl font-semibold">Service Request</h3>
-        <FormRow
-          label="Service Request Reference"
-          error={errors.serviceRequestReference?.message}
-        >
-          <FormInput
-            type="text"
-            id="serviceRequestReference"
-            {...register("serviceRequestReference")}
-          />
-        </FormRow>
-
-        <FormRow
-          label="Service Request Display"
-          error={errors.serviceRequestDisplay?.message}
-        >
-          <FormInput
-            type="text"
-            id="serviceRequestDisplay"
-            {...register("serviceRequestDisplay")}
-          />
-        </FormRow>
-      </div>
-
-      <div className="mb-4 border-b pb-4">
-        <h3 className="mb-4 text-xl font-semibold">Attachments</h3>
-        <FormRow label="Attachments (JSON)" error={errors.attachments?.message}>
-          <FormInput
-            type="text"
-            id="attachments"
-            {...register("attachments")}
-            placeholder='[{"url": "attachment1"}, {"url": "attachment2"}]'
-          />
-        </FormRow>
-      </div>
-
       <div className="flex w-full justify-center">
         <Button
           type="submit"
@@ -131,6 +250,17 @@ const AddMedicalRecordForm = ({ onSubmitSuccess }) => {
           {isPending ? <Spinner /> : "Add Record"}
         </Button>
       </div>
+
+      {errors && (
+        <div className="mt-4 text-red-500">
+          {Object.keys(errors).map((errorKey) => (
+            <div key={errorKey}>
+              {errors[errorKey]?.message ||
+                `There is an error in the field ${errorKey}`}
+            </div>
+          ))}
+        </div>
+      )}
     </form>
   );
 };

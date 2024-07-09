@@ -1,9 +1,7 @@
 /* eslint-disable react/prop-types */
 import { Link } from "react-router-dom";
-import { useGetPatient } from "../users/usePatients";
-import { useGetObservation } from "../observations/useObservations";
-import Spinner from "../../ui/Spinner";
 import Card from "../../ui/Card";
+import { useSearchLabResults } from "../labresults/useLabResults";
 
 const formatDate = (dateString) => {
   if (!dateString || dateString === "0001-01-01T00:00:00Z") {
@@ -15,124 +13,140 @@ const formatDate = (dateString) => {
   return date.toLocaleDateString(undefined, options);
 };
 
-const ConditionEvidenceDetail = ({ evidenceDetail }) => {
-  const { observation, isPending, error } = useGetObservation(
-    evidenceDetail.reference.split("/").pop(),
-  );
-
-  if (isPending) return <Spinner />;
-  if (error) return <div>Errore nel caricamento dell&apososservazione</div>;
-
-  return (
-    <li>
-      {observation ? (
-        <>
-          <strong>{observation.code.coding[0].display}:</strong>{" "}
-          {observation.value || "N/A"}
-        </>
-      ) : (
-        "Osservazione non disponibile"
-      )}
-    </li>
-  );
-};
-
-const MedicalRecordCard = ({ item }) => {
-  const { patient, isPending, error } = useGetPatient(item.patientID);
-
-  if (isPending) return <Spinner />;
-  if (error) return <div>Errore nel caricamento dei dati del paziente</div>;
-
-  const patientName = patient
-    ? `${patient.name?.text}`
-    : "Paziente Sconosciuto";
-  const patientDOB = patient
-    ? formatDate(patient.date)
-    : "Data di Nascita Sconosciuta";
-  const patientGender = patient
-    ? `${patient.gender.coding[0].display}`
-    : "Sesso Sconosciuto";
-
+const MedicalRecordCard = ({ item, patient }) => {
   const recordID = item.identifier;
+  const { labResults = [] } = useSearchLabResults({
+    query: {
+      selector: {
+        "subject.reference": `${item.patientID}`,
+      },
+    },
+  });
+
+  const getLabResultText = (resultID) => {
+    const labResult = labResults.find(
+      (result) => result.identifier?.value === resultID,
+    );
+    return labResult ? labResult.code?.text : "N/A";
+  };
+
+  const renderList = (title, list) => {
+    if (!list || list.length === 0) {
+      return (
+        <div className="text-cyan-950">
+          <span className="font-bold">{title}:</span> N/A
+        </div>
+      );
+    }
+
+    if (list.length === 1) {
+      return (
+        <div className="text-cyan-950">
+          <span className="font-bold">{title}:</span> {list[0]}
+        </div>
+      );
+    }
+
+    return (
+      <div className="text-cyan-950">
+        <span className="font-bold">{title}:</span>
+        <ul className="list-inside list-disc">
+          {list.map((item, index) => (
+            <li key={index}>{item}</li>
+          ))}
+        </ul>
+      </div>
+    );
+  };
+  const allergies = item.allergies
+    ? item.allergies.map((allergy) => {
+        if (
+          allergy.code &&
+          allergy.code.coding &&
+          allergy.code.coding.length > 0
+        ) {
+          return allergy.code.coding[0].display;
+        }
+        return "N/A";
+      })
+    : [];
 
   const conditions = item.conditions
-    ? item.conditions.map((condition, index) => (
-        <li key={index}>
-          {condition.code.coding[0].display}
-          {condition.evidence && condition.evidence.length > 0 && (
-            <ul>
-              {condition.evidence.map((evidence, idx) => (
-                <li key={idx}>
-                  {evidence.code && evidence.code.coding[0].display}
-                  {evidence.detail && evidence.detail.length > 0 && (
-                    <ul>
-                      {evidence.detail.map((detail, id) => (
-                        <ConditionEvidenceDetail
-                          key={id}
-                          evidenceDetail={detail}
-                        />
-                      ))}
-                    </ul>
-                  )}
-                </li>
-              ))}
-            </ul>
-          )}
-        </li>
-      ))
+    ? item.conditions.map((condition) => {
+        if (
+          condition.code &&
+          condition.code.coding &&
+          condition.code.coding.length > 0
+        ) {
+          return condition.code.coding[0].display;
+        }
+        return "N/A";
+      })
     : [];
 
   const procedures = item.procedures
-    ? item.procedures.map((procedure, index) => (
-        <li key={index}>{procedure.code.coding[0].display}</li>
-      ))
+    ? item.procedures.map((procedure) => {
+        if (
+          procedure.code &&
+          procedure.code.coding &&
+          procedure.code.coding.length > 0
+        ) {
+          return procedure.code.coding[0].display;
+        }
+        return "N/A";
+      })
     : [];
 
   const prescriptions = item.prescriptions
-    ? item.prescriptions.map((prescription, index) => (
-        <li key={index}>
-          {prescription.medicationCodeableConcept.coding[0].display}
-        </li>
-      ))
+    ? item.prescriptions.map((prescription) => {
+        if (
+          prescription.medicationCodeableConcept &&
+          prescription.medicationCodeableConcept.coding &&
+          prescription.medicationCodeableConcept.coding.length > 0
+        ) {
+          return prescription.medicationCodeableConcept.coding[0].display;
+        }
+        return "N/A";
+      })
     : [];
 
-  const allergies = item.allergies
-    ? item.allergies.map((allergy, index) => (
-        <li key={index}>{allergy.code.coding[0].display}</li>
-      ))
+  const labResultsText = item.labResultsIDs
+    ? item.labResultsIDs.map((resultID) => getLabResultText(resultID))
+    : [];
+
+  const attachments = item.attachments
+    ? item.attachments.map((attachment) => attachment.url)
     : [];
 
   return (
     <Card item={item} itemKey="identifier">
       <Link to={`/records/${recordID}`} className="mb-4 flex-1">
-        <div>
-          <strong>Numero della Cartella Clinica:</strong> {recordID}
+        <div className="text-cyan-950">
+          <span className="font-bold">Numero della Cartella Clinica:</span>{" "}
+          {recordID}
         </div>
-        <div>
-          <strong>Nome del Paziente:</strong> {patientName}
+        <div className="text-cyan-950">
+          <span className="font-bold">Nome del Paziente:</span>{" "}
+          {patient.name?.text || "Paziente Sconosciuto"}
         </div>
-        <div>
-          <strong>Data di Nascita:</strong> {patientDOB}
+        <div className="text-cyan-950">
+          <span className="font-bold">Data di Nascita:</span>{" "}
+          {formatDate(patient.date)}
         </div>
-        <div>
-          <strong>Sesso:</strong> {patientGender}
+        <div className="text-cyan-950">
+          <span className="font-bold">Sesso:</span>{" "}
+          {patient.gender?.coding[0]?.display || "Sesso Sconosciuto"}
         </div>
-        <div>
-          <strong>Condizioni Mediche:</strong>
-          <ul>{conditions}</ul>
+        {renderList("Condizioni Mediche", conditions)}
+        {renderList("Procedure", procedures)}
+        {renderList("Prescrizioni", prescriptions)}
+        {renderList("Allergie", allergies)}
+        {renderList("Risultati di Laboratorio", labResultsText)}
+        <div className="text-cyan-950">
+          <span className="font-bold">Richiesta di Servizio:</span>{" "}
+          {item.serviceRequest?.display || "N/A"}
         </div>
-        <div>
-          <strong>Procedure:</strong>
-          <ul>{procedures}</ul>
-        </div>
-        <div>
-          <strong>Prescrizioni:</strong>
-          <ul>{prescriptions}</ul>
-        </div>
-        <div>
-          <strong>Allergie:</strong>
-          <ul>{allergies}</ul>
-        </div>
+        {renderList("Allegati", attachments)}
       </Link>
     </Card>
   );

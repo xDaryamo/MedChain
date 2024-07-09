@@ -4,14 +4,22 @@ import {
   createMedicalRecord,
   updateMedicalRecord,
   deleteMedicalRecord,
-  createCondition,
-  createProcedure,
-  updateCondition,
-  updateProcedure,
-  createAllergy,
-  updateAllergy,
+  createConditionsBatch,
+  createProceduresBatch,
+  createAllergiesBatch,
+  updateConditionsBatch,
+  updateProceduresBatch,
+  updateAllergiesBatch,
+  deleteConditionsBatch,
+  deleteProceduresBatch,
+  deleteAllergiesBatch,
   searchMedicalRecords,
 } from "../../services/apiRecords";
+import {
+  createPrescriptionsBatch,
+  updatePrescriptionsBatch,
+  deletePrescriptionsBatch,
+} from "../../services/apiPrescriptions";
 import toast from "react-hot-toast";
 
 export const useSearchMedicalRecords = (query) => {
@@ -42,29 +50,32 @@ export const useAddRecord = () => {
 
   const { mutate: addRecord, isPending } = useMutation({
     mutationFn: async (record) => {
-      const createdAllergies = await Promise.all(
-        (record.allergies || []).map((allergy) => createAllergy(allergy)),
-      );
+      console.log("Adding record:", record);
 
-      const createdConditions = await Promise.all(
-        (record.conditions || []).map((condition) =>
-          createCondition(condition),
-        ),
+      const createdAllergies = await createAllergiesBatch(
+        record.allergies || [],
       );
-
-      const createdProcedures = await Promise.all(
-        (record.procedures || []).map((procedure) =>
-          createProcedure(procedure),
-        ),
+      console.log(record.allergies);
+      const createdConditions = await createConditionsBatch(
+        record.conditions || [],
+      );
+      const createdProcedures = await createProceduresBatch(
+        record.procedures || [],
+      );
+      const createdPrescriptions = await createPrescriptionsBatch(
+        record.prescriptions || [],
       );
 
       const updatedRecord = {
         ...record,
-        allergies: createdAllergies.map((allergy) => allergy.id),
-        conditions: createdConditions.map((cond) => cond.id),
-        procedures: createdProcedures.map((proc) => proc.id),
+        allergies: createdAllergies.allergies,
+        conditions: createdConditions.conditions,
+        procedures: createdProcedures.procedures,
+        prescriptions: createdPrescriptions.prescriptions,
         attachments: record.attachments || [],
       };
+
+      console.log(updatedRecord);
 
       await createMedicalRecord(updatedRecord);
     },
@@ -86,21 +97,10 @@ export const useUpdateRecord = () => {
 
   const { mutate: updateRecord, isPending } = useMutation({
     mutationFn: async ({ id, record }) => {
-      await Promise.all(
-        record.Allergies.map((allergy) => updateAllergy(allergy.id, allergy)),
-      );
-
-      await Promise.all(
-        record.Conditions.map((condition) =>
-          updateCondition(condition.id, condition),
-        ),
-      );
-
-      await Promise.all(
-        record.Procedures.map((procedure) =>
-          updateProcedure(procedure.id, procedure),
-        ),
-      );
+      await updateAllergiesBatch(record.allergies || []);
+      await updateConditionsBatch(record.conditions || []);
+      await updateProceduresBatch(record.procedures || []);
+      await updatePrescriptionsBatch(record.prescriptions || []);
 
       await updateMedicalRecord(id, record);
     },
@@ -121,7 +121,22 @@ export const useRemoveRecord = () => {
   const queryClient = useQueryClient();
 
   const { mutate: removeRecord, isPending } = useMutation({
-    mutationFn: deleteMedicalRecord,
+    mutationFn: async (id) => {
+      const record = await getMedicalRecord(id);
+      await deleteAllergiesBatch(
+        record.allergies.map((a) => a.identifier.value),
+      );
+      await deleteConditionsBatch(
+        record.conditions.map((c) => c.identifier.value),
+      );
+      await deleteProceduresBatch(
+        record.procedures.map((p) => p.identifier.value),
+      );
+      await deletePrescriptionsBatch(
+        record.prescriptions.map((p) => p.identifier.value),
+      );
+      await deleteMedicalRecord(id);
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["medicalRecords"] });
       toast.success("Medical record deleted successfully");

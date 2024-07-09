@@ -13,6 +13,7 @@ import LabResultList from "./features/labresults/LabResultList";
 import MedicalRecordList from "./features/records/MedicalRecordList";
 import FollowedPatientsList from "./features/users/FollowedPatientsList";
 import FollowedPatientPage from "./features/users/FollowedPatientPage";
+import MedicalRecordDetails from "./features/records/MedicalRecordDetails";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -29,8 +30,10 @@ const App = () => {
       <ReactQueryDevtools initialIsOpen={false} />
       <Router>
         <Routes>
+          <Route path="login" element={<Login />} />
           <Route path="/" element={<Layout />}>
             <Route index element={<HomePage />} />
+            <Route path="signup" element={<Signup />} />
 
             <Route
               path="patients"
@@ -41,9 +44,15 @@ const App = () => {
               }
             />
 
-            <Route path="labresults" element={<LabResultList />} />
-            <Route path="signup" element={<Signup />} />
-            <Route path="patients/:id" element={<FollowedPatientPage />} />
+            <Route
+              path="patients/:id"
+              element={
+                <ProtectedRoute>
+                  <FollowedPatientPage />
+                </ProtectedRoute>
+              }
+            />
+
             <Route
               path="patients/:id/records"
               element={
@@ -53,9 +62,26 @@ const App = () => {
               }
             />
 
+            <Route
+              path="labresults"
+              element={
+                <ProtectedRoute>
+                  <LabResultList />
+                </ProtectedRoute>
+              }
+            />
+
+            <Route
+              path="records/:id"
+              element={
+                <ProtectedRoute>
+                  <MedicalRecordDetails />
+                </ProtectedRoute>
+              }
+            />
+
             <Route path="*" element={<ErrorPage />} />
           </Route>
-          <Route path="login" element={<Login />} />
         </Routes>
       </Router>
       <Toaster

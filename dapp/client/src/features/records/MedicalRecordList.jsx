@@ -2,6 +2,7 @@
 import { useState } from "react";
 import { useSearchMedicalRecords, useRemoveRecord } from "./useMedicalRecords";
 import { useUser } from "../authentication/useAuth";
+import { useGetPatient } from "../users/usePatients"; // Importa il hook per ottenere i dettagli del paziente
 
 import Spinner from "../../ui/Spinner";
 import List from "../../ui/List";
@@ -26,16 +27,24 @@ const MedicalRecordList = () => {
   const [query, setQuery] = useState(defaultQuery);
 
   const { records = [], isPending, error } = useSearchMedicalRecords(query);
-  const { removeRecord, isPending: isDeleting } = useRemoveRecord();
   const { user, isPending: userLoading, error: userError } = useUser();
+  const {
+    patient,
+    isPending: patientLoading,
+    error: patientError,
+  } = useGetPatient(id);
+
   const [isModalOpen, setModalOpen] = useState(false);
 
-  if (error || userError)
+  if (error || userError || patientError)
     return <p>Error loading medical records or user data</p>;
 
-  const handleRemoveRecord = async (id) => {
-    await removeRecord(id);
-  };
+  if (isPending || userLoading || patientLoading)
+    return (
+      <div className="flex h-full items-center justify-center">
+        <Spinner />
+      </div>
+    );
 
   const handleModalClose = () => {
     setModalOpen(false);
@@ -45,22 +54,15 @@ const MedicalRecordList = () => {
     <div>
       <Heading>Medical Records List</Heading>
 
-      {isPending ? (
-        <div className="flex h-full items-center justify-center">
-          <Spinner />
-        </div>
-      ) : (
-        <List
-          items={records}
-          itemKey="identifier"
-          ItemComponent={MedicalRecordCard}
-          onDelete={handleRemoveRecord}
-          isDeleting={isDeleting}
-          user={user}
-          onAddNew={() => setModalOpen(true)}
-          hasAddBtn={true}
-        />
-      )}
+      <List
+        items={records}
+        itemKey="identifier"
+        ItemComponent={MedicalRecordCard}
+        user={user}
+        patient={patient}
+        onAddNew={() => setModalOpen(true)}
+        hasAddBtn={true}
+      />
 
       {user.role === "practitioner" && (
         <Modal isOpen={isModalOpen} onClose={handleModalClose}>

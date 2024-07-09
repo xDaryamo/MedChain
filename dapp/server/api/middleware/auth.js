@@ -3,22 +3,20 @@ const jwt = require("jsonwebtoken");
 exports.verifyToken = (req, res, next) => {
   const authHeader = req.get("Authorization");
   if (!authHeader) {
-    const error = new Error("Not authenticated.");
-    error.statusCode = 401;
-    throw error;
+    return res.status(401).json({ message: "Not authenticated." });
   }
   const token = authHeader.split(" ")[1];
   let decodedToken;
   try {
     decodedToken = jwt.verify(token, "somesupersecretsecret");
   } catch (err) {
-    err.statusCode = 500;
-    throw err;
+    if (err.name === "TokenExpiredError") {
+      return res.status(401).json({ message: "Token expired." });
+    }
+    return res.status(500).json({ message: "Failed to authenticate token." });
   }
   if (!decodedToken) {
-    const error = new Error("Not authenticated.");
-    error.statusCode = 401;
-    throw error;
+    return res.status(401).json({ message: "Not authenticated." });
   }
   req.user = {
     userId: decodedToken.userId,

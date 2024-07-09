@@ -1,23 +1,12 @@
-import PropTypes from "prop-types";
-
-function FormRow({ label, children, error }) {
+/* eslint-disable react/prop-types */
+const FormRow = ({ label, error, children }) => {
   return (
-    <div>
-      {label && (
-        <label htmlFor={children.props.id} className="text-cyan-950">
-          {label}
-        </label>
-      )}
+    <div className="mb-4">
+      <label className="mb-2 block font-bold text-gray-700">{label}</label>
       {children}
-      {error && <span className="text-sm text-red-600">{error}</span>}
+      {error && <p className="text-xs italic text-red-500">{error}</p>}
     </div>
   );
-}
-
-FormRow.propTypes = {
-  label: PropTypes.string,
-  children: PropTypes.any,
-  error: PropTypes.string,
 };
 
 export default FormRow;

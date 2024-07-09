@@ -1,215 +1,194 @@
 /* eslint-disable react/prop-types */
-import { useFieldArray } from "react-hook-form";
-import { useEffect, useRef } from "react";
+import { useFieldArray, useWatch } from "react-hook-form";
+import { useEffect, useState, useRef } from "react";
 import FormRow from "../../ui/FormRow";
 import FormInput from "../../ui/FormInput";
 import { FaPlus, FaTrash } from "react-icons/fa";
 import Button from "../../ui/Button";
+import FormSelect from "../../ui/FormSelect";
 
-const AllergiesForm = ({ control, register, errors }) => {
+const AllergiesForm = ({ control, register, errors, setValue }) => {
   const { fields, append, remove } = useFieldArray({
     control,
     name: "allergies",
   });
 
-  const newInputRef = useRef(null);
+  const [selectedTypes, setSelectedTypes] = useState([]);
+  const [selectedCategories, setSelectedCategories] = useState([]);
+  const [selectedCriticality, setSelectedCriticality] = useState([]);
+  const [selectedSeverity, setSelectedSeverity] = useState([]);
+
+  const allergies = useWatch({
+    control,
+    name: "allergies",
+    defaultValue: [],
+  });
+
+  const prevAllergiesRef = useRef(allergies);
 
   useEffect(() => {
-    if (newInputRef.current) {
-      newInputRef.current.focus();
-    }
-  }, [fields]);
+    allergies.forEach((allergy, index) => {
+      const prevAllergy = prevAllergiesRef.current[index];
+      if (
+        allergy?.code?.coding?.[0]?.code &&
+        (prevAllergy?.code?.coding?.[0]?.code !== allergy.code.coding[0].code ||
+          prevAllergy?.code?.coding?.[0]?.display !==
+            allergy.code.coding[0].display)
+      ) {
+        const codeValue = allergy.code.coding[0].code;
+        const displayValue = allergy.code.coding[0].display;
+
+        setValue(
+          `allergies.${index}.reaction[0].substance.coding[0].code`,
+          codeValue,
+          { shouldValidate: true, shouldDirty: true },
+        );
+        setValue(
+          `allergies.${index}.reaction[0].substance.coding[0].display`,
+          displayValue,
+          { shouldValidate: true, shouldDirty: true },
+        );
+        setValue(
+          `allergies.${index}.reaction[0].substance.text`,
+          displayValue,
+          { shouldValidate: true, shouldDirty: true },
+        );
+        setValue(`allergies.${index}.code.text`, displayValue, {
+          shouldValidate: true,
+          shouldDirty: true,
+        });
+      }
+    });
+    prevAllergiesRef.current = allergies;
+  }, [allergies, setValue]);
 
   const handleAddAllergy = () => {
     append({});
-    setTimeout(() => {
-      if (newInputRef.current) {
-        newInputRef.current.focus();
-      }
-    }, 100);
+  };
+
+  const handleTypeChange = (index, value) => {
+    const newSelectedTypes = [...selectedTypes];
+    newSelectedTypes[index] = value;
+    setSelectedTypes(newSelectedTypes);
+  };
+
+  const handleCategoryChange = (index, value) => {
+    const newSelectedCategories = [...selectedCategories];
+    newSelectedCategories[index] = value;
+    setSelectedCategories(newSelectedCategories);
+  };
+
+  const handleCriticalityChange = (index, value) => {
+    const newSelectedCriticality = [...selectedCriticality];
+    newSelectedCriticality[index] = value;
+    setSelectedCriticality(newSelectedCriticality);
+  };
+
+  const handleSeverityChange = (index, value) => {
+    const newSelectedSeverity = [...selectedSeverity];
+    newSelectedSeverity[index] = value;
+    setSelectedSeverity(newSelectedSeverity);
   };
 
   return (
     <div>
       {fields.map((field, index) => (
         <div key={field.id} className="mb-2 space-y-2 border p-2">
-          <h4 className="text-lg font-medium">Allergy {index + 1}</h4>
+          <h4 className="text-lg font-medium">Allergia {index + 1}</h4>
+
           <FormRow
-            label="System"
-            error={errors?.allergies?.[index]?.identifier?.system?.message}
-          >
-            <FormInput
-              {...register(`allergies.${index}.identifier.system`, {
-                required: "System is required",
-              })}
-              placeholder="http://hospital.smarthealth.org/allergies"
-              ref={index === fields.length - 1 ? newInputRef : null}
-            />
-          </FormRow>
-          <FormRow
-            label="Value"
-            error={errors?.allergies?.[index]?.identifier?.value?.message}
-          >
-            <FormInput
-              {...register(`allergies.${index}.identifier.value`, {
-                required: "Value is required",
-              })}
-              placeholder="12345"
-            />
-          </FormRow>
-          <FormRow
-            label="Clinical Status Code"
-            error={
-              errors?.allergies?.[index]?.clinicalStatus?.coding?.[0]?.code
-                ?.message
-            }
-          >
-            <FormInput
-              {...register(`allergies.${index}.clinicalStatus.coding[0].code`, {
-                required: "Code is required",
-              })}
-              placeholder="active"
-            />
-          </FormRow>
-          <FormRow
-            label="Clinical Status Display"
-            error={
-              errors?.allergies?.[index]?.clinicalStatus?.coding?.[0]?.display
-                ?.message
-            }
-          >
-            <FormInput
-              {...register(
-                `allergies.${index}.clinicalStatus.coding[0].display`,
-                { required: "Display is required" },
-              )}
-              placeholder="Active"
-            />
-          </FormRow>
-          <FormRow
-            label="Verification Status Code"
-            error={
-              errors?.allergies?.[index]?.verificationStatus?.coding?.[0]?.code
-                ?.message
-            }
-          >
-            <FormInput
-              {...register(
-                `allergies.${index}.verificationStatus.coding[0].code`,
-                { required: "Code is required" },
-              )}
-              placeholder="confirmed"
-            />
-          </FormRow>
-          <FormRow
-            label="Verification Status Display"
-            error={
-              errors?.allergies?.[index]?.verificationStatus?.coding?.[0]
-                ?.display?.message
-            }
-          >
-            <FormInput
-              {...register(
-                `allergies.${index}.verificationStatus.coding[0].display`,
-                { required: "Display is required" },
-              )}
-              placeholder="Confirmed"
-            />
-          </FormRow>
-          <FormRow
-            label="Type"
+            label="Tipo"
             error={errors?.allergies?.[index]?.type?.message}
           >
-            <FormInput
+            <FormSelect
+              id={`allergies.${index}.type`}
               {...register(`allergies.${index}.type`, {
-                required: "Type is required",
+                required: "Il tipo è obbligatorio",
+                onChange: (e) => handleTypeChange(index, e.target.value),
               })}
-              placeholder="allergy"
+              options={[
+                { value: "", label: "Seleziona un tipo" },
+                { value: "allergy", label: "Allergia" },
+                { value: "intolerance", label: "Intolleranza" },
+              ].filter(
+                (option) =>
+                  option.value !== "" || selectedTypes[index] === undefined,
+              )}
             />
           </FormRow>
           <FormRow
-            label="Category"
+            label="Categoria"
             error={errors?.allergies?.[index]?.category?.[0]?.message}
           >
-            <FormInput
+            <FormSelect
+              id={`allergies.${index}.category`}
               {...register(`allergies.${index}.category[0]`, {
-                required: "Category is required",
+                required: "La categoria è obbligatoria",
+                onChange: (e) => handleCategoryChange(index, e.target.value),
               })}
-              placeholder="medication"
+              options={[
+                { value: "", label: "Seleziona una categoria" },
+                { value: "food", label: "Cibo" },
+                { value: "medication", label: "Medicinale" },
+                { value: "environment", label: "Ambientale" },
+                { value: "biologic", label: "Biologica" },
+              ].filter(
+                (option) =>
+                  option.value !== "" ||
+                  selectedCategories[index] === undefined,
+              )}
             />
           </FormRow>
           <FormRow
-            label="Criticality"
+            label="Criticità"
             error={errors?.allergies?.[index]?.criticality?.message}
           >
-            <FormInput
+            <FormSelect
+              id={`allergies.${index}.criticality`}
               {...register(`allergies.${index}.criticality`, {
-                required: "Criticality is required",
+                required: "La criticità è obbligatoria",
+                onChange: (e) => handleCriticalityChange(index, e.target.value),
               })}
-              placeholder="high"
+              options={[
+                { value: "", label: "Seleziona una criticità" },
+                { value: "low", label: "Bassa" },
+                { value: "high", label: "Alta" },
+                { value: "unable-to-assess", label: "Non Valutabile" },
+              ].filter(
+                (option) =>
+                  option.value !== "" ||
+                  selectedCriticality[index] === undefined,
+              )}
             />
           </FormRow>
+
           <FormRow
-            label="Patient Reference"
-            error={errors?.allergies?.[index]?.patient?.reference?.message}
-          >
-            <FormInput
-              {...register(`allergies.${index}.patient.reference`, {
-                required: "Patient reference is required",
-              })}
-              placeholder="Patient/67890"
-            />
-          </FormRow>
-          <FormRow
-            label="Patient Display"
-            error={errors?.allergies?.[index]?.patient?.display?.message}
-          >
-            <FormInput
-              {...register(`allergies.${index}.patient.display`, {
-                required: "Patient display is required",
-              })}
-              placeholder="John Doe"
-            />
-          </FormRow>
-          <FormRow
-            label="Code System"
-            error={
-              errors?.allergies?.[index]?.code?.coding?.[0]?.system?.message
-            }
-          >
-            <FormInput
-              {...register(`allergies.${index}.code.coding[0].system`, {
-                required: "Code system is required",
-              })}
-              placeholder="http://www.nlm.nih.gov/research/umls/rxnorm"
-            />
-          </FormRow>
-          <FormRow
-            label="Code"
+            label="Codice"
             error={errors?.allergies?.[index]?.code?.coding?.[0]?.code?.message}
           >
             <FormInput
               {...register(`allergies.${index}.code.coding[0].code`, {
-                required: "Code is required",
+                required: "Il codice è obbligatorio",
               })}
-              placeholder="2670"
+              placeholder="227493005"
             />
           </FormRow>
           <FormRow
-            label="Code Display"
+            label="Descrizione del Codice"
             error={
               errors?.allergies?.[index]?.code?.coding?.[0]?.display?.message
             }
           >
             <FormInput
               {...register(`allergies.${index}.code.coding[0].display`, {
-                required: "Display is required",
+                required: "La descrizione è obbligatoria",
               })}
-              placeholder="Penicillin"
+              placeholder="Noci"
             />
           </FormRow>
+
           <FormRow
-            label="Reaction Manifestation"
+            label="Manifestazione della Reazione"
             error={
               errors?.allergies?.[index]?.reaction?.[0]?.manifestation?.[0]
                 ?.coding?.[0]?.display?.message
@@ -218,20 +197,31 @@ const AllergiesForm = ({ control, register, errors }) => {
             <FormInput
               {...register(
                 `allergies.${index}.reaction[0].manifestation[0].coding[0].display`,
-                { required: "Reaction manifestation is required" },
+                { required: "La manifestazione della reazione è obbligatoria" },
               )}
-              placeholder="Anaphylactic reaction"
+              placeholder="Reazione anafilattica"
             />
           </FormRow>
+
           <FormRow
-            label="Reaction Severity"
+            label="Gravità della Reazione"
             error={errors?.allergies?.[index]?.reaction?.[0]?.severity?.message}
           >
-            <FormInput
+            <FormSelect
+              id={`allergies.${index}.reaction[0].severity`}
               {...register(`allergies.${index}.reaction[0].severity`, {
-                required: "Reaction severity is required",
+                required: "La gravità della reazione è obbligatoria",
+                onChange: (e) => handleSeverityChange(index, e.target.value),
               })}
-              placeholder="severe"
+              options={[
+                { value: "", label: "Seleziona una gravità" },
+                { value: "mild", label: "Lieve" },
+                { value: "moderate", label: "Moderata" },
+                { value: "severe", label: "Grave" },
+              ].filter(
+                (option) =>
+                  option.value !== "" || selectedSeverity[index] === undefined,
+              )}
             />
           </FormRow>
           <div className="flex justify-end">

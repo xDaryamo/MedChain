@@ -45,6 +45,9 @@
     "patient-records-channel": {
       "peers": {}
     },
+    "prescriptions-channel": {
+      "peers": {}
+    },
     "lab-results-channel": {
       "peers": {}
     },

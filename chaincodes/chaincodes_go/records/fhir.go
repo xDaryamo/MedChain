@@ -269,14 +269,14 @@ type Annotation struct {
 
 // Observation represents measurements or simple assertions made about a patient
 type Observation struct {
-	ID              string                 `json:"id"`                        // Unique identifier for this Observation
+	ID              *Identifier            `json:"identifier"`                // Unique identifier for this Observation
 	Status          string                 `json:"status"`                    // The status of the observation (registered | preliminary | final | amended +)
 	Category        []CodeableConcept      `json:"category,omitempty"`        // Classification of the observation (e.g., laboratory, vital signs)
-	Code            *CodeableConcept       `json:"code"`                      // Describes what was observed
+	Code            *CodeableConcept        `json:"code"`                      // Describes what was observed
 	Subject         *Reference             `json:"subject"`                   // Who and/or what the observation is about
 	Encounter       *Reference             `json:"encounter,omitempty"`       // The healthcare event (e.g., a patient encounter) during which the observation was made
-	EffectivePeriod *Period                `json:"effectivePeriod,omitempty"` // A period of time during which the observation was made
-	Issued          *time.Time             `json:"issued,omitempty"`          // The date and time this observation was made available
+	EffectivePeriod *Period                 `json:"effectivePeriod,omitempty"` // A period of time during which the observation was made
+	Issued          time.Time              `json:"issued,omitempty"`          // The date and time this observation was made available
 	Performer       []Reference            `json:"performer,omitempty"`       // Who made the observation
 	Interpretation  []CodeableConcept      `json:"interpretation,omitempty"`  // High-level interpretation of observation
 	Note            []Annotation           `json:"note,omitempty"`            // Comments about the observation
@@ -345,7 +345,7 @@ type Immunization struct {
 
 // Condition captures information about a health condition diagnosed or identified in a patient
 type Condition struct {
-	ID                 *Identifier         `json:"id"`                           // Unique identifier for the condition instance
+	ID                 *Identifier         `json:"identifier"`                   // Unique identifier for the condition instance
 	ClinicalStatus     *CodeableConcept    `json:"clinicalStatus,omitempty"`     // Clinical status of the condition
 	VerificationStatus *CodeableConcept    `json:"verificationStatus,omitempty"` // Verification status of the condition
 	Category           []CodeableConcept   `json:"category,omitempty"`           // Categorization of the condition
@@ -357,17 +357,13 @@ type Condition struct {
 	RecordedDate       string              `json:"recordedDate,omitempty"`       // Date and time the condition was first recorded
 	Recorder           *Reference          `json:"recorder,omitempty"`           // Who recorded the condition
 	Asserter           *Reference          `json:"asserter,omitempty"`           // Individual making the condition statement
-	Evidence           []ConditionEvidence `json:"evidence,omitempty"`           // Evidence supporting the existence of the condition
 }
 
-type ConditionEvidence struct {
-	Code   *CodeableConcept `json:"code,omitempty"`   // A manifestation or symptom that led to the recording of this condition
-	Detail []Reference      `json:"detail,omitempty"` // Links to other relevant information, including diagnostic reports, observations documenting symptoms, or other conditions that are due to the same underlying cause
-}
+
 
 // MedicationStatement represents information about medication that is being consumed by a patient
 type MedicationStatement struct {
-	ID                        string            `json:"id"`                                  // Unique identifier for this particular MedicationStatement
+	ID                        string            `json:"identifier"`                                  // Unique identifier for this particular MedicationStatement
 	Status                    string            `json:"status"`                              // Medication status (active, completed, entered-in-error, intended, stopped, on-hold)
 	MedicationCodeableConcept *CodeableConcept  `json:"medicationCodeableConcept,omitempty"` // Identifies the medication being administered. This should be a codified drug name
 	Subject                   *Reference        `json:"subject"`                             // The patient or group who is taking the medication
@@ -497,3 +493,5 @@ type CarePlanActivityDetail struct {
 	Quantity               *Quantity         `json:"quantity,omitempty"`               // How much is administered/supplied/consumed
 	Description            string            `json:"description,omitempty"`            // Extra info describing activity
 }
+
+

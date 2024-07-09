@@ -17,18 +17,16 @@ type MedicalRecordsChaincode struct {
 type MedicalRecords struct {
 	RecordID       string               `json:"identifier,omitempty"`
 	PatientID      string               `json:"patientID,omitempty"`
-	Allergies      []AllergyIntolerance `json:"allergies,omitempty"`
+	Allergies      []AllergyIntolerance  `json:"allergies,omitempty"`
 	Conditions     []Condition          `json:"conditions,omitempty"`
 	Procedures     []Procedure          `json:"procedures,omitempty"`
 	Prescriptions  []MedicationRequest  `json:"prescriptions,omitempty"`
-	LabResultsIDs  []string             `json:"observationIDs,omitempty"` 
-	ServiceRequest *Reference           `json:"serviceRequest,omitempty"`
-	Attachments    []Attachment         `json:"attachments,omitempty"`
+	LabResultsIDs  []string             `json:"labResultsIDs,omitempty"`
 }
 
 // CreateMedicalRecords creates a new medical record folder for a patient
 func (mc *MedicalRecordsChaincode) CreateMedicalRecords(ctx contractapi.TransactionContextInterface, medicalRecordJSON string) (string, error) {
-	log.Printf("Received record:" + medicalRecordJSON)
+	log.Printf("Received record: " + medicalRecordJSON)
 	var medicalRecord MedicalRecords
 	err := json.Unmarshal([]byte(medicalRecordJSON), &medicalRecord)
 	if err != nil {
@@ -90,14 +88,9 @@ func (mc *MedicalRecordsChaincode) UpdateMedicalRecords(ctx contractapi.Transact
 		return `{"error": "record does not exist: ` + recordID + `"}`, errors.New("record does not exist")
 	}
 
-	var record MedicalRecords
-	err = json.Unmarshal(existingRecord, &record)
-	if err != nil {
-		return `{"error": "failed to unmarshal record: ` + err.Error() + `"}`, err
-	}
-
 	var updatedRecord MedicalRecords
-	if err := json.Unmarshal([]byte(updatedMedicalRecordJSON), &updatedRecord); err != nil {
+	err = json.Unmarshal([]byte(updatedMedicalRecordJSON), &updatedRecord)
+	if err != nil {
 		return `{"error": "failed to unmarshal record: ` + err.Error() + `"}`, err
 	}
 
@@ -106,7 +99,8 @@ func (mc *MedicalRecordsChaincode) UpdateMedicalRecords(ctx contractapi.Transact
 		return `{"error": "failed to marshal record: ` + err.Error() + `"}`, err
 	}
 
-	if err := ctx.GetStub().PutState(updatedRecord.RecordID, updatedRecordJSONBytes); err != nil {
+	err = ctx.GetStub().PutState(recordID, updatedRecordJSONBytes)
+	if err != nil {
 		return `{"error": "failed to put state: ` + err.Error() + `"}`, err
 	}
 
@@ -173,478 +167,240 @@ func (mc *MedicalRecordsChaincode) SearchMedicalRecords(ctx contractapi.Transact
 	return string(resultsJSON), nil
 }
 
-// CreateCondition adds a new condition record to the ledger
-func (c *MedicalRecordsChaincode) CreateCondition(ctx contractapi.TransactionContextInterface, conditionID string, conditionJSON string) (string, error) {
-	log.Printf("Condition JSON from param: %s", conditionJSON)
-
-	existingCondition, err := ctx.GetStub().GetState(conditionID)
-	if err != nil {
-		return `{"error": "failed to get condition: ` + err.Error() + `"}`, err
-	}
-	if existingCondition != nil {
-		return `{"error": "condition already exists: ` + conditionID + `"}`, errors.New("condition already exists")
-	}
-
-	var condition Condition
-	err = json.Unmarshal([]byte(conditionJSON), &condition)
-	if err != nil {
-		return `{"error": "failed to unmarshal condition: ` + err.Error() + `"}`, err
-	}
-
-	conditionJSONBytes, err := json.Marshal(condition)
-	if err != nil {
-		return `{"error": "failed to marshal condition: ` + err.Error() + `"}`, err
-	}
-
-	err = ctx.GetStub().PutState(conditionID, conditionJSONBytes)
-	if err != nil {
-		return `{"error": "failed to put condition in world state: ` + err.Error() + `"}`, err
-	}
-
-	return `{"message": "Condition created successfully"}`, nil
-}
-
-// ReadCondition retrieves a condition record from the ledger
-func (c *MedicalRecordsChaincode) ReadCondition(ctx contractapi.TransactionContextInterface, conditionID string) (string, error) {
-	conditionJSON, err := ctx.GetStub().GetState(conditionID)
-	if err != nil {
-		return `{"error": "failed to read condition: ` + err.Error() + `"}`, err
-	}
-	if conditionJSON == nil {
-		return `{"error": "condition does not exist: ` + conditionID + `"}`, errors.New("condition does not exist")
-	}
-
-	log.Printf("Condition JSON from ledger: %s", string(conditionJSON))
-
-	var condition Condition
-	err = json.Unmarshal(conditionJSON, &condition)
-	if err != nil {
-		return `{"error": "failed to unmarshal condition: ` + err.Error() + `"}`, err
-	}
-
-	log.Printf("Condition object: %+v", condition)
-
-	return string(conditionJSON), nil
-}
-
-// UpdateCondition updates an existing condition record in the ledger
-func (c *MedicalRecordsChaincode) UpdateCondition(ctx contractapi.TransactionContextInterface, conditionID string, conditionJSON string) (string, error) {
-	exists, err := ctx.GetStub().GetState(conditionID)
-	if err != nil {
-		return `{"error": "failed to get condition: ` + err.Error() + `"}`, err
-	}
-	if exists == nil {
-		return `{"error": "condition does not exist: ` + conditionID + `"}`, errors.New("condition does not exist")
-	}
-
-	var condition Condition
-	err = json.Unmarshal([]byte(conditionJSON), &condition)
-	if err != nil {
-		return `{"error": "failed to unmarshal condition: ` + err.Error() + `"}`, err
-	}
-
-	conditionJSONBytes, err := json.Marshal(condition)
-	if err != nil {
-		return `{"error": "failed to marshal condition: ` + err.Error() + `"}`, err
-	}
-
-	err = ctx.GetStub().PutState(conditionID, conditionJSONBytes)
-	if err != nil {
-		return `{"error": "failed to update condition: ` + err.Error() + `"}`, err
-	}
-
-	return `{"message": "Condition updated successfully"}`, nil
-}
-
-// DeleteCondition removes a condition record from the ledger
-func (c *MedicalRecordsChaincode) DeleteCondition(ctx contractapi.TransactionContextInterface, conditionID string) (string, error) {
-	existingCondition, err := ctx.GetStub().GetState(conditionID)
-	if err != nil {
-		return `{"error": "failed to get condition: ` + err.Error() + `"}`, err
-	}
-	if existingCondition == nil {
-		return `{"error": "condition does not exist: ` + conditionID + `"}`, errors.New("condition does not exist")
-	}
-
-	var condition Condition
-	err = json.Unmarshal([]byte(existingCondition), &condition)
-	if err != nil {
-		return `{"error": "failed to unmarshal condition: ` + err.Error() + `"}`, err
-	}
-
-	err = ctx.GetStub().DelState(conditionID)
-	if err != nil {
-		return `{"error": "failed to delete condition: ` + err.Error() + `"}`, err
-	}
-
-	return `{"message": "Condition deleted successfully"}`, nil
-}
-
-// SearchConditions executes a CouchDB query and returns the results as a JSON string
-func (mc *MedicalRecordsChaincode) SearchConditions(ctx contractapi.TransactionContextInterface, queryString string) (string, error) {
-	// Execute the query
-	resultsIterator, err := ctx.GetStub().GetQueryResult(queryString)
-	if err != nil {
-		return `{"error": "failed to execute query: ` + err.Error() + `"}`, err
-	}
-	defer resultsIterator.Close()
+// CreateConditionsBatch creates multiple condition records in a single transaction
+func (mc *MedicalRecordsChaincode) CreateConditionsBatch(ctx contractapi.TransactionContextInterface, conditionsJSON string) (string, error) {
+	log.Printf("Received conditions: " + conditionsJSON)
 
 	var conditions []Condition
+	err := json.Unmarshal([]byte(conditionsJSON), &conditions)
+	if err != nil {
+		return `{"error": "failed to unmarshal conditions: ` + err.Error() + `"}`, err
+	}
 
-	for resultsIterator.HasNext() {
-		queryResponse, err := resultsIterator.Next()
+	for _, condition := range conditions {
+		conditionJSONBytes, err := json.Marshal(condition)
 		if err != nil {
-			return `{"error": "failed to iterate query results: ` + err.Error() + `"}`, err
+			return `{"error": "failed to marshal condition: ` + err.Error() + `"}`, err
 		}
 
-		var condition Condition
-		err = json.Unmarshal(queryResponse.Value, &condition)
+		err = ctx.GetStub().PutState(condition.ID.Value, conditionJSONBytes)
 		if err != nil {
-			return `{"error": "failed to unmarshal query response: ` + err.Error() + `"}`, err
+			return `{"error": "failed to put condition in world state: ` + err.Error() + `"}`, err
 		}
 
-		log.Printf("Found condition: %+v", condition)
-
-		conditions = append(conditions, condition)
+		log.Printf("Condition created: %+v", condition)
 	}
 
-	resultsJSON, err := json.Marshal(conditions)
-	if err != nil {
-		return `{"error": "failed to encode results to JSON: ` + err.Error() + `"}`, err
-	}
-
-	return string(resultsJSON), nil
+	return `{"message": "Conditions created successfully"}`, nil
 }
 
-// CreateProcedure adds a new procedure record to the ledger
-func (c *MedicalRecordsChaincode) CreateProcedure(ctx contractapi.TransactionContextInterface, procedureJSON string) (string, error) {
-	log.Printf("Procedure JSON from param: %s", procedureJSON)
+// UpdateConditionsBatch updates multiple condition records in a single transaction
+func (mc *MedicalRecordsChaincode) UpdateConditionsBatch(ctx contractapi.TransactionContextInterface, conditionsJSON string) (string, error) {
+	log.Printf("Received conditions: " + conditionsJSON)
 
-	var procedure Procedure
-	err := json.Unmarshal([]byte(procedureJSON), &procedure)
+	var conditions []Condition
+	err := json.Unmarshal([]byte(conditionsJSON), &conditions)
 	if err != nil {
-		return `{"error": "failed to unmarshal procedure: ` + err.Error() + `"}`, err
+		return `{"error": "failed to unmarshal conditions: ` + err.Error() + `"}`, err
 	}
 
-	if procedure.ID.Value == "" {
-		return `{"error": "procedure request ID is required"}`, errors.New("procedure request ID is required")
+	for _, condition := range conditions {
+		conditionJSONBytes, err := json.Marshal(condition)
+		if err != nil {
+			return `{"error": "failed to marshal condition: ` + err.Error() + `"}`, err
+		}
+
+		err = ctx.GetStub().PutState(condition.ID.Value, conditionJSONBytes)
+		if err != nil {
+			return `{"error": "failed to put condition in world state: ` + err.Error() + `"}`, err
+		}
+
+		log.Printf("Condition updated: %+v", condition)
 	}
 
-	log.Printf("Procedure struct unmarshalled: %+v", procedure)
-
-	existingProcedure, err := ctx.GetStub().GetState(procedure.ID.Value)
-	if err != nil {
-		return `{"error": "failed to get procedure: ` + err.Error() + `"}`, err
-	}
-	if existingProcedure != nil {
-		return `{"error": "procedure already exists: ` + procedure.ID.Value + `"}`, errors.New("procedure already exists")
-	}
-
-	procedureJSONBytes, err := json.Marshal(procedure)
-	if err != nil {
-		return `{"error": "failed to marshal procedure: ` + err.Error() + `"}`, err
-	}
-
-	err = ctx.GetStub().PutState(procedure.ID.Value, procedureJSONBytes)
-	if err != nil {
-		return `{"error": "failed to put procedure in world state: ` + err.Error() + `"}`, err
-	}
-
-	return `{"message": "Procedure created successfully"}`, nil
+	return `{"message": "Conditions updated successfully"}`, nil
 }
 
-// ReadProcedure retrieves a procedure record from the ledger
-func (c *MedicalRecordsChaincode) ReadProcedure(ctx contractapi.TransactionContextInterface, procedureID string) (string, error) {
-	procedureJSON, err := ctx.GetStub().GetState(procedureID)
+// DeleteConditionsBatch deletes multiple condition records in a single transaction
+func (mc *MedicalRecordsChaincode) DeleteConditionsBatch(ctx contractapi.TransactionContextInterface, conditionIDsJSON string) (string, error) {
+	log.Printf("Received condition IDs: " + conditionIDsJSON)
+
+	var conditionIDs []string
+	err := json.Unmarshal([]byte(conditionIDsJSON), &conditionIDs)
 	if err != nil {
-		return `{"error": "failed to read procedure: ` + err.Error() + `"}`, err
-	}
-	if procedureJSON == nil {
-		return `{"error": "procedure does not exist: ` + procedureID + `"}`, errors.New("procedure does not exist")
+		return `{"error": "failed to unmarshal condition IDs: ` + err.Error() + `"}`, err
 	}
 
-	log.Printf("Procedure JSON from ledger: %s", string(procedureJSON))
+	for _, conditionID := range conditionIDs {
+		err := ctx.GetStub().DelState(conditionID)
+		if err != nil {
+			return `{"error": "failed to delete condition: ` + err.Error() + `"}`, err
+		}
 
-	var procedure Procedure
-	err = json.Unmarshal(procedureJSON, &procedure)
-	if err != nil {
-		return `{"error": "failed to unmarshal procedure: ` + err.Error() + `"}`, err
+		log.Printf("Condition deleted: %s", conditionID)
 	}
 
-	log.Printf("Procedure object: %+v", procedure)
-
-	return string(procedureJSON), nil
+	return `{"message": "Conditions deleted successfully"}`, nil
 }
 
-// UpdateProcedure updates an existing procedure record in the ledger
-func (c *MedicalRecordsChaincode) UpdateProcedure(ctx contractapi.TransactionContextInterface, procedureID string, procedureJSON string) (string, error) {
-	existingProcedure, err := ctx.GetStub().GetState(procedureID)
-	if err != nil {
-		return `{"error": "failed to get procedure: ` + err.Error() + `"}`, err
-	}
-	if existingProcedure == nil {
-		return `{"error": "procedure does not exist: ` + procedureID + `"}`, errors.New("procedure does not exist")
-	}
-
-	var procedure Procedure
-	err = json.Unmarshal([]byte(procedureJSON), &procedure)
-	if err != nil {
-		return `{"error": "failed to unmarshal procedure: ` + err.Error() + `"}`, err
-	}
-
-	log.Printf("Procedure object: %+v", procedure)
-
-	procedureJSONBytes, err := json.Marshal(procedure)
-	if err != nil {
-		return `{"error": "failed to marshal procedure: ` + err.Error() + `"}`, err
-	}
-
-	err = ctx.GetStub().PutState(procedureID, procedureJSONBytes)
-	if err != nil {
-		return `{"error": "failed to update procedure: ` + err.Error() + `"}`, err
-	}
-
-	return `{"message": "Procedure updated successfully"}`, nil
-}
-
-// DeleteProcedure removes a procedure record from the ledger
-func (c *MedicalRecordsChaincode) DeleteProcedure(ctx contractapi.TransactionContextInterface, procedureID string) (string, error) {
-	existingProcedure, err := ctx.GetStub().GetState(procedureID)
-	if err != nil {
-		return `{"error": "failed to get procedure: ` + err.Error() + `"}`, err
-	}
-	if existingProcedure == nil {
-		return `{"error": "procedure does not exist: ` + procedureID + `"}`, errors.New("procedure does not exist")
-	}
-
-	var procedure Procedure
-	err = json.Unmarshal([]byte(existingProcedure), &procedure)
-	if err != nil {
-		return `{"error": "failed to unmarshal procedure: ` + err.Error() + `"}`, err
-	}
-
-	log.Printf("Procedure object: %+v", procedure)
-
-	err = ctx.GetStub().DelState(procedureID)
-	if err != nil {
-		return `{"error": "failed to delete procedure: ` + err.Error() + `"}`, err
-	}
-
-	return `{"message": "Procedure deleted successfully"}`, nil
-}
-
-// SearchProcedures executes a CouchDB query and returns the results as a JSON string
-func (mc *MedicalRecordsChaincode) SearchProcedures(ctx contractapi.TransactionContextInterface, queryString string) (string, error) {
-	// Execute the query
-	resultsIterator, err := ctx.GetStub().GetQueryResult(queryString)
-	if err != nil {
-		return `{"error": "failed to execute query: ` + err.Error() + `"}`, err
-	}
-	defer resultsIterator.Close()
+// CreateProceduresBatch creates multiple procedure records in a single transaction
+func (mc *MedicalRecordsChaincode) CreateProceduresBatch(ctx contractapi.TransactionContextInterface, proceduresJSON string) (string, error) {
+	log.Printf("Received procedures: " + proceduresJSON)
 
 	var procedures []Procedure
+	err := json.Unmarshal([]byte(proceduresJSON), &procedures)
+	if err != nil {
+		return `{"error": "failed to unmarshal procedures: ` + err.Error() + `"}`, err
+	}
 
-	for resultsIterator.HasNext() {
-		queryResponse, err := resultsIterator.Next()
+	for _, procedure := range procedures {
+		procedureJSONBytes, err := json.Marshal(procedure)
 		if err != nil {
-			return `{"error": "failed to iterate query results: ` + err.Error() + `"}`, err
+			return `{"error": "failed to marshal procedure: ` + err.Error() + `"}`, err
 		}
 
-		var procedure Procedure
-		err = json.Unmarshal(queryResponse.Value, &procedure)
+		err = ctx.GetStub().PutState(procedure.ID.Value, procedureJSONBytes)
 		if err != nil {
-			return `{"error": "failed to unmarshal query response: ` + err.Error() + `"}`, err
+			return `{"error": "failed to put procedure in world state: ` + err.Error() + `"}`, err
 		}
 
-		log.Printf("Found procedure: %+v", procedure)
-
-		procedures = append(procedures, procedure)
+		log.Printf("Procedure created: %+v", procedure)
 	}
 
-	resultsJSON, err := json.Marshal(procedures)
-	if err != nil {
-		return `{"error": "failed to encode results to JSON: ` + err.Error() + `"}`, err
-	}
-
-	return string(resultsJSON), nil
+	return `{"message": "Procedures created successfully"}`, nil
 }
 
-// CreateAnnotation adds a new annotation to a procedure on the ledger
-func (c *MedicalRecordsChaincode) CreateAnnotation(ctx contractapi.TransactionContextInterface, procedureID string, annotationJSON string) (string, error) {
-	procedureJSON, err := ctx.GetStub().GetState(procedureID)
+// UpdateProceduresBatch updates multiple procedure records in a single transaction
+func (mc *MedicalRecordsChaincode) UpdateProceduresBatch(ctx contractapi.TransactionContextInterface, proceduresJSON string) (string, error) {
+	log.Printf("Received procedures: " + proceduresJSON)
+
+	var procedures []Procedure
+	err := json.Unmarshal([]byte(proceduresJSON), &procedures)
 	if err != nil {
-		return `{"error": "failed to get procedure: ` + err.Error() + `"}`, err
-	}
-	if procedureJSON == nil {
-		return `{"error": "procedure does not exist: ` + procedureID + `"}`, errors.New("procedure does not exist")
+		return `{"error": "failed to unmarshal procedures: ` + err.Error() + `"}`, err
 	}
 
-	var procedure Procedure
-	err = json.Unmarshal(procedureJSON, &procedure)
-	if err != nil {
-		return `{"error": "failed to unmarshal procedure: ` + err.Error() + `"}`, err
+	for _, procedure := range procedures {
+		procedureJSONBytes, err := json.Marshal(procedure)
+		if err != nil {
+			return `{"error": "failed to marshal procedure: ` + err.Error() + `"}`, err
+		}
+
+		err = ctx.GetStub().PutState(procedure.ID.Value, procedureJSONBytes)
+		if err != nil {
+			return `{"error": "failed to put procedure in world state: ` + err.Error() + `"}`, err
+		}
+
+		log.Printf("Procedure updated: %+v", procedure)
 	}
 
-	var annotation Annotation
-	err = json.Unmarshal([]byte(annotationJSON), &annotation)
-	if err != nil {
-		return `{"error": "failed to unmarshal annotation: ` + err.Error() + `"}`, err
-	}
-
-	procedure.Note = append(procedure.Note, annotation)
-
-	updatedProcedureJSON, err := json.Marshal(procedure)
-	if err != nil {
-		return `{"error": "failed to marshal updated procedure: ` + err.Error() + `"}`, err
-	}
-
-	err = ctx.GetStub().PutState(procedureID, updatedProcedureJSON)
-	if err != nil {
-		return `{"error": "failed to update procedure: ` + err.Error() + `"}`, err
-	}
-
-	return `{"message": "Annotation created successfully"}`, nil
+	return `{"message": "Procedures updated successfully"}`, nil
 }
 
-// CreateAllergy creates a new allergy
-func (mc *MedicalRecordsChaincode) CreateAllergy(ctx contractapi.TransactionContextInterface, allergyJSON string) (string, error) {
-	log.Printf("Received allergy:" + allergyJSON)
-	var allergy AllergyIntolerance
-	err := json.Unmarshal([]byte(allergyJSON), &allergy)
+// DeleteProceduresBatch deletes multiple procedure records in a single transaction
+func (mc *MedicalRecordsChaincode) DeleteProceduresBatch(ctx contractapi.TransactionContextInterface, procedureIDsJSON string) (string, error) {
+	log.Printf("Received procedure IDs: " + procedureIDsJSON)
+
+	var procedureIDs []string
+	err := json.Unmarshal([]byte(procedureIDsJSON), &procedureIDs)
 	if err != nil {
-		return `{"error": "failed to unmarshal allergy: ` + err.Error() + `"}`, err
-	}
-	log.Printf("Unmarshalled allergy: %+v", allergy)
-
-	if allergy.ID.Value == "" {
-		return `{"error": "allergy ID is required"}`, errors.New("allergy ID is required")
+		return `{"error": "failed to unmarshal procedure IDs: ` + err.Error() + `"}`, err
 	}
 
-	existingRecord, err := ctx.GetStub().GetState(allergy.ID.Value)
-	if err != nil {
-		return `{"error": "failed to get allergy for patient ` + allergy.ID.Value + ` from world state: ` + err.Error() + `"}`, err
-	}
-	if existingRecord != nil {
-		return `{"error": "allergy already exist ` + allergy.ID.Value + `"}`, errors.New("allergy already exist")
+	for _, procedureID := range procedureIDs {
+		err := ctx.GetStub().DelState(procedureID)
+		if err != nil {
+			return `{"error": "failed to delete procedure: ` + err.Error() + `"}`, err
+		}
+
+		log.Printf("Procedure deleted: %s", procedureID)
 	}
 
-	allergyJSONBytes, err := json.Marshal(allergy)
-	if err != nil {
-		return `{"error": "failed to marshal allergy: ` + err.Error() + `"}`, err
-	}
-
-	err = ctx.GetStub().PutState(allergy.ID.Value, allergyJSONBytes)
-	if err != nil {
-		return `{"error": "failed to put allergy in world state: ` + err.Error() + `"}`, err
-	}
-
-	return `{"message": "Allergy created successfully"}`, nil
+	return `{"message": "Procedures deleted successfully"}`, nil
 }
 
-// ReadAllergy retrieves a patient's allergy from the blockchain
-func (mc *MedicalRecordsChaincode) ReadAllergy(ctx contractapi.TransactionContextInterface, allergyID string) (string, error) {
-	allergyJSON, err := ctx.GetStub().GetState(allergyID)
-	if err != nil {
-		return `{"error": "failed to read allergy: ` + err.Error() + `"}`, err
-	}
-	if allergyJSON == nil {
-		return `{"error": "allergy does not exist: ` + allergyID + `"}`, errors.New("allergy does not exist")
-	}
-
-	var allergy AllergyIntolerance
-	err = json.Unmarshal(allergyJSON, &allergy)
-	if err != nil {
-		return `{"error": "failed to unmarshal allergy: ` + err.Error() + `"}`, err
-	}
-
-	return string(allergyJSON), nil
-}
-
-// UpdateMedicalRecords updates an existing allergy for a patient
-func (mc *MedicalRecordsChaincode) UpdateAllergy(ctx contractapi.TransactionContextInterface, allergyID string, updatedAllergyJSON string) (string, error) {
-	existingAllergy, err := ctx.GetStub().GetState(allergyID)
-	if err != nil {
-		return `{"error": "failed to get allergy: ` + err.Error() + `"}`, err
-	}
-	if existingAllergy == nil {
-		return `{"error": "allergy does not exist: ` + allergyID + `"}`, errors.New("allergy does not exist")
-	}
-
-	var updatedAllergy AllergyIntolerance
-	if err := json.Unmarshal([]byte(updatedAllergyJSON), &updatedAllergy); err != nil {
-		return `{"error": "failed to unmarshal allergy: ` + err.Error() + `"}`, err
-	}
-
-	updatedAllergyJSONBytes, err := json.Marshal(updatedAllergy)
-	if err != nil {
-		return `{"error": "failed to marshal allergy: ` + err.Error() + `"}`, err
-	}
-
-	if err := ctx.GetStub().PutState(updatedAllergy.ID.Value, updatedAllergyJSONBytes); err != nil {
-		return `{"error": "failed to put state: ` + err.Error() + `"}`, err
-	}
-
-	return `{"message": "Allergy updated successfully"}`, nil
-}
-
-// DeleteMedicalRecords removes an existing medical record folder for a patient
-func (mc *MedicalRecordsChaincode) DeleteAllergy(ctx contractapi.TransactionContextInterface, allergyID string) (string, error) {
-	existingAllergy, err := ctx.GetStub().GetState(allergyID)
-	if err != nil {
-		return `{"error": "failed to get allergy: ` + err.Error() + `"}`, err
-	}
-	if existingAllergy == nil {
-		return `{"error": "allergy not found: ` + allergyID + `"}`, errors.New("allergy not found")
-	}
-
-	var allergy AllergyIntolerance
-	err = json.Unmarshal(existingAllergy, &allergy)
-	if err != nil {
-		return `{"error": "failed to unmarshal allergy: ` + err.Error() + `"}`, err
-	}
-
-	err = ctx.GetStub().DelState(allergyID)
-	if err != nil {
-		return `{"error": "failed to delete allergy: ` + err.Error() + `"}`, err
-	}
-
-	return `{"message": "Allergy deleted successfully"}`, nil
-}
-
-// SearchAllergies executes a CouchDB query and returns the results as a JSON string
-func (mc *MedicalRecordsChaincode) SearchAllergies(ctx contractapi.TransactionContextInterface, queryString string) (string, error) {
-	// Execute the query
-	resultsIterator, err := ctx.GetStub().GetQueryResult(queryString)
-	if err != nil {
-		return `{"error": "failed to execute query: ` + err.Error() + `"}`, err
-	}
-	defer resultsIterator.Close()
+// CreateAllergiesBatch creates multiple allergy records in a single transaction
+func (mc *MedicalRecordsChaincode) CreateAllergiesBatch(ctx contractapi.TransactionContextInterface, allergiesJSON string) (string, error) {
+	log.Printf("Received allergies: " + allergiesJSON)
 
 	var allergies []AllergyIntolerance
-
-	for resultsIterator.HasNext() {
-		queryResponse, err := resultsIterator.Next()
-		if err != nil {
-			return `{"error": "failed to iterate query results: ` + err.Error() + `"}`, err
-		}
-
-		var allergy AllergyIntolerance
-		err = json.Unmarshal(queryResponse.Value, &allergy)
-		if err != nil {
-			return `{"error": "failed to unmarshal query response: ` + err.Error() + `"}`, err
-		}
-
-		log.Printf("Found allergy: %+v", allergy)
-
-		allergies = append(allergies, allergy)
-	}
-
-	resultsJSON, err := json.Marshal(allergies)
+	err := json.Unmarshal([]byte(allergiesJSON), &allergies)
 	if err != nil {
-		return `{"error": "failed to encode results to JSON: ` + err.Error() + `"}`, err
+		return `{"error": "failed to unmarshal allergies: ` + err.Error() + `"}`, err
 	}
 
-	return string(resultsJSON), nil
+	for _, allergy := range allergies {
+		if allergy.ID.Value == "" {
+			return `{"error": "allergy ID is required"}`, errors.New("allergy ID is required")
+		}
+
+		allergyJSONBytes, err := json.Marshal(allergy)
+		if err != nil {
+			return `{"error": "failed to marshal allergy: ` + err.Error() + `"}`, err
+		}
+
+		err = ctx.GetStub().PutState(allergy.ID.Value, allergyJSONBytes)
+		if err != nil {
+			return `{"error": "failed to put allergy in world state: ` + err.Error() + `"}`, err
+		}
+
+		log.Printf("Allergy created: %+v", allergy)
+	}
+
+	return `{"message": "Allergies created successfully"}`, nil
+}
+
+// UpdateAllergiesBatch updates multiple allergy records in a single transaction
+func (mc *MedicalRecordsChaincode) UpdateAllergiesBatch(ctx contractapi.TransactionContextInterface, allergiesJSON string) (string, error) {
+	log.Printf("Received allergies: " + allergiesJSON)
+
+	var allergies []AllergyIntolerance
+	err := json.Unmarshal([]byte(allergiesJSON), &allergies)
+	if err != nil {
+		return `{"error": "failed to unmarshal allergies: ` + err.Error() + `"}`, err
+	}
+
+	for _, allergy := range allergies {
+		if allergy.ID.Value == "" {
+			return `{"error": "allergy ID is required"}`, errors.New("allergy ID is required")
+		}
+
+		allergyJSONBytes, err := json.Marshal(allergy)
+		if err != nil {
+			return `{"error": "failed to marshal allergy: ` + err.Error() + `"}`, err
+		}
+
+		err = ctx.GetStub().PutState(allergy.ID.Value, allergyJSONBytes)
+		if err != nil {
+			return `{"error": "failed to put allergy in world state: ` + err.Error() + `"}`, err
+		}
+
+		log.Printf("Allergy updated: %+v", allergy)
+	}
+
+	return `{"message": "Allergies updated successfully"}`, nil
+}
+
+// DeleteAllergiesBatch deletes multiple allergy records in a single transaction
+func (mc *MedicalRecordsChaincode) DeleteAllergiesBatch(ctx contractapi.TransactionContextInterface, allergyIDsJSON string) (string, error) {
+	log.Printf("Received allergy IDs: " + allergyIDsJSON)
+
+	var allergyIDs []string
+	err := json.Unmarshal([]byte(allergyIDsJSON), &allergyIDs)
+	if err != nil {
+		return `{"error": "failed to unmarshal allergy IDs: ` + err.Error() + `"}`, err
+	}
+
+	for _, allergyID := range allergyIDs {
+		err := ctx.GetStub().DelState(allergyID)
+		if err != nil {
+			return `{"error": "failed to delete allergy: ` + err.Error() + `"}`, err
+		}
+
+		log.Printf("Allergy deleted: %s", allergyID)
+	}
+
+	return `{"message": "Allergies deleted successfully"}`, nil
 }
 
 func main() {

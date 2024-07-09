@@ -126,6 +126,11 @@
         },
 
         {
+          "name": "OspedaleMaresca",
+          "peers": ["peer0"]
+        },
+
+        {
           "name": "Patients",
           "peers": ["peer0"]
         }

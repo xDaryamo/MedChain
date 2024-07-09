@@ -33,7 +33,6 @@ export const getMedicalRecord = async (id) => {
 
 export const createMedicalRecord = async (record) => {
   const response = await api.post("/records", record);
-  console.log(record);
   return response.data;
 };
 
@@ -48,76 +47,68 @@ export const deleteMedicalRecord = async (id) => {
 };
 
 export const searchProcedures = async (query) => {
-  const response = await api.post("/procedures/search", { query });
+  const response = await api.post("/records/procedures/search", { query });
   return response.data.results || [];
 };
 
-export const createProcedure = async (procedure) => {
-  const response = await api.post("/procedures", procedure);
+export const createProceduresBatch = async (procedures) => {
+  const response = await api.post("/records/procedures/batch", procedures);
   return response.data;
 };
 
-export const readProcedure = async (id) => {
-  const response = await api.get(`/procedures/${id}`);
+export const updateProceduresBatch = async (procedures) => {
+  const response = await api.patch("/records/procedures/batch", procedures);
   return response.data;
 };
 
-export const updateProcedure = async (id, procedure) => {
-  const response = await api.patch(`/procedures/${id}`, procedure);
-  return response.data;
-};
-
-export const deleteProcedure = async (id) => {
-  const response = await api.delete(`/procedures/${id}`);
+export const deleteProceduresBatch = async (procedureIDs) => {
+  const response = await api.delete("/records/procedures/batch", {
+    data: { ids: procedureIDs },
+  });
   return response.data;
 };
 
 export const searchConditions = async (query) => {
-  const response = await api.post("/conditions/search", { query });
+  const response = await api.post("/records/conditions/search", { query });
   return response.data.results || [];
 };
 
-export const createCondition = async (condition) => {
-  const response = await api.post("/conditions", condition);
+export const createConditionsBatch = async (conditions) => {
+  const response = await api.post("/records/conditions/batch", conditions);
   return response.data;
 };
 
-export const readCondition = async (id) => {
-  const response = await api.get(`/conditions/${id}`);
+export const updateConditionsBatch = async (conditions) => {
+  const response = await api.patch("/records/conditions/batch", conditions);
   return response.data;
 };
 
-export const updateCondition = async (id, condition) => {
-  const response = await api.patch(`/conditions/${id}`, condition);
-  return response.data;
-};
-
-export const deleteCondition = async (id) => {
-  const response = await api.delete(`/conditions/${id}`);
+export const deleteConditionsBatch = async (conditionIDs) => {
+  const response = await api.delete("/records/conditions/batch", {
+    data: { ids: conditionIDs },
+  });
   return response.data;
 };
 
 export const searchAllergies = async (query) => {
-  const response = await api.post("/allergies/search", { query });
+  const response = await api.post("/records/allergies/search", { query });
   return response.data.results || [];
 };
 
-export const createAllergy = async (condition) => {
-  const response = await api.post("/allergies", condition);
+export const createAllergiesBatch = async (allergies) => {
+  const response = await api.post("/records/allergies/batch", allergies);
+  console.log(response.data);
   return response.data;
 };
 
-export const readAllergy = async (id) => {
-  const response = await api.get(`/allergies/${id}`);
+export const updateAllergiesBatch = async (allergies) => {
+  const response = await api.patch("/records/allergies/batch", allergies);
   return response.data;
 };
 
-export const updateAllergy = async (id, condition) => {
-  const response = await api.patch(`/allergies/${id}`, condition);
-  return response.data;
-};
-
-export const deleteAllergy = async (id) => {
-  const response = await api.delete(`/allergies/${id}`);
+export const deleteAllergiesBatch = async (allergyIDs) => {
+  const response = await api.delete("/records/allergies/batch", {
+    data: { ids: allergyIDs },
+  });
   return response.data;
 };

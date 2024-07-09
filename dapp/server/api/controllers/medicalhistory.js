@@ -417,6 +417,107 @@ exports.searchConditions = async (req, res, next) => {
   }
 };
 
+exports.createConditionsBatch = async (req, res, next) => {
+  const conditionsJSON = req.body;
+  const userID = req.user.userId;
+  const organization = req.user.organization;
+
+  try {
+    const channel = "patient-records-channel";
+    const chaincode = "records";
+
+    await fabric.init(userID, organization, channel, chaincode);
+    console.log("Fabric network initialized successfully.");
+
+    conditionsJSON.forEach((condition) => {
+      condition.identifier = {
+        ...condition.identifier, // Mantenere i campi esistenti in identifier
+        value: uuidv4(),
+      };
+    });
+
+    const conditionsJSONString = JSON.stringify(conditionsJSON);
+    console.log("Creating conditions batch: ", conditionsJSONString);
+    const result = await fabric.submitTransaction(
+      "CreateConditionsBatch",
+      conditionsJSONString
+    );
+
+    res.status(201).json({ conditions: conditionsJSON });
+  } catch (error) {
+    console.error("Failed to create conditions batch:", error);
+    res.status(500).json({ error: "Failed to create conditions batch" });
+  } finally {
+    fabric.disconnect();
+    console.log("Disconnected from Fabric gateway.");
+  }
+};
+
+exports.updateConditionsBatch = async (req, res, next) => {
+  const conditionsJSON = req.body;
+  const userID = req.user.userId;
+  const organization = req.user.organization;
+
+  try {
+    const channel = "patient-records-channel";
+    const chaincode = "records";
+
+    await fabric.init(userID, organization, channel, chaincode);
+    console.log("Fabric network initialized successfully.");
+
+    conditionsJSON.forEach((condition) => {
+      if (!condition.identifier || !condition.identifier.value) {
+        throw new Error("Missing identifier for condition");
+      }
+    });
+
+    const conditionsJSONString = JSON.stringify(conditionsJSON);
+    console.log("Updating conditions batch: ", conditionsJSONString);
+    const result = await fabric.submitTransaction(
+      "UpdateConditionsBatch",
+      conditionsJSONString
+    );
+
+    res.status(200).json({ conditions: conditionsJSON });
+  } catch (error) {
+    console.error("Failed to update conditions batch:", error);
+    res.status(500).json({ error: "Failed to update conditions batch" });
+  } finally {
+    fabric.disconnect();
+    console.log("Disconnected from Fabric gateway.");
+  }
+};
+
+exports.deleteConditionsBatch = async (req, res, next) => {
+  const conditionIDsJSON = req.body;
+  const userID = req.user.userId;
+  const organization = req.user.organization;
+
+  try {
+    const channel = "patient-records-channel";
+    const chaincode = "records";
+
+    await fabric.init(userID, organization, channel, chaincode);
+    console.log("Fabric network initialized successfully.");
+
+    const conditionIDsJSONString = JSON.stringify(conditionIDsJSON);
+    console.log("Deleting conditions batch: ", conditionIDsJSONString);
+    const result = await fabric.submitTransaction(
+      "DeleteConditionsBatch",
+      conditionIDsJSONString
+    );
+
+    const deletedConditionIDs = JSON.parse(result);
+    res.status(200).json({ ids: deletedConditionIDs });
+  } catch (error) {
+    console.error("Failed to delete conditions batch:", error);
+    res.status(500).json({ error: "Failed to delete conditions batch" });
+  } finally {
+    fabric.disconnect();
+    console.log("Disconnected from Fabric gateway.");
+  }
+};
+
 exports.createProcedure = async (req, res, next) => {
   const procedureData = req.body;
   const userId = req.user.userId;
@@ -627,6 +728,107 @@ exports.searchProcedures = async (req, res, next) => {
     console.log("Disconnected from Fabric gateway.");
   }
 };
+exports.createProceduresBatch = async (req, res, next) => {
+  const proceduresJSON = req.body;
+  const userID = req.user.userId;
+  const organization = req.user.organization;
+
+  try {
+    const channel = "patient-records-channel";
+    const chaincode = "records";
+
+    await fabric.init(userID, organization, channel, chaincode);
+    console.log("Fabric network initialized successfully.");
+
+    proceduresJSON.forEach((procedure) => {
+      procedure.identifier = {
+        ...procedure.identifier, // Mantenere i campi esistenti in identifier
+        value: uuidv4(),
+      };
+    });
+
+    const proceduresJSONString = JSON.stringify(proceduresJSON);
+    console.log("Creating procedures batch: ", proceduresJSONString);
+    const result = await fabric.submitTransaction(
+      "CreateProceduresBatch",
+      proceduresJSONString
+    );
+
+    res.status(201).json({ procedures: proceduresJSON });
+  } catch (error) {
+    console.error("Failed to create procedures batch:", error);
+    res.status(500).json({ error: "Failed to create procedures batch" });
+  } finally {
+    fabric.disconnect();
+    console.log("Disconnected from Fabric gateway.");
+  }
+};
+
+exports.updateProceduresBatch = async (req, res, next) => {
+  const proceduresJSON = req.body;
+  const userID = req.user.userId;
+  const organization = req.user.organization;
+
+  try {
+    const channel = "patient-records-channel";
+    const chaincode = "records";
+
+    await fabric.init(userID, organization, channel, chaincode);
+    console.log("Fabric network initialized successfully.");
+
+    // Assicurati che gli identificatori non vengano modificati
+    proceduresJSON.forEach((procedure) => {
+      if (!procedure.identifier || !procedure.identifier.value) {
+        throw new Error("Missing identifier for procedure");
+      }
+    });
+
+    const proceduresJSONString = JSON.stringify(proceduresJSON);
+    console.log("Updating procedures batch: ", proceduresJSONString);
+    const result = await fabric.submitTransaction(
+      "UpdateProceduresBatch",
+      proceduresJSONString
+    );
+
+    res.status(200).json({ procedures: proceduresJSON });
+  } catch (error) {
+    console.error("Failed to update procedures batch:", error);
+    res.status(500).json({ error: "Failed to update procedures batch" });
+  } finally {
+    fabric.disconnect();
+    console.log("Disconnected from Fabric gateway.");
+  }
+};
+
+exports.deleteProceduresBatch = async (req, res, next) => {
+  const procedureIDsJSON = req.body;
+  const userID = req.user.userId;
+  const organization = req.user.organization;
+
+  try {
+    const channel = "patient-records-channel";
+    const chaincode = "records";
+
+    await fabric.init(userID, organization, channel, chaincode);
+    console.log("Fabric network initialized successfully.");
+
+    const procedureIDsJSONString = JSON.stringify(procedureIDsJSON);
+    console.log("Deleting procedures batch: ", procedureIDsJSONString);
+    const result = await fabric.submitTransaction(
+      "DeleteProceduresBatch",
+      procedureIDsJSONString
+    );
+
+    const deletedProcedureIDs = JSON.parse(result);
+    res.status(200).json({ ids: deletedProcedureIDs });
+  } catch (error) {
+    console.error("Failed to delete procedures batch:", error);
+    res.status(500).json({ error: "Failed to delete procedures batch" });
+  } finally {
+    fabric.disconnect();
+    console.log("Disconnected from Fabric gateway.");
+  }
+};
 
 exports.createAllergy = async (req, res, next) => {
   const allergyJSON = req.body;
@@ -645,7 +847,6 @@ exports.createAllergy = async (req, res, next) => {
       return res.status(403).json({ error: "User not approved" });
     }
 
-    // Validate and stringify JSON
     let allergyJSONString;
     try {
       allergyJSONString = JSON.stringify(allergyJSON);
@@ -658,11 +859,10 @@ exports.createAllergy = async (req, res, next) => {
     await fabric.init(userID, organization, channel, chaincode);
     console.log("Fabric network initialized successfully.");
 
-    const result = await fabric.submitTransaction(
-      "CreateAllergy",
-      allergyJSONString
-    );
-    res.status(201).json({ result: result });
+    console.log("creating allergy: ", allergyJSONString);
+    await fabric.submitTransaction("CreateAllergy", allergyJSONString);
+
+    res.status(201).json({ allergy: allergyJSON });
   } catch (error) {
     console.error("Failed to create allergy:", error);
     res.status(500).json({ error: "Failed to create allergy" });
@@ -707,7 +907,7 @@ exports.getAllergy = async (req, res, next) => {
 
 exports.updateAllergy = async (req, res, next) => {
   const allergyID = req.params.id;
-  const updatedallergy = req.body;
+  const updatedAllergy = req.body;
   const userID = req.user.userId;
   const organization = req.user.organization;
   try {
@@ -715,7 +915,7 @@ exports.updateAllergy = async (req, res, next) => {
       !(await isAuthorized(
         userID,
         organization,
-        updatedallergy.patient.reference
+        updatedAllergy.patient.reference
       ))
     ) {
       return res.status(403).json({ error: "User not approved" });
@@ -726,7 +926,7 @@ exports.updateAllergy = async (req, res, next) => {
 
     let allergyJSONString;
     try {
-      allergyJSONString = JSON.stringify(allergyJSON);
+      allergyJSONString = JSON.stringify(updatedAllergy);
       JSON.parse(allergyJSONString);
     } catch (jsonError) {
       console.error("Invalid JSON format:", jsonError);
@@ -827,6 +1027,108 @@ exports.searchAllergies = async (req, res, next) => {
     res.status(200).json({ results: results });
   } catch (error) {
     res.status(500).json({ error: error.message });
+  } finally {
+    fabric.disconnect();
+    console.log("Disconnected from Fabric gateway.");
+  }
+};
+
+exports.createAllergiesBatch = async (req, res, next) => {
+  const allergiesJSON = req.body;
+  const userID = req.user.userId;
+  const organization = req.user.organization;
+
+  try {
+    const channel = "patient-records-channel";
+    const chaincode = "records";
+
+    await fabric.init(userID, organization, channel, chaincode);
+    console.log("Fabric network initialized successfully.");
+
+    allergiesJSON.forEach((allergy) => {
+      allergy.identifier = {
+        ...allergy.identifier,
+        value: uuidv4(),
+      };
+    });
+
+    const allergiesJSONString = JSON.stringify(allergiesJSON);
+    console.log("Creating allergies batch: ", allergiesJSONString);
+    const result = await fabric.submitTransaction(
+      "CreateAllergiesBatch",
+      allergiesJSONString
+    );
+
+    res.status(201).json({ allergies: allergiesJSON });
+  } catch (error) {
+    console.error("Failed to create allergies batch:", error);
+    res.status(500).json({ error: "Failed to create allergies batch" });
+  } finally {
+    fabric.disconnect();
+    console.log("Disconnected from Fabric gateway.");
+  }
+};
+
+exports.updateAllergiesBatch = async (req, res, next) => {
+  const allergiesJSON = req.body;
+  const userID = req.user.userId;
+  const organization = req.user.organization;
+
+  try {
+    const channel = "patient-records-channel";
+    const chaincode = "records";
+
+    await fabric.init(userID, organization, channel, chaincode);
+    console.log("Fabric network initialized successfully.");
+
+    // Assicurati che gli identificatori non vengano modificati
+    allergiesJSON.forEach((allergy) => {
+      if (!allergy.identifier || !allergy.identifier.value) {
+        throw new Error("Missing identifier for allergy");
+      }
+    });
+
+    const allergiesJSONString = JSON.stringify(allergiesJSON);
+    console.log("Updating allergies batch: ", allergiesJSONString);
+    const result = await fabric.submitTransaction(
+      "UpdateAllergiesBatch",
+      allergiesJSONString
+    );
+
+    res.status(200).json({ allergies: allergiesJSON });
+  } catch (error) {
+    console.error("Failed to update allergies batch:", error);
+    res.status(500).json({ error: "Failed to update allergies batch" });
+  } finally {
+    fabric.disconnect();
+    console.log("Disconnected from Fabric gateway.");
+  }
+};
+
+exports.deleteAllergiesBatch = async (req, res, next) => {
+  const allergyIDsJSON = req.body;
+  const userID = req.user.userId;
+  const organization = req.user.organization;
+
+  try {
+    const channel = "patient-records-channel";
+    const chaincode = "records";
+
+    await fabric.init(userID, organization, channel, chaincode);
+    console.log("Fabric network initialized successfully.");
+
+    const allergyIDsJSONString = JSON.stringify(allergyIDsJSON);
+    console.log("Deleting allergies batch: ", allergyIDsJSONString);
+    const result = await fabric.submitTransaction(
+      "DeleteAllergiesBatch",
+      allergyIDsJSONString
+    );
+
+    const deletedAllergyIDs = JSON.parse(result);
+    res.status(200).json({ ids: deletedAllergyIDs });
+  } catch (error) {
+    console.error("Failed to delete allergies batch:", error);
+    res.status(500).json({ error: "Failed to delete allergies batch" });
   } finally {
     fabric.disconnect();
     console.log("Disconnected from Fabric gateway.");

@@ -6,18 +6,35 @@ const prescriptionController = require("../controllers/prescription");
 const { verifyToken, authorizeOrganization } = require("../middleware/auth");
 
 // GET Retrieves a specific prescription
-router.get("/:id", verifyToken, prescriptionController.getMedicationRequest);
+router.get("/:id", verifyToken, prescriptionController.getPrescription);
 
 // POST Search prescriptions
 router.post("/search", verifyToken, prescriptionController.searchPrescriptions);
 
 // POST Create a new prescription
-router.post("/", verifyToken, prescriptionController.createMedicationRequest);
+router.post("/", verifyToken, prescriptionController.createPrescription);
 
 // PATCH Update status of an existing prescription
 router.patch("/:id", verifyToken, prescriptionController.updatePrescription);
 
 // DELETE Remove a prescription
 router.delete("/:id", verifyToken, prescriptionController.deletePrescription);
+
+// Batch operations
+router.post(
+  "/batch",
+  verifyToken,
+  prescriptionController.createPrescriptionsBatch
+);
+router.patch(
+  "/batch",
+  verifyToken,
+  prescriptionController.updatePrescriptionsBatch
+);
+router.delete(
+  "/batch",
+  verifyToken,
+  prescriptionController.deletePrescriptionsBatch
+);
 
 module.exports = router;

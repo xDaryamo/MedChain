@@ -183,6 +183,100 @@ func (t *PrescriptionChaincode) VerifyPrescription(ctx contractapi.TransactionCo
 	return `{"message": "prescription verified successfully"}`, nil
 }
 
+func (t *PrescriptionChaincode) CreatePrescriptionsBatch(ctx contractapi.TransactionContextInterface, medicationRequestsJSON string) (string, error) {
+	var medicationRequests []MedicationRequest
+	err := json.Unmarshal([]byte(medicationRequestsJSON), &medicationRequests)
+	if err != nil {
+		return `{"error": "failed to decode JSON"}`, err
+	}
+
+	for _, medicationRequest := range medicationRequests {
+		if medicationRequest.ID == nil || medicationRequest.ID.Value == "" {
+			return `{"error": "medication request ID is required for all requests"}`, errors.New("medication request ID is required for all requests")
+		}
+
+		existingPrescriptionAsBytes, err := ctx.GetStub().GetState(medicationRequest.ID.Value)
+		if err != nil {
+			return `{"error": "failed to read from world state"}`, err
+		}
+		if existingPrescriptionAsBytes != nil {
+			return `{"error": "a prescription already exists for ID ` + medicationRequest.ID.Value + `"}`, errors.New("prescription already exists for ID " + medicationRequest.ID.Value)
+		}
+
+		medicationRequestAsBytes, err := json.Marshal(medicationRequest)
+		if err != nil {
+			return `{"error": "failed to marshal medication request"}`, err
+		}
+
+		err = ctx.GetStub().PutState(medicationRequest.ID.Value, medicationRequestAsBytes)
+		if err != nil {
+			return `{"error": "failed to put state"}`, err
+		}
+	}
+
+	return `{"message": "Prescriptions created successfully"}`, nil
+}
+
+func (t *PrescriptionChaincode) UpdatePrescriptionsBatch(ctx contractapi.TransactionContextInterface, medicationRequestsJSON string) (string, error) {
+	var medicationRequests []MedicationRequest
+	err := json.Unmarshal([]byte(medicationRequestsJSON), &medicationRequests)
+	if err != nil {
+		return `{"error": "failed to decode JSON"}`, err
+	}
+
+	for _, medicationRequest := range medicationRequests {
+		if medicationRequest.ID == nil || medicationRequest.ID.Value == "" {
+			return `{"error": "medication request ID is required for all requests"}`, errors.New("medication request ID is required for all requests")
+		}
+
+		existingPrescriptionAsBytes, err := ctx.GetStub().GetState(medicationRequest.ID.Value)
+		if err != nil {
+			return `{"error": "failed to read from world state"}`, err
+		}
+		if existingPrescriptionAsBytes == nil {
+			return `{"error": "prescription does not exist for ID ` + medicationRequest.ID.Value + `"}`, errors.New("prescription does not exist for ID " + medicationRequest.ID.Value)
+		}
+
+		updatedMedicationRequestAsBytes, err := json.Marshal(medicationRequest)
+		if err != nil {
+			return `{"error": "failed to marshal medication request"}`, err
+		}
+
+		err = ctx.GetStub().PutState(medicationRequest.ID.Value, updatedMedicationRequestAsBytes)
+		if err != nil {
+			return `{"error": "failed to put state"}`, err
+		}
+	}
+
+	return `{"message": "Prescriptions updated successfully"}`, nil
+}
+
+func (t *PrescriptionChaincode) DeletePrescriptionsBatch(ctx contractapi.TransactionContextInterface, prescriptionIDsJSON string) (string, error) {
+	var prescriptionIDs []string
+	err := json.Unmarshal([]byte(prescriptionIDsJSON), &prescriptionIDs)
+	if err != nil {
+		return `{"error": "failed to decode JSON"}`, err
+	}
+
+	for _, prescriptionID := range prescriptionIDs {
+		existingPrescriptionAsBytes, err := ctx.GetStub().GetState(prescriptionID)
+		if err != nil {
+			return `{"error": "failed to read from world state for ID ` + prescriptionID + `"}`, err
+		}
+		if existingPrescriptionAsBytes == nil {
+			return `{"error": "prescription does not exist for ID ` + prescriptionID + `"}`, errors.New("prescription does not exist for ID " + prescriptionID)
+		}
+
+		err = ctx.GetStub().DelState(prescriptionID)
+		if err != nil {
+			return `{"error": "failed to delete state for ID ` + prescriptionID + `"}`, err
+		}
+	}
+
+	return `{"message": "Prescriptions deleted successfully"}`, nil
+}
+
+
 
 
 func main() {

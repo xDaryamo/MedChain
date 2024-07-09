@@ -1,12 +1,43 @@
 /* eslint-disable react/prop-types */
 import { useFieldArray, useWatch } from "react-hook-form";
 import { useSearchLabResults } from "../labresults/useLabResults";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import FormRow from "../../ui/FormRow";
 import FormSelect from "../../ui/FormSelect";
 import Button from "../../ui/Button";
 import { FaTrash, FaPlus } from "react-icons/fa";
 import SmallSpinner from "../../ui/SmallSpinner";
+
+const LabResultDetails = ({ labResult }) => {
+  if (!labResult) return null;
+
+  return (
+    <div className="mt-2 p-2">
+      <h4 className="mb-2 text-lg font-bold text-cyan-950">
+        Dettagli aggiuntivi
+      </h4>
+      <p className="text-sm text-cyan-950">
+        <strong>Categoria:</strong> {labResult.category[0]?.text || "N/A"}
+      </p>
+      <p className="text-sm text-cyan-950">
+        <strong>Nome:</strong> {labResult.code?.text || "N/A"}
+      </p>
+      <p className="text-sm text-cyan-950">
+        <strong>Stato:</strong> {labResult.status || "N/A"}
+      </p>
+      <p className="text-sm text-cyan-950">
+        <strong>Performer:</strong> {labResult.performer?.[0]?.display || "N/A"}
+      </p>
+      <p className="text-sm text-cyan-950">
+        <strong>Interpretazione:</strong>{" "}
+        {labResult.interpretation?.[0]?.text || "N/A"}
+      </p>
+      <p className="text-sm text-cyan-950">
+        <strong>Note:</strong> {labResult.note?.[0]?.text || "N/A"}
+      </p>
+    </div>
+  );
+};
 
 const LabResultsForm = ({ patientID, control, register, errors }) => {
   const { fields, append, remove } = useFieldArray({
@@ -19,6 +50,8 @@ const LabResultsForm = ({ patientID, control, register, errors }) => {
       control,
       name: "labResultsIDs",
     }) || [];
+
+  const [selectedIds, setSelectedIds] = useState([]);
 
   const {
     labResults = [],
@@ -38,17 +71,29 @@ const LabResultsForm = ({ patientID, control, register, errors }) => {
     }
   }, [error]);
 
+  useEffect(() => {
+    const newSelectedIds = selectedLabResults.map((lr) => lr.id);
+    if (JSON.stringify(newSelectedIds) !== JSON.stringify(selectedIds)) {
+      setSelectedIds(newSelectedIds);
+    }
+  }, [selectedLabResults, selectedIds]);
+
   const handleAddLabResult = () => {
     append({ id: "" });
+  };
+
+  const handleRemoveLabResult = (index) => {
+    const newSelectedIds = [...selectedIds];
+    newSelectedIds.splice(index, 1);
+    setSelectedIds(newSelectedIds);
+    remove(index);
   };
 
   const getFilteredOptions = (excludeIndex = -1) => {
     const excludeIds =
       excludeIndex >= 0
-        ? selectedLabResults
-            .filter((_, index) => index !== excludeIndex)
-            .map((lr) => lr.id)
-        : selectedLabResults.map((lr) => lr.id);
+        ? selectedIds.filter((_, index) => index !== excludeIndex)
+        : selectedIds;
     return labResults.filter(
       (result) => !excludeIds.includes(result.identifier?.value),
     );
@@ -71,22 +116,41 @@ const LabResultsForm = ({ patientID, control, register, errors }) => {
               id={`labResultsIDs.${index}.id`}
               {...register(`labResultsIDs.${index}.id`, {
                 required: "Lab result ID is required",
+                onChange: (e) => {
+                  const value = e.target.value;
+                  const newSelectedIds = [...selectedIds];
+                  newSelectedIds[index] = value;
+                  setSelectedIds(newSelectedIds);
+                },
               })}
               options={[
-                ...(selectedLabResults[index]?.id
-                  ? []
-                  : [{ value: "", label: "Select lab result" }]),
+                {
+                  value: "",
+                  label: "Select lab result",
+                  disabled: selectedIds[index] !== undefined,
+                },
                 ...getFilteredOptions(index).map((result) => ({
                   value: result.identifier?.value,
                   label: result.code?.text,
                 })),
-              ]}
+              ].filter(
+                (option) =>
+                  option.value !== "" || selectedIds[index] === undefined,
+              )}
             />
           </FormRow>
+          {selectedLabResults[index]?.id && (
+            <LabResultDetails
+              labResult={labResults.find(
+                (result) =>
+                  result.identifier?.value === selectedLabResults[index].id,
+              )}
+            />
+          )}
           <div className="flex justify-end">
             <Button
               type="button"
-              onClick={() => remove(index)}
+              onClick={() => handleRemoveLabResult(index)}
               variant="delete"
               size="small"
             >

@@ -3,7 +3,7 @@ const { v4: uuidv4 } = require("uuid");
 
 const fabric = new FabricNetwork();
 
-exports.getMedicationRequest = async (req, res, next) => {
+exports.getPrescription = async (req, res, next) => {
   const prescriptionID = req.params.id;
   const userId = req.user.userId;
   const organization = req.user.organization;
@@ -27,8 +27,9 @@ exports.getMedicationRequest = async (req, res, next) => {
     console.log("Disconnected from Fabric gateway.");
   }
 };
-exports.createMedicationRequest = async (req, res, next) => {
-  const medicationJSON = req.body;
+
+exports.createPrescription = async (req, res, next) => {
+  const prescriptionJSON = req.body;
   const userId = req.user.userId;
   const organization = req.user.organization;
   try {
@@ -36,28 +37,28 @@ exports.createMedicationRequest = async (req, res, next) => {
     const chaincode = "prescription";
     const uniqueId = uuidv4();
 
-    medicationJSON.identifier.value = uniqueId;
+    prescriptionJSON.identifier.value = uniqueId;
 
     await fabric.init(userId, organization, channel, chaincode);
     console.log("Fabric network initialized successfully.");
 
-    let medicationJSONString;
+    let prescriptionJSONString;
     try {
-      medicationJSONString = JSON.stringify(medicationJSON);
-      JSON.parse(medicationJSONString);
+      prescriptionJSONString = JSON.stringify(prescriptionJSON);
+      JSON.parse(prescriptionJSONString);
     } catch (jsonError) {
       console.error("Invalid JSON format:", jsonError);
       return res.status(400).json({ error: "Invalid JSON format" });
     }
 
     console.log(
-      "Submitting transaction with medication request JSON:",
-      medicationJSONString
+      "Submitting transaction with prescription request JSON:",
+      prescriptionJSONString
     );
 
     const resultString = await fabric.submitTransaction(
       "CreatePrescription",
-      medicationJSONString
+      prescriptionJSONString
     );
 
     let result;
@@ -69,7 +70,7 @@ exports.createMedicationRequest = async (req, res, next) => {
     }
 
     res.status(201).json({
-      result: result,
+      prescription: result,
     });
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -80,7 +81,7 @@ exports.createMedicationRequest = async (req, res, next) => {
 };
 
 exports.updatePrescription = async (req, res, next) => {
-  const medicationJSON = req.body;
+  const prescriptionJSON = req.body;
   const userId = req.user.userId;
   const organization = req.user.organization;
   const prescriptionId = req.params.id;
@@ -92,25 +93,25 @@ exports.updatePrescription = async (req, res, next) => {
     await fabric.init(userId, organization, channel, chaincode);
     console.log("Fabric network initialized successfully.");
 
-    medicationJSON.identifier = { value: prescriptionId };
+    prescriptionJSON.identifier = { value: prescriptionId };
 
-    let medicationJSONString;
+    let prescriptionJSONString;
     try {
-      medicationJSONString = JSON.stringify(medicationJSON);
-      JSON.parse(medicationJSONString);
+      prescriptionJSONString = JSON.stringify(prescriptionJSON);
+      JSON.parse(prescriptionJSONString);
     } catch (jsonError) {
       console.error("Invalid JSON format:", jsonError);
       return res.status(400).json({ error: "Invalid JSON format" });
     }
 
     console.log(
-      "Submitting transaction with updated medication request JSON:",
-      medicationJSONString
+      "Submitting transaction with updated prescription request JSON:",
+      prescriptionJSONString
     );
 
     const resultString = await fabric.submitTransaction(
       "UpdatePrescription",
-      medicationJSONString
+      prescriptionJSONString
     );
 
     let result;
@@ -122,7 +123,7 @@ exports.updatePrescription = async (req, res, next) => {
     }
 
     res.status(200).json({
-      result: result,
+      prescription: result,
     });
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -163,7 +164,7 @@ exports.deletePrescription = async (req, res, next) => {
     }
 
     res.status(200).json({
-      result: result,
+      prescription: result,
     });
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -224,29 +225,146 @@ exports.searchPrescriptions = async (req, res, next) => {
   }
 };
 
-// exports.verifyPrescription = async (req, res, next) => {
-//   const prescriptionID = req.params.id;
-//   const pharmacyID = req.body.pharmacyID;
-//   try {
-//     const organization = "patients.medchain.com";
-//     const channel = "patient-records-channel";
-//     const chaincode = "prescription";
+// Batch operations
+exports.createPrescriptionsBatch = async (req, res, next) => {
+  const prescriptionsJSON = req.body.prescriptions;
+  const userId = req.user.userId;
+  const organization = req.user.organization;
 
-//     await fabric.init(prescriptionID, organization, channel, chaincode);
-//     console.log("Fabric network initialized successfully.");
+  try {
+    const channel = "prescriptions-channel";
+    const chaincode = "prescription";
 
-//     const result = await fabric.submitTransaction(
-//       "VerifyPrescription",
-//       prescriptionID,
-//       pharmacyID
-//     );
-//     res
-//       .status(200)
-//       .json({ message: "Prescription verified successfully", result });
-//   } catch (error) {
-//     res.status(500).json({ error: error.message });
-//   } finally {
-//     fabric.disconnect();
-//     console.log("Disconnected from Fabric gateway.");
-//   }
-// };
+    await fabric.init(userId, organization, channel, chaincode);
+    console.log("Fabric network initialized successfully.");
+
+    prescriptionsJSON.forEach((prescription) => {
+      prescription.identifier = {
+        ...prescription.identifier,
+        value: uuidv4(),
+      };
+    });
+
+    let prescriptionsJSONString;
+    try {
+      prescriptionsJSONString = JSON.stringify(prescriptionsJSON);
+      JSON.parse(prescriptionsJSONString);
+    } catch (jsonError) {
+      console.error("Invalid JSON format:", jsonError);
+      return res.status(400).json({ error: "Invalid JSON format" });
+    }
+
+    console.log(
+      "Submitting transaction with prescriptions batch JSON:",
+      prescriptionsJSONString
+    );
+
+    const resultString = await fabric.submitTransaction(
+      "CreatePrescriptionsBatch",
+      prescriptionsJSONString
+    );
+
+    res.status(201).json({
+      prescriptions: prescriptionsJSON,
+    });
+  } catch (error) {
+    console.error("Error creating prescriptions batch:", error);
+    res.status(500).json({ error: error.message });
+  } finally {
+    fabric.disconnect();
+    console.log("Disconnected from Fabric gateway.");
+  }
+};
+
+exports.updatePrescriptionsBatch = async (req, res, next) => {
+  const prescriptionsJSON = req.body.prescriptions;
+  const userId = req.user.userId;
+  const organization = req.user.organization;
+
+  try {
+    const channel = "prescriptions-channel";
+    const chaincode = "prescription";
+
+    await fabric.init(userId, organization, channel, chaincode);
+    console.log("Fabric network initialized successfully.");
+
+    // Assicurati che gli identificatori non vengano modificati
+    prescriptionsJSON.forEach((prescription) => {
+      if (!prescription.identifier || !prescription.identifier.value) {
+        throw new Error("Missing identifier for prescription");
+      }
+    });
+
+    let prescriptionsJSONString;
+    try {
+      prescriptionsJSONString = JSON.stringify(prescriptionsJSON);
+      JSON.parse(prescriptionsJSONString);
+    } catch (jsonError) {
+      console.error("Invalid JSON format:", jsonError);
+      return res.status(400).json({ error: "Invalid JSON format" });
+    }
+
+    console.log(
+      "Submitting transaction with updated prescriptions batch JSON:",
+      prescriptionsJSONString
+    );
+
+    const resultString = await fabric.submitTransaction(
+      "UpdatePrescriptionsBatch",
+      prescriptionsJSONString
+    );
+
+    res.status(200).json({
+      prescriptions: prescriptionsJSON,
+    });
+  } catch (error) {
+    console.error("Error updating prescriptions batch:", error);
+    res.status(500).json({ error: error.message });
+  } finally {
+    fabric.disconnect();
+    console.log("Disconnected from Fabric gateway.");
+  }
+};
+
+exports.deletePrescriptionsBatch = async (req, res, next) => {
+  const prescriptionIDs = req.body.ids;
+  const userId = req.user.userId;
+  const organization = req.user.organization;
+
+  try {
+    const channel = "prescriptions-channel";
+    const chaincode = "prescription";
+
+    await fabric.init(userId, organization, channel, chaincode);
+    console.log("Fabric network initialized successfully.");
+
+    let prescriptionIDsJSONString;
+    try {
+      prescriptionIDsJSONString = JSON.stringify(prescriptionIDs);
+      JSON.parse(prescriptionIDsJSONString);
+    } catch (jsonError) {
+      console.error("Invalid JSON format:", jsonError);
+      return res.status(400).json({ error: "Invalid JSON format" });
+    }
+
+    console.log(
+      "Submitting transaction to delete prescriptions batch:",
+      prescriptionIDsJSONString
+    );
+
+    const resultString = await fabric.submitTransaction(
+      "DeletePrescriptionsBatch",
+      prescriptionIDsJSONString
+    );
+
+    res.status(200).json({
+      prescriptions: prescriptionIDs,
+    });
+  } catch (error) {
+    console.error("Error deleting prescriptions batch:", error);
+    res.status(500).json({ error: error.message });
+  } finally {
+    fabric.disconnect();
+    console.log("Disconnected from Fabric gateway.");
+  }
+};

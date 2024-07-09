@@ -9,15 +9,55 @@ const getSession = () => {
   return session ? session.access_token : null;
 };
 
+const refreshAccessToken = async () => {
+  const session = JSON.parse(localStorage.getItem("session"));
+  if (session && session.refresh_token) {
+    try {
+      const response = await api.post("/auth/refresh-token", {
+        refreshToken: session.refresh_token,
+      });
+      const newSession = {
+        ...session,
+        access_token: response.data.access_token,
+      };
+      localStorage.setItem("session", JSON.stringify(newSession));
+      return newSession.access_token;
+    } catch (error) {
+      localStorage.removeItem("session");
+      window.location.href = "/login"; // Redirect to login page
+    }
+  }
+  return null;
+};
+
+// Aggiunge il token di autorizzazione a ogni richiesta se è presente
 api.interceptors.request.use(
-  (config) => {
-    const token = getSession();
+  async (config) => {
+    let token = getSession();
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
     return config;
   },
   (error) => Promise.reject(error),
+);
+
+api.interceptors.response.use(
+  (response) => response,
+  async (error) => {
+    if (
+      error.response &&
+      error.response.status === 401 &&
+      error.response.data.message === "Token expired."
+    ) {
+      const newToken = await refreshAccessToken();
+      if (newToken) {
+        error.config.headers.Authorization = `Bearer ${newToken}`;
+        return axios.request(error.config);
+      }
+    }
+    return Promise.reject(error);
+  },
 );
 
 export const getPractitioner = async (id) => {

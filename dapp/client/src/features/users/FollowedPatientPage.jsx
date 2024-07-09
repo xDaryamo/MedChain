@@ -53,26 +53,31 @@ const FollowedPatientPage = () => {
       <main className="flex-1 overflow-y-auto p-4 md:p-8">
         <Heading>Patient Details</Heading>
         <div className="mt-4 space-y-2">
-          <div>
-            <strong>Name:</strong> {patient.name.text}
+          <div className="text-cyan-950">
+            <span className="font-bold">Name:</span> {patient.name.text}
           </div>
-          <div>
-            <strong>Date of Birth:</strong> {formatDate(patient.date)}
+          <div className="text-cyan-950">
+            <span className="font-bold">Date of Birth:</span>{" "}
+            {formatDate(patient.date)}
           </div>
-          <div>
-            <strong>Gender:</strong> {patient.gender.coding[0].display}
+          <div className="text-cyan-950">
+            <span className="font-bold">Gender:</span>{" "}
+            {patient.gender.coding[0].display}
           </div>
-          <div>
-            <strong>Marital Status:</strong> {patient.maritalstatus.text}
+          <div className="text-cyan-950">
+            <span className="font-bold">Marital Status:</span>{" "}
+            {patient.maritalstatus.text}
           </div>
-          <div>
-            <strong>Address:</strong> {patient.address[0].text}
+          <div className="text-cyan-950">
+            <span className="font-bold">Address:</span>{" "}
+            {patient.address[0].text}
           </div>
-          <div>
-            <strong>Contact:</strong> {patient.telecom[0].value}
+          <div className="text-cyan-950">
+            <span className="font-bold">Contact:</span>{" "}
+            {patient.telecom[0].value}
           </div>
-          <div>
-            <strong>Language:</strong>{" "}
+          <div className="text-cyan-950">
+            <span className="font-bold">Language:</span>{" "}
             {patient.communication[0].language.coding[0].display}
           </div>
         </div>
