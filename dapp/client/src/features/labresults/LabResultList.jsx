@@ -23,7 +23,7 @@ const LabResultList = () => {
   };
 
   const [query, setQuery] = useState(defaultQuery);
-  const { labResults = [], isPending, error } = useSearchLabResults(query);
+  const { labResults, isPending, error } = useSearchLabResults(query);
 
   const { mutate: deleteLabResult, isPending: isDeleting } = useDeleteLabResult();
   const { user, isPending: userLoading, error: userError } = useUser();

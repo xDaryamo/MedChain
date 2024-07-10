@@ -1,5 +1,5 @@
 import { useParams, useLocation, useNavigate } from "react-router-dom";
-import { useGetMedicationRequest } from "./useMedicationRequests";
+import { useGetPrescription } from "./usePrescriptions";
 import Spinner from "../../ui/Spinner";
 import Button from "../../ui/Button";
 import UpdateMedicationRequestForm from "./UpdateMedicationRequestForm";
@@ -9,7 +9,7 @@ const MedicationRequestPage = () => {
     const location = useLocation();
     const navigate = useNavigate();
 
-    const { medicationRequest, isPending: isLoading } = useGetMedicationRequest(id);
+    const { medicationRequest, isPending: isLoading } = useGetPrescription(id);
 
     const handleUpdateMedicationRequest = async () => {
         navigate(`/prescription/${id}`);

@@ -2,7 +2,7 @@ import { useForm } from "react-hook-form";
 import FormRow from "../../ui/FormRow";
 import FormInput from "../../ui/FormInput";
 import Button from "../../ui/Button";
-import { useUpdateMedicationRequest } from "./useMedicationRequests";
+import { useUpdatePrescription } from "./usePrescriptions";
 import Spinner from "../../ui/Spinner";
 
 const UpdateMedicationRequestForm = ({ medicationRequest, onUpdate, onCancel }) => {
@@ -10,7 +10,7 @@ const UpdateMedicationRequestForm = ({ medicationRequest, onUpdate, onCancel }) 
         defaultValues: medicationRequest,
     });
 
-    const { updateMedicationRequest, isPending } = useUpdateMedicationRequest();
+    const { updateMedicationRequest, isPending } = useUpdatePrescription();
 
     const onSubmit = async (data) => {
         const updatedMedicationRequest = {

@@ -2,69 +2,19 @@ import { useForm } from "react-hook-form";
 import FormRow from "../../ui/FormRow";
 import FormInput from "../../ui/FormInput";
 import Button from "../../ui/Button";
-import { useAddMedicationRequest } from "./useMedicationRequests";
+import { useAddPrescription } from "./usePrescriptions";
 import Spinner from "../../ui/Spinner";
 
 const AddMedicationRequestForm = ({ onSubmitSuccess }) => {
     const { register, handleSubmit, formState: { errors }, reset } = useForm();
-    const { addMedicationRequest, isPending } = useAddMedicationRequest();
+    const { addMedicationRequest, isPending } = useAddPrescription();
 
     const onSubmit = async (data) => {
         const medicationRequest = {
+            ...data,
             identifier: {
                 system: "urn:ietf:rfc:3986"
             },
-            medicationCodeableConcept: {
-                coding: [
-                    {
-                        system: data.medicationCodeableConcept.coding[0].system,
-                        code: data.medicationCodeableConcept.coding[0].code,
-                        display: data.medicationCodeableConcept.coding[0].display
-                    }
-                ],
-                text: data.medicationCodeableConcept.text
-            },
-            subject: {
-                reference: data.subject.reference,
-                display: data.subject.display
-            },
-            authoredOn: data.authoredOn,
-            requester: {
-                reference: data.requester.reference,
-                display: data.requester.display
-            },
-            dosageInstruction: [
-                {
-                    text: data.dosageInstruction[0].text
-                }
-            ],
-            dispenseRequest: {
-                quantity: {
-                    value: data.dispenseRequest.quantity.value,
-                    unit: data.dispenseRequest.quantity.unit
-                },
-                expectedSupplyDuration: {
-                    value: data.dispenseRequest.expectedSupplyDuration.value
-                }
-            },
-            status: {
-                coding: [
-                    {
-                        code: data.status.coding[0].code,
-                        display: data.status.coding[0].display
-                    }
-                ],
-                text: data.status.text
-            },
-            intent: {
-                coding: [
-                    {
-                        code: data.intent.coding[0].code,
-                        display: data.intent.coding[0].display
-                    }
-                ],
-                text: data.intent.text
-            }
         };
 
         await addMedicationRequest(medicationRequest, {

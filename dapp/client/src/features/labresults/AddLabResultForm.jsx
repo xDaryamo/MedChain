@@ -10,10 +10,11 @@ const AddLabResultForm = ({ onSubmitSuccess, onCancel }) => {
   const {
     register,
     handleSubmit,
+    reset,
     control,
     formState: { errors },
   } = useForm();
-  const { addLabResult, isPending } = useCreateLabResult();
+  const { createResult, isPending } = useCreateLabResult();
 
   const { fields: categoryFields, append: appendCategory } = useFieldArray({
     control,
@@ -38,31 +39,19 @@ const AddLabResultForm = ({ onSubmitSuccess, onCancel }) => {
 
   const onSubmit = async (data) => {
     const labresult = {
+      ...data,
       identifier: {
-        system: "urn:ietf:rfc:3986"
+        system: "http://hospital.smarthealth.org"
       },
-      status: data.status,
-      category: data.category.map((cat) => ({ text: cat.text })),
-      code: { text: data.code.text },
-      subject: { reference: data.subject.reference },
-      encounter: { reference: data.encounter.reference },
       effectivePeriod: {
-        start: data.effectivePeriod.start,
-        end: data.effectivePeriod.end,
+        start: new Date(data.effectivePeriod.start).toISOString(),
+        end: new Date(data.effectivePeriod.end).toISOString(),
       },
-      issued: data.issued,
-      interpretation: data.interpretation.map((inter) => ({
-        text: inter.text,
-      })),
-      note: data.note.map((note) => ({ text: note.text })),
-      component: data.component.map((comp) => ({
-        code: { text: comp.code.text },
-      })),
+      issued: new Date(data.issued).toISOString()
     };
 
-    await addLabResult(labresult, {
+    await createResult(labresult, {
       onSettled: () => {
-        // eslint-disable-next-line no-undef
         reset();
         onSubmitSuccess();
       },
@@ -71,7 +60,7 @@ const AddLabResultForm = ({ onSubmitSuccess, onCancel }) => {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-      <h2 className="mb-6 text-2xl font-bold">Add Observation</h2>
+      <h2 className="mb-6 text-2xl font-bold">Add LabResult</h2>
 
       <FormRow label="Status:" error={errors.status?.message}>
         <FormInput {...register("status")} placeholder="registered" />
@@ -182,8 +171,6 @@ const AddLabResultForm = ({ onSubmitSuccess, onCancel }) => {
           Add Component
         </Button>
       </FormRow>
-
-      {errors && <p>{errors}</p>}
 
       <div className="flex justify-end space-x-2">
         <Button type="button" onClick={onCancel} variant="secondary">

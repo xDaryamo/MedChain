@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useSearchMedicationRequests, useRemoveMedicationRequest } from "./useMedicationRequests";
+import { useSearchPrescriptions, useRemovePrescription } from "./usePrescriptions";
 import Spinner from "../../ui/Spinner";
 import { useUser } from "../authentication/useAuth";
 import List from "../../ui/List";
@@ -22,9 +22,9 @@ const MedicationRequestList = () => {
     };
 
     const [query, setQuery] = useState(defaultQuery);
-    const { medicationRequests = [], isPending, error } = useSearchMedicationRequests(query);
+    const { medicationRequests = [], isPending, error } = useSearchPrescriptions(query);
 
-    const { removeMedicationRequest, isPending: isDeleting } = useRemoveMedicationRequest();
+    const { removeMedicationRequest, isPending: isDeleting } = useRemovePrescription();
     const { user, isPending: userLoading, error: userError } = useUser();
     const [isModalOpen, setModalOpen] = useState(false);
 

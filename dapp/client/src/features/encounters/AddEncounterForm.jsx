@@ -35,26 +35,15 @@ const AddEncounterForm = ({ onAdd, onCancel }) => {
 
     const onSubmit = async (data) => {
         const encounterData = {
+            ...data,
             identifier: {
                 system: "urn:ietf:rfc:3986"
             },
-            status: data.status,
-            class: { code: data.class?.code || "default-class" },
-            type: data.type,
-            serviceType: { coding: [{ code: data.serviceType?.coding[0]?.code || "default-service-type" }] },
-            priority: { coding: [{ code: data.priority?.coding[0]?.code || "default-priority" }] },
-            subject: { reference: data.subject?.reference },
             participant: [
                 {
                     individual: { reference: `Practitioner/${practitionerID}` }
                 }
             ],
-            period: data.period,
-            length: data.length,
-            reasonReference: data.reasonReference,
-            diagnosis: data.diagnosis,
-            location: data.location,
-            partOf: { reference: data.partOf?.reference },
         };
 
         await addEncounter(encounterData, {
