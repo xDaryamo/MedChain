@@ -4,20 +4,18 @@ import FormInput from "../../ui/FormInput";
 import Button from "../../ui/Button";
 import { useAddEncounter } from "./useEncounters";
 import Spinner from "../../ui/Spinner";
+import { useParams } from "react-router-dom";
 
 const AddEncounterForm = ({ onAdd, onCancel }) => {
     const { register, handleSubmit, control, reset, formState: { errors } } = useForm();
 
     const { addEncounter, isPending } = useAddEncounter();
 
+    const { id: practitionerID } = useParams();
+
     const { fields: typeFields, append: appendType } = useFieldArray({
         control,
         name: "type"
-    });
-
-    const { fields: participantFields, append: appendParticipant } = useFieldArray({
-        control,
-        name: "participant"
     });
 
     const { fields: reasonReferenceFields, append: appendReasonReference } = useFieldArray({
@@ -37,22 +35,25 @@ const AddEncounterForm = ({ onAdd, onCancel }) => {
 
     const onSubmit = async (data) => {
         const encounterData = {
+            identifier: {
+                system: "urn:ietf:rfc:3986"
+            },
             status: data.status,
-            class: { code: data.class?.code },
+            class: { code: data.class?.code || "default-class" },
             type: data.type,
-            serviceType: { coding: [{ code: data.serviceType?.coding[0]?.code }] },
-            priority: { coding: [{ code: data.priority?.coding[0]?.code }] },
+            serviceType: { coding: [{ code: data.serviceType?.coding[0]?.code || "default-service-type" }] },
+            priority: { coding: [{ code: data.priority?.coding[0]?.code || "default-priority" }] },
             subject: { reference: data.subject?.reference },
-            basedOn: data.basedOn,
-            participant: data.participant,
-            appointment: { reference: data.appointment?.reference },
+            participant: [
+                {
+                    individual: { reference: `Practitioner/${practitionerID}` }
+                }
+            ],
             period: data.period,
             length: data.length,
-            reasonCode: { coding: [{ code: data.reasonCode?.coding[0]?.code }] },
             reasonReference: data.reasonReference,
             diagnosis: data.diagnosis,
             location: data.location,
-            serviceProvider: { reference: data.serviceProvider?.reference },
             partOf: { reference: data.partOf?.reference },
         };
 
@@ -133,59 +134,6 @@ const AddEncounterForm = ({ onAdd, onCancel }) => {
             </FormRow>
 
             <FormRow
-                label="Based On Reference:"
-                error={errors.basedOn?.[0]?.reference?.message}
-            >
-                <FormInput
-                    {...register("basedOn[0].reference")}
-                    placeholder="ServiceRequest/123"
-                />
-            </FormRow>
-
-            {participantFields.map((item, index) => (
-                <div key={item.id}>
-                    <h3>Participant {index + 1}</h3>
-                    <FormRow
-                        label="Type:"
-                        error={errors.participant?.[index]?.type?.[0]?.coding?.[0]?.code?.message}
-                    >
-                        <FormInput
-                            {...register(`participant.${index}.type[0].coding[0].code`)}
-                            placeholder="Practitioner"
-                        />
-                    </FormRow>
-                    <FormRow
-                        label="Period Start:"
-                        error={errors.participant?.[index]?.period?.start?.message}
-                    >
-                        <input
-                            type="datetime-local"
-                            {...register(`participant.${index}.period.start`)}
-                        />
-                    </FormRow>
-                    <FormRow
-                        label="Period End:"
-                        error={errors.participant?.[index]?.period?.end?.message}
-                    >
-                        <input
-                            type="datetime-local"
-                            {...register(`participant.${index}.period.end`)}
-                        />
-                    </FormRow>
-                    <FormRow
-                        label="Individual Reference:"
-                        error={errors.participant?.[index]?.individual?.reference?.message}
-                    >
-                        <FormInput
-                            {...register(`participant.${index}.individual.reference`, { required: "Individual reference is required" })}
-                            placeholder="Practitioner/123"
-                        />
-                    </FormRow>
-                </div>
-            ))}
-            <Button type="button" onClick={() => appendParticipant({})}>Add Participant</Button>
-
-            <FormRow
                 label="Period Start:"
                 error={errors.period?.start?.message}
             >
@@ -212,16 +160,6 @@ const AddEncounterForm = ({ onAdd, onCancel }) => {
                 <FormInput
                     {...register("length")}
                     placeholder="3600"
-                />
-            </FormRow>
-
-            <FormRow
-                label="Reason Code:"
-                error={errors.reasonCode?.coding?.[0]?.code?.message}
-            >
-                <FormInput
-                    {...register("reasonCode.coding[0].code")}
-                    placeholder="checkup"
                 />
             </FormRow>
 
@@ -295,39 +233,12 @@ const AddEncounterForm = ({ onAdd, onCancel }) => {
                         />
                     </FormRow>
                     <FormRow
-                        label="Location Alias:"
-                        error={errors.location?.[index]?.alias?.message}
-                    >
-                        <FormInput
-                            {...register(`location.${index}.alias`)}
-                            placeholder="MH"
-                        />
-                    </FormRow>
-                    <FormRow
-                        label="Location Description:"
-                        error={errors.location?.[index]?.description?.message}
-                    >
-                        <FormInput
-                            {...register(`location.${index}.description`)}
-                            placeholder="Main hospital building"
-                        />
-                    </FormRow>
-                    <FormRow
                         label="Location Type:"
                         error={errors.location?.[index]?.type?.coding?.[0]?.code?.message}
                     >
                         <FormInput
                             {...register(`location.${index}.type.coding[0].code`)}
                             placeholder="hospital"
-                        />
-                    </FormRow>
-                    <FormRow
-                        label="Location Mode:"
-                        error={errors.location?.[index]?.mode?.code?.message}
-                    >
-                        <FormInput
-                            {...register(`location.${index}.mode.code`)}
-                            placeholder="instance"
                         />
                     </FormRow>
                     <FormRow
@@ -351,16 +262,6 @@ const AddEncounterForm = ({ onAdd, onCancel }) => {
                 </div>
             ))}
             <Button type="button" onClick={() => appendLocation({})}>Add Location</Button>
-
-            <FormRow
-                label="Service Provider Reference:"
-                error={errors.serviceProvider?.reference?.message}
-            >
-                <FormInput
-                    {...register("serviceProvider.reference")}
-                    placeholder="Organization/123"
-                />
-            </FormRow>
 
             <FormRow
                 label="Part Of Reference:"

@@ -38,6 +38,9 @@ const AddLabResultForm = ({ onSubmitSuccess, onCancel }) => {
 
   const onSubmit = async (data) => {
     const labresult = {
+      identifier: {
+        system: "urn:ietf:rfc:3986"
+      },
       status: data.status,
       category: data.category.map((cat) => ({ text: cat.text })),
       code: { text: data.code.text },
@@ -141,7 +144,7 @@ const AddLabResultForm = ({ onSubmitSuccess, onCancel }) => {
           <FormInput
             key={item.id}
             {...register(`interpretation[${index}].text`)}
-            placeholder="normal"
+            placeholder="description"
           />
         ))}
         <Button type="button" onClick={() => appendInterpretation({})}>
@@ -154,7 +157,7 @@ const AddLabResultForm = ({ onSubmitSuccess, onCancel }) => {
           <FormInput
             key={item.id}
             {...register(`note[${index}].text`)}
-            placeholder="Observation note"
+            placeholder="Note"
           />
         ))}
         <Button type="button" onClick={() => appendNote({})}>
@@ -180,7 +183,7 @@ const AddLabResultForm = ({ onSubmitSuccess, onCancel }) => {
         </Button>
       </FormRow>
 
-      {error && <p>{error}</p>}
+      {errors && <p>{errors}</p>}
 
       <div className="flex justify-end space-x-2">
         <Button type="button" onClick={onCancel} variant="secondary">

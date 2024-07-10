@@ -15,22 +15,16 @@ const UpdateLabResultForm = ({ labresult, onUpdate, onCancel }) => {
 
     const onSubmit = async (data) => {
         const updatedLabResult = {
-            identifier: data.identifier || [],
+            ...labresult,
             status: data.status || {},
             category: data.category || [],
-            code: data.code || {},
-            subject: data.subject || {},
-            encounter: data.encounter || {},
-            effectivePeriod: data.effectivePeriod || {},
-            issued: data.issued || null,
             performer: data.performer || [],
-            interpretation: data.interpretation || [],
             note: data.note || [],
             component: data.component || [],
         };
 
         try {
-            await updateLabresult(labresult.id, updatedLabResult);
+            await updateLabresult(labresult.identifier.value, updatedLabResult);
             reset();
             onUpdate();
         } catch (err) {
@@ -40,7 +34,7 @@ const UpdateLabResultForm = ({ labresult, onUpdate, onCancel }) => {
 
     return (
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-            <h2 className="mb-4 text-2xl font-bold">Update Observation</h2>
+            <h2 className="mb-4 text-2xl font-bold">Update Lab Result</h2>
 
             <FormRow
                 label="Status"
@@ -66,71 +60,7 @@ const UpdateLabResultForm = ({ labresult, onUpdate, onCancel }) => {
                 />
             </FormRow>
 
-            <FormRow
-                label="Code"
-                error={errors.code?.message}
-            >
-                <FormInput
-                    type="text"
-                    {...register("code", {
-                        required: "Code is required",
-                    })}
-                />
-            </FormRow>
-
-            <FormRow
-                label="Subject Reference"
-                error={errors.subject?.reference?.message}
-            >
-                <FormInput
-                    type="text"
-                    {...register("subject.reference", {
-                        required: "Subject reference is required",
-                    })}
-                />
-            </FormRow>
-
-            <FormRow
-                label="Encounter Reference"
-                error={errors.encounter?.reference?.message}
-            >
-                <FormInput
-                    type="text"
-                    {...register("encounter.reference")}
-                />
-            </FormRow>
-
-            <FormRow
-                label="Effective Period Start"
-                error={errors.effectivePeriod?.start?.message}
-            >
-                <FormInput
-                    type="datetime-local"
-                    {...register("effectivePeriod.start")}
-                />
-            </FormRow>
-
-            <FormRow
-                label="Effective Period End"
-                error={errors.effectivePeriod?.end?.message}
-            >
-                <FormInput
-                    type="datetime-local"
-                    {...register("effectivePeriod.end")}
-                />
-            </FormRow>
-
-            <FormRow
-                label="Issued"
-                error={errors.issued?.message}
-            >
-                <FormInput
-                    type="datetime-local"
-                    {...register("issued")}
-                />
-            </FormRow>
-
-            {observation.performer.map((performer, index) => (
+            {labresult.performer.map((index) => (
                 <FormRow
                     key={index}
                     label={`Performer ${index + 1}`}
@@ -144,7 +74,7 @@ const UpdateLabResultForm = ({ labresult, onUpdate, onCancel }) => {
             ))}
             <Button type="button" onClick={() => appendPerformer({})}>Add Performer</Button>
 
-            {observation.note.map((note, index) => (
+            {labresult.note.map((index) => (
                 <FormRow
                     key={index}
                     label={`Note ${index + 1}`}
@@ -158,7 +88,7 @@ const UpdateLabResultForm = ({ labresult, onUpdate, onCancel }) => {
             ))}
             <Button type="button" onClick={() => appendNote({})}>Add Note</Button>
 
-            {observation.component.map((component, index) => (
+            {labresult.component.map((index) => (
                 <FormRow
                     key={index}
                     label={`Component ${index + 1}`}

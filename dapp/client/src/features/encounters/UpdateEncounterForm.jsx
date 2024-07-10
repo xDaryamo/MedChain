@@ -39,8 +39,25 @@ const UpdateEncounterForm = ({ encounter, onUpdate, onCancel }) => {
     });
 
     const onSubmit = async (data) => {
-        await updateEncounter(data);
-        onUpdate();
+
+        const updatedEncounter = {
+            ...encounter,
+            status: data.status,
+            priority: data.priority,
+            type: data.type || [],
+            participant: data.participant || [],
+            reasonReference: data.reasonReference || [],
+            diagnosis: data.diagnosis || [],
+            location: data.location || [],
+        }
+
+        try {
+            await updateEncounter(encounter.identifier.value, updatedEncounter);
+            reset();
+            onUpdate();
+        } catch (err) {
+            console.error("Error updating encounter:", err.message);
+        }
     };
 
     return (
@@ -75,7 +92,7 @@ const UpdateEncounterForm = ({ encounter, onUpdate, onCancel }) => {
                             {...register(`participant.${index}.type[0].coding[0].code`, {
                                 required: `Participant ${index + 1} type code is required`
                             })}
-                            placeholder="Practitioner"
+                            placeholder="Practitioner/123"
                         />
                     </FormRow>
                     <Button type="button" onClick={() => removeParticipant(index)}>Remove Participant</Button>
@@ -121,8 +138,20 @@ const UpdateEncounterForm = ({ encounter, onUpdate, onCancel }) => {
 
             {locationFields.map((location, index) => (
                 <div key={location.id}>
+                    <h3>Location {index + 1}</h3>
                     <FormRow
-                        label={`Location ${index + 1} Name:`}
+                        label="Location Status:"
+                        error={errors.location?.[index]?.status?.message}
+                    >
+                        <FormInput
+                            {...register(`location.${index}.status`, {
+                                required: `Location ${index + 1} status is required`
+                            })}
+                            placeholder="active"
+                        />
+                    </FormRow>
+                    <FormRow
+                        label="Location Name:"
                         error={errors.location?.[index]?.name?.message}
                     >
                         <FormInput
@@ -130,6 +159,35 @@ const UpdateEncounterForm = ({ encounter, onUpdate, onCancel }) => {
                                 required: `Location ${index + 1} name is required`
                             })}
                             placeholder="Main Hospital"
+                        />
+                    </FormRow>
+                    <FormRow
+                        label="Location Type:"
+                        error={errors.location?.[index]?.type?.coding?.[0]?.code?.message}
+                    >
+                        <FormInput
+                            {...register(`location.${index}.type.coding[0].code`)}
+                            placeholder="hospital"
+                        />
+                    </FormRow>
+                    <FormRow
+                        label="Location Contact:"
+                        error={errors.location?.[index]?.contact?.value?.message}
+                    >
+                        <FormInput
+                            {...register(`location.${index}.contact.value`)}
+                            placeholder="123-456-7890"
+                        />
+                    </FormRow>
+                    <FormRow
+                        label="Location Address:"
+                        error={errors.location?.[index]?.address?.line?.[0]?.message}
+                    >
+                        <FormInput
+                            {...register(`location.${index}.address.line[0]`, {
+                                required: `Location ${index + 1} address is required`
+                            })}
+                            placeholder="123 Main St"
                         />
                     </FormRow>
                     <Button type="button" onClick={() => removeLocation(index)}>Remove Location</Button>
@@ -150,128 +208,12 @@ const UpdateEncounterForm = ({ encounter, onUpdate, onCancel }) => {
             </FormRow>
 
             <FormRow
-                label="Class:"
-                error={errors.class?.code?.message}
-            >
-                <FormInput
-                    {...register("class.code")}
-                    placeholder="inpatient"
-                />
-            </FormRow>
-
-            <FormRow
-                label="Service Type:"
-                error={errors.serviceType?.coding?.[0]?.code?.message}
-            >
-                <FormInput
-                    {...register("serviceType.coding[0].code")}
-                    placeholder="primary care"
-                />
-            </FormRow>
-
-            <FormRow
                 label="Priority:"
                 error={errors.priority?.coding?.[0]?.code?.message}
             >
                 <FormInput
                     {...register("priority.coding[0].code")}
                     placeholder="urgent"
-                />
-            </FormRow>
-
-            <FormRow
-                label="Subject Reference:"
-                error={errors.subject?.reference?.message}
-            >
-                <FormInput
-                    {...register("subject.reference", {
-                        required: "Subject reference is required"
-                    })}
-                    placeholder="Patient/67890"
-                />
-            </FormRow>
-
-            <FormRow
-                label="Based On Reference:"
-                error={errors.basedOn?.[0]?.reference?.message}
-            >
-                <FormInput
-                    {...register("basedOn[0].reference")}
-                    placeholder="ServiceRequest/123"
-                />
-            </FormRow>
-
-            <FormRow
-                label="Appointment Reference:"
-                error={errors.appointment?.reference?.message}
-            >
-                <FormInput
-                    {...register("appointment.reference")}
-                    placeholder="Appointment/123"
-                />
-            </FormRow>
-
-            <FormRow
-                label="Period Start:"
-                error={errors.period?.start?.message}
-            >
-                <input
-                    type="datetime-local"
-                    {...register("period.start", {
-                        required: "Period start is required"
-                    })}
-                />
-            </FormRow>
-
-            <FormRow
-                label="Period End:"
-                error={errors.period?.end?.message}
-            >
-                <input
-                    type="datetime-local"
-                    {...register("period.end", {
-                        required: "Period end is required"
-                    })}
-                />
-            </FormRow>
-
-            <FormRow
-                label="Length (in seconds):"
-                error={errors.length?.message}
-            >
-                <FormInput
-                    {...register("length")}
-                    placeholder="3600"
-                />
-            </FormRow>
-
-            <FormRow
-                label="Reason Code:"
-                error={errors.reasonCode?.coding?.[0]?.code?.message}
-            >
-                <FormInput
-                    {...register("reasonCode.coding[0].code")}
-                    placeholder="checkup"
-                />
-            </FormRow>
-
-            <FormRow
-                label="Service Provider Reference:"
-                error={errors.serviceProvider?.reference?.message}
-            >
-                <FormInput
-                    {...register("serviceProvider.reference")}
-                    placeholder="Organization/123"
-                />
-            </FormRow>
-
-            <FormRow
-                label="Part Of Reference:"
-                error={errors.partOf?.reference?.message}
-            >
-                <FormInput
-                    {...register("partOf.reference")}
-                    placeholder="Encounter/123"
                 />
             </FormRow>
 

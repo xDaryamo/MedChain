@@ -17,7 +17,7 @@ const LabResultList = () => {
   const defaultQuery = {
     query: {
       selector: {
-        reference: `${id}`,
+        "subject.reference": `${id}`,
       },
     },
   };
