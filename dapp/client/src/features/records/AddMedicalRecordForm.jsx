@@ -227,6 +227,9 @@ const AddMedicalRecordForm = ({ onSubmitSuccess }) => {
         })),
         prescriptions: (data.prescriptions || []).map((prescription) => ({
           ...prescription,
+          identifier: {
+            system: "urn:ietf:rfc:3986",
+          },
           status: {
             coding: [
               {
@@ -249,6 +252,17 @@ const AddMedicalRecordForm = ({ onSubmitSuccess }) => {
             ],
             text: "Order",
           },
+          medicationCodeableConcept: {
+            coding: [
+              {
+                system: "http://snomed.info/sct",
+                code: prescription.medicationCodeableConcept.coding[0].code,
+                display:
+                  prescription.medicationCodeableConcept.coding[0].display,
+              },
+            ],
+            text: prescription.medicationCodeableConcept.coding[0].text,
+          },
           subject: {
             reference: patientID,
             display: patient?.name?.text || "Unknown",
@@ -257,6 +271,24 @@ const AddMedicalRecordForm = ({ onSubmitSuccess }) => {
           requester: {
             reference: practitioner.identifier.value,
             display: practitioner.name[0].text,
+          },
+          dispenseRequest: {
+            quantity: {
+              value: prescription.dispenseRequest.quantity.value,
+              unit: prescription.dispenseRequest.quantity.unit,
+              system: "http://unitsofmeasure.org",
+            },
+            expectedSupplyDuration: {
+              value: prescription.dispenseRequest.expectedSupplyDuration.value,
+              unit: prescription.dispenseRequest.expectedSupplyDuration.unit,
+              system: "http://unitsofmeasure.org",
+            },
+            validityPeriod: {
+              start: prescription.dispenseRequest.validityPeriod.start,
+              end: prescription.dispenseRequest.validityPeriod.end,
+            },
+            numberOfRepeatsAllowed:
+              prescription.dispenseRequest.numberOfRepeatsAllowed,
           },
         })),
         labResultsIDs,
@@ -309,11 +341,12 @@ const AddMedicalRecordForm = ({ onSubmitSuccess }) => {
       </div>
 
       <div className="mb-4 border-b pb-4">
-        <h3 className="mb-4 text-xl font-semibold">Medication Requests</h3>
+        <h3 className="mb-4 text-xl font-semibold">Prescrizioni</h3>
         <MedicationRequestsForm
           control={control}
           register={register}
           errors={errors}
+          setValue={setValue}
         />
       </div>
 
