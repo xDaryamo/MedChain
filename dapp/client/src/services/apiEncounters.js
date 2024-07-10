@@ -61,7 +61,7 @@ api.interceptors.response.use(
 );
 
 export const searchEncounters = async (query) => {
-  const response = await api.post("/encounters/search", { query });
+  const response = await api.post("/encounters/search", query);
   return response.data.results || [];
 };
 

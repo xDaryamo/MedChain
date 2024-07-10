@@ -40,7 +40,7 @@ exports.createEncounter = async (req, res, next) => {
       "CreateEncounter",
       encounterJSONString
     );
-    res.status(201).json({ result: result });
+    res.status(201).json({ result: JSON.parse(result) });
   } catch (error) {
     console.error("Failed to create encounter:", error);
     res.status(500).json({ error: "Failed to create encounter" });
@@ -166,8 +166,7 @@ exports.deleteEncounter = async (req, res, next) => {
 };
 
 exports.searchEncounter = async (req, res, next) => {
-  const queryString = req.params.query || { selector: {} };
-
+  const queryString = req.body.query || { selector: {} };
   const userID = req.user.userId;
   const organization = req.user.organization;
 
@@ -218,14 +217,12 @@ async function isAuthorized(userID, organization, patientReference) {
   const identity_channel = "identity-channel";
   const auth_chaincode = "patient";
 
-  const patientID = patientReference.split("/")[1];
-
   await fabric.init(userID, organization, identity_channel, auth_chaincode);
   console.log("Verifying user...");
 
   const authBool = await fabric.submitTransaction(
     "IsAuthorized",
-    patientID,
+    patientReference,
     userID
   );
 

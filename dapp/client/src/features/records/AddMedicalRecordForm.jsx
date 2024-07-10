@@ -163,12 +163,27 @@ const AddMedicalRecordForm = ({ onSubmitSuccess }) => {
             display: practitioner.name[0].text,
           },
         })),
+
         procedures: data.procedures.map((procedure) => ({
           ...procedure,
+          identifier: {
+            system: "urn:ietf:rfc:3986",
+          },
           subject: {
             reference: patientID,
             display: patient?.name?.text || "Unknown",
           },
+          code: {
+            coding: [
+              {
+                system: "http://snomed.info/sct",
+                code: procedure.code.coding[0].code,
+                display: procedure.code.coding[0].display,
+              },
+            ],
+            text: procedure.code.coding[0].text,
+          },
+
           status: {
             coding: [
               {
@@ -180,10 +195,35 @@ const AddMedicalRecordForm = ({ onSubmitSuccess }) => {
             ],
             text: "Completed",
           },
+          category: {
+            coding: [
+              {
+                system: "http://snomed.info/sct",
+                code: procedure.category.coding[0].code,
+                display: procedure.category.coding[0].display,
+              },
+            ],
+            text: procedure.category.coding[0].display,
+          },
+
           performed: {
             reference: practitioner.identifier.value,
             display: practitioner.name[0].text,
           },
+          encounter: {
+            reference: procedure.encounter.reference,
+            display: procedure.encounter.display,
+          },
+          note: [
+            {
+              authorReference: {
+                reference: practitioner.identifier.value,
+                display: practitioner.name[0].text,
+              },
+              time: new Date().toISOString(),
+              text: procedure.note[0].text,
+            },
+          ],
         })),
         prescriptions: (data.prescriptions || []).map((prescription) => ({
           ...prescription,
@@ -259,7 +299,13 @@ const AddMedicalRecordForm = ({ onSubmitSuccess }) => {
 
       <div className="mb-4 border-b pb-4">
         <h3 className="mb-4 text-xl font-semibold">Procedures</h3>
-        <ProceduresForm control={control} register={register} errors={errors} />
+        <ProceduresForm
+          control={control}
+          register={register}
+          errors={errors}
+          setValue={setValue}
+          patientID={patientID}
+        />
       </div>
 
       <div className="mb-4 border-b pb-4">

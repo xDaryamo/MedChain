@@ -1,721 +1,297 @@
 /* eslint-disable react/prop-types */
 import { useFieldArray } from "react-hook-form";
-import { useEffect, useRef } from "react";
+import { useEffect, useState } from "react";
 import FormRow from "../../ui/FormRow";
 import FormInput from "../../ui/FormInput";
+import FormSelect from "../../ui/FormSelect";
 import Button from "../../ui/Button";
 import { FaTrash, FaPlus } from "react-icons/fa";
+import SmallSpinner from "../../ui/SmallSpinner";
+import { useSearchEncounters } from "../encounters/useEncounters";
+import { format } from "date-fns";
 
-const ProceduresForm = ({ control, register, errors }) => {
+const categoryOptions = [
+  {
+    code: "24642003",
+    display: "Psychiatry procedure or service",
+    label: "Procedura psichiatrica o servizio",
+  },
+  { code: "409063005", display: "Counselling", label: "Consulenza" },
+  { code: "409073007", display: "Education", label: "Educazione" },
+  {
+    code: "387713003",
+    display: "Surgical procedure (procedure)",
+    label: "Procedura chirurgica",
+  },
+  {
+    code: "15220000",
+    display: "Laboratory test",
+    label: "Test di laboratorio",
+  },
+  { code: "363679005", display: "Imaging (procedure)", label: "Imaging" },
+  { code: "122869004", display: "Measurement", label: "Misurazione" },
+  {
+    code: "46947000",
+    display: "Chiropractic manipulation",
+    label: "Manipolazione chiropratica",
+  },
+  {
+    code: "410606002",
+    display: "Social service procedure (procedure)",
+    label: "Procedura di servizio sociale",
+  },
+];
+
+const EncounterDetails = ({ encounter }) => {
+  if (!encounter) return null;
+
+  const formatDate = (date) => format(new Date(date), "dd/MM/yyyy HH:mm");
+
+  return (
+    <div className="mt-2 p-2">
+      <h4 className="mb-2 text-lg font-bold text-cyan-950">
+        Dettagli dell&apos;incontro
+      </h4>
+      <p className="text-sm text-cyan-950">
+        <strong>ID:</strong> {encounter.id?.value || "N/A"}
+      </p>
+      <p className="text-sm text-cyan-950">
+        <strong>Stato:</strong> {encounter.status?.coding[0]?.display || "N/A"}
+      </p>
+      <p className="text-sm text-cyan-950">
+        <strong>Classe:</strong> {encounter.class?.display || "N/A"}
+      </p>
+      <p className="text-sm text-cyan-950">
+        <strong>Periodo:</strong>{" "}
+        {encounter.period
+          ? `${formatDate(encounter.period.start)} - ${formatDate(
+              encounter.period.end,
+            )}`
+          : "N/A"}
+      </p>
+      <p className="text-sm text-cyan-950">
+        <strong>Luogo:</strong>{" "}
+        {encounter.location?.[0]?.location?.display || "N/A"}
+      </p>
+    </div>
+  );
+};
+
+const ProceduresForm = ({ control, register, errors, setValue, patientID }) => {
   const { fields, append, remove } = useFieldArray({
     control,
     name: "procedures",
   });
 
-  const newInputRef = useRef(null);
+  const [selectedCategories, setSelectedCategories] = useState([]);
+  const [selectedEncounters, setSelectedEncounters] = useState({});
+  const [focusIndex, setFocusIndex] = useState(null);
+
+  const { encounters = [], isPending: isPendingEncounters } =
+    useSearchEncounters({
+      query: {
+        selector: {
+          "subject.reference": `${patientID}`,
+        },
+      },
+    });
 
   useEffect(() => {
-    if (newInputRef.current) {
-      newInputRef.current.focus();
+    if (focusIndex !== null) {
+      const element = document.getElementById(`procedures.${focusIndex}.code`);
+      if (element) {
+        element.focus();
+      }
     }
-  }, [fields]);
+  }, [focusIndex]);
 
   const handleAddProcedure = () => {
     append({});
-    setTimeout(() => {
-      if (newInputRef.current) {
-        newInputRef.current.focus();
-      }
-    }, 100);
+    setFocusIndex(fields.length);
+  };
+
+  const handleCategoryChange = (index, value) => {
+    const selectedOption = categoryOptions.find(
+      (option) => option.code === value,
+    );
+
+    const newSelectedCategories = [...selectedCategories];
+    newSelectedCategories[index] = value;
+    setSelectedCategories(newSelectedCategories);
+
+    setValue(
+      `procedures.${index}.category.coding[0].code`,
+      selectedOption.code,
+      {
+        shouldValidate: true,
+        shouldDirty: true,
+      },
+    );
+    setValue(
+      `procedures.${index}.category.coding[0].display`,
+      selectedOption.display,
+      {
+        shouldValidate: true,
+        shouldDirty: true,
+      },
+    );
+    setValue(`procedures.${index}.category.text`, selectedOption.display, {
+      shouldValidate: true,
+      shouldDirty: true,
+    });
+  };
+
+  const handleCodeDescriptionChange = (index, value) => {
+    setValue(`procedures.${index}.code.coding[0].display`, value, {
+      shouldValidate: true,
+      shouldDirty: true,
+    });
+    setValue(`procedures.${index}.code.text`, value, {
+      shouldValidate: true,
+      shouldDirty: true,
+    });
+  };
+
+  const handleEncounterChange = (index, value) => {
+    const selectedEncounter = encounters.find(
+      (encounter) => encounter.id.value === value,
+    );
+
+    if (selectedEncounter) {
+      setValue(
+        `procedures.${index}.encounter.reference`,
+        selectedEncounter.id.value,
+        {
+          shouldValidate: true,
+          shouldDirty: true,
+        },
+      );
+      setValue(
+        `procedures.${index}.encounter.display`,
+        selectedEncounter.class?.display || "N/A",
+        {
+          shouldValidate: true,
+          shouldDirty: true,
+        },
+      );
+
+      setSelectedEncounters((prev) => ({
+        ...prev,
+        [index]: selectedEncounter,
+      }));
+    }
   };
 
   return (
     <div>
       {fields.map((field, index) => (
         <div key={field.id} className="mb-2 space-y-2 border p-2">
-          <h4 className="text-lg font-medium">Procedure {index + 1}</h4>
-          <FormRow
-            label="Subject Reference:"
-            error={errors?.procedures?.[index]?.subject?.reference?.message}
-          >
-            <FormInput
-              {...register(`procedures.${index}.subject.reference`, {
-                required: "Subject reference is required",
-              })}
-              placeholder="Patient/67890"
-              ref={index === fields.length - 1 ? newInputRef : null}
-            />
-          </FormRow>
-          <FormRow
-            label="Subject Display:"
-            error={errors?.procedures?.[index]?.subject?.display?.message}
-          >
-            <FormInput
-              {...register(`procedures.${index}.subject.display`, {
-                required: "Subject display is required",
-              })}
-              placeholder="John Doe"
-            />
-          </FormRow>
+          <h4 className="text-lg font-medium">Procedura {index + 1}</h4>
 
           {/* Code */}
           <FormRow
-            label="Code System:"
-            error={
-              errors?.procedures?.[index]?.code?.coding?.[0]?.system?.message
-            }
-          >
-            <FormInput
-              {...register(`procedures.${index}.code.coding.[0].system`, {
-                required: "Code system is required",
-              })}
-              placeholder="http://snomed.info/sct"
-            />
-          </FormRow>
-          <FormRow
-            label="Code Value:"
+            label="Codice"
             error={
               errors?.procedures?.[index]?.code?.coding?.[0]?.code?.message
             }
           >
             <FormInput
               {...register(`procedures.${index}.code.coding.[0].code`, {
-                required: "Code value is required",
+                required: "Il codice è obbligatorio",
               })}
               placeholder="80146002"
+              id={`procedures.${index}.code`}
             />
           </FormRow>
           <FormRow
-            label="Code Display:"
+            label="Descrizione del codice"
             error={
               errors?.procedures?.[index]?.code?.coding?.[0]?.display?.message
             }
           >
             <FormInput
               {...register(`procedures.${index}.code.coding.[0].display`, {
-                required: "Code display is required",
+                required: "La descrizione del codice è obbligatoria",
+                onChange: (e) =>
+                  handleCodeDescriptionChange(index, e.target.value),
               })}
               placeholder="Appendectomy"
-            />
-          </FormRow>
-          <FormRow
-            label="Code Text:"
-            error={errors?.procedures?.[index]?.code?.text?.message}
-          >
-            <FormInput
-              {...register(`procedures.${index}.code.text`, {
-                required: "Code text is required",
-              })}
-              placeholder="Appendectomy"
-            />
-          </FormRow>
-
-          {/* Status */}
-          <FormRow
-            label="Status System:"
-            error={
-              errors?.procedures?.[index]?.status?.coding?.[0]?.system?.message
-            }
-          >
-            <FormInput
-              {...register(`procedures.${index}.status.coding.[0].system`, {
-                required: "Status system is required",
-              })}
-              placeholder="http://terminology.hl7.org/CodeSystem/event-status"
-            />
-          </FormRow>
-          <FormRow
-            label="Status Code:"
-            error={
-              errors?.procedures?.[index]?.status?.coding?.[0]?.code?.message
-            }
-          >
-            <FormInput
-              {...register(`procedures.${index}.status.coding.[0].code`, {
-                required: "Status code is required",
-              })}
-              placeholder="completed"
-            />
-          </FormRow>
-          <FormRow
-            label="Status Display:"
-            error={
-              errors?.procedures?.[index]?.status?.coding?.[0]?.display?.message
-            }
-          >
-            <FormInput
-              {...register(`procedures.${index}.status.coding.[0].display`, {
-                required: "Status display is required",
-              })}
-              placeholder="Completed"
-            />
-          </FormRow>
-          <FormRow
-            label="Status Text:"
-            error={errors?.procedures?.[index]?.status?.text?.message}
-          >
-            <FormInput
-              {...register(`procedures.${index}.status.text`, {
-                required: "Status text is required",
-              })}
-              placeholder="Completed"
             />
           </FormRow>
 
           {/* Category */}
           <FormRow
-            label="Category System:"
-            error={
-              errors?.procedures?.[index]?.category?.coding?.[0]?.system
-                ?.message
-            }
-          >
-            <FormInput
-              {...register(`procedures.${index}.category.coding.[0].system`, {
-                required: "Category system is required",
-              })}
-              placeholder="http://snomed.info/sct"
-            />
-          </FormRow>
-          <FormRow
-            label="Category Code:"
+            label="Categoria"
             error={
               errors?.procedures?.[index]?.category?.coding?.[0]?.code?.message
             }
           >
-            <FormInput
-              {...register(`procedures.${index}.category.coding.[0].code`, {
-                required: "Category code is required",
+            <FormSelect
+              id={`procedures.${index}.category`}
+              {...register(`procedures.${index}.category.coding[0].code`, {
+                required: "La categoria è obbligatoria",
+                onChange: (e) => handleCategoryChange(index, e.target.value),
               })}
-              placeholder="387713003"
-            />
-          </FormRow>
-          <FormRow
-            label="Category Display:"
-            error={
-              errors?.procedures?.[index]?.category?.coding?.[0]?.display
-                ?.message
-            }
-          >
-            <FormInput
-              {...register(`procedures.${index}.category.coding.[0].display`, {
-                required: "Category display is required",
-              })}
-              placeholder="Surgical procedure"
-            />
-          </FormRow>
-          <FormRow
-            label="Category Text:"
-            error={errors?.procedures?.[index]?.category?.text?.message}
-          >
-            <FormInput
-              {...register(`procedures.${index}.category.text`, {
-                required: "Category text is required",
-              })}
-              placeholder="Surgical procedure"
-            />
-          </FormRow>
-
-          {/* Performed Period */}
-          <FormRow
-            label="Performed Start:"
-            error={errors?.procedures?.[index]?.performedPeriod?.start?.message}
-          >
-            <FormInput
-              type="datetime-local"
-              {...register(`procedures.${index}.performedPeriod.start`, {
-                required: "Performed start is required",
-              })}
-            />
-          </FormRow>
-          <FormRow
-            label="Performed End:"
-            error={errors?.procedures?.[index]?.performedPeriod?.end?.message}
-          >
-            <FormInput
-              type="datetime-local"
-              {...register(`procedures.${index}.performedPeriod.end`, {
-                required: "Performed end is required",
-              })}
-            />
-          </FormRow>
-
-          {/* Performer */}
-          <FormRow
-            label="Performer Actor Reference:"
-            error={
-              errors?.procedures?.[index]?.performer?.[0]?.actor?.reference
-                ?.message
-            }
-          >
-            <FormInput
-              {...register(
-                `procedures.${index}.performer.[0].actor.reference`,
-                {
-                  required: "Performer actor reference is required",
-                },
+              options={[
+                { value: "", label: "Seleziona una categoria" },
+                ...categoryOptions.map((option) => ({
+                  value: option.code,
+                  label: option.label,
+                })),
+              ].filter(
+                (option) =>
+                  option.value !== "" ||
+                  selectedCategories[index] === undefined,
               )}
-              placeholder="Practitioner/123"
-            />
-          </FormRow>
-          <FormRow
-            label="Performer Actor Display:"
-            error={
-              errors?.procedures?.[index]?.performer?.[0]?.actor?.display
-                ?.message
-            }
-          >
-            <FormInput
-              {...register(`procedures.${index}.performer.[0].actor.display`, {
-                required: "Performer actor display is required",
-              })}
-              placeholder="Dr. Smith"
-            />
-          </FormRow>
-          <FormRow
-            label="Performer Role System:"
-            error={
-              errors?.procedures?.[index]?.performer?.[0]?.role?.coding?.[0]
-                ?.system?.message
-            }
-          >
-            <FormInput
-              {...register(
-                `procedures.${index}.performer.[0].role.coding.[0].system`,
-                {
-                  required: "Performer role system is required",
-                },
-              )}
-              placeholder="http://terminology.hl7.org/CodeSystem/v2-0912"
-            />
-          </FormRow>
-          <FormRow
-            label="Performer Role Code:"
-            error={
-              errors?.procedures?.[index]?.performer?.[0]?.role?.coding?.[0]
-                ?.code?.message
-            }
-          >
-            <FormInput
-              {...register(
-                `procedures.${index}.performer.[0].role.coding.[0].code`,
-                {
-                  required: "Performer role code is required",
-                },
-              )}
-              placeholder="PPRF"
-            />
-          </FormRow>
-          <FormRow
-            label="Performer Role Display:"
-            error={
-              errors?.procedures?.[index]?.performer?.[0]?.role?.coding?.[0]
-                ?.display?.message
-            }
-          >
-            <FormInput
-              {...register(
-                `procedures.${index}.performer.[0].role.coding.[0].display`,
-                {
-                  required: "Performer role display is required",
-                },
-              )}
-              placeholder="Primary surgeon"
-            />
-          </FormRow>
-          <FormRow
-            label="Performer Role Text:"
-            error={
-              errors?.procedures?.[index]?.performer?.[0]?.role?.text?.message
-            }
-          >
-            <FormInput
-              {...register(`procedures.${index}.performer.[0].role.text`, {
-                required: "Performer role text is required",
-              })}
-              placeholder="Primary surgeon"
             />
           </FormRow>
 
           {/* Encounter */}
           <FormRow
-            label="Encounter Reference:"
+            label="Riferimento all'incontro"
             error={errors?.procedures?.[index]?.encounter?.reference?.message}
           >
-            <FormInput
-              {...register(`procedures.${index}.encounter.reference`, {
-                required: "Encounter reference is required",
-              })}
-              placeholder="Encounter/345"
-            />
+            {isPendingEncounters ? (
+              <SmallSpinner />
+            ) : (
+              <FormSelect
+                id={`procedures.${index}.encounter`}
+                {...register(`procedures.${index}.encounter.reference`, {
+                  required: "Il riferimento all'incontro è obbligatorio",
+                  onChange: (e) => handleEncounterChange(index, e.target.value),
+                })}
+                options={[
+                  {
+                    value: "",
+                    label: "Seleziona un incontro",
+                  },
+                  ...encounters.map((encounter) => ({
+                    value: encounter.id.value,
+                    label: encounter.class?.display || encounter.id.value,
+                  })),
+                ]}
+              />
+            )}
           </FormRow>
-          <FormRow
-            label="Encounter Display:"
-            error={errors?.procedures?.[index]?.encounter?.display?.message}
-          >
-            <FormInput
-              {...register(`procedures.${index}.encounter.display`, {
-                required: "Encounter display is required",
-              })}
-              placeholder="Emergency department visit"
-            />
-          </FormRow>
-
-          {/* Location */}
-          <FormRow
-            label="Location Reference:"
-            error={errors?.procedures?.[index]?.location?.reference?.message}
-          >
-            <FormInput
-              {...register(`procedures.${index}.location.reference`, {
-                required: "Location reference is required",
-              })}
-              placeholder="Location/1"
-            />
-          </FormRow>
-          <FormRow
-            label="Location Display:"
-            error={errors?.procedures?.[index]?.location?.display?.message}
-          >
-            <FormInput
-              {...register(`procedures.${index}.location.display`, {
-                required: "Location display is required",
-              })}
-              placeholder="Operating Room 1"
-            />
-          </FormRow>
-
-          {/* Reason Code */}
-          <FormRow
-            label="Reason Code System:"
-            error={
-              errors?.procedures?.[index]?.reasonCode?.[0]?.coding?.[0]?.system
-                ?.message
-            }
-          >
-            <FormInput
-              {...register(
-                `procedures.${index}.reasonCode.[0].coding.[0].system`,
-                {
-                  required: "Reason code system is required",
-                },
-              )}
-              placeholder="http://snomed.info/sct"
-            />
-          </FormRow>
-          <FormRow
-            label="Reason Code Value:"
-            error={
-              errors?.procedures?.[index]?.reasonCode?.[0]?.coding?.[0]?.code
-                ?.message
-            }
-          >
-            <FormInput
-              {...register(
-                `procedures.${index}.reasonCode.[0].coding.[0].code`,
-                {
-                  required: "Reason code value is required",
-                },
-              )}
-              placeholder="233604007"
-            />
-          </FormRow>
-          <FormRow
-            label="Reason Code Display:"
-            error={
-              errors?.procedures?.[index]?.reasonCode?.[0]?.coding?.[0]?.display
-                ?.message
-            }
-          >
-            <FormInput
-              {...register(
-                `procedures.${index}.reasonCode.[0].coding.[0].display`,
-                {
-                  required: "Reason code display is required",
-                },
-              )}
-              placeholder="Acute appendicitis"
-            />
-          </FormRow>
-          <FormRow
-            label="Reason Code Text:"
-            error={errors?.procedures?.[index]?.reasonCode?.[0]?.text?.message}
-          >
-            <FormInput
-              {...register(`procedures.${index}.reasonCode.[0].text`, {
-                required: "Reason code text is required",
-              })}
-              placeholder="Acute appendicitis"
-            />
-          </FormRow>
+          {!isPendingEncounters && encounters.length === 0 && (
+            <p className="text-sm italic text-red-500">
+              Non ci sono incontri disponibili.
+            </p>
+          )}
+          {selectedEncounters[index] && (
+            <EncounterDetails encounter={selectedEncounters[index]} />
+          )}
 
           {/* Note */}
           <FormRow
-            label="Note Author Reference:"
-            error={
-              errors?.procedures?.[index]?.note?.[0]?.authorReference?.reference
-                ?.message
-            }
-          >
-            <FormInput
-              {...register(
-                `procedures.${index}.note.[0].authorReference.reference`,
-                {
-                  required: "Note author reference is required",
-                },
-              )}
-              placeholder="Practitioner/123"
-            />
-          </FormRow>
-          <FormRow
-            label="Note Author Display:"
-            error={
-              errors?.procedures?.[index]?.note?.[0]?.authorReference?.display
-                ?.message
-            }
-          >
-            <FormInput
-              {...register(
-                `procedures.${index}.note.[0].authorReference.display`,
-                {
-                  required: "Note author display is required",
-                },
-              )}
-              placeholder="Dr. Smith"
-            />
-          </FormRow>
-          <FormRow
-            label="Note Time:"
-            error={errors?.procedures?.[index]?.note?.[0]?.time?.message}
-          >
-            <FormInput
-              type="datetime-local"
-              {...register(`procedures.${index}.note.[0].time`, {
-                required: "Note time is required",
-              })}
-            />
-          </FormRow>
-          <FormRow
-            label="Note Text:"
+            label="Nota"
             error={errors?.procedures?.[index]?.note?.[0]?.text?.message}
           >
             <FormInput
               {...register(`procedures.${index}.note.[0].text`, {
-                required: "Note text is required",
+                required: "Il testo della nota è obbligatorio",
               })}
               placeholder="Procedure was successful with no complications."
-            />
-          </FormRow>
-
-          {/* Follow-up */}
-          <FormRow
-            label="Follow-up System:"
-            error={
-              errors?.procedures?.[index]?.followUp?.[0]?.coding?.[0]?.system
-                ?.message
-            }
-          >
-            <FormInput
-              {...register(
-                `procedures.${index}.followUp.[0].coding.[0].system`,
-                {
-                  required: "Follow-up system is required",
-                },
-              )}
-              placeholder="http://terminology.hl7.org/CodeSystem/v2-0936"
-            />
-          </FormRow>
-          <FormRow
-            label="Follow-up Code:"
-            error={
-              errors?.procedures?.[index]?.followUp?.[0]?.coding?.[0]?.code
-                ?.message
-            }
-          >
-            <FormInput
-              {...register(`procedures.${index}.followUp.[0].coding.[0].code`, {
-                required: "Follow-up code is required",
-              })}
-              placeholder="F01"
-            />
-          </FormRow>
-          <FormRow
-            label="Follow-up Display:"
-            error={
-              errors?.procedures?.[index]?.followUp?.[0]?.coding?.[0]?.display
-                ?.message
-            }
-          >
-            <FormInput
-              {...register(
-                `procedures.${index}.followUp.[0].coding.[0].display`,
-                {
-                  required: "Follow-up display is required",
-                },
-              )}
-              placeholder="Follow-up visit"
-            />
-          </FormRow>
-          <FormRow
-            label="Follow-up Text:"
-            error={errors?.procedures?.[index]?.followUp?.[0]?.text?.message}
-          >
-            <FormInput
-              {...register(`procedures.${index}.followUp.[0].text`, {
-                required: "Follow-up text is required",
-              })}
-              placeholder="Follow-up visit in 2 weeks"
-            />
-          </FormRow>
-
-          {/* Report */}
-          <FormRow
-            label="Report Reference:"
-            error={errors?.procedures?.[index]?.report?.[0]?.reference?.message}
-          >
-            <FormInput
-              {...register(`procedures.${index}.report.[0].reference`, {
-                required: "Report reference is required",
-              })}
-              placeholder="DiagnosticReport/5678"
-            />
-          </FormRow>
-          <FormRow
-            label="Report Display:"
-            error={errors?.procedures?.[index]?.report?.[0]?.display?.message}
-          >
-            <FormInput
-              {...register(`procedures.${index}.report.[0].display`, {
-                required: "Report display is required",
-              })}
-              placeholder="Post-operative pathology report"
-            />
-          </FormRow>
-
-          {/* Complication */}
-          <FormRow
-            label="Complication System:"
-            error={
-              errors?.procedures?.[index]?.complication?.[0]?.coding?.[0]
-                ?.system?.message
-            }
-          >
-            <FormInput
-              {...register(
-                `procedures.${index}.complication.[0].coding.[0].system`,
-                {
-                  required: "Complication system is required",
-                },
-              )}
-              placeholder="http://snomed.info/sct"
-            />
-          </FormRow>
-          <FormRow
-            label="Complication Code:"
-            error={
-              errors?.procedures?.[index]?.complication?.[0]?.coding?.[0]?.code
-                ?.message
-            }
-          >
-            <FormInput
-              {...register(
-                `procedures.${index}.complication.[0].coding.[0].code`,
-                {
-                  required: "Complication code is required",
-                },
-              )}
-              placeholder="116223007"
-            />
-          </FormRow>
-          <FormRow
-            label="Complication Display:"
-            error={
-              errors?.procedures?.[index]?.complication?.[0]?.coding?.[0]
-                ?.display?.message
-            }
-          >
-            <FormInput
-              {...register(
-                `procedures.${index}.complication.[0].coding.[0].display`,
-                {
-                  required: "Complication display is required",
-                },
-              )}
-              placeholder="Postoperative wound infection"
-            />
-          </FormRow>
-          <FormRow
-            label="Complication Text:"
-            error={
-              errors?.procedures?.[index]?.complication?.[0]?.text?.message
-            }
-          >
-            <FormInput
-              {...register(`procedures.${index}.complication.[0].text`, {
-                required: "Complication text is required",
-              })}
-              placeholder="Postoperative wound infection"
-            />
-          </FormRow>
-
-          {/* Body Site */}
-          <FormRow
-            label="Body Site System:"
-            error={
-              errors?.procedures?.[index]?.bodySite?.[0]?.coding?.[0]?.system
-                ?.message
-            }
-          >
-            <FormInput
-              {...register(
-                `procedures.${index}.bodySite.[0].coding.[0].system`,
-                {
-                  required: "Body site system is required",
-                },
-              )}
-              placeholder="http://snomed.info/sct"
-            />
-          </FormRow>
-          <FormRow
-            label="Body Site Code:"
-            error={
-              errors?.procedures?.[index]?.bodySite?.[0]?.coding?.[0]?.code
-                ?.message
-            }
-          >
-            <FormInput
-              {...register(`procedures.${index}.bodySite.[0].coding.[0].code`, {
-                required: "Body site code is required",
-              })}
-              placeholder="66754008"
-            />
-          </FormRow>
-          <FormRow
-            label="Body Site Display:"
-            error={
-              errors?.procedures?.[index]?.bodySite?.[0]?.coding?.[0]?.display
-                ?.message
-            }
-          >
-            <FormInput
-              {...register(
-                `procedures.${index}.bodySite.[0].coding.[0].display`,
-                {
-                  required: "Body site display is required",
-                },
-              )}
-              placeholder="Appendix structure"
-            />
-          </FormRow>
-          <FormRow
-            label="Body Site Text:"
-            error={errors?.procedures?.[index]?.bodySite?.[0]?.text?.message}
-          >
-            <FormInput
-              {...register(`procedures.${index}.bodySite.[0].text`, {
-                required: "Body site text is required",
-              })}
-              placeholder="Appendix structure"
             />
           </FormRow>
 
@@ -738,7 +314,7 @@ const ProceduresForm = ({ control, register, errors }) => {
           variant="secondary"
           size="small"
         >
-          <FaPlus className="mr-1" /> Add Procedure
+          <FaPlus className="mr-1" /> Aggiungi Procedura
         </Button>
       </div>
     </div>

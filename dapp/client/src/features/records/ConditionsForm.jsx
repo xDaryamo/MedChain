@@ -51,7 +51,7 @@ const ConditionsForm = ({ control, register, errors, setValue }) => {
 
   const handleAddCondition = () => {
     append({});
-    setFocusIndex(0); // Focus sul primo elemento della lista
+    setFocusIndex(0);
   };
 
   const handleCategoryChange = (index, value) => {

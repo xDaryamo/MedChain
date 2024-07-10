@@ -5,7 +5,7 @@ const { verifyToken, authorizeOrganization } = require("../middleware/auth");
 
 router.post("/", verifyToken, encounter.createEncounter);
 
-router.post("/:query", verifyToken, encounter.searchEncounter);
+router.post("/search/", verifyToken, encounter.searchEncounter);
 
 router.get("/:id", verifyToken, encounter.getEncounter);
 
