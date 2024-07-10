@@ -16,7 +16,7 @@ const MedicationRequestList = () => {
     const defaultQuery = {
         query: {
             selector: {
-                reference: `${id}`,
+                "subject.reference": `${id}`,
             },
         },
     };

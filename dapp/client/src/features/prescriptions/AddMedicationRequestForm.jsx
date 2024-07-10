@@ -11,6 +11,9 @@ const AddMedicationRequestForm = ({ onSubmitSuccess }) => {
 
     const onSubmit = async (data) => {
         const medicationRequest = {
+            identifier: {
+                system: "urn:ietf:rfc:3986"
+            },
             medicationCodeableConcept: {
                 coding: [
                     {
