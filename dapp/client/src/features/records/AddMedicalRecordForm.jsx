@@ -113,6 +113,42 @@ const AddMedicalRecordForm = ({ onSubmitSuccess }) => {
             ],
             text: "Confirmed",
           },
+          category: [
+            {
+              coding: [
+                {
+                  system:
+                    "http://terminology.hl7.org/CodeSystem/condition-category",
+                  code: condition.category[0].coding[0].code,
+                  display: condition.category[0].coding[0].display,
+                },
+              ],
+              text: condition.category[0].coding[0].text,
+            },
+          ],
+          severity: {
+            coding: [
+              {
+                system: "http://snomed.info/sct",
+                code: condition.severity.coding[0].code,
+                display: condition.severity.coding[0].display,
+              },
+            ],
+            text: condition.severity.coding[0].text,
+          },
+
+          code: [
+            {
+              coding: [
+                {
+                  system: "http://snomed.info/sct",
+                  code: condition.code.coding[0].code,
+                  display: condition.code.coding[0].display,
+                },
+              ],
+              text: condition.code.coding[0].text,
+            },
+          ],
           subject: {
             reference: patientID,
             display: patient?.name?.text || "Unknown",
@@ -213,7 +249,12 @@ const AddMedicalRecordForm = ({ onSubmitSuccess }) => {
 
       <div className="mb-4 border-b pb-4">
         <h3 className="mb-4 text-xl font-semibold">Conditions</h3>
-        <ConditionsForm control={control} register={register} errors={errors} />
+        <ConditionsForm
+          control={control}
+          register={register}
+          errors={errors}
+          setValue={setValue}
+        />
       </div>
 
       <div className="mb-4 border-b pb-4">
