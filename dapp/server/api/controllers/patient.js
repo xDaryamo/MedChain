@@ -260,6 +260,7 @@ exports.grantAccess = async (req, res, next) => {
 exports.revokeAccess = async (req, res, next) => {
   const patientID = req.user.userId;
   const requesterID = req.params.requesterId;
+  const isOrg = req.body.isOrg;
   const organization = req.user.organization;
 
   try {
@@ -272,7 +273,8 @@ exports.revokeAccess = async (req, res, next) => {
     const resultString = await fabric.submitTransaction(
       "RevokeAccess",
       patientID,
-      requesterID
+      requesterID,
+      isOrg.toString()
     );
     const result = JSON.parse(resultString);
 
