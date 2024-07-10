@@ -58,6 +58,7 @@ const MedicalRecordCard = ({ item, patient }) => {
       </div>
     );
   };
+
   const allergies = item.allergies
     ? item.allergies.map((allergy) => {
         if (
@@ -114,10 +115,6 @@ const MedicalRecordCard = ({ item, patient }) => {
     ? item.labResultsIDs.map((resultID) => getLabResultText(resultID))
     : [];
 
-  const attachments = item.attachments
-    ? item.attachments.map((attachment) => attachment.url)
-    : [];
-
   return (
     <Card item={item} itemKey="identifier">
       <Link to={`/records/${recordID}`} className="mb-4 flex-1">
@@ -142,11 +139,6 @@ const MedicalRecordCard = ({ item, patient }) => {
         {renderList("Prescrizioni", prescriptions)}
         {renderList("Allergie", allergies)}
         {renderList("Risultati di Laboratorio", labResultsText)}
-        <div className="text-cyan-950">
-          <span className="font-bold">Richiesta di Servizio:</span>{" "}
-          {item.serviceRequest?.display || "N/A"}
-        </div>
-        {renderList("Allegati", attachments)}
       </Link>
     </Card>
   );
