@@ -1,5 +1,5 @@
 import { Link, useNavigate, useParams } from "react-router-dom";
-import { useGetMedicalRecord } from "./useMedicalRecords";
+import { useGetMedicalRecord, useRemoveRecord } from "./useMedicalRecords";
 import { useGetPatient } from "../users/usePatients";
 import { useGetLabResultsByIds } from "../labresults/useLabResults";
 import Spinner from "../../ui/Spinner";
@@ -23,6 +23,9 @@ const MedicalRecordDetails = () => {
     error: recordError,
     refetch: refetchRecord,
   } = useGetMedicalRecord(id);
+
+  const { removeRecord, isPending: deletePending } = useRemoveRecord();
+
   const {
     patient,
     isPending: patientLoading,
@@ -47,8 +50,11 @@ const MedicalRecordDetails = () => {
 
   const handleDeleteRecord = () => {
     if (window.confirm("Sei sicuro di voler eliminare questo record?")) {
-      console.log("Record eliminato");
-      navigate(-1);
+      removeRecord(id, {
+        onSuccess: () => {
+          navigate(-2);
+        },
+      });
     }
   };
 
@@ -275,7 +281,7 @@ const MedicalRecordDetails = () => {
           </div>
           <div className="text-cyan-950">
             <span className="font-bold">Lingua:</span>{" "}
-            {patient.communication?.[0]?.language?.text || "N/A"}
+            {patient.communication?.[0]?.language?.coding[0].display || "N/A"}
           </div>
         </section>
         <section className="mb-4">
@@ -294,8 +300,12 @@ const MedicalRecordDetails = () => {
           <Link to={`/records/update/${id}`}>
             <Button variant="secondary">Modifica</Button>
           </Link>
-          <Button variant="delete" onClick={handleDeleteRecord}>
-            Cancella
+          <Button
+            variant="danger"
+            onClick={handleDeleteRecord}
+            disabled={deletePending}
+          >
+            {deletePending ? <Spinner /> : "Cancella"}
           </Button>
         </div>
       </div>

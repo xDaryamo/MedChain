@@ -21,6 +21,7 @@ const AddMedicalRecordForm = ({ onSubmitSuccess }) => {
     formState: { errors },
     reset,
     setValue,
+    watch,
   } = useForm();
   const { addRecord, isPending } = useAddRecord();
   const { id: patientID } = useParams();
@@ -33,11 +34,11 @@ const AddMedicalRecordForm = ({ onSubmitSuccess }) => {
       const labResultsIDs = data.labResultsIDs?.map((lr) => lr.id) || [];
       const record = {
         patientID,
-
         allergies: data.allergies.map((allergy) => ({
           ...allergy,
           identifier: {
             system: "urn:ietf:rfc:3986",
+            value: allergy.identifier?.value || "",
           },
           patient: {
             reference: patientID,
@@ -85,11 +86,11 @@ const AddMedicalRecordForm = ({ onSubmitSuccess }) => {
             },
           })),
         })),
-
         conditions: data.conditions.map((condition) => ({
           ...condition,
           identifier: {
             system: "urn:ietf:rfc:3986",
+            value: condition.identifier?.value || "",
           },
           clinicalStatus: {
             coding: [
@@ -136,7 +137,6 @@ const AddMedicalRecordForm = ({ onSubmitSuccess }) => {
             ],
             text: condition.severity.text,
           },
-
           code: [
             {
               coding: [
@@ -153,7 +153,7 @@ const AddMedicalRecordForm = ({ onSubmitSuccess }) => {
             reference: patientID,
             display: patient?.name?.text || "Unknown",
           },
-          recordedDate: new Date().toISOString(),
+          recordedDate: condition.recordedDate || new Date().toISOString(),
           recorder: {
             reference: practitioner.identifier.value,
             display: practitioner.name[0].text,
@@ -163,11 +163,11 @@ const AddMedicalRecordForm = ({ onSubmitSuccess }) => {
             display: practitioner.name[0].text,
           },
         })),
-
         procedures: data.procedures.map((procedure) => ({
           ...procedure,
           identifier: {
             system: "urn:ietf:rfc:3986",
+            value: procedure.identifier?.value || "",
           },
           subject: {
             reference: patientID,
@@ -183,7 +183,6 @@ const AddMedicalRecordForm = ({ onSubmitSuccess }) => {
             ],
             text: procedure.code.text,
           },
-
           status: {
             coding: [
               {
@@ -193,7 +192,6 @@ const AddMedicalRecordForm = ({ onSubmitSuccess }) => {
                 display: "Completed",
               },
             ],
-            text: "Completed",
           },
           category: {
             coding: [
@@ -205,7 +203,6 @@ const AddMedicalRecordForm = ({ onSubmitSuccess }) => {
             ],
             text: procedure.category.text,
           },
-
           performed: {
             reference: practitioner.identifier.value,
             display: practitioner.name[0].text,
@@ -225,75 +222,91 @@ const AddMedicalRecordForm = ({ onSubmitSuccess }) => {
             },
           ],
         })),
-        prescriptions: (data.prescriptions || []).map((prescription) => ({
-          ...prescription,
-          identifier: {
-            system: "urn:ietf:rfc:3986",
-          },
-          status: {
-            coding: [
-              {
-                system:
-                  "http://terminology.hl7.org/CodeSystem/medication-request-status",
-                code: "active",
-                display: "Active",
-              },
-            ],
-          },
-          intent: {
-            coding: [
-              {
-                system:
-                  "http://terminology.hl7.org/CodeSystem/medication-request-intent",
-                code: "order",
-                display: "Order",
-              },
-            ],
-            text: "Order",
-          },
-          medicationCodeableConcept: {
-            coding: [
-              {
-                system: "http://snomed.info/sct",
-                code: prescription.medicationCodeableConcept.coding[0].code,
-                display:
-                  prescription.medicationCodeableConcept.coding[0].display,
-              },
-            ],
-            text: prescription.medicationCodeableConcept.text,
-          },
-          subject: {
-            reference: patientID,
-            display: patient?.name?.text || "Unknown",
-          },
-          authoredOn: new Date().toISOString(),
-          requester: {
-            reference: practitioner.identifier.value,
-            display: practitioner.name[0].text,
-          },
-          dispenseRequest: {
-            quantity: {
-              value: prescription.dispenseRequest.quantity.value,
-              unit: prescription.dispenseRequest.quantity.unit,
-              system: "http://unitsofmeasure.org",
+        prescriptions: data.prescriptions.map((prescription) => {
+          const start = prescription.dispenseRequest.validityPeriod.start
+            ? new Date(
+                prescription.dispenseRequest.validityPeriod.start,
+              ).toISOString()
+            : "";
+          const end = prescription.dispenseRequest.validityPeriod.end
+            ? new Date(
+                prescription.dispenseRequest.validityPeriod.end,
+              ).toISOString()
+            : "";
+
+          return {
+            ...prescription,
+            identifier: {
+              system: "urn:ietf:rfc:3986",
+              value: prescription.identifier?.value || "",
             },
-            expectedSupplyDuration: {
-              value: prescription.dispenseRequest.expectedSupplyDuration.value,
-              unit: prescription.dispenseRequest.expectedSupplyDuration.unit,
-              system: "http://unitsofmeasure.org",
+            status: {
+              coding: [
+                {
+                  system:
+                    "http://terminology.hl7.org/CodeSystem/medication-request-status",
+                  code: "active",
+                  display: "Active",
+                },
+              ],
+              text: "Active",
             },
-            validityPeriod: {
-              start: prescription.dispenseRequest.validityPeriod.start,
-              end: prescription.dispenseRequest.validityPeriod.end,
+            intent: {
+              coding: [
+                {
+                  system:
+                    "http://terminology.hl7.org/CodeSystem/medication-request-intent",
+                  code: "order",
+                  display: "Order",
+                },
+              ],
+              text: "Order",
             },
-            numberOfRepeatsAllowed:
-              prescription.dispenseRequest.numberOfRepeatsAllowed,
-          },
-        })),
+            medicationCodeableConcept: {
+              coding: [
+                {
+                  system: "http://snomed.info/sct",
+                  code: prescription.medicationCodeableConcept.coding[0].code,
+                  display:
+                    prescription.medicationCodeableConcept.coding[0].display,
+                },
+              ],
+              text: prescription.medicationCodeableConcept.text,
+            },
+            subject: {
+              reference: patientID,
+              display: patient?.name?.text || "Unknown",
+            },
+            authoredOn: prescription.authoredOn || new Date().toISOString(),
+            requester: {
+              reference: practitioner.identifier.value,
+              display: practitioner.name[0].text,
+            },
+            dispenseRequest: {
+              quantity: {
+                value: prescription.dispenseRequest.quantity.value,
+                unit: prescription.dispenseRequest.quantity.unit,
+                system: "http://unitsofmeasure.org",
+              },
+              expectedSupplyDuration: {
+                value:
+                  prescription.dispenseRequest.expectedSupplyDuration.value,
+                unit: prescription.dispenseRequest.expectedSupplyDuration.unit,
+                system: "http://unitsofmeasure.org",
+              },
+              validityPeriod: {
+                start,
+                end,
+              },
+              numberOfRepeatsAllowed:
+                prescription.dispenseRequest.numberOfRepeatsAllowed,
+            },
+          };
+        }),
         labResultsIDs,
       };
 
-      addRecord(record, {
+      await addRecord(record, {
         onSettled: () => {
           reset();
           onSubmitSuccess();
@@ -350,6 +363,7 @@ const AddMedicalRecordForm = ({ onSubmitSuccess }) => {
           register={register}
           errors={errors}
           setValue={setValue}
+          watch={watch}
         />
       </div>
 

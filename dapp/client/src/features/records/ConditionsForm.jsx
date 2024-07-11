@@ -50,7 +50,11 @@ const ConditionsForm = ({ control, register, errors, setValue }) => {
   }, [focusIndex]);
 
   const handleAddCondition = () => {
-    append({});
+    append({
+      category: [{ coding: [{}] }],
+      severity: { coding: [{}] },
+      code: { coding: [{}] },
+    });
     setFocusIndex(fields.length);
   };
 
@@ -75,7 +79,10 @@ const ConditionsForm = ({ control, register, errors, setValue }) => {
     setValue(
       `conditions.${index}.category[0].coding[0].display`,
       displayValue,
-      { shouldValidate: true, shouldDirty: true },
+      {
+        shouldValidate: true,
+        shouldDirty: true,
+      },
     );
     setValue(`conditions.${index}.category[0].text`, textValue, {
       shouldValidate: true,
@@ -95,7 +102,10 @@ const ConditionsForm = ({ control, register, errors, setValue }) => {
     setValue(
       `conditions.${index}.severity.coding[0].code`,
       selectedOption.code,
-      { shouldValidate: true, shouldDirty: true },
+      {
+        shouldValidate: true,
+        shouldDirty: true,
+      },
     );
     setValue(
       `conditions.${index}.severity.coding[0].display`,
@@ -105,7 +115,10 @@ const ConditionsForm = ({ control, register, errors, setValue }) => {
     setValue(
       `conditions.${index}.severity.coding[0].system`,
       selectedOption.system,
-      { shouldValidate: true, shouldDirty: true },
+      {
+        shouldValidate: true,
+        shouldDirty: true,
+      },
     );
     setValue(`conditions.${index}.severity.text`, selectedOption.display, {
       shouldValidate: true,

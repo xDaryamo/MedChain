@@ -58,7 +58,7 @@ const UpdateMedicalRecordForm = () => {
       const updatedRecord = {
         ...data,
         patientID: record.patientID,
-        allergies: data.allergies.map((allergy) => ({
+        allergies: (data.allergies || []).map((allergy) => ({
           ...allergy,
           identifier: {
             system: "urn:ietf:rfc:3986",
@@ -99,18 +99,18 @@ const UpdateMedicalRecordForm = () => {
             ],
             text: allergy.code.text,
           },
-          reaction: allergy.reaction.map((reaction) => ({
+          reaction: (allergy.reaction || []).map((reaction) => ({
             ...reaction,
             substance: {
               ...reaction.substance,
-              coding: reaction.substance.coding.map((coding) => ({
+              coding: (reaction.substance.coding || []).map((coding) => ({
                 ...coding,
                 system: "http://www.nlm.nih.gov/research/umls/rxnorm",
               })),
             },
           })),
         })),
-        conditions: data.conditions.map((condition) => ({
+        conditions: (data.conditions || []).map((condition) => ({
           ...condition,
           identifier: {
             system: "urn:ietf:rfc:3986",
@@ -187,7 +187,7 @@ const UpdateMedicalRecordForm = () => {
             display: practitioner.name[0].text,
           },
         })),
-        procedures: data.procedures.map((procedure) => ({
+        procedures: (data.procedures || []).map((procedure) => ({
           ...procedure,
           identifier: {
             system: "urn:ietf:rfc:3986",
@@ -416,7 +416,7 @@ const UpdateMedicalRecordForm = () => {
           />
         </div>
 
-        <div className="flex w-full justify-center">
+        <div className="flex w-full justify-center space-x-4">
           <Button
             type="submit"
             disabled={updatePending}

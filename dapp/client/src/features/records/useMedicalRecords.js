@@ -103,25 +103,69 @@ export const useUpdateRecord = (id) => {
     mutationFn: async ({ id, record }) => {
       console.log("Updating record:", record);
 
-      const updatedAllergies = await updateAllergiesBatch(
-        record.allergies || [],
+      // Separate new and existing allergies
+      const newAllergies = record.allergies.filter((a) => !a.identifier?.value);
+      const existingAllergies = record.allergies.filter(
+        (a) => a.identifier?.value,
       );
-      const updatedConditions = await updateConditionsBatch(
-        record.conditions || [],
+      console.log("newAllergies: ", newAllergies);
+      console.log("existingAllergies: ", existingAllergies);
+
+      const createdAllergies = await createAllergiesBatch(newAllergies);
+      const updatedAllergies = await updateAllergiesBatch(existingAllergies);
+
+      // Repeat for other subcomponents (conditions, procedures, prescriptions)
+      const newConditions = record.conditions.filter(
+        (c) => !c.identifier?.value,
       );
-      const updatedProcedures = await updateProceduresBatch(
-        record.procedures || [],
+      const existingConditions = record.conditions.filter(
+        (c) => c.identifier?.value,
       );
+
+      const createdConditions = await createConditionsBatch(newConditions);
+      const updatedConditions = await updateConditionsBatch(existingConditions);
+
+      const newProcedures = record.procedures.filter(
+        (p) => !p.identifier?.value,
+      );
+      const existingProcedures = record.procedures.filter(
+        (p) => p.identifier?.value,
+      );
+
+      const createdProcedures = await createProceduresBatch(newProcedures);
+      const updatedProcedures = await updateProceduresBatch(existingProcedures);
+
+      const newPrescriptions = record.prescriptions.filter(
+        (p) => !p.identifier?.value,
+      );
+      const existingPrescriptions = record.prescriptions.filter(
+        (p) => p.identifier?.value,
+      );
+
+      const createdPrescriptions =
+        await createPrescriptionsBatch(newPrescriptions);
       const updatedPrescriptions = await updatePrescriptionsBatch(
-        record.prescriptions || [],
+        existingPrescriptions,
       );
 
       const updatedRecord = {
         ...record,
-        allergies: updatedAllergies.allergies,
-        conditions: updatedConditions.conditions,
-        procedures: updatedProcedures.procedures,
-        prescriptions: updatedPrescriptions.prescriptions,
+        allergies: [
+          ...createdAllergies.allergies,
+          ...updatedAllergies.allergies,
+        ],
+        conditions: [
+          ...createdConditions.conditions,
+          ...updatedConditions.conditions,
+        ],
+        procedures: [
+          ...createdProcedures.procedures,
+          ...updatedProcedures.procedures,
+        ],
+        prescriptions: [
+          ...createdPrescriptions.prescriptions,
+          ...updatedPrescriptions.prescriptions,
+        ],
       };
 
       console.log(updatedRecord);

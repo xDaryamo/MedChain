@@ -114,7 +114,7 @@ exports.deleteMedicalRecords = async (req, res, next) => {
 
   try {
     const channel = "patient-records-channel";
-    const chaincode = "record";
+    const chaincode = "records";
 
     await fabric.init(userID, organization, channel, chaincode);
     console.log("Fabric network initialized successfully.");
@@ -125,16 +125,26 @@ exports.deleteMedicalRecords = async (req, res, next) => {
     );
     const record = JSON.parse(recordString);
 
-    if (!(await isAuthorized(userID, organization, record.patientID))) {
+    fabric.disconnect();
+
+    // Verifica l'autorizzazione dell'utente
+    const isAuthorizedResult = await isAuthorized(
+      userID,
+      organization,
+      record.patientID
+    );
+    if (!isAuthorizedResult) {
       return res.status(403).json({ error: "User not approved" });
     }
-
+    await fabric.init(userID, organization, channel, chaincode);
+    // Elimina il record medico
     const result = await fabric.submitTransaction(
       "DeleteMedicalRecords",
       recordID
     );
     res.status(200).json({ message: "Record deleted successfully", result });
   } catch (error) {
+    console.error("Failed to delete medical record:", error);
     res.status(500).json({ error: error.message });
   } finally {
     // Disconnetti dalla rete Fabric
@@ -489,7 +499,7 @@ exports.updateConditionsBatch = async (req, res, next) => {
 };
 
 exports.deleteConditionsBatch = async (req, res, next) => {
-  const conditionIDsJSON = req.body;
+  const conditionIDsJSON = req.body.ids;
   const userID = req.user.userId;
   const organization = req.user.organization;
 
@@ -801,7 +811,7 @@ exports.updateProceduresBatch = async (req, res, next) => {
 };
 
 exports.deleteProceduresBatch = async (req, res, next) => {
-  const procedureIDsJSON = req.body;
+  const procedureIDsJSON = req.body.ids;
   const userID = req.user.userId;
   const organization = req.user.organization;
 
@@ -1122,18 +1132,18 @@ exports.updateAllergiesBatch = async (req, res, next) => {
 };
 
 exports.deleteAllergiesBatch = async (req, res, next) => {
-  const allergyIDsJSON = req.body;
+  const allergyIDs = req.body.ids; // Assuming req.body is an array of IDs
   const userID = req.user.userId;
   const organization = req.user.organization;
 
   try {
     const channel = "patient-records-channel";
-    const chaincode = "records";
+    const chaincode = "records"; // Ensure this matches the chaincode name
 
     await fabric.init(userID, organization, channel, chaincode);
     console.log("Fabric network initialized successfully.");
 
-    const allergyIDsJSONString = JSON.stringify(allergyIDsJSON);
+    const allergyIDsJSONString = JSON.stringify(allergyIDs);
     console.log("Deleting allergies batch: ", allergyIDsJSONString);
     const result = await fabric.submitTransaction(
       "DeleteAllergiesBatch",
@@ -1158,13 +1168,21 @@ async function isAuthorized(userID, organization, patientReference) {
   await fabric.init(userID, organization, identity_channel, auth_chaincode);
   console.log("Verifying user...");
 
-  const authBool = await fabric.submitTransaction(
-    "IsAuthorized",
-    patientReference,
-    userID
-  );
+  let authBool;
+  try {
+    authBool = await fabric.submitTransaction(
+      "IsAuthorized",
+      patientReference,
+      userID
+    );
+  } catch (error) {
+    console.error("Failed to verify authorization:", error);
+    return false;
+  } finally {
+    fabric.disconnect();
+    console.log("Disconnected from Fabric gateway.");
+  }
 
-  fabric.disconnect();
   if (authBool === "false") {
     console.log("User not approved", userID);
     return false;
