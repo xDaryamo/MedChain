@@ -6,32 +6,11 @@ const { verifyToken, authorizeOrganization } = require("../middleware/auth");
 // POST Create a new medical record linked to a patient
 router.post("/", verifyToken, medicalHistoryController.createMedicalRecords);
 
-// GET Retrieve medical record details by ID
-router.get(
-  "/:id",
-  verifyToken,
-  medicalHistoryController.getMedicalRecordsDetails
-);
-
 // GET Retrieve all medical records from user id
 router.post(
   "/search",
   verifyToken,
   medicalHistoryController.searchMedicalRecords
-);
-
-// PATCH update the medical record linked to a patient
-router.patch(
-  "/:id",
-  verifyToken,
-  medicalHistoryController.updateMedicalRecords
-);
-
-// DELETE Delete medical record linked to a patient
-router.delete(
-  "/:id",
-  verifyToken,
-  medicalHistoryController.deleteMedicalRecords
 );
 
 // Condition Routes
@@ -44,21 +23,6 @@ router.post(
   "/conditions/search",
   verifyToken,
   medicalHistoryController.searchConditions
-);
-router.get(
-  "/conditions/:id",
-  verifyToken,
-  medicalHistoryController.readCondition
-);
-router.patch(
-  "/conditions/:id",
-  verifyToken,
-  medicalHistoryController.updateCondition
-);
-router.delete(
-  "/conditions/:id",
-  verifyToken,
-  medicalHistoryController.deleteCondition
 );
 
 // Batch Condition Routes
@@ -89,21 +53,6 @@ router.post(
   verifyToken,
   medicalHistoryController.searchProcedures
 );
-router.get(
-  "/procedures/:id",
-  verifyToken,
-  medicalHistoryController.readProcedure
-);
-router.patch(
-  "/procedures/:id",
-  verifyToken,
-  medicalHistoryController.updateProcedure
-);
-router.delete(
-  "/procedures/:id",
-  verifyToken,
-  medicalHistoryController.deleteProcedure
-);
 
 // Batch Procedure Routes
 router.post(
@@ -129,17 +78,6 @@ router.post(
   verifyToken,
   medicalHistoryController.searchAllergies
 );
-router.get("/allergies/:id", verifyToken, medicalHistoryController.getAllergy);
-router.patch(
-  "/allergies/:id",
-  verifyToken,
-  medicalHistoryController.updateAllergy
-);
-router.delete(
-  "/allergies/:id",
-  verifyToken,
-  medicalHistoryController.deleteAllergy
-);
 
 // Batch Allergy Routes
 router.post(
@@ -158,4 +96,67 @@ router.delete(
   medicalHistoryController.deleteAllergiesBatch
 );
 
+router.get(
+  "/conditions/:id",
+  verifyToken,
+  medicalHistoryController.readCondition
+);
+router.patch(
+  "/conditions/:id",
+  verifyToken,
+  medicalHistoryController.updateCondition
+);
+router.delete(
+  "/conditions/:id",
+  verifyToken,
+  medicalHistoryController.deleteCondition
+);
+
+router.get(
+  "/procedures/:id",
+  verifyToken,
+  medicalHistoryController.readProcedure
+);
+router.patch(
+  "/procedures/:id",
+  verifyToken,
+  medicalHistoryController.updateProcedure
+);
+router.delete(
+  "/procedures/:id",
+  verifyToken,
+  medicalHistoryController.deleteProcedure
+);
+
+router.get("/allergies/:id", verifyToken, medicalHistoryController.getAllergy);
+router.patch(
+  "/allergies/:id",
+  verifyToken,
+  medicalHistoryController.updateAllergy
+);
+router.delete(
+  "/allergies/:id",
+  verifyToken,
+  medicalHistoryController.deleteAllergy
+);
+// GET Retrieve medical record details by ID
+router.get(
+  "/:id",
+  verifyToken,
+  medicalHistoryController.getMedicalRecordsDetails
+);
+
+// PATCH update the medical record linked to a patient
+router.patch(
+  "/:id",
+  verifyToken,
+  medicalHistoryController.updateMedicalRecords
+);
+
+// DELETE Delete medical record linked to a patient
+router.delete(
+  "/:id",
+  verifyToken,
+  medicalHistoryController.deleteMedicalRecords
+);
 module.exports = router;

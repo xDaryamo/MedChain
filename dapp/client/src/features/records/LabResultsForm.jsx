@@ -39,7 +39,7 @@ const LabResultDetails = ({ labResult }) => {
   );
 };
 
-const LabResultsForm = ({ patientID, control, register, errors }) => {
+const LabResultsForm = ({ patientID, control, register, errors, isUpdate }) => {
   const { fields, append, remove } = useFieldArray({
     control,
     name: "labResultsIDs",
@@ -99,6 +99,9 @@ const LabResultsForm = ({ patientID, control, register, errors }) => {
     );
   };
 
+  const getSelectedLabResult = (id) =>
+    labResults.find((result) => result.identifier?.value === id);
+
   return (
     <div>
       {isPending && <SmallSpinner />}
@@ -123,28 +126,27 @@ const LabResultsForm = ({ patientID, control, register, errors }) => {
                   setSelectedIds(newSelectedIds);
                 },
               })}
+              defaultValue={field.id || ""}
               options={[
-                {
-                  value: "",
-                  label: "Select lab result",
-                  disabled: selectedIds[index] !== undefined,
-                },
+                ...(!isUpdate
+                  ? [
+                      {
+                        value: "",
+                        label: "Seleziona risultato",
+                        disabled: true,
+                      },
+                    ]
+                  : []),
                 ...getFilteredOptions(index).map((result) => ({
                   value: result.identifier?.value,
                   label: result.code?.text,
                 })),
-              ].filter(
-                (option) =>
-                  option.value !== "" || selectedIds[index] === undefined,
-              )}
+              ]}
             />
           </FormRow>
-          {selectedLabResults[index]?.id && (
+          {getSelectedLabResult(selectedLabResults[index]?.id) && (
             <LabResultDetails
-              labResult={labResults.find(
-                (result) =>
-                  result.identifier?.value === selectedLabResults[index].id,
-              )}
+              labResult={getSelectedLabResult(selectedLabResults[index]?.id)}
             />
           )}
           <div className="flex justify-end">

@@ -277,6 +277,10 @@ exports.createPrescriptionsBatch = async (req, res, next) => {
 };
 
 exports.updatePrescriptionsBatch = async (req, res, next) => {
+  console.log("updatePrescriptionsBatch controller called");
+  console.log("User:", req.user);
+  console.log("Request Body:", JSON.stringify(req.body, null, 2));
+
   const prescriptionsJSON = req.body.prescriptions;
   const userId = req.user.userId;
   const organization = req.user.organization;
@@ -302,6 +306,28 @@ exports.updatePrescriptionsBatch = async (req, res, next) => {
     } catch (jsonError) {
       console.error("Invalid JSON format:", jsonError);
       return res.status(400).json({ error: "Invalid JSON format" });
+    }
+
+    // Check if each prescription exists before attempting to update
+    for (const prescription of prescriptionsJSON) {
+      const prescriptionID = prescription.identifier.value;
+      console.log(`Checking existence of prescription ID: ${prescriptionID}`);
+
+      try {
+        const existingPrescription = await fabric.evaluateTransaction(
+          "ReadPrescription",
+          prescriptionID
+        );
+        console.log(`Prescription ID ${prescriptionID} exists.`);
+      } catch (readError) {
+        console.error(
+          `Prescription ID ${prescriptionID} does not exist.`,
+          readError
+        );
+        return res
+          .status(404)
+          .json({ error: `Prescription ID ${prescriptionID} does not exist.` });
+      }
     }
 
     console.log(

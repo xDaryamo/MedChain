@@ -72,7 +72,7 @@ const AddMedicalRecordForm = ({ onSubmitSuccess }) => {
                 display: allergy.code.coding[0].display,
               },
             ],
-            text: allergy.code.coding[0].display,
+            text: allergy.code.text,
           },
           reaction: allergy.reaction.map((reaction) => ({
             ...reaction,
@@ -123,7 +123,7 @@ const AddMedicalRecordForm = ({ onSubmitSuccess }) => {
                   display: condition.category[0].coding[0].display,
                 },
               ],
-              text: condition.category[0].coding[0].text,
+              text: condition.category[0].text,
             },
           ],
           severity: {
@@ -134,7 +134,7 @@ const AddMedicalRecordForm = ({ onSubmitSuccess }) => {
                 display: condition.severity.coding[0].display,
               },
             ],
-            text: condition.severity.coding[0].text,
+            text: condition.severity.text,
           },
 
           code: [
@@ -146,7 +146,7 @@ const AddMedicalRecordForm = ({ onSubmitSuccess }) => {
                   display: condition.code.coding[0].display,
                 },
               ],
-              text: condition.code.coding[0].text,
+              text: condition.code.text,
             },
           ],
           subject: {
@@ -181,7 +181,7 @@ const AddMedicalRecordForm = ({ onSubmitSuccess }) => {
                 display: procedure.code.coding[0].display,
               },
             ],
-            text: procedure.code.coding[0].text,
+            text: procedure.code.text,
           },
 
           status: {
@@ -203,7 +203,7 @@ const AddMedicalRecordForm = ({ onSubmitSuccess }) => {
                 display: procedure.category.coding[0].display,
               },
             ],
-            text: procedure.category.coding[0].display,
+            text: procedure.category.text,
           },
 
           performed: {
@@ -239,7 +239,6 @@ const AddMedicalRecordForm = ({ onSubmitSuccess }) => {
                 display: "Active",
               },
             ],
-            text: "Active",
           },
           intent: {
             coding: [
@@ -261,7 +260,7 @@ const AddMedicalRecordForm = ({ onSubmitSuccess }) => {
                   prescription.medicationCodeableConcept.coding[0].display,
               },
             ],
-            text: prescription.medicationCodeableConcept.coding[0].text,
+            text: prescription.medicationCodeableConcept.text,
           },
           subject: {
             reference: patientID,
@@ -307,10 +306,12 @@ const AddMedicalRecordForm = ({ onSubmitSuccess }) => {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-      <h2 className="mb-6 text-2xl font-bold">Add New Medical Record</h2>
+      <h2 className="mb-6 text-center text-2xl font-bold text-cyan-950">
+        Aggiungi una cartella clinica
+      </h2>
 
       <div className="mb-4 border-b pb-4">
-        <h3 className="mb-4 text-xl font-semibold">Allergies</h3>
+        <h3 className="mb-4 text-xl font-semibold text-cyan-950">Allergie</h3>
         <AllergiesForm
           control={control}
           register={register}
@@ -320,7 +321,7 @@ const AddMedicalRecordForm = ({ onSubmitSuccess }) => {
       </div>
 
       <div className="mb-4 border-b pb-4">
-        <h3 className="mb-4 text-xl font-semibold">Conditions</h3>
+        <h3 className="mb-4 text-xl font-semibold text-cyan-950">Condizioni</h3>
         <ConditionsForm
           control={control}
           register={register}
@@ -330,7 +331,7 @@ const AddMedicalRecordForm = ({ onSubmitSuccess }) => {
       </div>
 
       <div className="mb-4 border-b pb-4">
-        <h3 className="mb-4 text-xl font-semibold">Procedures</h3>
+        <h3 className="mb-4 text-xl font-semibold text-cyan-950">Procedure</h3>
         <ProceduresForm
           control={control}
           register={register}
@@ -341,7 +342,9 @@ const AddMedicalRecordForm = ({ onSubmitSuccess }) => {
       </div>
 
       <div className="mb-4 border-b pb-4">
-        <h3 className="mb-4 text-xl font-semibold">Prescrizioni</h3>
+        <h3 className="mb-4 text-xl font-semibold text-cyan-950">
+          Prescrizioni
+        </h3>
         <MedicationRequestsForm
           control={control}
           register={register}
@@ -351,12 +354,15 @@ const AddMedicalRecordForm = ({ onSubmitSuccess }) => {
       </div>
 
       <div className="mb-4 border-b pb-4">
-        <h3 className="mb-4 text-xl font-semibold">Lab Results</h3>
+        <h3 className="mb-4 text-xl font-semibold text-cyan-950">
+          Risultati Laboratorio
+        </h3>
         <LabResultsForm
           control={control}
           register={register}
           errors={errors}
-          patientID={patientID} // Pass patientID to LabResultsForm
+          patientID={patientID}
+          isUpdate={false}
         />
       </div>
 

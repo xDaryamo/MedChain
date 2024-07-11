@@ -1068,9 +1068,19 @@ exports.createAllergiesBatch = async (req, res, next) => {
     console.log("Disconnected from Fabric gateway.");
   }
 };
-
 exports.updateAllergiesBatch = async (req, res, next) => {
-  const allergiesJSON = req.body;
+  let allergiesJSON;
+
+  if (Array.isArray(req.body)) {
+    allergiesJSON = req.body;
+  } else if (req.body.allergies && Array.isArray(req.body.allergies)) {
+    allergiesJSON = req.body.allergies;
+  } else {
+    return res
+      .status(400)
+      .json({ error: "Invalid allergies format, expected an array." });
+  }
+
   const userID = req.user.userId;
   const organization = req.user.organization;
 
@@ -1078,22 +1088,28 @@ exports.updateAllergiesBatch = async (req, res, next) => {
     const channel = "patient-records-channel";
     const chaincode = "records";
 
+    console.log(
+      "Initializing Fabric network with userID:",
+      userID,
+      "and organization:",
+      organization
+    );
     await fabric.init(userID, organization, channel, chaincode);
     console.log("Fabric network initialized successfully.");
 
-    // Assicurati che gli identificatori non vengano modificati
-    allergiesJSON.forEach((allergy) => {
+    allergiesJSON.forEach((allergy, index) => {
       if (!allergy.identifier || !allergy.identifier.value) {
-        throw new Error("Missing identifier for allergy");
+        throw new Error(`Missing identifier for allergy at index ${index}`);
       }
     });
 
     const allergiesJSONString = JSON.stringify(allergiesJSON);
-    console.log("Updating allergies batch: ", allergiesJSONString);
+    console.log("Updating allergies batch:", allergiesJSONString);
     const result = await fabric.submitTransaction(
       "UpdateAllergiesBatch",
       allergiesJSONString
     );
+    console.log("Transaction submitted successfully, result:", result);
 
     res.status(200).json({ allergies: allergiesJSON });
   } catch (error) {

@@ -1,6 +1,7 @@
 /* eslint-disable react/prop-types */
 import { useFieldArray } from "react-hook-form";
 import { useEffect, useState } from "react";
+import { format, parseISO } from "date-fns";
 import FormRow from "../../ui/FormRow";
 import FormInput from "../../ui/FormInput";
 import FormSelect from "../../ui/FormSelect";
@@ -19,7 +20,19 @@ const durationUnitOptions = [
   { value: "months", label: "Mesi" },
 ];
 
-const MedicationRequestsForm = ({ control, register, setValue, errors }) => {
+const formatDateTimeLocal = (dateTimeString) => {
+  if (!dateTimeString) return "";
+  const date = parseISO(dateTimeString);
+  return format(date, "yyyy-MM-dd'T'HH:mm");
+};
+
+const MedicationRequestsForm = ({
+  control,
+  register,
+  setValue,
+  watch,
+  errors,
+}) => {
   const { fields, append, remove } = useFieldArray({
     control,
     name: "prescriptions",
@@ -38,6 +51,24 @@ const MedicationRequestsForm = ({ control, register, setValue, errors }) => {
     }
   }, [focusIndex]);
 
+  useEffect(() => {
+    fields.forEach((field, index) => {
+      const startDate = field.dispenseRequest?.validityPeriod?.start || "";
+      const formattedStartDate = formatDateTimeLocal(startDate);
+      setValue(
+        `prescriptions.${index}.dispenseRequest.validityPeriod.start`,
+        formattedStartDate,
+      );
+
+      const endDate = field.dispenseRequest?.validityPeriod?.end || "";
+      const formattedEndDate = formatDateTimeLocal(endDate);
+      setValue(
+        `prescriptions.${index}.dispenseRequest.validityPeriod.end`,
+        formattedEndDate,
+      );
+    });
+  }, [fields, setValue]);
+
   const handleAddMedicationRequest = () => {
     append({});
     setFocusIndex(fields.length);
@@ -55,11 +86,6 @@ const MedicationRequestsForm = ({ control, register, setValue, errors }) => {
     });
   };
 
-  const formatDate = (date) => {
-    const isoString = new Date(date).toISOString();
-    return isoString.split("T")[0]; // Return only the date part in YYYY-MM-DD format
-  };
-
   return (
     <div>
       {fields.map((field, index) => (
@@ -67,8 +93,6 @@ const MedicationRequestsForm = ({ control, register, setValue, errors }) => {
           <h4 className="text-lg font-medium">
             Medication Request {index + 1}
           </h4>
-          {/* Medication Codeable Concept */}
-
           <FormRow
             label="Codice del Medicinale"
             error={
@@ -85,6 +109,9 @@ const MedicationRequestsForm = ({ control, register, setValue, errors }) => {
               )}
               placeholder="80146002"
               id={`prescriptions.${index}.medicationCodeableConcept.coding[0].code`}
+              defaultValue={
+                field.medicationCodeableConcept?.coding?.[0]?.code || ""
+              }
             />
           </FormRow>
           <FormRow
@@ -103,10 +130,12 @@ const MedicationRequestsForm = ({ control, register, setValue, errors }) => {
                 },
               )}
               placeholder="Ibuprofen"
+              defaultValue={
+                field.medicationCodeableConcept?.coding?.[0]?.display || ""
+              }
             />
           </FormRow>
 
-          {/* Dosage Instruction */}
           <FormRow
             label="Istruzioni sul Dosaggio"
             error={
@@ -119,10 +148,10 @@ const MedicationRequestsForm = ({ control, register, setValue, errors }) => {
                 required: "Le istruzioni sul dosaggio sono obbligatorie",
               })}
               placeholder="Prendere 1 compressa due volte al giorno"
+              defaultValue={field.dosageInstruction?.[0]?.text || ""}
             />
           </FormRow>
 
-          {/* Dispense Request */}
           <FormRow
             label="Quantità da Dispensare"
             error={
@@ -140,6 +169,7 @@ const MedicationRequestsForm = ({ control, register, setValue, errors }) => {
                 },
               )}
               placeholder="30"
+              defaultValue={field.dispenseRequest?.quantity?.value || ""}
             />
           </FormRow>
           <FormRow
@@ -160,6 +190,7 @@ const MedicationRequestsForm = ({ control, register, setValue, errors }) => {
                 { value: "", label: "Seleziona un'unità" },
                 ...quantityUnitOptions,
               ]}
+              defaultValue={field.dispenseRequest?.quantity?.unit || ""}
             />
           </FormRow>
           <FormRow
@@ -179,6 +210,9 @@ const MedicationRequestsForm = ({ control, register, setValue, errors }) => {
                 },
               )}
               placeholder="7"
+              defaultValue={
+                field.dispenseRequest?.expectedSupplyDuration?.value || ""
+              }
             />
           </FormRow>
           <FormRow
@@ -199,6 +233,9 @@ const MedicationRequestsForm = ({ control, register, setValue, errors }) => {
                 { value: "", label: "Seleziona un'unità" },
                 ...durationUnitOptions,
               ]}
+              defaultValue={
+                field.dispenseRequest?.expectedSupplyDuration?.unit || ""
+              }
             />
           </FormRow>
           <FormRow
@@ -209,14 +246,15 @@ const MedicationRequestsForm = ({ control, register, setValue, errors }) => {
             }
           >
             <FormInput
-              type="date"
+              type="datetime-local"
               {...register(
                 `prescriptions.${index}.dispenseRequest.validityPeriod.start`,
                 {
                   required: "L'inizio del periodo di validità è obbligatorio",
-                  valueAsDate: true,
-                  setValueAs: (value) => formatDate(value),
                 },
+              )}
+              defaultValue={watch(
+                `prescriptions.${index}.dispenseRequest.validityPeriod.start`,
               )}
             />
           </FormRow>
@@ -228,14 +266,15 @@ const MedicationRequestsForm = ({ control, register, setValue, errors }) => {
             }
           >
             <FormInput
-              type="date"
+              type="datetime-local"
               {...register(
                 `prescriptions.${index}.dispenseRequest.validityPeriod.end`,
                 {
                   required: "La fine del periodo di validità è obbligatoria",
-                  valueAsDate: true,
-                  setValueAs: (value) => formatDate(value),
                 },
+              )}
+              defaultValue={watch(
+                `prescriptions.${index}.dispenseRequest.validityPeriod.end`,
               )}
             />
           </FormRow>
@@ -257,6 +296,7 @@ const MedicationRequestsForm = ({ control, register, setValue, errors }) => {
                 },
               )}
               placeholder="0"
+              defaultValue={field.dispenseRequest?.numberOfRepeatsAllowed || ""}
             />
           </FormRow>
 
@@ -279,7 +319,7 @@ const MedicationRequestsForm = ({ control, register, setValue, errors }) => {
           variant="secondary"
           size="small"
         >
-          <FaPlus className="mr-1" /> Aggiungi Richiesta di Medicinale
+          <FaPlus className="mr-1" /> Aggiungi Prescrizione
         </Button>
       </div>
     </div>

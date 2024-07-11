@@ -35,13 +35,18 @@ export const useSearchMedicalRecords = (query) => {
 };
 
 export const useGetMedicalRecord = (id) => {
-  const { data: record, isPending } = useQuery({
+  const {
+    data: record,
+    isPending,
+    refetch,
+  } = useQuery({
     queryKey: ["medicalRecord", id],
     queryFn: () => getMedicalRecord(id),
   });
   return {
     isPending,
     record,
+    refetch,
   };
 };
 
@@ -72,7 +77,6 @@ export const useAddRecord = () => {
         conditions: createdConditions.conditions,
         procedures: createdProcedures.procedures,
         prescriptions: createdPrescriptions.prescriptions,
-        attachments: record.attachments || [],
       };
 
       console.log(updatedRecord);
@@ -92,20 +96,41 @@ export const useAddRecord = () => {
   return { addRecord, isPending };
 };
 
-export const useUpdateRecord = () => {
+export const useUpdateRecord = (id) => {
   const queryClient = useQueryClient();
 
   const { mutate: updateRecord, isPending } = useMutation({
     mutationFn: async ({ id, record }) => {
-      await updateAllergiesBatch(record.allergies || []);
-      await updateConditionsBatch(record.conditions || []);
-      await updateProceduresBatch(record.procedures || []);
-      await updatePrescriptionsBatch(record.prescriptions || []);
+      console.log("Updating record:", record);
 
-      await updateMedicalRecord(id, record);
+      const updatedAllergies = await updateAllergiesBatch(
+        record.allergies || [],
+      );
+      const updatedConditions = await updateConditionsBatch(
+        record.conditions || [],
+      );
+      const updatedProcedures = await updateProceduresBatch(
+        record.procedures || [],
+      );
+      const updatedPrescriptions = await updatePrescriptionsBatch(
+        record.prescriptions || [],
+      );
+
+      const updatedRecord = {
+        ...record,
+        allergies: updatedAllergies.allergies,
+        conditions: updatedConditions.conditions,
+        procedures: updatedProcedures.procedures,
+        prescriptions: updatedPrescriptions.prescriptions,
+      };
+
+      console.log(updatedRecord);
+
+      await updateMedicalRecord(id, updatedRecord);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["medicalRecords"] });
+      queryClient.invalidateQueries({ queryKey: ["medicalRecord", id] });
       toast.success("Medical record updated successfully");
     },
     onError: (error) => {

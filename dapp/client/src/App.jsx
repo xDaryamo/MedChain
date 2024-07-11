@@ -14,6 +14,7 @@ import MedicalRecordList from "./features/records/MedicalRecordList";
 import FollowedPatientsList from "./features/users/FollowedPatientsList";
 import FollowedPatientPage from "./features/users/FollowedPatientPage";
 import MedicalRecordDetails from "./features/records/MedicalRecordDetails";
+import UpdateMedicalRecordForm from "./features/records/UpdateMedicalRecordForm";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -76,6 +77,14 @@ const App = () => {
               element={
                 <ProtectedRoute>
                   <MedicalRecordDetails />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="records/update/:id"
+              element={
+                <ProtectedRoute>
+                  <UpdateMedicalRecordForm />
                 </ProtectedRoute>
               }
             />

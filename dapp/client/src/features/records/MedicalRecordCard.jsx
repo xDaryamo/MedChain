@@ -76,10 +76,11 @@ const MedicalRecordCard = ({ item, patient }) => {
     ? item.conditions.map((condition) => {
         if (
           condition.code &&
-          condition.code.coding &&
-          condition.code.coding.length > 0
+          condition.code.length > 0 &&
+          condition.code[0].coding &&
+          condition.code[0].coding.length > 0
         ) {
-          return condition.code.coding[0].display;
+          return condition.code[0].coding[0].display;
         }
         return "N/A";
       })
@@ -128,7 +129,7 @@ const MedicalRecordCard = ({ item, patient }) => {
         </div>
         <div className="text-cyan-950">
           <span className="font-bold">Data di Nascita:</span>{" "}
-          {formatDate(patient.date)}
+          {formatDate(patient.birthDate)}
         </div>
         <div className="text-cyan-950">
           <span className="font-bold">Sesso:</span>{" "}

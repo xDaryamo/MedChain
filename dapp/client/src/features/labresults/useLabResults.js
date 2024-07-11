@@ -17,6 +17,25 @@ export const useGetLabResult = (id) => {
   return { labResult, isPending };
 };
 
+export const useGetLabResultsByIds = (ids) => {
+  const {
+    data: labResults,
+    isPending,
+    error,
+    refetch,
+  } = useQuery({
+    queryKey: ["labResults", ids],
+    queryFn: () => Promise.all(ids.map((id) => getLabResult(id))),
+    enabled: ids.length > 0,
+    onError: (error) => {
+      toast.error("Failed to fetch lab results");
+      console.error("Fetch lab results error", error);
+    },
+  });
+
+  return { labResults: labResults || [], isPending, error, refetch };
+};
+
 export const useSearchLabResults = (query) => {
   const queryKey = query ? ["labResults", query] : ["labResults"];
 
@@ -24,6 +43,7 @@ export const useSearchLabResults = (query) => {
     data: labResults,
     isPending,
     error,
+    refetch,
   } = useQuery({
     queryKey,
     queryFn: () => searchLabResults(query),
@@ -32,7 +52,7 @@ export const useSearchLabResults = (query) => {
       console.error("Fetch lab results error", error);
     },
   });
-  return { labResults: labResults || [], isPending, error };
+  return { labResults: labResults || [], isPending, error, refetch };
 };
 
 export const useCreateLabResult = () => {

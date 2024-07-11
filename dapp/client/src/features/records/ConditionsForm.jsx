@@ -3,9 +3,9 @@ import { useFieldArray } from "react-hook-form";
 import { useEffect, useState } from "react";
 import FormRow from "../../ui/FormRow";
 import FormInput from "../../ui/FormInput";
+import FormSelect from "../../ui/FormSelect";
 import Button from "../../ui/Button";
 import { FaTrash, FaPlus } from "react-icons/fa";
-import FormSelect from "../../ui/FormSelect";
 
 const severityOptions = [
   {
@@ -51,7 +51,7 @@ const ConditionsForm = ({ control, register, errors, setValue }) => {
 
   const handleAddCondition = () => {
     append({});
-    setFocusIndex(0);
+    setFocusIndex(fields.length);
   };
 
   const handleCategoryChange = (index, value) => {
@@ -201,6 +201,7 @@ const ConditionsForm = ({ control, register, errors, setValue }) => {
                 required: "Il codice è obbligatorio",
               })}
               placeholder="44054006"
+              defaultValue={field.code[0]?.coding?.[0]?.code || ""}
             />
           </FormRow>
           <FormRow
@@ -216,6 +217,7 @@ const ConditionsForm = ({ control, register, errors, setValue }) => {
                   handleCodeDescriptionChange(index, e.target.value),
               })}
               placeholder="Diabete mellito di tipo 2"
+              defaultValue={field.code[0]?.coding?.[0]?.display || ""}
             />
           </FormRow>
 
@@ -229,6 +231,7 @@ const ConditionsForm = ({ control, register, errors, setValue }) => {
               {...register(`conditions.${index}.onsetDateTime`, {
                 required: "La data e ora di inizio è obbligatoria",
               })}
+              defaultValue={field.onsetDateTime || ""}
             />
           </FormRow>
 
@@ -242,6 +245,7 @@ const ConditionsForm = ({ control, register, errors, setValue }) => {
               {...register(`conditions.${index}.abatementDateTime`, {
                 required: "La data e ora di cessazione è obbligatoria",
               })}
+              defaultValue={field.abatementDateTime || ""}
             />
           </FormRow>
 

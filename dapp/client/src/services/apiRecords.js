@@ -97,7 +97,6 @@ export const searchAllergies = async (query) => {
 
 export const createAllergiesBatch = async (allergies) => {
   const response = await api.post("/records/allergies/batch", allergies);
-  console.log(response.data);
   return response.data;
 };
 
