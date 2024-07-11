@@ -49,7 +49,7 @@ exports.createLabResult = async (req, res, next) => {
     let labResultJSONString;
     try {
       labResultJSONString = JSON.stringify(labResultData);
-      JSON.parse(labResultJSONString); // Ensures the string is valid JSON
+      JSON.parse(labResultJSONString);
     } catch (jsonError) {
       console.error("Invalid JSON format:", jsonError);
       return res.status(400).json({ error: "Invalid JSON format" });
@@ -86,12 +86,15 @@ exports.createLabResult = async (req, res, next) => {
 
 exports.updateLabResult = async (req, res, next) => {
   const labResultID = req.params.id;
-  const { organization, updatedLabResult } = req.body;
+  const updatedLabResult = req.body;
+  const organization = req.user.organization;
+  const practitionerId = req.user.userId;
+
   try {
     const channel = "lab-results-channel";
     const chaincode = "labresults";
 
-    await fabric.init(labResultID, organization, channel, chaincode);
+    await fabric.init(practitionerId, organization, channel, chaincode);
     console.log("Fabric network initialized successfully.");
 
     updatedLabResult.identifier.value = labResultID;
