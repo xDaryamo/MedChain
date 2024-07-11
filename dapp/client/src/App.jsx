@@ -64,7 +64,16 @@ const App = () => {
             />
 
             <Route
-              path="labresults"
+              path="records/:id"
+              element={
+                <ProtectedRoute>
+                  <MedicalRecordDetails />
+                </ProtectedRoute>
+              }
+            />
+
+            <Route
+              path="patients/:id/labresults"
               element={
                 <ProtectedRoute>
                   <LabResultList />

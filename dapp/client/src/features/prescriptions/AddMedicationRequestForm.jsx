@@ -1,9 +1,22 @@
 import { useForm } from "react-hook-form";
 import FormRow from "../../ui/FormRow";
 import FormInput from "../../ui/FormInput";
+import FormSelect from "../../ui/FormSelect";
 import Button from "../../ui/Button";
-import { useAddPrescription } from "./usePrescriptions";
 import Spinner from "../../ui/Spinner";
+import { useAddPrescription } from "./usePrescriptions";
+
+const quantityUnitOptions = [
+    { value: "tablets", label: "Tablets" },
+    { value: "capsules", label: "Capsules" },
+    { value: "ml", label: "Milliliters" },
+];
+
+const durationUnitOptions = [
+    { value: "days", label: "Days" },
+    { value: "weeks", label: "Weeks" },
+    { value: "months", label: "Months" },
+];
 
 const AddMedicationRequestForm = ({ onSubmitSuccess }) => {
     const { register, handleSubmit, formState: { errors }, reset } = useForm();
@@ -31,9 +44,8 @@ const AddMedicationRequestForm = ({ onSubmitSuccess }) => {
 
             <div className="mb-4 border-b pb-4">
                 <div className="mb-2 space-y-2 border p-2">
-                    <h4 className="text-lg font-medium">
-                        Medication Request
-                    </h4>
+                    <h4 className="text-lg font-medium">Medication Request</h4>
+
                     {/* Medication Codeable Concept */}
                     <FormRow
                         label="Medication Code System:"
@@ -170,11 +182,14 @@ const AddMedicationRequestForm = ({ onSubmitSuccess }) => {
                         label="Dispense Quantity Unit:"
                         error={errors?.dispenseRequest?.quantity?.unit?.message}
                     >
-                        <FormInput
+                        <FormSelect
                             {...register("dispenseRequest.quantity.unit", {
                                 required: "Dispense quantity unit is required",
                             })}
-                            placeholder="tablets"
+                            options={[
+                                { value: "", label: "Select a unit" },
+                                ...quantityUnitOptions,
+                            ]}
                         />
                     </FormRow>
                     <FormRow
@@ -186,6 +201,20 @@ const AddMedicationRequestForm = ({ onSubmitSuccess }) => {
                                 required: "Expected supply duration value is required",
                             })}
                             placeholder="7"
+                        />
+                    </FormRow>
+                    <FormRow
+                        label="Expected Supply Duration Unit:"
+                        error={errors?.dispenseRequest?.expectedSupplyDuration?.unit?.message}
+                    >
+                        <FormSelect
+                            {...register("dispenseRequest.expectedSupplyDuration.unit", {
+                                required: "Expected supply duration unit is required",
+                            })}
+                            options={[
+                                { value: "", label: "Select a unit" },
+                                ...durationUnitOptions,
+                            ]}
                         />
                     </FormRow>
 
