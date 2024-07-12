@@ -10,6 +10,12 @@ import Signup from "./features/authentication/Signup";
 import { Toaster } from "react-hot-toast";
 import ProtectedRoute from "./ui/ProtectedRoute";
 import LabResultList from "./features/labresults/LabResultList";
+import LabResultPage from "./features/labresults/LabResultPage";
+import UpdateLabResultForm from "./features/labresults/UpdateLabResultForm";
+import EncounterList from "./features/encounters/EncounterList";
+import EncounterPage from "./features/encounters/EncounterPage";
+import MedicationRequestList from "./features/prescriptions/MedicationRequestList";
+import MedicationRequestPage from "./features/prescriptions/MedicationRequestPage";
 import MedicalRecordList from "./features/records/MedicalRecordList";
 import FollowedPatientsList from "./features/users/FollowedPatientsList";
 import FollowedPatientPage from "./features/users/FollowedPatientPage";
@@ -77,6 +83,60 @@ const App = () => {
               element={
                 <ProtectedRoute>
                   <LabResultList />
+                </ProtectedRoute>
+              }
+            />
+
+            <Route
+              path="labresults/:id"
+              element={
+                <ProtectedRoute>
+                  <LabResultPage />
+                </ProtectedRoute>
+              }
+            />
+
+            <Route
+              path="labresults/update/:id"
+              element={
+                <ProtectedRoute>
+                  <UpdateLabResultForm />
+                </ProtectedRoute>
+              }
+            />
+
+            <Route
+              path="patients/:id/prescriptions"
+              element={
+                <ProtectedRoute>
+                  <MedicationRequestList />
+                </ProtectedRoute>
+              }
+            />
+
+            <Route
+              path="prescriptions/:id"
+              element={
+                <ProtectedRoute>
+                  <MedicationRequestPage />
+                </ProtectedRoute>
+              }
+            />
+
+            <Route
+              path="patients/:id/encounters"
+              element={
+                <ProtectedRoute>
+                  <EncounterList />
+                </ProtectedRoute>
+              }
+            />
+
+            <Route
+              path="encounters/:id"
+              element={
+                <ProtectedRoute>
+                  <EncounterPage />
                 </ProtectedRoute>
               }
             />

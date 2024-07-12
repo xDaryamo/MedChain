@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useSearchLabResults, useDeleteLabResult } from "./useLabResults";
+import { useSearchLabResults } from "./useLabResults";
 import Spinner from "../../ui/Spinner";
 import { useUser } from "../authentication/useAuth";
 import List from "../../ui/List";
@@ -25,20 +25,11 @@ const LabResultList = () => {
   const [query, setQuery] = useState(defaultQuery);
   const { labResults, isPending, error } = useSearchLabResults(query);
 
-  const { mutate: deleteLabResult, isPending: isDeleting } = useDeleteLabResult();
   const { user, isPending: userLoading, error: userError } = useUser();
   const [isModalOpen, setModalOpen] = useState(false);
 
   if (isPending || userLoading) return <Spinner />;
   if (error || userError) return <p>Error loading lab results or user data</p>;
-
-  const handleDelete = async (id) => {
-    try {
-      await deleteLabResult(id);
-    } catch (error) {
-      console.error("Delete lab result error", error);
-    }
-  };
 
   const handleModalClose = () => {
     setModalOpen(false);
@@ -49,10 +40,8 @@ const LabResultList = () => {
       <Heading>Lab Results List</Heading>
       <List
         items={labResults}
-        itemKey="id"
+        itemKey="identifier"
         ItemComponent={LabResultCard}
-        onDelete={handleDelete}
-        isDeleting={isDeleting}
         user={user}
         onAddNew={() => setModalOpen(true)}
         hasAddBtn={true}

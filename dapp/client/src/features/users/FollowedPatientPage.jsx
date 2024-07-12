@@ -31,23 +31,30 @@ const FollowedPatientPage = () => {
             Medical Records
           </Link>
           <Link
-            to={`lab-results`}
+            to={`/patients/${id}/labresults`}
             className="rounded p-2 text-stone-800 transition-all duration-300 hover:bg-gray-700 hover:text-white"
           >
             Lab Results
           </Link>
           <Link
-            to={`prescriptions`}
+            to={`/patients/${id}/prescriptions`}
             className="rounded p-2 text-stone-800 transition-all duration-300 hover:bg-gray-700 hover:text-white"
           >
             Prescriptions
           </Link>
           <Link
-            to={`allergies`}
+            to={`/patients/${id}/allergies`}
             className="rounded p-2 text-stone-800 transition-all duration-300 hover:bg-gray-700 hover:text-white"
           >
             Allergies
           </Link>
+          <Link
+            to={`/patients/${id}/encounters`}
+            className="rounded p-2 text-stone-800 transition-all duration-300 hover:bg-gray-700 hover:text-white"
+          >
+            Encounters
+          </Link>
+
         </nav>
       </aside>
       <main className="flex-1 overflow-y-auto p-4 md:p-8">

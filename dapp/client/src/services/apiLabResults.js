@@ -80,9 +80,4 @@ export const updateLabResult = async (id, labResult) => {
   return response.data;
 };
 
-export const deleteLabResult = async (id) => {
-  const response = await api.delete(`/labresults/${id}`);
-  return response.data;
-};
-
 export default api;

@@ -4,7 +4,6 @@ import {
   searchLabResults,
   createLabResult,
   updateLabResult,
-  deleteLabResult,
 } from "../../services/apiLabResults";
 import toast from "react-hot-toast";
 
@@ -85,20 +84,4 @@ export const useUpdateLabResult = () => {
     },
   });
   return { updateResult, isPending };
-};
-
-export const useDeleteLabResult = () => {
-  const queryClient = useQueryClient();
-  const { mutate: deleteResult, isPending } = useMutation({
-    mutationFn: deleteLabResult,
-    onSuccess: () => {
-      queryClient.invalidateQueries(["labResults"]);
-      toast.success("Lab result deleted successfully");
-    },
-    onError: (error) => {
-      toast.error("Failed to delete lab result");
-      console.error("Delete lab result error", error);
-    },
-  });
-  return { deleteResult, isPending };
 };
