@@ -5,6 +5,7 @@ import {
   getCurrentUser,
   loginUser,
   registerUser,
+  updateUserCredentials,
 } from "../../services/apiAuth";
 // Hook per il login
 
@@ -85,3 +86,23 @@ export function useUser() {
     isAuthenticated: user?.role === "practitioner" || user?.role === "patient",
   };
 }
+export const useUpdateCredentials = () => {
+  const queryClient = useQueryClient();
+  const navigate = useNavigate();
+
+  const { mutate: updateCredentials, isPending } = useMutation({
+    mutationFn: (userData) => updateUserCredentials(userData),
+    onSuccess: (user) => {
+      queryClient.setQueryData(["user"], user);
+
+      toast.success("Credentials successfully updated");
+      navigate("/profile", { replace: true });
+    },
+    onError: (error) => {
+      toast.error(error.message);
+      console.error("Update credentials error", error);
+    },
+  });
+
+  return { updateCredentials, isPending };
+};

@@ -15,6 +15,10 @@ import FollowedPatientsList from "./features/users/FollowedPatientsList";
 import FollowedPatientPage from "./features/users/FollowedPatientPage";
 import MedicalRecordDetails from "./features/records/MedicalRecordDetails";
 import UpdateMedicalRecordForm from "./features/records/UpdateMedicalRecordForm";
+import UserProfile from "./features/users/UserProfile";
+import EditCredentals from "./features/users/EditCredentials";
+import EditPractitionerDetails from "./features/users/EditPractitionerDetails";
+import EditPatientDetails from "./features/users/EditPatientDetails";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -36,6 +40,41 @@ const App = () => {
             <Route index element={<HomePage />} />
             <Route path="signup" element={<Signup />} />
 
+            <Route
+              path="profile"
+              element={
+                <ProtectedRoute>
+                  <UserProfile />
+                </ProtectedRoute>
+              }
+            />
+
+            <Route
+              path="profile/edit-credentials"
+              element={
+                <ProtectedRoute>
+                  <EditCredentals />
+                </ProtectedRoute>
+              }
+            />
+
+            <Route
+              path="profile/patients/edit-details"
+              element={
+                <ProtectedRoute>
+                  <EditPatientDetails />
+                </ProtectedRoute>
+              }
+            />
+
+            <Route
+              path="profile/practitioners/edit-details"
+              element={
+                <ProtectedRoute>
+                  <EditPractitionerDetails />
+                </ProtectedRoute>
+              }
+            />
             <Route
               path="patients"
               element={

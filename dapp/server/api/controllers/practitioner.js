@@ -2,6 +2,9 @@ const FabricNetwork = require("../../blockchain/fabric");
 
 const fabric = new FabricNetwork();
 
+const jwt = require("jsonwebtoken");
+const User = require("../models/user");
+
 exports.getPractitioner = async (req, res, next) => {
   const practitionerId = req.params.id;
   console.log(practitionerId);
@@ -76,6 +79,7 @@ exports.updatePractitioner = async (req, res, next) => {
   const practitionerJSON = req.body;
   const userId = req.user.userId;
   const organization = req.user.organization;
+  console.log(practitionerJSON); // Debugging line to verify the incoming data
 
   try {
     const channel = "identity-channel";
@@ -110,7 +114,26 @@ exports.updatePractitioner = async (req, res, next) => {
     );
 
     const result = JSON.parse(resultString);
-    res.status(200).json(result);
+
+    // Update MongoDB with the new organization information
+    const updatedUser = await User.findOneAndUpdate(
+      { userId: userId },
+      { organization: practitionerJSON.qualification[0].issuer.reference },
+      { new: true }
+    );
+
+    // Generate a new token with the updated organization information
+    const newToken = jwt.sign(
+      {
+        userId: updatedUser.userId, // Use updatedUser.userId instead of _id
+        organization: updatedUser.organization,
+        role: req.user.role,
+      },
+      "somesupersecretsecret",
+      { expiresIn: "1h" }
+    );
+
+    res.status(200).json({ ...result, token: newToken });
   } catch (error) {
     res.status(500).json({ error: error.message });
   } finally {

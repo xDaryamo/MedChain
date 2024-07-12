@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "react-hot-toast";
+import { format } from "date-fns";
 import FormRow from "./FormRow";
 import FormInput from "./FormInput";
 import FormSelect from "./FormSelect";
@@ -37,6 +38,10 @@ const PatientSignupForm = () => {
 
   const onSubmit = (data) => {
     const names = data.firstName.split(" ");
+    const formattedDate = data.birthDate
+      ? format(new Date(data.birthDate), "yyyy-MM-dd'T'HH:mm:ssXXX")
+      : undefined;
+
     const finalData = {
       username: data.username,
       email: data.email,
@@ -46,7 +51,7 @@ const PatientSignupForm = () => {
       fhirData: {
         identifier: {
           system: "http://hospital.smarthealthit.org",
-          value: ``,
+          value: "",
         },
         active: true,
         name: {
@@ -102,7 +107,7 @@ const PatientSignupForm = () => {
             },
           ],
         },
-        birthDate: data.birthDate,
+        date: formattedDate,
         address: [
           {
             use: {
@@ -114,6 +119,24 @@ const PatientSignupForm = () => {
               ],
             },
             text: data.address,
+            line: data.line,
+            city: data.city,
+            postalcode: data.postalCode,
+            country: data.country,
+          },
+        ],
+        maritalstatus: {
+          text: data.maritalStatus,
+        },
+        communication: [
+          {
+            language: {
+              coding: [
+                {
+                  display: "Italian",
+                },
+              ],
+            },
           },
         ],
       },
@@ -277,6 +300,7 @@ const PatientSignupForm = () => {
                 options={[
                   { value: "male", label: "Maschio" },
                   { value: "female", label: "Femmina" },
+                  { value: "non-binary", label: "Non-binario" },
                   { value: "other", label: "Altro" },
                 ]}
               />
@@ -308,7 +332,7 @@ const PatientSignupForm = () => {
               />
             </FormRow>
             <FormRow
-              label="Address"
+              label="Indirizzo"
               error={errors?.address?.message}
               className="col-span-2"
             >
@@ -318,6 +342,69 @@ const PatientSignupForm = () => {
                 {...register("address", {
                   required: "This field is required",
                 })}
+              />
+            </FormRow>
+            <FormRow
+              label="Numero Civico"
+              error={errors?.line?.message}
+              className="col-span-2"
+            >
+              <FormInput
+                type="number"
+                id="line"
+                {...register("line", {
+                  required: "Il numero civico è obbligatorio",
+                })}
+              />
+            </FormRow>
+            <FormRow
+              label="Città"
+              error={errors?.city?.message}
+              className="col-span-2"
+            >
+              <FormInput
+                type="text"
+                id="city"
+                {...register("city", {
+                  required: "La città è obbligatoria",
+                })}
+              />
+            </FormRow>
+            <FormRow
+              label="Codice Postale"
+              error={errors?.postalCode?.message}
+              className="col-span-2"
+            >
+              <FormInput
+                type="text"
+                id="postalCode"
+                {...register("postalCode", {
+                  required: "Il codice postale è obbligatorio",
+                })}
+              />
+            </FormRow>
+            <FormRow
+              label="Paese"
+              error={errors?.country?.message}
+              className="col-span-2"
+            >
+              <FormInput
+                type="text"
+                id="country"
+                {...register("country", {
+                  required: "Il paese è obbligatorio",
+                })}
+              />
+            </FormRow>
+            <FormRow
+              label="Stato Civile"
+              error={errors?.maritalStatus?.message}
+              className="col-span-2"
+            >
+              <FormInput
+                type="text"
+                id="maritalStatus"
+                {...register("maritalStatus")}
               />
             </FormRow>
             <Button type="submit" className="col-span-2">

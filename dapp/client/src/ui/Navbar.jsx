@@ -21,16 +21,10 @@ const Navbar = () => {
         {isAuthenticated && (
           <>
             <li>
-              <NavLink to="/profile">Profile</NavLink>
+              <NavLink to="/patients">Pazienti</NavLink>
             </li>
             <li>
-              <NavLink to="/records">Medical Records</NavLink>
-            </li>
-            <li>
-              <NavLink to="/labresults">Lab Results</NavLink>
-            </li>
-            <li>
-              <NavLink to="/patients">Patients</NavLink>
+              <NavLink to="/profile">Profilo</NavLink>
             </li>
             <li>
               <Logout />

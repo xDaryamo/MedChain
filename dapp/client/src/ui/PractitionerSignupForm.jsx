@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
+import { useNavigate } from "react-router-dom";
 import FormRow from "./FormRow";
 import FormInput from "./FormInput";
 import FormSelect from "./FormSelect";
@@ -17,6 +18,7 @@ const PractitionerSignupForm = () => {
     formState: { errors },
     reset,
   } = useForm();
+  const navigate = useNavigate();
 
   const [step, setStep] = useState(1);
 
@@ -33,12 +35,79 @@ const PractitionerSignupForm = () => {
     },
   ];
 
-  // Lista statica delle qualifiche
   const qualifications = [
+    { value: "PN", label: "Advanced Practice Nurse" },
+    { value: "AAS", label: "Associate of Applied Science" },
+    { value: "AA", label: "Associate of Arts" },
+    { value: "ABA", label: "Associate of Business Administration" },
+    { value: "AE", label: "Associate of Engineering" },
+    { value: "AS", label: "Associate of Science" },
+    { value: "BA", label: "Bachelor of Arts" },
+    { value: "BBA", label: "Bachelor of Business Administration" },
+    { value: "BE", label: "Bachelor of Engineering" },
+    { value: "BFA", label: "Bachelor of Fine Arts" },
+    { value: "BN", label: "Bachelor of Nursing" },
+    { value: "BS", label: "Bachelor of Science" },
+    { value: "BSL", label: "Bachelor of Science - Law" },
+    { value: "BSN", label: "Bachelor of Science - Nursing" },
+    { value: "BT", label: "Bachelor of Theology" },
+    { value: "CER", label: "Certificate" },
+    { value: "CANP", label: "Certified Adult Nurse Practitioner" },
+    { value: "CMA", label: "Certified Medical Assistant" },
+    { value: "CNP", label: "Certified Nurse Practitioner" },
+    { value: "CNM", label: "Certified Nurse Midwife" },
+    { value: "CRN", label: "Certified Registered Nurse" },
+    { value: "CNS", label: "Certified Nurse Specialist" },
+    { value: "CPNP", label: "Certified Pediatric Nurse Practitioner" },
+    { value: "CTR", label: "Certified Tumor Registrar" },
+    { value: "DIP", label: "Diploma" },
+    { value: "DBA", label: "Doctor of Business Administration" },
+    { value: "DED", label: "Doctor of Education" },
+    { value: "PharmD", label: "Doctor of Pharmacy" },
+    { value: "PHE", label: "Doctor of Engineering" },
+    { value: "PHD", label: "Doctor of Philosophy" },
+    { value: "PHS", label: "Doctor of Science" },
     { value: "MD", label: "Doctor of Medicine" },
-    { value: "PhD", label: "Doctor of Philosophy" },
-    { value: "DO", label: "Doctor of Osteopathic Medicine" },
-    // Aggiungi altre qualifiche se necessario
+    { value: "DO", label: "Doctor of Osteopathy" },
+    { value: "EMT", label: "Emergency Medical Technician" },
+    { value: "EMTP", label: "Emergency Medical Technician - Paramedic" },
+    { value: "FPNP", label: "Family Practice Nurse Practitioner" },
+    { value: "HS", label: "High School Graduate" },
+    { value: "JD", label: "Juris Doctor" },
+    { value: "MA", label: "Master of Arts" },
+    { value: "MBA", label: "Master of Business Administration" },
+    { value: "MCE", label: "Master of Civil Engineering" },
+    { value: "MDI", label: "Master of Divinity" },
+    { value: "MED", label: "Master of Education" },
+    { value: "MEE", label: "Master of Electrical Engineering" },
+    { value: "ME", label: "Master of Engineering" },
+    { value: "MFA", label: "Master of Fine Arts" },
+    { value: "MME", label: "Master of Mechanical Engineering" },
+    { value: "MS", label: "Master of Science" },
+    { value: "MSL", label: "Master of Science - Law" },
+    { value: "MSN", label: "Master of Science - Nursing" },
+    { value: "MTH", label: "Master of Theology" },
+    { value: "MDA", label: "Medical Assistant" },
+    { value: "MT", label: "Medical Technician" },
+    { value: "NG", label: "Non-Graduate" },
+    { value: "NP", label: "Nurse Practitioner" },
+    { value: "PA", label: "Physician Assistant" },
+    { value: "RMA", label: "Registered Medical Assistant" },
+    { value: "RN", label: "Registered Nurse" },
+    { value: "RPH", label: "Registered Pharmacist" },
+    { value: "SEC", label: "Secretarial Certificate" },
+    { value: "TS", label: "Trade School Graduate" },
+  ];
+
+  const qualificationStatuses = [
+    { value: "active", label: "Attivo" },
+    { value: "inactive", label: "Inattivo" },
+    { value: "in-progress", label: "In corso" },
+    { value: "pending", label: "In attesa" },
+    { value: "temporary", label: "Temporaneo" },
+    { value: "conditional", label: "Condizionale" },
+    { value: "suspended", label: "Sospeso" },
+    { value: "revoked", label: "Revocato" },
   ];
 
   const { signup, isPending } = useSignup();
@@ -53,6 +122,10 @@ const PractitionerSignupForm = () => {
 
   const onSubmit = (data) => {
     const names = data.firstName.split(" ");
+    const organizationLabel = organizations.find(
+      (org) => org.value === data.organization,
+    )?.label;
+
     const finalData = {
       username: data.username,
       email: data.email,
@@ -101,10 +174,18 @@ const PractitionerSignupForm = () => {
             {
               system: "http://hl7.org/fhir/administrative-gender",
               code: data.gender,
+              display:
+                data.gender === "male"
+                  ? "Maschio"
+                  : data.gender === "female"
+                    ? "Femmina"
+                    : data.gender === "non-binary"
+                      ? "Non-binario"
+                      : "Altro",
             },
           ],
         },
-        birthDate: data.birthDate,
+        date: `${data.birthDate}T00:00:00Z`, // Correctly formatted date
         deceased: false,
         address: {
           use: {
@@ -132,10 +213,6 @@ const PractitionerSignupForm = () => {
         },
         qualification: [
           {
-            identifier: {
-              system: "http://hospital.example.org/qualifications",
-              value: data.qualificationIdentifier,
-            },
             code: {
               coding: [
                 {
@@ -157,14 +234,14 @@ const PractitionerSignupForm = () => {
                 {
                   system:
                     "http://terminology.hl7.org/CodeSystem/credential-status",
-                  code: "active",
-                  display: "Active",
+                  code: data.qualificationStatus,
+                  display: data.qualificationStatus,
                 },
               ],
             },
             issuer: {
-              reference: "Organization/1",
-              display: data.issuingOrganization,
+              reference: data.organization,
+              display: organizationLabel,
             },
           },
         ],
@@ -191,6 +268,7 @@ const PractitionerSignupForm = () => {
       onSettled: () => {
         reset();
         setStep(1);
+        navigate("/profile");
       },
     });
   };
@@ -221,7 +299,7 @@ const PractitionerSignupForm = () => {
               {steps[0]}
             </h2>
             <FormRow
-              label="Username"
+              label="Nome utente"
               error={errors?.username?.message}
               className="col-span-1"
             >
@@ -229,7 +307,7 @@ const PractitionerSignupForm = () => {
                 type="text"
                 id="username"
                 {...register("username", {
-                  required: "This field is required",
+                  required: "Questo campo è obbligatorio",
                 })}
               />
             </FormRow>
@@ -242,10 +320,10 @@ const PractitionerSignupForm = () => {
                 type="email"
                 id="email"
                 {...register("email", {
-                  required: "This field is required",
+                  required: "Questo campo è obbligatorio",
                   pattern: {
                     value: /\S+@\S+\.\S+/,
-                    message: "Please provide a valid email address",
+                    message: "Per favore, inserisci un indirizzo email valido",
                   },
                 })}
               />
@@ -259,10 +337,10 @@ const PractitionerSignupForm = () => {
                 type="password"
                 id="password"
                 {...register("password", {
-                  required: "This field is required",
+                  required: "Questo campo è obbligatorio",
                   minLength: {
                     value: 8,
-                    message: "Password needs a minimum of 8 characters",
+                    message: "La password deve essere di almeno 8 caratteri",
                   },
                 })}
               />
@@ -276,9 +354,10 @@ const PractitionerSignupForm = () => {
                 type="password"
                 id="confirmPassword"
                 {...register("confirmPassword", {
-                  required: "This field is required",
+                  required: "Questo campo è obbligatorio",
                   validate: (value) =>
-                    value === getValues().password || "Passwords need to match",
+                    value === getValues().password ||
+                    "Le password non corrispondono",
                 })}
               />
             </FormRow>
@@ -296,7 +375,7 @@ const PractitionerSignupForm = () => {
               {steps[1]}
             </h2>
             <FormRow
-              label="First Name"
+              label="Nome"
               error={errors?.firstName?.message}
               className="col-span-1"
             >
@@ -304,12 +383,12 @@ const PractitionerSignupForm = () => {
                 type="text"
                 id="firstName"
                 {...register("firstName", {
-                  required: "This field is required",
+                  required: "Questo campo è obbligatorio",
                 })}
               />
             </FormRow>
             <FormRow
-              label="Last Name"
+              label="Cognome"
               error={errors?.lastName?.message}
               className="col-span-1"
             >
@@ -317,12 +396,12 @@ const PractitionerSignupForm = () => {
                 type="text"
                 id="lastName"
                 {...register("lastName", {
-                  required: "This field is required",
+                  required: "Questo campo è obbligatorio",
                 })}
               />
             </FormRow>
             <FormRow
-              label="Birth Date"
+              label="Data di Nascita"
               error={errors?.birthDate?.message}
               className="col-span-1"
             >
@@ -330,27 +409,30 @@ const PractitionerSignupForm = () => {
                 type="date"
                 id="birthDate"
                 {...register("birthDate", {
-                  required: "This field is required",
+                  required: "Questo campo è obbligatorio",
                 })}
               />
             </FormRow>
             <FormRow
-              label="Gender"
+              label="Genere"
               error={errors?.gender?.message}
               className="col-span-1"
             >
               <FormSelect
                 id="gender"
-                {...register("gender", { required: "This field is required" })}
+                {...register("gender", {
+                  required: "Questo campo è obbligatorio",
+                })}
                 options={[
                   { value: "male", label: "Maschio" },
                   { value: "female", label: "Femmina" },
+                  { value: "non-binary", label: "Non-binario" },
                   { value: "other", label: "Altro" },
                 ]}
               />
             </FormRow>
             <FormRow
-              label="Prefix"
+              label="Prefisso"
               error={errors?.prefix?.message}
               className="col-span-1"
             >
@@ -360,12 +442,14 @@ const PractitionerSignupForm = () => {
                 options={[
                   { value: "Dr.", label: "Dr." },
                   { value: "Prof.", label: "Prof." },
-                  // Add more prefixes as needed
+                  { value: "Mr.", label: "Mr." },
+                  { value: "Mrs.", label: "Mrs." },
+                  { value: "Ms.", label: "Ms." },
                 ]}
               />
             </FormRow>
             <FormRow
-              label="Suffix"
+              label="Suffisso"
               error={errors?.suffix?.message}
               className="col-span-1"
             >
@@ -375,7 +459,7 @@ const PractitionerSignupForm = () => {
                 options={[
                   { value: "MD", label: "MD" },
                   { value: "PhD", label: "PhD" },
-                  // Add more suffixes as needed
+                  { value: "DO", label: "DO" },
                 ]}
               />
             </FormRow>
@@ -393,7 +477,7 @@ const PractitionerSignupForm = () => {
               {steps[2]}
             </h2>
             <FormRow
-              label="Phone"
+              label="Telefono"
               error={errors?.phone?.message}
               className="col-span-1"
             >
@@ -401,12 +485,12 @@ const PractitionerSignupForm = () => {
                 type="tel"
                 id="phone"
                 {...register("phone", {
-                  required: "This field is required",
+                  required: "Questo campo è obbligatorio",
                 })}
               />
             </FormRow>
             <FormRow
-              label="Address"
+              label="Indirizzo"
               error={errors?.address?.message}
               className="col-span-1"
             >
@@ -414,12 +498,12 @@ const PractitionerSignupForm = () => {
                 type="text"
                 id="address"
                 {...register("address", {
-                  required: "This field is required",
+                  required: "Questo campo è obbligatorio",
                 })}
               />
             </FormRow>
             <FormRow
-              label="Line"
+              label="Numero Civico"
               error={errors?.line?.message}
               className="col-span-1"
             >
@@ -427,12 +511,12 @@ const PractitionerSignupForm = () => {
                 type="text"
                 id="line"
                 {...register("line", {
-                  required: "This field is required",
+                  required: "Questo campo è obbligatorio",
                 })}
               />
             </FormRow>
             <FormRow
-              label="City"
+              label="Città"
               error={errors?.city?.message}
               className="col-span-1"
             >
@@ -440,12 +524,12 @@ const PractitionerSignupForm = () => {
                 type="text"
                 id="city"
                 {...register("city", {
-                  required: "This field is required",
+                  required: "Questo campo è obbligatorio",
                 })}
               />
             </FormRow>
             <FormRow
-              label="State"
+              label="Stato"
               error={errors?.state?.message}
               className="col-span-1"
             >
@@ -453,12 +537,12 @@ const PractitionerSignupForm = () => {
                 type="text"
                 id="state"
                 {...register("state", {
-                  required: "This field is required",
+                  required: "Questo campo è obbligatorio",
                 })}
               />
             </FormRow>
             <FormRow
-              label="Postal Code"
+              label="Codice Postale"
               error={errors?.postalCode?.message}
               className="col-span-1"
             >
@@ -466,12 +550,12 @@ const PractitionerSignupForm = () => {
                 type="text"
                 id="postalCode"
                 {...register("postalCode", {
-                  required: "This field is required",
+                  required: "Questo campo è obbligatorio",
                 })}
               />
             </FormRow>
             <FormRow
-              label="Country"
+              label="Paese"
               error={errors?.country?.message}
               className="col-span-1"
             >
@@ -479,19 +563,19 @@ const PractitionerSignupForm = () => {
                 type="text"
                 id="country"
                 {...register("country", {
-                  required: "This field is required",
+                  required: "Questo campo è obbligatorio",
                 })}
               />
             </FormRow>
             <FormRow
-              label="Organization"
+              label="Organizzazione"
               error={errors?.organization?.message}
               className="col-span-2"
             >
               <FormSelect
                 id="organization"
                 {...register("organization", {
-                  required: "This field is required",
+                  required: "Questo campo è obbligatorio",
                 })}
                 options={organizations}
               />
@@ -509,61 +593,39 @@ const PractitionerSignupForm = () => {
             <h2 className="col-span-2 mb-4 text-xl font-bold text-cyan-950">
               {steps[3]}
             </h2>
+
             <FormRow
-              label="Qualification Identifier"
-              error={errors?.qualificationIdentifier?.message}
-              className="col-span-1"
-            >
-              <FormInput
-                type="text"
-                id="qualificationIdentifier"
-                {...register("qualificationIdentifier", {
-                  required: "This field is required",
-                })}
-              />
-            </FormRow>
-            <FormRow
-              label="Qualification Code"
+              label="Codice Qualifica"
               error={errors?.qualificationCode?.message}
               className="col-span-1"
             >
               <FormSelect
                 id="qualificationCode"
                 {...register("qualificationCode", {
-                  required: "This field is required",
+                  required: "Questo campo è obbligatorio",
                 })}
                 options={qualifications}
               />
             </FormRow>
             <FormRow
-              label="Qualification Status"
+              label="Stato della Qualifica"
               error={errors?.qualificationStatus?.message}
               className="col-span-1"
             >
-              <FormInput
-                type="text"
+              <FormSelect
                 id="qualificationStatus"
                 {...register("qualificationStatus", {
-                  required: "This field is required",
+                  required: "Questo campo è obbligatorio",
                 })}
+                options={qualificationStatuses}
               />
             </FormRow>
-            <FormRow
-              label="Issuing Organization"
-              error={errors?.issuingOrganization?.message}
-              className="col-span-1"
-            >
-              <FormInput
-                type="text"
-                id="issuingOrganization"
-                {...register("issuingOrganization", {
-                  required: "This field is required",
-                })}
-              />
-            </FormRow>
-            <Button type="submit">
-              {isPending ? <SmallSpinner /> : "Registrati"}
-            </Button>
+
+            <div className="flex w-full justify-center">
+              <Button type="submit" size="large" variant="primary">
+                {isPending ? <SmallSpinner /> : "Registrati"}
+              </Button>
+            </div>
           </>
         )}
       </form>

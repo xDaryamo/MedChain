@@ -71,6 +71,7 @@ export const createPractitioner = async (practitioner) => {
 };
 
 export const updatePractitioner = async (id, practitioner) => {
+  console.log(practitioner);
   const response = await api.patch(`/practitioner/${id}`, practitioner);
   return response.data;
 };

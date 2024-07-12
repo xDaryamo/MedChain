@@ -45,6 +45,7 @@ export const useUpdatePractitioner = () => {
   const { mutate: updatePractitioner, isPending } = useMutation({
     mutationFn: ({ id, practitioner }) =>
       updatePractitionerApi(id, practitioner),
+
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["practitioners"] });
       toast.success("Practitioner updated successfully");

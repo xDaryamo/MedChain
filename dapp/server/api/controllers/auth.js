@@ -210,3 +210,75 @@ exports.getCurrentUser = async (req, res, next) => {
     next(err);
   }
 };
+
+exports.updateCredentials = async (req, res, next) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res
+      .status(422)
+      .json({ message: "Validation failed.", data: errors.array() });
+  }
+
+  const userId = req.user.userId;
+  const { email, username, oldPassword, password } = req.body;
+
+  try {
+    const user = await User.findOne({ userId });
+
+    if (!user) {
+      const error = new Error("User not found.");
+      error.statusCode = 404;
+      throw error;
+    }
+
+    if (email) user.email = email;
+    if (username) user.username = username;
+
+    if (oldPassword && password) {
+      const isEqualHash = await bcrypt.compare(oldPassword, user.password);
+      if (!isEqualHash) {
+        return res.status(401).json({ message: "Old password is incorrect!" });
+      }
+
+      user.password = await bcrypt.hash(password, 12);
+    }
+
+    await user.save();
+
+    const token = jwt.sign(
+      {
+        email: user.email,
+        userId: user.userId,
+        organization: user.organization,
+        role: user.role,
+      },
+      "somesupersecretsecret",
+      { expiresIn: "1h" }
+    );
+
+    const refreshToken = jwt.sign(
+      { userId: user.userId },
+      "somesupersecretrefreshsecret",
+      { expiresIn: "7d" }
+    );
+
+    res.status(200).json({
+      session: {
+        access_token: token,
+        expires_at: Date.now() + 60 * 60 * 1000,
+        expires_in: 3600,
+        refresh_token: refreshToken,
+        token_type: "bearer",
+        user: {
+          id: user.userId,
+          email: user.email,
+          username: user.username,
+          role: user.role,
+          organization: user.organization,
+        },
+      },
+    });
+  } catch (err) {
+    next(err);
+  }
+};

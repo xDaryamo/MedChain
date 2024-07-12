@@ -49,3 +49,17 @@ export const getCurrentUser = async () => {
     return null;
   }
 };
+// Add the new method for updating user credentials
+export const updateUserCredentials = async (userData) => {
+  const session = JSON.parse(localStorage.getItem("session"));
+  if (!session || !session.access_token) return null;
+
+  const response = await api.post("/auth/update-credentials", userData, {
+    headers: {
+      Authorization: `Bearer ${session.access_token}`,
+    },
+  });
+
+  localStorage.setItem("session", JSON.stringify(response.data.session));
+  return response.data.session.user;
+};
