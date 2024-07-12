@@ -11,8 +11,10 @@ exports.createEncounter = async (req, res, next) => {
     const channel = "patient-records-channel";
     const chaincode = "encounter";
 
-    encounterJSON.id.value = encounterID;
+    encounterJSON.identifier.value = encounterID;
 
+    console.log(userID);
+    console.log(encounterJSON.subject.reference);
     if (
       !(await isAuthorized(
         userID,

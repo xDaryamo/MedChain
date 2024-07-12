@@ -10,10 +10,17 @@ import toast from "react-hot-toast";
 
 export const useSearchEncounters = (query) => {
   const queryKey = query ? ["encounters", query] : ["encounters"];
-  const { data: encounters, isLoading: isPending } = useQuery({
+  const { data: encounters = [], isPending } = useQuery({
     queryKey,
     queryFn: () => searchEncounters(query),
+    onSuccess: (data) => {
+      console.log("Encounters fetched successfully:", data);
+    },
+    onError: (error) => {
+      console.error("Error fetching encounters:", error);
+    },
   });
+
   return {
     isPending,
     encounters,
