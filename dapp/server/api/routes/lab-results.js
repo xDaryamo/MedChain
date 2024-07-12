@@ -11,6 +11,4 @@ router.post("/", verifyToken, labresultsController.createLabResult);
 
 router.patch("/:id", verifyToken, labresultsController.updateLabResult);
 
-router.delete("/:id", verifyToken, labresultsController.deleteLabResult);
-
 module.exports = router;

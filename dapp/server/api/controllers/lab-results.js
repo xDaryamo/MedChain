@@ -33,7 +33,7 @@ exports.getLabResult = async (req, res, next) => {
 
 exports.createLabResult = async (req, res, next) => {
   const labResultData = req.body;
-  const practitionerId = req.user.userId; // Use practitioner ID from the verified token
+  const practitionerId = req.user.userId;
   const organization = req.user.organization;
 
   try {
@@ -130,13 +130,14 @@ exports.updateLabResult = async (req, res, next) => {
 
 exports.deleteLabResult = async (req, res, next) => {
   const labResultID = req.params.id;
-  const { organization } = req.body;
+  const organization = req.user.organization;
+  const practitionerId = req.user.userId;
 
   try {
     const channel = "lab-results-channel";
     const chaincode = "labresults";
 
-    await fabric.init(labResultID, organization, channel, chaincode);
+    await fabric.init(practitionerId, organization, channel, chaincode);
     console.log("Fabric network initialized successfully.");
 
     console.log(

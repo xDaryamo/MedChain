@@ -27,6 +27,11 @@ const AddLabResultForm = ({ onSubmitSuccess, onCancel }) => {
       name: "interpretation",
     });
 
+  const { fields: performerFields, append: appendPerformer } = useFieldArray({
+    control,
+    name: 'performer',
+  });
+
   const { fields: noteFields, append: appendNote } = useFieldArray({
     control,
     name: "note",
@@ -50,7 +55,7 @@ const AddLabResultForm = ({ onSubmitSuccess, onCancel }) => {
       issued: new Date(data.issued).toISOString()
     };
 
-    await createResult(labresult, {
+    createResult(labresult, {
       onSettled: () => {
         reset();
         onSubmitSuccess();
@@ -141,6 +146,35 @@ const AddLabResultForm = ({ onSubmitSuccess, onCancel }) => {
         </Button>
       </FormRow>
 
+      <FormRow label="Performers:" error={errors.performer?.[0]?.reference?.message}>
+        {performerFields.map((item, index) => (
+          <div key={item.id} className="flex space-x-2 mb-2">
+            <FormInput
+              {...register(`performer[${index}].reference`, {
+                required: `Performer ${index + 1} reference is required`,
+              })}
+              placeholder="Practitioner/56789"
+            />
+            <FormInput
+              {...register(`performer[${index}].display`)}
+              placeholder="Dr. John Doe"
+            />
+            {index > 0 && (
+              <Button
+                type="button"
+                variant="danger"
+                onClick={() => removePerformer(index)}
+              >
+                Remove
+              </Button>
+            )}
+          </div>
+        ))}
+        <Button type="button" onClick={() => appendPerformer({})}>
+          Add Performer
+        </Button>
+      </FormRow>
+
       <FormRow label="Note Text:" error={errors.note?.[0]?.text?.message}>
         {noteFields.map((item, index) => (
           <FormInput
@@ -161,7 +195,7 @@ const AddLabResultForm = ({ onSubmitSuccess, onCancel }) => {
         {componentFields.map((item, index) => (
           <FormInput
             key={item.id}
-            {...register(`component[${index}].code.text`, {
+            {...register(`components[${index}].code.text`, {
               required: `Component ${index + 1} code is required`,
             })}
             placeholder="blood pressure"
@@ -171,6 +205,8 @@ const AddLabResultForm = ({ onSubmitSuccess, onCancel }) => {
           Add Component
         </Button>
       </FormRow>
+
+
 
       <div className="flex justify-end space-x-2">
         <Button type="button" onClick={onCancel} variant="secondary">
