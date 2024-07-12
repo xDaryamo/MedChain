@@ -11,6 +11,17 @@ import {
 } from "../../services/apiPrescriptions";
 import toast from "react-hot-toast";
 
+export const useGetPrescription = (id) => {
+  const { data: prescription, isLoading: isPending } = useQuery({
+    queryKey: ["prescription", id],
+    queryFn: () => getPrescription(id),
+  });
+  return {
+    isPending,
+    prescription,
+  };
+};
+
 export const useSearchPrescriptions = (query) => {
   const queryKey = query ? ["prescriptions", query] : ["prescriptions"];
   const { data: prescriptions, isLoading: isPending } = useQuery({
@@ -20,17 +31,6 @@ export const useSearchPrescriptions = (query) => {
   return {
     isPending,
     prescriptions,
-  };
-};
-
-export const useGetPrescription = (id) => {
-  const { data: prescription, isLoading: isPending } = useQuery({
-    queryKey: ["prescription", id],
-    queryFn: () => getPrescription(id),
-  });
-  return {
-    isPending,
-    prescription,
   };
 };
 
@@ -76,7 +76,7 @@ export const useUpdatePrescription = () => {
 export const useRemovePrescription = () => {
   const queryClient = useQueryClient();
 
-  const { mutate: removePrescription, isLoading: isPending } = useMutation({
+  const { mutate: removePrescription, isLoading: deletePending } = useMutation({
     mutationFn: deletePrescription,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["prescriptions"] });
@@ -88,7 +88,7 @@ export const useRemovePrescription = () => {
     },
   });
 
-  return { removePrescription, isPending };
+  return { removePrescription, deletePending };
 };
 
 export const useAddPrescriptionsBatch = () => {

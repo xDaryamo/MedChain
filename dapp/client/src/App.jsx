@@ -16,6 +16,7 @@ import EncounterList from "./features/encounters/EncounterList";
 import EncounterPage from "./features/encounters/EncounterPage";
 import MedicationRequestList from "./features/prescriptions/MedicationRequestList";
 import MedicationRequestPage from "./features/prescriptions/MedicationRequestPage";
+import UpdateMedicationRequestForm from "./features/prescriptions/UpdateMedicationRequestForm";
 import MedicalRecordList from "./features/records/MedicalRecordList";
 import FollowedPatientsList from "./features/users/FollowedPatientsList";
 import FollowedPatientPage from "./features/users/FollowedPatientPage";
@@ -119,6 +120,15 @@ const App = () => {
               element={
                 <ProtectedRoute>
                   <MedicationRequestPage />
+                </ProtectedRoute>
+              }
+            />
+
+            <Route
+              path="prescriptions/update/:id"
+              element={
+                <ProtectedRoute>
+                  <UpdateMedicationRequestForm />
                 </ProtectedRoute>
               }
             />

@@ -1,7 +1,5 @@
-/* eslint-disable react/prop-types */
+import React from "react";
 import { Link } from "react-router-dom";
-import { useGetPatient } from "../users/usePatients";
-import Spinner from "../../ui/Spinner";
 import Card from "../../ui/Card";
 
 const formatDate = (dateString) => {
@@ -15,22 +13,8 @@ const formatDate = (dateString) => {
 };
 
 const MedicationRequestCard = ({ item }) => {
-    const { patient, isPending, error } = useGetPatient(item.patientID);
 
-    if (isPending) return <Spinner />;
-    if (error) return <div>Errore nel caricamento dei dati del paziente</div>;
-
-    const patientName = patient
-        ? `${patient.name?.text}`
-        : "Paziente Sconosciuto";
-    const patientDOB = patient
-        ? formatDate(patient.date)
-        : "Data di Nascita Sconosciuta";
-    const patientGender = patient
-        ? `${patient.gender.coding[0].display}`
-        : "Sesso Sconosciuto";
-
-    const requestID = item.identifier;
+    const requestID = item.identifier?.value || "ID non disponibile";
     const medication = item.medicationCodeableConcept
         ? item.medicationCodeableConcept.coding[0].display
         : "Medicazione Sconosciuta";
@@ -40,48 +24,15 @@ const MedicationRequestCard = ({ item }) => {
             <li key={index}>{instruction.text}</li>
         ))
         : ["Istruzioni di dosaggio non disponibili"];
-    const reasonCode = item.reasonCode
-        ? item.reasonCode.map((reason, index) => (
-            <li key={index}>{reason.coding[0].display}</li>
-        ))
-        : ["Motivo non disponibile"];
-    const note = item.note ? item.note.map((note, index) => (
-        <li key={index}>{note.text}</li>
-    )) : ["Nessuna nota disponibile"];
+
 
     return (
-        <Card item={item} itemKey="identifier">
-            <Link to={`/medicationRequests/${requestID}`} className="mb-4 flex-1">
-                <div>
-                    <strong>Numero della Richiesta di Medicazione:</strong> {requestID}
-                </div>
-                <div>
-                    <strong>Nome del Paziente:</strong> {patientName}
-                </div>
-                <div>
-                    <strong>Data di Nascita:</strong> {patientDOB}
-                </div>
-                <div>
-                    <strong>Sesso:</strong> {patientGender}
-                </div>
-                <div>
-                    <strong>Medicazione:</strong> {medication}
-                </div>
-                <div>
-                    <strong>Data della Prescrizione:</strong> {authoredOn}
-                </div>
-                <div>
-                    <strong>Istruzioni di Dosaggio:</strong>
-                    <ul>{dosageInstructions}</ul>
-                </div>
-                <div>
-                    <strong>Motivo della Prescrizione:</strong>
-                    <ul>{reasonCode}</ul>
-                </div>
-                <div>
-                    <strong>Note:</strong>
-                    <ul>{note}</ul>
-                </div>
+        <Card>
+            <Link to={`/prescriptions/${requestID}`} className="mb-4 flex-1">
+                <div><strong>ID della Richiesta di Medicazione:</strong> {requestID}</div>
+                <div><strong>Medicazione:</strong> {medication}</div>
+                <div><strong>Data della Prescrizione:</strong> {authoredOn}</div>
+                <div><strong>Istruzioni di Dosaggio:</strong><ul>{dosageInstructions}</ul></div>
             </Link>
         </Card>
     );
