@@ -11,29 +11,28 @@ import EncounterCard from "./EncounterCard";
 import { useParams } from "react-router-dom";
 
 const EncounterList = () => {
-
     const { id } = useParams();
 
     const defaultQuery = {
-        query: {
-            selector: {
-                "subject.reference": `${id}`,
-            },
+        selector: {
+            "subject.reference": `${id}`,
         },
     };
 
     const [query, setQuery] = useState(defaultQuery);
-    const { encounters = [], isPending, error } = useSearchEncounters(query);
+    const { isPending, encounters } = useSearchEncounters(query);
     const { removeEncounter, isPending: isDeleting } = useRemoveEncounter();
     const { user, isPending: userLoading, error: userError } = useUser();
     const [isModalOpen, setModalOpen] = useState(false);
 
-    if (isPending || userLoading) return <Spinner />;
-    if (error || userError)
-        return <p>Error loading encounters or user data</p>;
+    console.log(encounters)
+
+
+
+    if (userError) return <p>Error loading user data</p>;
 
     const handleRemoveEncounter = async (id) => {
-        await removeEncounter(id);
+        removeEncounter(id);
     };
 
     const handleModalClose = () => {
@@ -51,9 +50,9 @@ const EncounterList = () => {
                 isDeleting={isDeleting}
                 user={user}
                 onAddNew={() => setModalOpen(true)}
-                hasAddBtn={true}
+                hasAddBtn={user?.role === "practitioner"}
             />
-            {user.role === "practitioner" && (
+            {user?.role === "practitioner" && (
                 <Modal isOpen={isModalOpen} onClose={handleModalClose}>
                     <AddEncounterForm onSubmitSuccess={handleModalClose} />
                 </Modal>

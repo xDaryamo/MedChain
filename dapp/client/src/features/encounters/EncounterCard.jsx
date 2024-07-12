@@ -1,4 +1,4 @@
-/* eslint-disable react/prop-types */
+import React from "react";
 import { Link } from "react-router-dom";
 import { useGetPatient } from "../users/usePatients";
 import Spinner from "../../ui/Spinner";
@@ -24,11 +24,10 @@ const EncounterCard = ({ item }) => {
     const patientDOB = patient ? formatDate(patient.date) : "Data di Nascita Sconosciuta";
     const patientGender = patient ? `${patient.gender.coding[0].display}` : "Sesso Sconosciuto";
 
-    const encounterID = item.identifier;
-
+    const encounterID = item.id?.value || "ID non disponibile";
     const encounterType = item.type ? item.type.map((type, index) => (
         <li key={index}>{type.coding[0].display}</li>
-    )) : [];
+    )) : ["Tipo di Incontro Sconosciuto"];
 
     const encounterPeriod = item.period ? (
         <div>
@@ -38,39 +37,21 @@ const EncounterCard = ({ item }) => {
 
     const encounterReason = item.reasonCode ? item.reasonCode.map((reason, index) => (
         <li key={index}>{reason.coding[0].display}</li>
-    )) : [];
+    )) : ["Ragione dell'Incontro Sconosciuta"];
 
     const encounterStatus = item.status || "Stato Sconosciuto";
 
     return (
-        <Card item={item} itemKey="identifier">
+        <Card>
             <Link to={`/encounters/${encounterID}`} className="mb-4 flex-1">
-                <div>
-                    <strong>Numero dell&apos;Incontro:</strong> {encounterID}
-                </div>
-                <div>
-                    <strong>Nome del Paziente:</strong> {patientName}
-                </div>
-                <div>
-                    <strong>Data di Nascita:</strong> {patientDOB}
-                </div>
-                <div>
-                    <strong>Sesso:</strong> {patientGender}
-                </div>
-                <div>
-                    <strong>Tipo di Incontro:</strong>
-                    <ul>{encounterType}</ul>
-                </div>
-                <div>
-                    <strong>Periodo dell'Incontro:</strong> {encounterPeriod}
-                </div>
-                <div>
-                    <strong>Ragione dell'Incontro:</strong>
-                    <ul>{encounterReason}</ul>
-                </div>
-                <div>
-                    <strong>Stato dell'Incontro:</strong> {encounterStatus}
-                </div>
+                <div><strong>Numero dell'Incontro:</strong> {encounterID}</div>
+                <div><strong>Nome del Paziente:</strong> {patientName}</div>
+                <div><strong>Data di Nascita:</strong> {patientDOB}</div>
+                <div><strong>Sesso:</strong> {patientGender}</div>
+                <div><strong>Tipo di Incontro:</strong><ul>{encounterType}</ul></div>
+                <div><strong>Periodo dell'Incontro:</strong> {encounterPeriod}</div>
+                <div><strong>Ragione dell'Incontro:</strong><ul>{encounterReason}</ul></div>
+                <div><strong>Stato dell'Incontro:</strong> {encounterStatus}</div>
             </Link>
         </Card>
     );
