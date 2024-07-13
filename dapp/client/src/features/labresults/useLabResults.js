@@ -8,12 +8,16 @@ import {
 import toast from "react-hot-toast";
 
 export const useGetLabResult = (id) => {
-  const { data: labResult, isPending } = useQuery({
+  const {
+    data: labResult,
+    isPending,
+    refetch,
+  } = useQuery({
     queryKey: ["labResult", id],
     queryFn: () => getLabResult(id),
     enabled: !!id,
   });
-  return { labResult, isPending };
+  return { labResult, isPending, refetch };
 };
 
 export const useGetLabResultsByIds = (ids) => {

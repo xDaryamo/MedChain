@@ -62,7 +62,7 @@ api.interceptors.response.use(
 
 export const getLabResult = async (id) => {
   const response = await api.get(`/labresults/${id}`);
-  return response.data;
+  return response.data.labResult;
 };
 
 export const searchLabResults = async (query) => {

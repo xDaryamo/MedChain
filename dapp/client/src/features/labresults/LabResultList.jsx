@@ -11,7 +11,6 @@ import AddLabResultForm from "./AddLabResultForm";
 import { useParams } from "react-router-dom";
 
 const LabResultList = () => {
-
   const { id } = useParams();
 
   const defaultQuery = {
@@ -24,7 +23,7 @@ const LabResultList = () => {
 
   const [query, setQuery] = useState(defaultQuery);
   const { labResults, isPending, error } = useSearchLabResults(query);
-
+  console.log(labResults);
   const { user, isPending: userLoading, error: userError } = useUser();
   const [isModalOpen, setModalOpen] = useState(false);
 

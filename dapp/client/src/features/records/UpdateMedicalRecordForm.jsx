@@ -249,13 +249,13 @@ const UpdateMedicalRecordForm = () => {
         prescriptions: (data.prescriptions || []).map((prescription) => {
           const start = prescription.dispenseRequest.validityPeriod.start
             ? new Date(
-              prescription.dispenseRequest.validityPeriod.start,
-            ).toISOString()
+                prescription.dispenseRequest.validityPeriod.start,
+              ).toISOString()
             : "";
           const end = prescription.dispenseRequest.validityPeriod.end
             ? new Date(
-              prescription.dispenseRequest.validityPeriod.end,
-            ).toISOString()
+                prescription.dispenseRequest.validityPeriod.end,
+              ).toISOString()
             : "";
 
           return {

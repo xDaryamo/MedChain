@@ -1,338 +1,463 @@
 /* eslint-disable react/prop-types */
 import { useForm, useFieldArray } from "react-hook-form";
 import { useEffect } from "react";
+import { useUpdateLabResult, useGetLabResult } from "./useLabResults";
 import Button from "../../ui/Button";
+import FormInput from "../../ui/FormInput";
+import FormRow from "../../ui/FormRow";
+import FormSelect from "../../ui/FormSelect";
 import Spinner from "../../ui/Spinner";
-import { useNavigate, useParams } from "react-router-dom";
+import { FaPlus, FaTrash } from "react-icons/fa";
+import { useParams, useNavigate } from "react-router-dom";
+import { useUser } from "../authentication/useAuth";
 import BackButton from "../../ui/BackButton";
 import Heading from "../../ui/Heading";
-import FormRow from "../../ui/FormRow";
-import FormInput from "../../ui/FormInput";
-import { useUpdateLabResult, useGetLabResult } from "./useLabResults";
 
 const UpdateLabResultForm = () => {
-    const { id } = useParams();
-    const { labResult, isPending: labResultLoading } = useGetLabResult(id);
-    const { register, handleSubmit, formState: { errors }, reset, control } = useForm();
-    const { updateResult, isPending: updatePending } = useUpdateLabResult();
-    const navigate = useNavigate();
+  const { id } = useParams();
+  const { user } = useUser();
+  const navigate = useNavigate();
+  const {
+    labResult,
+    isPending: labResultLoading,
+    error: labResultError,
+  } = useGetLabResult(id);
 
-    useEffect(() => {
-        if (labResult) {
-            reset(labResult.labResult);
-        }
-    }, [labResult, reset]);
+  const {
+    register,
+    handleSubmit,
+    reset,
+    control,
+    formState: { errors },
+  } = useForm({
+    defaultValues: {
+      category: [],
+      interpretation: [],
+      note: [],
+      component: [],
+    },
+  });
+  const { updateResult, isPending: updatePending } = useUpdateLabResult(id);
 
-    const { fields: categoryFields, append: appendCategory, remove: removeCategory } = useFieldArray({ control, name: "category" });
-    const { fields: performerFields, append: appendPerformer, remove: removePerformer } = useFieldArray({ control, name: "performer" });
-    const { fields: noteFields, append: appendNote, remove: removeNote } = useFieldArray({ control, name: "note" });
-    const { fields: componentFields, append: appendComponent, remove: removeComponent } = useFieldArray({ control, name: "components" });
-    const formSections = [
-        {
-            label: "Category",
-            errorKey: "category",
-            fields: categoryFields.map((category, index) => ({
-                label: `Category ${index + 1}`,
-                inputs: [
-                    { name: "coding.0.code", defaultValue: category.coding?.[0]?.code || "", label: "Code" },
-                    { name: "coding.0.display", defaultValue: category.coding?.[0]?.display || "", label: "Display" },
-                    { name: "text", defaultValue: category.text || "", label: "Text" },
-                ],
-            })),
-            append: appendCategory,
-            remove: removeCategory,
+  const {
+    fields: categoryFields,
+    append: appendCategory,
+    remove: removeCategory,
+  } = useFieldArray({
+    control,
+    name: "category",
+  });
+
+  const {
+    fields: interpretationFields,
+    append: appendInterpretation,
+    remove: removeInterpretation,
+  } = useFieldArray({
+    control,
+    name: "interpretation",
+  });
+
+  const {
+    fields: noteFields,
+    append: appendNote,
+    remove: removeNote,
+  } = useFieldArray({
+    control,
+    name: "note",
+  });
+
+  const {
+    fields: componentFields,
+    append: appendComponent,
+    remove: removeComponent,
+  } = useFieldArray({
+    control,
+    name: "component",
+  });
+
+  useEffect(() => {
+    if (labResult) {
+      const formattedData = {
+        ...labResult,
+        category: labResult.category?.map((cat) => ({ text: cat.text })) || [],
+        code: { text: labResult.code?.text || "" },
+        effectivePeriod: {
+          start: labResult.effectivePeriod?.start
+            ? new Date(labResult.effectivePeriod.start)
+                .toISOString()
+                .substring(0, 16)
+            : "",
+          end: labResult.effectivePeriod?.end
+            ? new Date(labResult.effectivePeriod.end)
+                .toISOString()
+                .substring(0, 16)
+            : "",
         },
+        issued: labResult.issued
+          ? new Date(labResult.issued).toISOString().substring(0, 16)
+          : "",
+        interpretation:
+          labResult.interpretation?.map((interp) => ({
+            text: interp.text,
+          })) || [],
+        note: labResult.note?.map((n) => ({ text: n.text })) || [],
+        component:
+          labResult.component?.map((comp) => ({
+            code: { text: comp.code?.text || "" },
+            valueQuantity: comp.valueQuantity?.value || "",
+            unit: comp.valueQuantity?.unit || "",
+            interpretation: comp.interpretation
+              ?.map((interp) => interp.text)
+              .join(", "),
+          })) || [],
+      };
+      reset(formattedData);
+    }
+  }, [labResult, reset]);
+
+  const onSubmit = async (data) => {
+    const labresult = {
+      identifier: {
+        system: "http://hospital.smarthealth.org",
+      },
+      status: data.status,
+      category: data.category.map((cat) => ({
+        coding: [
+          {
+            system:
+              "http://terminology.hl7.org/CodeSystem/observation-category",
+            code: cat.text,
+            display: cat.text,
+          },
+        ],
+        text: cat.text,
+      })),
+      code: {
+        coding: [
+          {
+            system: "http://loinc.org",
+            code: data.code.text,
+            display: data.code.text,
+          },
+        ],
+        text: data.code.text,
+      },
+      subject: {
+        reference: labResult.subject?.reference || "",
+      },
+      effectivePeriod: {
+        start: new Date(data.effectivePeriod.start).toISOString(),
+        end: new Date(data.effectivePeriod.end).toISOString(),
+      },
+      issued: new Date(data.issued).toISOString(),
+      performer: [
         {
-            label: "Performer",
-            errorKey: "performer",
-            fields: performerFields.map((performer, index) => ({
-                label: `Performer ${index + 1}`,
-                inputs: [
-                    { name: "reference", defaultValue: performer?.reference || "", label: "Reference" },
-                    { name: "display", defaultValue: performer?.display || "", label: "Display" },
-                ],
-            })),
-            append: appendPerformer,
-            remove: removePerformer,
+          reference: user.userId,
+          display: user.username,
         },
-        {
-            label: "Note",
-            errorKey: "note",
-            fields: noteFields.map((note, index) => ({
-                label: `Note ${index + 1}`,
-                inputs: [
-                    { name: "text", defaultValue: note?.text || "", label: "Text" },
-                    { name: "authorReference.reference", defaultValue: note?.authorReference?.reference || "", label: "Author Reference" },
-                    { name: "authorReference.display", defaultValue: note?.authorReference?.display || "", label: "Author Display" },
-                    { name: "time", defaultValue: note?.time || "", label: "Time" },
-                ],
-            })),
-            append: appendNote,
-            remove: removeNote,
-        }
-    ];
-
-    const onSubmit = async (data) => {
-        try {
-            if (!labResult) {
-                console.error("Lab result is undefined");
-                return;
-            }
-
-            const updatedLabResult = buildUpdatedLabResult(data);
-
-            updateResult(
-                { id, labResult: updatedLabResult },
-                {
-                    onSettled: async () => {
-                        reset(updatedLabResult);
-                        console.log("Lab Result:", updatedLabResult);
-                    },
-                }
-            );
-        } catch (error) {
-            console.error("Error submitting lab result:", error);
-        }
-    };
-
-    const buildUpdatedLabResult = (data) => {
-        const defaultDate = new Date().toISOString();
-
-        const codeCoding = {
-            system: data.codeSystem || labResult.labResult.code?.coding?.[0]?.system || "",
-            code: data.code?.coding?.[0]?.code?.text || labResult.labResult.code?.coding?.[0]?.code?.text || "",
-            display: data.codeDisplay || labResult.labResult.code?.coding?.[0]?.display || ""
-        };
-
-        const buildAuthorReference = (authorReference) => ({
-            reference: authorReference?.reference || "",
-            display: authorReference?.display || ""
-        });
-
-        return {
-            identifier: {
-                system: labResult.labResult.identifier?.system || "",
-                value: id,
+      ],
+      interpretation: data.interpretation.map((interp) => ({
+        coding: [
+          {
+            system:
+              "http://terminology.hl7.org/CodeSystem/v3-ObservationInterpretation",
+            code: interp.text,
+            display: interp.text,
+          },
+        ],
+        text: interp.text,
+      })),
+      note: data.note.map((n) => ({
+        text: n.text,
+        time: new Date(),
+        authorString: "Author",
+      })),
+      component: data.component.map((comp) => ({
+        code: {
+          coding: [
+            {
+              system: "http://loinc.org",
+              code: comp.code.text,
+              display: comp.code.text,
             },
-            status: data.status || labResult.labResult.status || "",
-            category: data.category || labResult.labResult.category || [],
-            code: {
-                coding: [codeCoding],
-                text: data.codeText || labResult.labResult.code?.text || "",
-            },
-            subject: {
-                reference: labResult.labResult.subject?.reference || "",
-                display: labResult.labResult.subject?.display || "",
-            },
-            encounter: {
-                reference: labResult.labResult.encounter?.reference || "",
-                display: labResult.labResult.encounter?.display || "",
-            },
-            effectivePeriod: {
-                start: labResult.labResult.effectivePeriod?.start || "",
-                end: labResult.labResult.effectivePeriod?.end || "",
-            },
-            issued: labResult.labResult.issued || defaultDate,
-            performer: (data.performer || []).map((performer, index) => ({
-                reference: performer.reference || labResult.labResult.performer?.[index]?.reference || "",
-                display: performer.display || labResult.labResult.performer?.[index]?.display || "",
-            })),
-            interpretation: (data.interpretation || []).map((interpretation) => ({
+          ],
+          text: comp.code.text,
+        },
+        valueQuantity: {
+          value: parseFloat(comp.valueQuantity),
+          unit: comp.unit,
+          system: "http://unitsofmeasure.org",
+        },
+        interpretation: comp.interpretation
+          ? [
+              {
                 coding: [
-                    {
-                        system: interpretation.system || "",
-                        code: interpretation.code || "",
-                        display: interpretation.display || "",
-                    },
+                  {
+                    system:
+                      "http://terminology.hl7.org/CodeSystem/v3-ObservationInterpretation",
+                    code: comp.interpretation,
+                    display: comp.interpretation,
+                  },
                 ],
-                text: interpretation.text || "",
-            })),
-            note: (data.note || []).map((note) => ({
-                text: note.text || "",
-                authorReference: buildAuthorReference(note.authorReference),
-                time: note.time || defaultDate,
-            })),
-            components: data.components || labResult.labResult.components,
-        };
+                text: comp.interpretation,
+              },
+            ]
+          : [],
+      })),
     };
 
-    if (labResultLoading) return <Spinner />;
-
-    return (
-        <div className="flex-1 overflow-y-auto p-4 md:p-8">
-            <div>
-                <BackButton onClick={() => navigate(-1)}>Indietro</BackButton>
-            </div>
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-                <Heading>Modifica Risultato di Laboratorio</Heading>
-
-                <div className="mb-4">
-                    <FormRow label="Status" error={errors.status?.message}>
-                        <FormInput
-                            type="text"
-                            {...register("status")}
-                            defaultValue={labResult?.labResult?.status || ""}
-                        />
-                    </FormRow>
-                </div>
-
-                {/* Render Form Sections */}
-                {formSections.map((section, index) => (
-                    <div key={index} className="mb-4 border-b pb-4">
-                        <h3 className="mb-4 text-xl font-semibold text-cyan-950">{section.label}</h3>
-                        {section.fields.map((field, fieldIndex) => (
-                            <div key={fieldIndex} className="mb-4">
-                                <FormRow
-                                    label={field.label}
-                                    error={errors[section.errorKey]?.[fieldIndex]?.message}
-                                >
-                                    {field.inputs.map((input, inputIndex) => (
-                                        <div key={inputIndex} className="mb-2">
-                                            <label className="block text-sm font-medium text-gray-700">
-                                                {input.label}
-                                            </label>
-                                            <FormInput
-                                                type="text"
-                                                {...register(`${section.errorKey}[${fieldIndex}].${input.name}`)}
-                                                defaultValue={input.defaultValue}
-                                            />
-                                        </div>
-                                    ))}
-                                </FormRow>
-                                <Button
-                                    type="button"
-                                    variant="danger"
-                                    size="small"
-                                    onClick={() => section.remove(fieldIndex)}
-                                >
-                                    Remove {section.label}
-                                </Button>
-                            </div>
-                        ))}
-                        <Button
-                            type="button"
-                            variant="secondary"
-                            size="small"
-                            onClick={() => section.append({})}
-                        >
-                            Add {section.label}
-                        </Button>
-                    </div>
-                ))}
-
-                {/* Render Components Section */}
-                <div className="mb-4 border-b pb-4">
-                    <h3 className="mb-4 text-xl font-semibold text-cyan-950">Components</h3>
-                    {componentFields.map((components, index) => (
-                        <div key={index} className="mb-4">
-                            <FormRow
-                                label={`Component ${index + 1}`}
-                                error={errors.components?.[index]?.message}
-                            >
-                                <div className="grid grid-cols-2 gap-x-4">
-                                    <div className="mb-2">
-                                        <label className="block text-sm font-medium text-gray-700">Code</label>
-                                        <FormInput
-                                            type="text"
-                                            {...register(`components[${index}].code.coding.[0].code`)}
-                                            defaultValue={""}
-                                        />
-                                    </div>
-                                    <div className="mb-2">
-                                        <label className="block text-sm font-medium text-gray-700">Display</label>
-                                        <FormInput
-                                            type="text"
-                                            {...register(`components[${index}].code.coding.[0].display`)}
-                                            defaultValue={""}
-                                        />
-                                    </div>
-                                    <div className="mb-2">
-                                        <label className="block text-sm font-medium text-gray-700">Text</label>
-                                        <FormInput
-                                            type="text"
-                                            {...register(`components[${index}].code.text`)}
-                                            defaultValue={""}
-                                        />
-                                    </div>
-                                    <div className="mb-2">
-                                        <label className="block text-sm font-medium text-gray-700">Quantity Value</label>
-                                        <FormInput
-                                            type="number"
-                                            {...register(
-                                                `components[${index}].valueQuantity.value`,
-                                                {
-                                                    valueAsNumber: true,
-                                                },
-                                            )}
-                                            defaultValue={components?.[index]?.valueQuantity?.value || 0}
-                                        />
-
-                                    </div>
-                                    <div className="mb-2">
-                                        <label className="block text-sm font-medium text-gray-700">Quantity Unit</label>
-                                        <FormInput
-                                            type="text"
-                                            {...register(`components[${index}].valueQuantity.unit`)}
-                                            defaultValue={""}
-                                        />
-                                    </div>
-                                    <div className="mb-2">
-                                        <label className="block text-sm font-medium text-gray-700">Quantity System</label>
-                                        <FormInput
-                                            type="text"
-                                            {...register(`components[${index}].valueQuantity.system`)}
-                                            defaultValue={""}
-                                        />
-                                    </div>
-
-                                </div>
-                            </FormRow>
-                            <Button
-                                type="button"
-                                variant="danger"
-                                size="small"
-                                onClick={() => removeComponent(index)}
-                            >
-                                Remove Component
-                            </Button>
-                        </div>
-                    ))}
-                    <Button
-                        type="button"
-                        variant="secondary"
-                        size="small"
-                        onClick={() => appendComponent({})}
-                    >
-                        Add Component
-                    </Button>
-                </div>
-
-                {/* Submit Button */}
-                <div className="flex w-full justify-center space-x-4">
-                    <Button
-                        type="submit"
-                        disabled={updatePending}
-                        variant="primary"
-                        size="large"
-                    >
-                        {updatePending ? <Spinner /> : "Modifica"}
-                    </Button>
-                </div>
-
-                {/* Display Errors */}
-                {Object.keys(errors).length > 0 && (
-                    <div className="mt-4 text-red-500">
-                        {Object.keys(errors).map((errorKey) => (
-                            <div key={errorKey}>
-                                {errors[errorKey]?.message ||
-                                    `There is an error in the field ${errorKey}`}
-                            </div>
-                        ))}
-                    </div>
-                )}
-            </form>
-        </div>
+    updateResult(
+      { id, labResult: labresult },
+      {
+        onSettled: () => {
+          reset();
+          navigate(-1);
+        },
+      },
     );
+  };
+
+  if (labResultLoading) return <Spinner />;
+  if (labResultError) return <p>Error loading lab result</p>;
+
+  return (
+    <div className="flex-1 overflow-y-auto p-4 md:p-8">
+      <div>
+        <BackButton onClick={() => navigate(-1)}>Indietro</BackButton>
+      </div>
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+        <Heading>Modifica Risultato di Laboratorio</Heading>
+
+        <FormRow label="Status:" error={errors.status?.message}>
+          <FormSelect
+            id="status"
+            {...register("status", { required: "Lo status è obbligatorio" })}
+            options={[
+              { value: "registered", label: "Registrato" },
+              { value: "preliminary", label: "Preliminare" },
+              { value: "final", label: "Finale" },
+              { value: "amended", label: "Modificato" },
+              { value: "corrected", label: "Corretto" },
+              { value: "cancelled", label: "Annullato" },
+              { value: "entered-in-error", label: "Inserito per errore" },
+              { value: "unknown", label: "Sconosciuto" },
+            ]}
+          />
+        </FormRow>
+
+        <div className="mb-4 border-b pb-4">
+          <h3 className="mb-4 text-xl font-semibold text-cyan-950">
+            Categoria
+          </h3>
+          {categoryFields.map((item, index) => (
+            <div key={item.id} className="mb-2 flex space-x-2">
+              <FormInput
+                {...register(`category[${index}].text`, {
+                  required: "La categoria è obbligatoria",
+                })}
+                placeholder="laboratorio"
+              />
+              <div className="flex justify-end">
+                <Button
+                  type="button"
+                  variant="delete"
+                  onClick={() => removeCategory(index)}
+                  size="small"
+                >
+                  <FaTrash />
+                </Button>
+              </div>
+            </div>
+          ))}
+          <div className="flex justify-center">
+            <Button
+              type="button"
+              onClick={() => appendCategory({})}
+              variant="secondary"
+              size="small"
+            >
+              <FaPlus className="mr-1" /> Aggiungi Categoria
+            </Button>
+          </div>
+        </div>
+
+        <FormRow label="Codice:" error={errors.code?.text?.message}>
+          <FormInput
+            {...register("code.text", { required: "Il codice è obbligatorio" })}
+            placeholder="segni vitali"
+          />
+        </FormRow>
+
+        <FormRow
+          label="Periodo di Validità Inizio:"
+          error={errors.effectivePeriod?.start?.message}
+        >
+          <FormInput
+            type="datetime-local"
+            {...register("effectivePeriod.start", {
+              required: "Il periodo di validità inizio è obbligatorio",
+            })}
+          />
+        </FormRow>
+
+        <FormRow
+          label="Periodo di Validità Fine:"
+          error={errors.effectivePeriod?.end?.message}
+        >
+          <FormInput
+            type="datetime-local"
+            {...register("effectivePeriod.end", {
+              required: "Il periodo di validità fine è obbligatorio",
+            })}
+          />
+        </FormRow>
+
+        <FormRow label="Data di Emissione:" error={errors.issued?.message}>
+          <FormInput
+            type="datetime-local"
+            {...register("issued", {
+              required: "La data di emissione è obbligatoria",
+            })}
+          />
+        </FormRow>
+
+        <div className="mb-4 border-b pb-4">
+          <h3 className="mb-4 text-xl font-semibold text-cyan-950">
+            Interpretazione
+          </h3>
+          {interpretationFields.map((item, index) => (
+            <div key={item.id} className="mb-2 flex space-x-2">
+              <FormInput
+                {...register(`interpretation[${index}].text`, {
+                  required: "L'interpretazione è obbligatoria",
+                })}
+                placeholder="descrizione"
+              />
+              <div className="flex justify-end">
+                <Button
+                  type="button"
+                  variant="delete"
+                  onClick={() => removeInterpretation(index)}
+                  size="small"
+                >
+                  <FaTrash />
+                </Button>
+              </div>
+            </div>
+          ))}
+          <div className="flex justify-center">
+            <Button
+              type="button"
+              onClick={() => appendInterpretation({})}
+              variant="secondary"
+              size="small"
+            >
+              <FaPlus className="mr-1" /> Aggiungi Interpretazione
+            </Button>
+          </div>
+        </div>
+
+        <div className="mb-4 border-b pb-4">
+          <h3 className="mb-4 text-xl font-semibold text-cyan-950">Note</h3>
+          {noteFields.map((item, index) => (
+            <div key={item.id} className="mb-2 flex space-x-2">
+              <FormInput
+                {...register(`note[${index}].text`, {
+                  required: "La nota è obbligatoria",
+                })}
+                placeholder="Nota"
+              />
+              <div className="flex justify-end">
+                <Button
+                  type="button"
+                  variant="delete"
+                  onClick={() => removeNote(index)}
+                  size="small"
+                >
+                  <FaTrash />
+                </Button>
+              </div>
+            </div>
+          ))}
+          <div className="flex justify-center">
+            <Button
+              type="button"
+              onClick={() => appendNote({})}
+              variant="secondary"
+              size="small"
+            >
+              <FaPlus className="mr-1" /> Aggiungi Nota
+            </Button>
+          </div>
+        </div>
+
+        <div className="mb-4 border-b pb-4">
+          <h3 className="mb-4 text-xl font-semibold text-cyan-950">
+            Componenti
+          </h3>
+          {componentFields.map((item, index) => (
+            <div key={item.id} className="mb-2 flex space-x-2">
+              <FormInput
+                {...register(`component[${index}].code.text`, {
+                  required: `Il codice del componente ${index + 1} è obbligatorio`,
+                })}
+                placeholder="pressione sanguigna"
+              />
+              <FormInput
+                type="number"
+                {...register(`component[${index}].valueQuantity`, {
+                  required: `Il valore del componente ${index + 1} è obbligatorio`,
+                  valueAsNumber: true,
+                })}
+                placeholder="Valore"
+              />
+              <FormInput
+                {...register(`component[${index}].unit`, {
+                  required: `L'unità del componente ${index + 1} è obbligatoria`,
+                })}
+                placeholder="Unità"
+              />
+              <div className="flex justify-end">
+                <Button
+                  type="button"
+                  variant="delete"
+                  onClick={() => removeComponent(index)}
+                  size="small"
+                >
+                  <FaTrash />
+                </Button>
+              </div>
+            </div>
+          ))}
+          <div className="flex justify-center">
+            <Button
+              type="button"
+              onClick={() => appendComponent({})}
+              variant="secondary"
+              size="small"
+            >
+              <FaPlus className="mr-1" /> Aggiungi Componente
+            </Button>
+          </div>
+        </div>
+
+        <div className="flex justify-center space-x-2">
+          <Button
+            type="submit"
+            variant="primary"
+            size="large"
+            disabled={updatePending}
+          >
+            {updatePending ? (
+              <Spinner size="small" />
+            ) : (
+              "Modifica risultato laboratorio"
+            )}
+          </Button>
+        </div>
+      </form>
+    </div>
+  );
 };
 
 export default UpdateLabResultForm;

@@ -89,6 +89,7 @@ exports.updateLabResult = async (req, res, next) => {
   const updatedLabResult = req.body;
   const organization = req.user.organization;
   const practitionerId = req.user.userId;
+  console.log(labResultID);
 
   try {
     const channel = "lab-results-channel";
