@@ -19,8 +19,8 @@ const PatientCard = ({ item }) => {
   const patientID = item.identifier.value;
 
   return (
-    <Link to={`/patients/${patientID}`} className="mb-4 flex-1">
-      <Card item={item} itemKey="id">
+    <Card item={item} itemKey="id">
+      <Link to={`/patients/${patientID}`} className="mb-4 flex-1">
         <div>
           <strong>Nome del Paziente:</strong> {patientName}
         </div>
@@ -30,8 +30,8 @@ const PatientCard = ({ item }) => {
         <div>
           <strong>Sesso:</strong> {patientGender}
         </div>
-      </Card>
-    </Link>
+      </Link>
+    </Card>
   );
 };
 

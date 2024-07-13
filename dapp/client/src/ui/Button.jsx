@@ -6,6 +6,7 @@ const Button = ({
   type = "button",
   variant = "primary",
   size = "medium",
+  disabled = false,
   ...restProps
 }) => {
   const baseStyles =
@@ -18,6 +19,7 @@ const Button = ({
       "bg-cyan-700 text-white hover:bg-cyan-500 focus:ring-cyan-500 rounded-md",
     delete: "text-stone-600 hover:text-cyan-600 focus:ring-cyan-500 rounded-md",
     add: "h-12 w-12 bg-cyan-600 text-white shadow-lg hover:bg-cyan-500 focus:ring-cyan-500 rounded-full",
+    disabled: "bg-gray-400 text-gray-700 cursor-not-allowed rounded-md",
   };
 
   const sizeStyles = {
@@ -27,11 +29,18 @@ const Button = ({
     add: "h-16 w-16 text-3xl",
   };
 
+  const selectedVariant = disabled ? "disabled" : variant;
+
   return (
     <button
       type={type}
       {...restProps}
-      className={clsx(baseStyles, variantStyles[variant], sizeStyles[size])}
+      className={clsx(
+        baseStyles,
+        variantStyles[selectedVariant],
+        sizeStyles[size],
+      )}
+      disabled={disabled}
     >
       {children}
     </button>

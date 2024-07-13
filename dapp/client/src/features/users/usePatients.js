@@ -5,9 +5,11 @@ import {
   updatePatient as updatePatientApi,
   deletePatient,
   searchPatients,
-  requestAccess,
+  requestAccess as requestAccessApi,
   grantAccess,
   revokeAccess,
+  getAccessRequests as getAccessRequestsApi,
+  getPatientByEmail,
 } from "../../services/apiPatients";
 import toast from "react-hot-toast";
 
@@ -91,8 +93,8 @@ export const useRemovePatient = () => {
 };
 
 export const useRequestAccess = () => {
-  const { mutate: requestAccessMutation, isPending } = useMutation({
-    mutationFn: requestAccess,
+  const { mutate: requestAccess, isPending } = useMutation({
+    mutationFn: ({ id, isOrg }) => requestAccessApi(id, { isOrg }),
     onSuccess: () => {
       toast.success("Access request sent successfully");
     },
@@ -102,13 +104,16 @@ export const useRequestAccess = () => {
     },
   });
 
-  return { requestAccessMutation, isPending };
+  return { requestAccess, isPending };
 };
 
 export const useGrantAccess = () => {
+  const queryClient = useQueryClient();
+
   const { mutate: grantAccessMutation, isPending } = useMutation({
     mutationFn: grantAccess,
     onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["followedPatients"] });
       toast.success("Access granted successfully");
     },
     onError: (error) => {
@@ -121,9 +126,12 @@ export const useGrantAccess = () => {
 };
 
 export const useRevokeAccess = () => {
+  const queryClient = useQueryClient();
+
   const { mutate: revokeAccessMutation, isPending } = useMutation({
     mutationFn: revokeAccess,
     onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["followedPatients"] });
       toast.success("Access revoked successfully");
     },
     onError: (error) => {
@@ -133,4 +141,38 @@ export const useRevokeAccess = () => {
   });
 
   return { revokeAccessMutation, isPending };
+};
+
+export const useGetAccessRequests = () => {
+  const { data: accessRequests, isPending } = useQuery({
+    queryKey: ["accessRequests"],
+    queryFn: () => getAccessRequestsApi(),
+  });
+
+  return {
+    isPending,
+    accessRequests,
+  };
+};
+
+export const useGetPatientByEmail = (email) => {
+  const {
+    data: patient,
+    isPending,
+    error,
+  } = useQuery({
+    queryKey: ["patientByEmail", email],
+    queryFn: () => getPatientByEmail(email),
+    enabled: !!email,
+    onError: (error) => {
+      toast.error("Failed to fetch patient by email");
+      console.error("Get patient by email error", error);
+    },
+  });
+
+  return {
+    isPending,
+    patient,
+    error,
+  };
 };

@@ -1,6 +1,8 @@
 const FabricNetwork = require("../../blockchain/fabric");
 
 const fabric = new FabricNetwork();
+const practitionerFabric = new FabricNetwork();
+const User = require("../models/user");
 
 exports.getPatient = async (req, res, next) => {
   const patientId = req.params.id;
@@ -188,6 +190,7 @@ exports.requestAccess = async (req, res, next) => {
   const requesterID = req.user.userId;
   const isOrg = req.body.isOrg;
   const organization = req.user.organization;
+  console.log(isOrg);
   try {
     const channel = "identity-channel";
     const chaincode = "patient";
@@ -284,5 +287,87 @@ exports.revokeAccess = async (req, res, next) => {
   } finally {
     fabric.disconnect();
     console.log("Disconnected from Fabric gateway.");
+  }
+};
+
+exports.getAccessRequests = async (req, res, next) => {
+  try {
+    const channel = "identity-channel";
+    const chaincode = "patient";
+    const userId = req.user.userId;
+    const organization = req.user.organization;
+
+    await fabric.init(userId, organization, channel, chaincode);
+    console.log("Fabric network initialized successfully.");
+
+    const resultString = await fabric.evaluateTransaction(
+      "GetAccessRequests",
+      userId
+    );
+    const accessRequests = JSON.parse(resultString);
+
+    const practitionerDetails = await Promise.all(
+      Object.keys(accessRequests.Authorized).map(async (practitionerId) => {
+        try {
+          await practitionerFabric.init(
+            userId,
+            organization,
+            "identity-channel",
+            "practitioner"
+          );
+          const practitionerResultString =
+            await practitionerFabric.evaluateTransaction(
+              "ReadPractitioner",
+              practitionerId
+            );
+          const practitioner = JSON.parse(practitionerResultString);
+          return {
+            practitionerId,
+            authorized: accessRequests.Authorized[practitionerId],
+            details: practitioner,
+          };
+        } catch (error) {
+          console.error(
+            `Failed to retrieve details for practitioner ${practitionerId}:`,
+            error
+          );
+          return null;
+        }
+      })
+    );
+
+    const validPractitionerDetails = practitionerDetails.filter(
+      (practitioner) => practitioner !== null
+    );
+
+    res.status(200).json(validPractitionerDetails);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  } finally {
+    fabric.disconnect();
+    practitionerFabric.disconnect();
+    console.log("Disconnected from Fabric gateway.");
+  }
+};
+
+exports.getPatientByEmail = async (req, res, next) => {
+  const { email } = req.body;
+  console.log(email);
+  try {
+    const patientUser = await User.findOne({ email, role: "patient" });
+    if (!patientUser) {
+      return res.status(404).json({ error: "Patient not found" });
+    }
+
+    // Costruisci l'oggetto da restituire
+    const result = {
+      userId: patientUser.userId,
+      email: patientUser.email,
+      username: patientUser.username, // Supponendo che tu abbia un campo username
+    };
+
+    res.status(200).json(result);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
   }
 };

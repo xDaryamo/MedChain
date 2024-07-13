@@ -260,27 +260,27 @@ func (c *PractitionerContract) GrantAccess(ctx contractapi.TransactionContextInt
 }
 
 func (c *PractitionerContract) GetFollowedPatients(ctx contractapi.TransactionContextInterface, practitionerID string) ([]string, error) {
-	followedPatientsAsBytes, err := ctx.GetStub().GetState("followedPatients_" + practitionerID)
-	if err != nil {
-		return nil, errors.New("failed to get followed patients: " + err.Error())
-	}
-	if followedPatientsAsBytes == nil {
-		return nil, errors.New("no followed patients found")
-	}
+    followedPatientsAsBytes, err := ctx.GetStub().GetState("followedPatients_" + practitionerID)
+    if err != nil {
+        return nil, errors.New("failed to get followed patients: " + err.Error())
+    }
+    if followedPatientsAsBytes == nil {
+        return []string{}, nil
+    }
 
-	var followedPatients FollowedPatients
-	err = json.Unmarshal(followedPatientsAsBytes, &followedPatients)
-	if err != nil {
-		return nil, errors.New("failed to unmarshal followed patients: " + err.Error())
-	}
+    var followedPatients FollowedPatients
+    err = json.Unmarshal(followedPatientsAsBytes, &followedPatients)
+    if err != nil {
+        return nil, errors.New("failed to unmarshal followed patients: " + err.Error())
+    }
 
-	// Estrai la lista dei patientID
-	patientIDs := make([]string, 0, len(followedPatients.Patients))
-	for patientID := range followedPatients.Patients {
-		patientIDs = append(patientIDs, patientID)
-	}
+    // Estrai la lista dei patientID
+    patientIDs := make([]string, 0, len(followedPatients.Patients))
+    for patientID := range followedPatients.Patients {
+        patientIDs = append(patientIDs, patientID)
+    }
 
-	return patientIDs, nil
+    return patientIDs, nil
 }
 
 func (c *PractitionerContract) RevokeAccess(ctx contractapi.TransactionContextInterface, patientID string, practitionerID string) (string, error) {

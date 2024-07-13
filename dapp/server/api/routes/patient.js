@@ -3,7 +3,12 @@ const router = express.Router();
 const patientController = require("../controllers/patient");
 const { verifyToken, authorizeOrganization } = require("../middleware/auth");
 
-// Rotte per i pazienti
+router.get(
+  "/access-requests/",
+  verifyToken,
+  patientController.getAccessRequests
+);
+
 router.get(
   "/:id",
   verifyToken,
@@ -11,6 +16,8 @@ router.get(
   patientController.getPatient
 );
 router.post("/", verifyToken, patientController.createPatient);
+
+router.post("/email", verifyToken, patientController.getPatientByEmail);
 
 router.post("/search", verifyToken, patientController.searchPatients);
 

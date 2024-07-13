@@ -434,6 +434,34 @@ func (c *PatientContract) SearchPatients(ctx contractapi.TransactionContextInter
 	return string(resultsJSON), nil
 }
 
+// GetAccessRequests returns the list of access requests for a given patient
+func (c *PatientContract) GetAccessRequests(ctx contractapi.TransactionContextInterface, patientID string) (string, error) {
+	authAsBytes, err := ctx.GetStub().GetState("auth_" + patientID)
+	if err != nil {
+		return `{"error": "failed to get authorization data: ` + err.Error() + `"}`, err
+	}
+	if authAsBytes == nil {
+		return `{"error": "no authorization record found for patient: ` + patientID + `"}`, errors.New("no authorization record found for patient: " + patientID)
+	}
+
+	var auth Authorization
+	err = json.Unmarshal(authAsBytes, &auth)
+	if err != nil {
+		return `{"error": "failed to unmarshal authorization data: ` + err.Error() + `"}`, err
+	}
+
+	requests := make(map[string]interface{})
+	requests["Authorized"] = auth.Authorized
+	requests["AuthorizedOrgs"] = auth.AuthorizedOrgs
+
+	requestsJSON, err := json.Marshal(requests)
+	if err != nil {
+		return `{"error": "failed to marshal requests to JSON: ` + err.Error() + `"}`, err
+	}
+
+	return string(requestsJSON), nil
+}
+
 func main() {
 	chaincode, err := contractapi.NewChaincode(new(PatientContract))
 	if err != nil {
