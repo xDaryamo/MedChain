@@ -5,18 +5,19 @@ import FormSelect from "../../ui/FormSelect";
 import Button from "../../ui/Button";
 import Spinner from "../../ui/Spinner";
 import { useAddPrescription } from "./usePrescriptions";
+import { FaPlus, FaTrash } from "react-icons/fa";
 
 const quantityUnitOptions = [
-    { value: "tablets", label: "Tablets" },
-    { value: "capsules", label: "Capsules" },
-    { value: "ml", label: "Milliliters" },
+    { value: "tablets", label: "Compresse" },
+    { value: "capsules", label: "Capsule" },
+    { value: "ml", label: "Millilitri" },
 ];
 
 const durationUnitOptions = [
-    { value: "days", label: "Days" },
-    { value: "weeks", label: "Weeks" },
-    { value: "months", label: "Months" },
-    { value: "hours", label: "Hours" },
+    { value: "days", label: "Giorni" },
+    { value: "weeks", label: "Settimane" },
+    { value: "months", label: "Mesi" },
+    { value: "hours", label: "Ore" },
 ];
 
 const AddMedicationRequestForm = ({ onSubmitSuccess, onCancel }) => {
@@ -78,187 +79,187 @@ const AddMedicationRequestForm = ({ onSubmitSuccess, onCancel }) => {
 
     return (
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-            <h2 className="mb-6 text-2xl font-bold">Add a New Prescription</h2>
+            <h2 className="mb-6 text-2xl font-bold">Aggiungi una Nuova Prescrizione</h2>
 
             <div className="mb-4 border-b pb-4">
                 <div className="mb-2 space-y-2 border p-2">
-                    <h4 className="text-lg font-medium">Prescription Details</h4>
+                    <h4 className="text-lg font-medium">Dettagli Prescrizione</h4>
 
                     {/* Medication Codeable Concept */}
                     <FormRow
-                        label="Medication Code System:"
+                        label="Sistema di Codifica Medicinale:"
                         error={errors?.medicationCodeableConcept?.coding?.[0]?.system?.message}
                     >
                         <FormInput
                             {...register("medicationCodeableConcept.coding[0].system", {
-                                required: "Medication code system is required",
+                                required: "Il sistema di codifica del medicinale è obbligatorio",
                             })}
                             placeholder="http://snomed.info/sct"
                         />
                     </FormRow>
                     <FormRow
-                        label="Medication Code Value:"
+                        label="Valore del Codice Medicinale:"
                         error={errors?.medicationCodeableConcept?.coding?.[0]?.code?.message}
                     >
                         <FormInput
                             {...register("medicationCodeableConcept.coding[0].code", {
-                                required: "Medication code value is required",
+                                required: "Il valore del codice medicinale è obbligatorio",
                             })}
                             placeholder="80146002"
                         />
                     </FormRow>
                     <FormRow
-                        label="Medication Code Display:"
+                        label="Descrizione del Codice Medicinale:"
                         error={errors?.medicationCodeableConcept?.coding?.[0]?.display?.message}
                     >
                         <FormInput
                             {...register("medicationCodeableConcept.coding[0].display", {
-                                required: "Medication code display is required",
+                                required: "La descrizione del codice medicinale è obbligatoria",
                             })}
-                            placeholder="Ibuprofen"
+                            placeholder="Ibuprofene"
                         />
                     </FormRow>
                     <FormRow
-                        label="Medication Code Text:"
+                        label="Testo del Codice Medicinale:"
                         error={errors?.medicationCodeableConcept?.text?.message}
                     >
                         <FormInput
                             {...register("medicationCodeableConcept.text", {
-                                required: "Medication code text is required",
+                                required: "Il testo del codice medicinale è obbligatorio",
                             })}
-                            placeholder="Ibuprofen"
+                            placeholder="Ibuprofene"
                         />
                     </FormRow>
 
                     {/* Subject */}
                     <FormRow
-                        label="Subject Reference:"
+                        label="Riferimento del Soggetto:"
                         error={errors?.subject?.reference?.message}
                     >
                         <FormInput
                             {...register("subject.reference", {
-                                required: "Subject reference is required",
+                                required: "Il riferimento del soggetto è obbligatorio",
                             })}
-                            placeholder="Patient/67890"
+                            placeholder="67890"
                         />
                     </FormRow>
                     <FormRow
-                        label="Subject Display:"
+                        label="Nome del Soggetto:"
                         error={errors?.subject?.display?.message}
                     >
                         <FormInput
                             {...register("subject.display", {
-                                required: "Subject display is required",
+                                required: "Il nome del soggetto è obbligatorio",
                             })}
-                            placeholder="John Doe"
+                            placeholder="Mario Rossi"
                         />
                     </FormRow>
 
                     {/* Authored On */}
                     <FormRow
-                        label="Authored On:"
+                        label="Data di Prescrizione:"
                         error={errors?.authoredOn?.message}
                     >
                         <input
                             type="datetime-local"
                             {...register("authoredOn", {
-                                required: "Authored On is required",
+                                required: "La data di prescrizione è obbligatoria",
                             })}
                         />
                     </FormRow>
 
                     {/* Requester */}
                     <FormRow
-                        label="Requester Reference:"
+                        label="Riferimento del Richiedente:"
                         error={errors?.requester?.reference?.message}
                     >
                         <FormInput
                             {...register("requester.reference", {
-                                required: "Requester reference is required",
+                                required: "Il riferimento del richiedente è obbligatorio",
                             })}
-                            placeholder="Practitioner/123"
+                            placeholder="123"
                         />
                     </FormRow>
                     <FormRow
-                        label="Requester Display:"
+                        label="Nome del Richiedente:"
                         error={errors?.requester?.display?.message}
                     >
                         <FormInput
                             {...register("requester.display", {
-                                required: "Requester display is required",
+                                required: "Il nome del richiedente è obbligatorio",
                             })}
-                            placeholder="Dr. Smith"
+                            placeholder="Dott. Mario Verdi"
                         />
                     </FormRow>
 
                     {/* Dosage Instruction */}
                     {dosageInstructionFields.map((item, index) => (
                         <div key={item.id} className="mb-4 border p-4">
-                            <h4 className="text-lg font-medium">Dosage Instruction {index + 1}</h4>
+                            <h4 className="text-lg font-medium">Istruzioni di Dosaggio {index + 1}</h4>
                             <FormRow
-                                label="Dosage Instruction Text:"
+                                label="Testo delle Istruzioni di Dosaggio:"
                                 error={errors?.dosageInstruction?.[index]?.text?.message}
                             >
                                 <FormInput
                                     {...register(`dosageInstruction[${index}].text`, {
-                                        required: `Dosage instruction ${index + 1} text is required`,
+                                        required: `Il testo delle istruzioni di dosaggio ${index + 1} è obbligatorio`,
                                     })}
-                                    placeholder="Take 1 tablet twice daily"
+                                    placeholder="Assumere 1 compressa due volte al giorno"
                                 />
                             </FormRow>
                             <FormRow
-                                label="Timing Frequency:"
+                                label="Frequenza Temporale:"
                                 error={errors?.dosageInstruction?.[index]?.timing?.repeat?.frequency?.message}
                             >
                                 <FormInput
                                     type="number"
                                     {...register(`dosageInstruction[${index}].timing.repeat.frequency`, {
-                                        required: `Dosage instruction ${index + 1} timing frequency is required`,
+                                        required: `La frequenza temporale delle istruzioni di dosaggio ${index + 1} è obbligatoria`,
                                         valueAsNumber: true,
                                     })}
                                     placeholder="2"
                                 />
                             </FormRow>
                             <FormRow
-                                label="Timing Period:"
+                                label="Periodo Temporale:"
                                 error={errors?.dosageInstruction?.[index]?.timing?.repeat?.period?.message}
                             >
                                 <FormInput
                                     type="number"
                                     {...register(`dosageInstruction[${index}].timing.repeat.period`, {
-                                        required: `Dosage instruction ${index + 1} timing period is required`,
+                                        required: `Il periodo temporale delle istruzioni di dosaggio ${index + 1} è obbligatorio`,
                                         valueAsNumber: true,
                                     })}
                                     placeholder="1"
                                 />
                             </FormRow>
                             <FormRow
-                                label="Timing Period Unit:"
+                                label="Unità del Periodo Temporale:"
                                 error={errors?.dosageInstruction?.[index]?.timing?.repeat?.periodUnit?.message}
                             >
                                 <FormSelect
                                     {...register(`dosageInstruction[${index}].timing.repeat.periodUnit`, {
-                                        required: `Dosage instruction ${index + 1} timing period unit is required`,
+                                        required: `L'unità del periodo temporale delle istruzioni di dosaggio ${index + 1} è obbligatoria`,
                                     })}
                                     options={[
-                                        { value: "", label: "Select a unit" },
+                                        { value: "", label: "Seleziona un'unità" },
                                         ...durationUnitOptions,
                                     ]}
                                 />
                             </FormRow>
                             <FormRow
-                                label="Route:"
+                                label="Via di Somministrazione:"
                                 error={errors?.dosageInstruction?.[index]?.route?.text?.message}
                             >
                                 <FormInput
                                     {...register(`dosageInstruction[${index}].route.text`, {
-                                        required: `Dosage instruction ${index + 1} route is required`,
+                                        required: `La via di somministrazione delle istruzioni di dosaggio ${index + 1} è obbligatoria`,
                                     })}
-                                    placeholder="Oral"
+                                    placeholder="Orale"
                                 />
                             </FormRow>
                             <FormRow
-                                label="Dose Quantity Value:"
+                                label="Quantità della Dose:"
                                 error={errors?.dosageInstruction?.[index]?.doseQuantity?.value?.message}
                             >
                                 <FormInput
@@ -266,7 +267,7 @@ const AddMedicationRequestForm = ({ onSubmitSuccess, onCancel }) => {
                                     {...register(
                                         `dosageInstruction[${index}].doseQuantity.value`,
                                         {
-                                            required: `Dosage instruction ${index + 1} dose quantity value is required`,
+                                            required: `La quantità della dose delle istruzioni di dosaggio ${index + 1} è obbligatoria`,
                                             valueAsNumber: true,
                                         },
                                     )}
@@ -274,37 +275,48 @@ const AddMedicationRequestForm = ({ onSubmitSuccess, onCancel }) => {
                                 />
                             </FormRow>
                             <FormRow
-                                label="Dose Quantity Unit:"
+                                label="Unità della Dose:"
                                 error={errors?.dosageInstruction?.[index]?.doseQuantity?.unit?.message}
                             >
                                 <FormSelect
                                     {...register(`dosageInstruction[${index}].doseQuantity.unit`, {
-                                        required: `Dosage instruction ${index + 1} dose quantity unit is required`,
+                                        required: `L'unità della dose delle istruzioni di dosaggio ${index + 1} è obbligatoria`,
                                     })}
                                     options={[
-                                        { value: "", label: "Select a unit" },
+                                        { value: "", label: "Seleziona un'unità" },
                                         ...quantityUnitOptions,
                                     ]}
                                 />
                             </FormRow>
-                            {index > 0 && (
+                            <div className="flex justify-end">
                                 <Button
                                     type="button"
-                                    variant="danger"
+                                    variant="delete"
                                     onClick={() => removeDosageInstruction(index)}
+                                    size="small"
                                 >
-                                    Remove Dosage Instruction
+                                    <FaTrash />
                                 </Button>
-                            )}
+                            </div>
                         </div>
                     ))}
-                    <Button type="button" onClick={() => appendDosageInstruction({})}>
-                        Add Dosage Instruction
-                    </Button>
+
+                    <div className="flex justify-center">
+                        <Button
+                            type="button"
+                            onClick={() => appendDosageInstruction({})}
+                            variant="secondary"
+                            size="small"
+                        >
+                            <FaPlus className="mr-1" /> Aggiungi Istruzione di Dosaggio
+                        </Button>
+                    </div>
+
+
 
                     {/* Dispense Request */}
                     <FormRow
-                        label="Dispense Quantity:"
+                        label="Quantità da Dispensare:"
                         error={errors?.dispenseRequest?.quantity?.value?.message}
                     >
                         <FormInput
@@ -312,7 +324,7 @@ const AddMedicationRequestForm = ({ onSubmitSuccess, onCancel }) => {
                             {...register(
                                 `dispenseRequest.quantity.value`,
                                 {
-                                    required: "Dispense quantity value is required",
+                                    required: "La quantità da dispensare è obbligatoria",
                                     valueAsNumber: true,
                                 },
                             )}
@@ -320,21 +332,21 @@ const AddMedicationRequestForm = ({ onSubmitSuccess, onCancel }) => {
                         />
                     </FormRow>
                     <FormRow
-                        label="Dispense Quantity Unit:"
+                        label="Unità della Quantità da Dispensare:"
                         error={errors?.dispenseRequest?.quantity?.unit?.message}
                     >
                         <FormSelect
                             {...register("dispenseRequest.quantity.unit", {
-                                required: "Dispense quantity unit is required",
+                                required: "L'unità della quantità da dispensare è obbligatoria",
                             })}
                             options={[
-                                { value: "", label: "Select a unit" },
+                                { value: "", label: "Seleziona un'unità" },
                                 ...quantityUnitOptions,
                             ]}
                         />
                     </FormRow>
                     <FormRow
-                        label="Expected Supply Duration:"
+                        label="Durata Prevista della Scorta:"
                         error={errors?.dispenseRequest?.expectedSupplyDuration?.value?.message}
                     >
                         <FormInput
@@ -342,7 +354,7 @@ const AddMedicationRequestForm = ({ onSubmitSuccess, onCancel }) => {
                             {...register(
                                 `dispenseRequest.expectedSupplyDuration.value`,
                                 {
-                                    required: "Expected supply duration value is required",
+                                    required: "La durata prevista della scorta è obbligatoria",
                                     valueAsNumber: true,
                                 },
                             )}
@@ -350,42 +362,42 @@ const AddMedicationRequestForm = ({ onSubmitSuccess, onCancel }) => {
                         />
                     </FormRow>
                     <FormRow
-                        label="Expected Supply Duration Unit:"
+                        label="Unità della Durata Prevista della Scorta:"
                         error={errors?.dispenseRequest?.expectedSupplyDuration?.unit?.message}
                     >
                         <FormSelect
                             {...register("dispenseRequest.expectedSupplyDuration.unit", {
-                                required: "Expected supply duration unit is required",
+                                required: "L'unità della durata prevista della scorta è obbligatoria",
                             })}
                             options={[
-                                { value: "", label: "Select a unit" },
+                                { value: "", label: "Seleziona un'unità" },
                                 ...durationUnitOptions,
                             ]}
                         />
                     </FormRow>
 
                     <FormRow
-                        label=" Validity Period Start:"
+                        label=" Periodo di Validità Inizio:"
                         error={errors?.dispenseRequest?.validityPeriod?.start?.message}
                     >
                         <div className="mb-2">
                             <FormInput
                                 type="datetime-local"
                                 {...register(`dispenseRequest.validityPeriod.start`, {
-                                    required: "Expected supply duration unit is required",
+                                    required: "La durata prevista della scorta è obbligatoria",
                                 })}
                             />
                         </div>
                     </FormRow>
                     <FormRow
-                        label=" Validity Period End:"
+                        label=" Periodo di Validità Fine:"
                         error={errors?.dispenseRequest?.validityPeriod?.end?.message}
                     >
                         <div className="mb-2">
                             <FormInput
                                 type="datetime-local"
                                 {...register(`dispenseRequest.validityPeriod.end`, {
-                                    required: "Expected supply duration unit is required",
+                                    required: "La durata prevista della scorta è obbligatoria",
                                 })}
                             />
                         </div>
@@ -393,71 +405,71 @@ const AddMedicationRequestForm = ({ onSubmitSuccess, onCancel }) => {
 
                     {/* Status */}
                     <FormRow
-                        label="Status Code:"
+                        label="Codice di Stato:"
                         error={errors?.status?.coding?.[0]?.code?.message}
                     >
                         <FormInput
                             {...register("status.coding[0].code", {
-                                required: "Status code is required",
+                                required: "Il codice di stato è obbligatorio",
                             })}
-                            placeholder="active"
+                            placeholder="attivo"
                         />
                     </FormRow>
                     <FormRow
-                        label="Status Display:"
+                        label="Descrizione dello Stato:"
                         error={errors?.status?.coding?.[0]?.display?.message}
                     >
                         <FormInput
                             {...register("status.coding[0].display", {
-                                required: "Status display is required",
+                                required: "La descrizione dello stato è obbligatoria",
                             })}
-                            placeholder="Active"
+                            placeholder="Attivo"
                         />
                     </FormRow>
                     <FormRow
-                        label="Status Text:"
+                        label="Testo dello Stato:"
                         error={errors?.status?.text?.message}
                     >
                         <FormInput
                             {...register("status.text", {
-                                required: "Status text is required",
+                                required: "Il testo dello stato è obbligatorio",
                             })}
-                            placeholder="Active"
+                            placeholder="Attivo"
                         />
                     </FormRow>
 
                     {/* Intent */}
                     <FormRow
-                        label="Intent Code:"
+                        label="Codice dell'Intento:"
                         error={errors?.intent?.coding?.[0]?.code?.message}
                     >
                         <FormInput
                             {...register("intent.coding[0].code", {
-                                required: "Intent code is required",
+                                required: "Il codice dell'intento è obbligatorio",
                             })}
-                            placeholder="proposal"
+                            placeholder="proposta"
                         />
                     </FormRow>
                     <FormRow
-                        label="Intent Display:"
+                        label="Descrizione dell'Intento:"
                         error={errors?.intent?.coding?.[0]?.display?.message}
                     >
                         <FormInput
                             {...register("intent.coding[0].display", {
-                                required: "Intent display is required",
+                                required: "La descrizione dell'intento è obbligatoria",
                             })}
-                            placeholder="Proposal"
+                            placeholder="Proposta"
                         />
                     </FormRow>
                     <FormRow
-                        label="Intent Text:"
+                        label="Testo dell'Intento:"
                         error={errors?.intent?.text?.message}
                     >
                         <FormInput
                             {...register("intent.text", {
-                                required: "Intent text is required",
+                                required: "Il testo dell'intento è obbligatorio",
                             })}
-                            placeholder="Proposal"
+                            placeholder="Proposta"
                         />
                     </FormRow>
                 </div>
@@ -465,10 +477,10 @@ const AddMedicationRequestForm = ({ onSubmitSuccess, onCancel }) => {
 
             <div className="flex justify-end space-x-2">
                 <Button type="button" onClick={onCancel} variant="secondary">
-                    Cancel
+                    Cancella
                 </Button>
                 <Button type="submit" variant="primary" disabled={isPending}>
-                    {isPending ? <Spinner size="small" /> : "Submit"}
+                    {isPending ? <Spinner size="small" /> : "Invia"}
                 </Button>
             </div>
         </form>

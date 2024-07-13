@@ -14,11 +14,9 @@ const MedicationRequestList = () => {
     const { id } = useParams();
 
     const defaultQuery = {
-
         selector: {
             "subject.reference": `${id}`,
         },
-
     };
 
     const [query, setQuery] = useState(defaultQuery);
@@ -35,7 +33,7 @@ const MedicationRequestList = () => {
 
     return (
         <div>
-            <Heading>Lista delle Ricette</Heading>
+            <Heading>Lista delle Prescrizioni</Heading>
             <List
                 items={prescriptions}
                 itemKey="identifier"

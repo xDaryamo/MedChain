@@ -5,10 +5,10 @@ import Button from "../../ui/Button";
 import { Link } from 'react-router-dom';
 
 const formatDate = (dateString) => {
-    if (!dateString) return "N/A";
+    if (!dateString) return "N/D";
     const options = { year: "numeric", month: "long", day: "numeric" };
     const date = new Date(dateString);
-    return date.toLocaleDateString(undefined, options);
+    return date.toLocaleDateString("it-IT", options);
 };
 
 const MedicationRequestPage = () => {
@@ -19,7 +19,7 @@ const MedicationRequestPage = () => {
     const { isPending, prescription } = useGetPrescription(id);
 
     const handleDeleteMedicationRequest = () => {
-        if (window.confirm("Are you sure you want to delete this prescription?")) {
+        if (window.confirm("Sei sicuro di voler eliminare questa prescrizione?")) {
             removePrescription(id, {
                 onSuccess: () => {
                     navigate(-2);
@@ -29,56 +29,55 @@ const MedicationRequestPage = () => {
     };
 
     const renderPrescription = (prescription) => {
-
         return (
             <div>
                 <div>
-                    <strong>ID:</strong> {prescription.identifier?.value || "N/A"}
+                    <strong>ID:</strong> {prescription.identifier?.value || "N/D"}
                 </div>
                 <div>
-                    <strong>Status:</strong> {prescription.status?.coding[0].code || "Status Unknown"}
+                    <strong>Stato:</strong> {prescription.status?.coding[0].code || "Stato sconosciuto"}
                 </div>
                 <div>
-                    <strong>Intent:</strong> {prescription.intent?.coding[0].code || "Intent Unknown"}
+                    <strong>Intento:</strong> {prescription.intent?.coding[0].code || "Intento sconosciuto"}
                 </div>
                 <div>
-                    <strong>Medication:</strong> {prescription.medicationCodeableConcept?.text || "Medication Unknown"}
+                    <strong>Farmaco:</strong> {prescription.medicationCodeableConcept?.text || "Farmaco sconosciuto"}
                 </div>
                 <div>
-                    <strong>Patient:</strong> {prescription.subject?.display || "Patient Unknown"}
+                    <strong>Paziente:</strong> {prescription.subject?.display || "Paziente sconosciuto"}
                 </div>
                 <div>
-                    <strong>Authored On:</strong> {formatDate(prescription.authoredOn)}
+                    <strong>Data di Autorizzazione:</strong> {formatDate(prescription.authoredOn)}
                 </div>
                 <div>
-                    <strong>Requester:</strong> {prescription.requester?.display || "Requester Unknown"}
+                    <strong>Richiedente:</strong> {prescription.requester?.display || "Richiedente sconosciuto"}
                 </div>
                 <div>
-                    <strong>Dosage Instructions:</strong>
+                    <strong>Istruzioni di Dosaggio:</strong>
                     <ul>
                         {prescription.dosageInstruction?.map((instruction, index) => (
                             <li key={index}>
-                                <strong>Dosage {index + 1}:</strong>
-                                <div>Text: {instruction.text || "N/A"}</div>
-                                <div>Route: {instruction.route?.text || "N/A"}</div>
+                                <strong>Dosaggio {index + 1}:</strong>
+                                <div>Testo: {instruction.text || "N/D"}</div>
+                                <div>Via: {instruction.route?.text || "N/D"}</div>
                             </li>
                         ))}
                     </ul>
                 </div>
                 {prescription.dispenseRequest && (
                     <div>
-                        <strong>Dispense Request:</strong>
+                        <strong>Richiesta di Dispensa:</strong>
                         <div>
-                            <strong>Quantity:</strong> {prescription.dispenseRequest.quantity.value} {prescription.dispenseRequest.quantity.unit}
+                            <strong>Quantità:</strong> {prescription.dispenseRequest.quantity.value} {prescription.dispenseRequest.quantity.unit}
                         </div>
                         <div>
-                            <strong>Expected Supply Duration:</strong> {prescription.dispenseRequest.expectedSupplyDuration.value} {prescription.dispenseRequest.expectedSupplyDuration.unit}
+                            <strong>Durata di Fornitura Prevista:</strong> {prescription.dispenseRequest.expectedSupplyDuration.value} {prescription.dispenseRequest.expectedSupplyDuration.unit}
                         </div>
                         <div>
-                            <strong>Validity start:</strong> {prescription.dispenseRequest.validityPeriod?.start}
+                            <strong>Inizio Validità:</strong> {prescription.dispenseRequest.validityPeriod?.start}
                         </div>
                         <div>
-                            <strong>Validity end:</strong> {prescription.dispenseRequest.validityPeriod?.end}
+                            <strong>Fine Validità:</strong> {prescription.dispenseRequest.validityPeriod?.end}
                         </div>
                     </div>
                 )}
@@ -94,25 +93,30 @@ const MedicationRequestPage = () => {
         <div className="flex-1 overflow-y-auto p-4 md:p-8">
             <div className="flex items-center mb-4">
                 <Button variant="secondary" onClick={() => navigate(-1)}>
-                    Back
+                    Indietro
                 </Button>
-                <h1 className="ml-4 text-2xl font-bold">Prescription Details</h1>
+                <h1 className="ml-4 text-2xl font-bold">Dettagli Prescrizione</h1>
             </div>
             <section className="mt-4 space-y-6">
                 <div className="bg-white rounded shadow p-4">
-                    <h2 className="text-xl font-bold mb-2">Prescription Information</h2>
+                    <h2 className="text-xl font-bold mb-2">Informazioni Prescrizione</h2>
                     {renderPrescription(prescription.prescription)}
                 </div>
                 <div className="flex space-x-4 mt-4">
-                    <Link to={`/prescriptions/update/${id}`}>
-                        <Button variant="secondary">Edit</Button>
+                    <Link
+                        to={`/prescriptions/update/${id}`}
+                        className="mt-4 flex w-full justify-center space-x-4"
+                    >
+                        <Button variant="primary" size="large">
+                            Modifica
+                        </Button>
                     </Link>
                     <Button
                         variant="danger"
                         onClick={handleDeleteMedicationRequest}
                         disabled={deletePending}
                     >
-                        {deletePending ? <Spinner /> : "Delete"}
+                        {deletePending ? <Spinner /> : "Elimina"}
                     </Button>
                 </div>
             </section>
