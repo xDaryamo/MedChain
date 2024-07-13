@@ -45,11 +45,6 @@ const AddEncounterForm = ({ onSubmitSuccess, onCancel }) => {
         name: "diagnosis"
     });
 
-    const { fields: locationFields, append: appendLocation, remove: removeLocation } = useFieldArray({
-        control,
-        name: "location"
-    });
-
     const [focusIndex, setFocusIndex] = useState(null);
 
     useEffect(() => {
@@ -68,13 +63,6 @@ const AddEncounterForm = ({ onSubmitSuccess, onCancel }) => {
                 start: new Date(data.period.start).toISOString(),
                 end: new Date(data.period.end).toISOString(),
             },
-            location: data.location.map(loc => ({
-                ...loc,
-                period: {
-                    start: new Date(loc.period.start).toISOString(),
-                    end: new Date(loc.period.end).toISOString(),
-                }
-            })),
             identifier: {
                 system: "urn:ietf:rfc:3986"
             },
@@ -219,39 +207,6 @@ const AddEncounterForm = ({ onSubmitSuccess, onCancel }) => {
             <div className="flex justify-center">
                 <Button type="button" onClick={() => { appendDiagnosis({}); setFocusIndex(diagnosisFields.length); }} variant="secondary" size="small">
                     <FaPlus className="mr-1" /> Aggiungi Diagnosi
-                </Button>
-            </div>
-
-            {
-                locationFields.map((item, index) => (
-                    <div key={item.id} className="mb-2 space-y-2 border p-2">
-                        <h4 className="text-lg font-medium">Posizione {index + 1}</h4>
-                        <FormRow label="Riferimento della posizione:" error={errors.location?.[index]?.location?.reference?.message}>
-                            <FormInput
-                                {...register(`location.${index}.location.reference`, { required: "Il riferimento della posizione è obbligatorio" })}
-                                placeholder="123"
-                            />
-                        </FormRow>
-                        <FormRow label="Stato:" error={errors.location?.[index]?.status?.message}>
-                            <FormInput {...register(`location.${index}.status.coding.[0].code`)} placeholder="attivo" />
-                        </FormRow>
-                        <FormRow label="Inizio periodo:" error={errors.location?.[index]?.period?.start?.message}>
-                            <input type="datetime-local" {...register(`location.${index}.period.start`)} />
-                        </FormRow>
-                        <FormRow label="Fine periodo:" error={errors.location?.[index]?.period?.end?.message}>
-                            <input type="datetime-local" {...register(`location.${index}.period.end`)} />
-                        </FormRow>
-                        <div className="flex justify-end">
-                            <Button type="button" onClick={() => removeLocation(index)} variant="delete" size="small">
-                                <FaTrash />
-                            </Button>
-                        </div>
-                    </div>
-                ))
-            }
-            <div className="flex justify-center">
-                <Button type="button" onClick={() => { appendLocation({}); setFocusIndex(locationFields.length); }} variant="secondary" size="small">
-                    <FaPlus className="mr-1" /> Aggiungi Posizione
                 </Button>
             </div>
 
