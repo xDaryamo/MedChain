@@ -3,6 +3,7 @@ import { useGetPrescription, useRemovePrescription } from "./usePrescriptions";
 import Spinner from "../../ui/Spinner";
 import Button from "../../ui/Button";
 import { Link } from 'react-router-dom';
+import { FaTrash } from "react-icons/fa";
 
 const formatDate = (dateString) => {
     if (!dateString) return "N/D";
@@ -111,13 +112,16 @@ const MedicationRequestPage = () => {
                             Modifica
                         </Button>
                     </Link>
-                    <Button
-                        variant="danger"
-                        onClick={handleDeleteMedicationRequest}
-                        disabled={deletePending}
-                    >
-                        {deletePending ? <Spinner /> : "Elimina"}
-                    </Button>
+                    <div className="flex justify-end">
+                        <Button
+                            type="button"
+                            variant="delete"
+                            onClick={() => handleDeleteMedicationRequest()}
+                            size="small"
+                        >
+                            <FaTrash />
+                        </Button>
+                    </div>
                 </div>
             </section>
         </div>

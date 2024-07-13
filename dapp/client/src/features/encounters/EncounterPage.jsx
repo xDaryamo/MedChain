@@ -6,6 +6,7 @@ import Heading from "../../ui/Heading";
 import BackButton from "../../ui/BackButton";
 import { Link } from "react-router-dom";
 import { useEffect } from "react";
+import { FaTrash } from "react-icons/fa";
 
 const formatDate = (dateString) => {
     if (!dateString) return "N/D";
@@ -106,13 +107,16 @@ const EncounterPage = () => {
                         <Link to={`/encounters/update/${id}`} className="mt-4 flex w-full justify-center space-x-4">
                             <Button variant="secondary">Modifica</Button>
                         </Link>
-                        <Button
-                            variant="danger"
-                            onClick={handleDeleteEncounter}
-                            disabled={deletePending}
-                        >
-                            {deletePending ? <Spinner /> : "Elimina"}
-                        </Button>
+                        <div className="flex justify-end">
+                            <Button
+                                type="button"
+                                variant="delete"
+                                onClick={() => handleDeleteEncounter()}
+                                size="small"
+                            >
+                                <FaTrash />
+                            </Button>
+                        </div>
                     </div>
                 </section>
             )}
