@@ -14,6 +14,7 @@ import LabResultPage from "./features/labresults/LabResultPage";
 import UpdateLabResultForm from "./features/labresults/UpdateLabResultForm";
 import EncounterList from "./features/encounters/EncounterList";
 import EncounterPage from "./features/encounters/EncounterPage";
+import UpdateEncounterForm from "./features/encounters/UpdateEncounterForm";
 import MedicationRequestList from "./features/prescriptions/MedicationRequestList";
 import MedicationRequestPage from "./features/prescriptions/MedicationRequestPage";
 import UpdateMedicationRequestForm from "./features/prescriptions/UpdateMedicationRequestForm";
@@ -186,6 +187,15 @@ const App = () => {
               element={
                 <ProtectedRoute>
                   <EncounterPage />
+                </ProtectedRoute>
+              }
+            />
+
+            <Route
+              path="encounters/update/:id"
+              element={
+                <ProtectedRoute>
+                  <UpdateEncounterForm />
                 </ProtectedRoute>
               }
             />

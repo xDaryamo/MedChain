@@ -29,7 +29,7 @@ const EncounterList = () => {
 
   console.log(encounters);
 
-  if (userError) return <p>Error loading user data</p>;
+  if (userError) return <p>Errore nel caricamento dei dati utente</p>;
 
   const handleRemoveEncounter = async (id) => {
     removeEncounter(id);
@@ -43,7 +43,7 @@ const EncounterList = () => {
 
   return (
     <div>
-      <Heading>Encounter List</Heading>
+      <Heading>Lista degli Incontri</Heading>
       <List
         items={encounters}
         itemKey="identifier"
@@ -56,7 +56,7 @@ const EncounterList = () => {
       />
       {user?.role === "practitioner" && (
         <Modal isOpen={isModalOpen} onClose={handleModalClose}>
-          <AddEncounterForm onSubmitSuccess={handleModalClose} />
+          <AddEncounterForm onSubmitSuccess={handleModalClose} onCancel={handleModalClose} />
         </Modal>
       )}
       <Toaster />

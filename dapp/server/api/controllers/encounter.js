@@ -68,7 +68,7 @@ exports.getEncounter = async (req, res, next) => {
       encounterID
     );
 
-    const encounter = JSON.parse(encounter);
+    const encounter = JSON.parse(encounterString);
 
     if (
       !(await isAuthorized(userID, organization, encounter.subject.reference))
@@ -148,11 +148,15 @@ exports.deleteEncounter = async (req, res, next) => {
     );
     const encounter = JSON.parse(encounterString);
 
+    fabric.disconnect();
+
     if (
       !(await isAuthorized(userID, organization, encounter.subject.reference))
     ) {
       return res.status(403).json({ error: "User not approved" });
     }
+
+    await fabric.init(userID, organization, channel, chaincode);
 
     const result = await fabric.submitTransaction(
       "DeleteEncounter",

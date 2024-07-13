@@ -8,43 +8,55 @@ import {
 } from "../../services/apiEncounters";
 import toast from "react-hot-toast";
 
+export const useGetEncounter = (id) => {
+  const {
+    data: encounter,
+    isPending,
+    refetch,
+    error,
+  } = useQuery({
+    queryKey: ["encounter", id],
+    queryFn: () => getEncounter(id),
+    enabled: !!id,
+    onError: (error) => {
+      toast.error("Failed to fetch encounter");
+      console.error("Fetch encounter error", error);
+    },
+  });
+  return { encounter, isPending, refetch, error };
+};
+
 export const useSearchEncounters = (query) => {
   const queryKey = query ? ["encounters", query] : ["encounters"];
-  const { data: encounters = [], isPending } = useQuery({
+  const {
+    data: encounters = [],
+    isPending,
+    error,
+    refetch,
+  } = useQuery({
     queryKey,
     queryFn: () => searchEncounters(query),
-    onSuccess: (data) => {
-      console.log("Encounters fetched successfully:", data);
-    },
     onError: (error) => {
-      console.error("Error fetching encounters:", error);
+      toast.error("Failed to fetch encounters");
+      console.error("Fetch encounters error", error);
     },
   });
 
   return {
     isPending,
     encounters,
-  };
-};
-
-export const useGetEncounter = (id) => {
-  const { data: encounter, isLoading: isPending } = useQuery({
-    queryKey: ["encounter", id],
-    queryFn: () => getEncounter(id),
-  });
-  return {
-    isPending,
-    encounter,
+    error,
+    refetch,
   };
 };
 
 export const useAddEncounter = () => {
   const queryClient = useQueryClient();
 
-  const { mutate: addEncounter, isLoading: isPending } = useMutation({
+  const { mutate: addEncounter, isPending } = useMutation({
     mutationFn: createEncounter,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["encounters"] });
+      queryClient.invalidateQueries(["encounters"]);
       toast.success("Encounter added successfully");
     },
     onError: (error) => {
@@ -59,12 +71,10 @@ export const useAddEncounter = () => {
 export const useUpdateEncounter = () => {
   const queryClient = useQueryClient();
 
-  const { mutate: updateEncounter, isLoading: isPending } = useMutation({
-    mutationFn: async ({ id, encounter }) => {
-      await updateEncounterApi(id, encounter);
-    },
+  const { mutate: updateEncounter, isPending } = useMutation({
+    mutationFn: ({ id, encounter }) => updateEncounterApi(id, encounter),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["encounters"] });
+      queryClient.invalidateQueries(["encounters"]);
       toast.success("Encounter updated successfully");
     },
     onError: (error) => {
@@ -79,10 +89,10 @@ export const useUpdateEncounter = () => {
 export const useRemoveEncounter = () => {
   const queryClient = useQueryClient();
 
-  const { mutate: removeEncounter, isLoading: isPending } = useMutation({
+  const { mutate: removeEncounter, isPending } = useMutation({
     mutationFn: deleteEncounter,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["encounters"] });
+      queryClient.invalidateQueries(["encounters"]);
       toast.success("Encounter deleted successfully");
     },
     onError: (error) => {

@@ -150,7 +150,7 @@ type HumanName struct {
 
 // Encounter represents an interaction between a patient and healthcare provider(s) for the provision of healthcare service(s)
 type Encounter struct {
-	ID              *Identifier            `json:"identifier"`                        // The logical id of the resource.
+	ID              *Identifier            `json:"identifier"`                // The logical id of the resource.
 	Status          *Code                  `json:"status"`                    // Current state of the encounter (e.g., planned, in-progress, onhold, completed, cancelled)
 	Class           *Coding                `json:"class"`                     // Classification of the encounter (e.g., inpatient, outpatient, emergency)
 	Type            []CodeableConcept      `json:"type,omitempty"`            // Specific type of the encounter (e.g., consultation, follow-up)
@@ -163,7 +163,7 @@ type Encounter struct {
 	Period          *Period                `json:"period,omitempty"`          // The start and end time of the encounter
 	Length          *Duration              `json:"length,omitempty"`          // Quantity of time the encounter lasted (in seconds)
 	ReasonCode      *CodeableConcept       `json:"reasonCode,omitempty"`      // Reason the encounter takes place, expressed as a code
-	ReasonReference []CodeableConcept      `json:"reasonReference,omitempty"` // Reasons the encounter takes place, referenced as a resource
+	ReasonReference []Reference            `json:"reasonReference,omitempty"` // Reasons the encounter takes place, referenced as a resource
 	Diagnosis       []EncounterDiagnosis   `json:"diagnosis,omitempty"`       // The list of diagnosis relevant to this encounter
 	Location        []Location             `json:"location,omitempty"`        // List of locations where the encounter takes place
 	ServiceProvider *Reference             `json:"serviceProvider,omitempty"` // The organization that is primarily responsible for this Encounter's services

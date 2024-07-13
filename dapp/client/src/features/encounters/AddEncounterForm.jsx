@@ -1,276 +1,269 @@
+/* eslint-disable react/prop-types */
 import { useForm, useFieldArray } from "react-hook-form";
+import { useEffect, useState } from "react";
 import FormRow from "../../ui/FormRow";
 import FormInput from "../../ui/FormInput";
+import FormSelect from "../../ui/FormSelect";
 import Button from "../../ui/Button";
+import { FaTrash, FaPlus } from "react-icons/fa";
 import { useAddEncounter } from "./useEncounters";
 import Spinner from "../../ui/Spinner";
 import { useParams } from "react-router-dom";
 
-const AddEncounterForm = ({ onAdd, onCancel }) => {
+const statusOptions = [
+    { value: "planned", label: "Pianificato" },
+    { value: "arrived", label: "Arrivato" },
+    { value: "in-progress", label: "In corso" },
+    { value: "onleave", label: "In pausa" },
+    { value: "finished", label: "Concluso" },
+    { value: "cancelled", label: "Annullato" },
+];
+
+const classOptions = [
+    { value: "inpatient", label: "In paziente" },
+    { value: "outpatient", label: "Ambulatoriale" },
+    { value: "emergency", label: "Emergenza" },
+];
+
+const AddEncounterForm = ({ onSubmitSuccess, onCancel }) => {
     const { register, handleSubmit, control, reset, formState: { errors } } = useForm();
-
     const { addEncounter, isPending } = useAddEncounter();
-
     const { id: practitionerID } = useParams();
 
-    const { fields: typeFields, append: appendType } = useFieldArray({
+    const { fields: typeFields, append: appendType, remove: removeType } = useFieldArray({
         control,
         name: "type"
     });
 
-    const { fields: reasonReferenceFields, append: appendReasonReference } = useFieldArray({
+    const { fields: reasonReferenceFields, append: appendReasonReference, remove: removeReasonReference } = useFieldArray({
         control,
         name: "reasonReference"
     });
 
-    const { fields: diagnosisFields, append: appendDiagnosis } = useFieldArray({
+    const { fields: diagnosisFields, append: appendDiagnosis, remove: removeDiagnosis } = useFieldArray({
         control,
         name: "diagnosis"
     });
 
-    const { fields: locationFields, append: appendLocation } = useFieldArray({
+    const { fields: locationFields, append: appendLocation, remove: removeLocation } = useFieldArray({
         control,
         name: "location"
     });
 
+    const [focusIndex, setFocusIndex] = useState(null);
+
+    useEffect(() => {
+        if (focusIndex !== null) {
+            const element = document.getElementById(`type.${focusIndex}.coding[0].code`);
+            if (element) {
+                element.focus();
+            }
+        }
+    }, [focusIndex]);
+
     const onSubmit = async (data) => {
-        const encounterData = {
+        const formattedData = {
             ...data,
+            period: {
+                start: new Date(data.period.start).toISOString(),
+                end: new Date(data.period.end).toISOString(),
+            },
+            location: data.location.map(loc => ({
+                ...loc,
+                period: {
+                    start: new Date(loc.period.start).toISOString(),
+                    end: new Date(loc.period.end).toISOString(),
+                }
+            })),
             identifier: {
                 system: "urn:ietf:rfc:3986"
             },
             participant: [
                 {
-                    individual: { reference: `Practitioner/${practitionerID}` }
+                    individual: { reference: `${practitionerID}` }
                 }
             ],
         };
 
-        await addEncounter(encounterData, {
+        formattedData.length = parseFloat(formattedData.length);
+
+        formattedData.diagnosis.forEach(diagnosis => {
+            diagnosis.rank = parseInt(diagnosis.rank);
+        });
+
+        await addEncounter(formattedData, {
             onSettled: () => {
                 reset();
-                onAdd();
+                onSubmitSuccess();
             }
         });
     };
 
+
     return (
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-            <h2 className="mb-6 text-2xl font-bold">Add Encounter</h2>
+            <h2 className="mb-6 text-2xl font-bold">Aggiungi Incontro</h2>
 
-            <FormRow
-                label="Status:"
-                error={errors.status?.message}
-            >
-                <FormInput
-                    {...register("status", { required: "Status is required" })}
-                    placeholder="planned"
+            <FormRow label="Stato:" error={errors.status?.message}>
+                <FormSelect
+                    {...register("status.coding.[0].code", { required: "Lo stato è obbligatorio" })}
+                    options={statusOptions}
                 />
             </FormRow>
 
-            <FormRow
-                label="Class:"
-                error={errors.class?.code?.message}
-            >
-                <FormInput
-                    {...register("class.code")}
-                    placeholder="inpatient"
+            <FormRow label="Classe:" error={errors.class?.code?.message}>
+                <FormSelect
+                    {...register("class.code", { required: "La classe è obbligatoria" })}
+                    options={classOptions}
                 />
             </FormRow>
 
             {typeFields.map((item, index) => (
-                <FormRow
-                    key={item.id}
-                    label={`Type ${index + 1}:`}
-                    error={errors.type?.[index]?.coding?.[0]?.code?.message}
-                >
-                    <FormInput
-                        {...register(`type.${index}.coding[0].code`)}
-                        placeholder="consultation"
-                    />
-                </FormRow>
-            ))}
-            <Button type="button" onClick={() => appendType({})}>Add Type</Button>
-
-            <FormRow
-                label="Service Type:"
-                error={errors.serviceType?.coding?.[0]?.code?.message}
-            >
-                <FormInput
-                    {...register("serviceType.coding[0].code")}
-                    placeholder="primary care"
-                />
-            </FormRow>
-
-            <FormRow
-                label="Priority:"
-                error={errors.priority?.coding?.[0]?.code?.message}
-            >
-                <FormInput
-                    {...register("priority.coding[0].code")}
-                    placeholder="urgent"
-                />
-            </FormRow>
-
-            <FormRow
-                label="Subject Reference:"
-                error={errors.subject?.reference?.message}
-            >
-                <FormInput
-                    {...register("subject.reference", { required: "Subject reference is required" })}
-                    placeholder="Patient/67890"
-                />
-            </FormRow>
-
-            <FormRow
-                label="Period Start:"
-                error={errors.period?.start?.message}
-            >
-                <input
-                    type="datetime-local"
-                    {...register("period.start", { required: "Period start is required" })}
-                />
-            </FormRow>
-
-            <FormRow
-                label="Period End:"
-                error={errors.period?.end?.message}
-            >
-                <input
-                    type="datetime-local"
-                    {...register("period.end", { required: "Period end is required" })}
-                />
-            </FormRow>
-
-            <FormRow
-                label="Length (in seconds):"
-                error={errors.length?.message}
-            >
-                <FormInput
-                    {...register("length")}
-                    placeholder="3600"
-                />
-            </FormRow>
-
-            {reasonReferenceFields.map((item, index) => (
-                <FormRow
-                    key={item.id}
-                    label={`Reason Reference ${index + 1}:`}
-                    error={errors.reasonReference?.[index]?.coding?.[0]?.code?.message}
-                >
-                    <FormInput
-                        {...register(`reasonReference.${index}.coding[0].code`)}
-                        placeholder="Condition/123"
-                    />
-                </FormRow>
-            ))}
-            <Button type="button" onClick={() => appendReasonReference({})}>Add Reason Reference</Button>
-
-            {diagnosisFields.map((item, index) => (
-                <div key={item.id}>
-                    <h3>Diagnosis {index + 1}</h3>
-                    <FormRow
-                        label="Condition Reference:"
-                        error={errors.diagnosis?.[index]?.condition?.reference?.message}
-                    >
+                <div key={item.id} className="mb-2 space-y-2 border p-2">
+                    <h4 className="text-lg font-medium">Tipo {index + 1}</h4>
+                    <FormRow label="Codice:" error={errors.type?.[index]?.coding?.[0]?.code?.message}>
                         <FormInput
-                            {...register(`diagnosis.${index}.condition.reference`)}
-                            placeholder="Condition/123"
+                            id={`type.${index}.coding[0].code`}
+                            {...register(`type.${index}.coding[0].code`, { required: "Il codice è obbligatorio" })}
+                            placeholder="consultazione"
                         />
                     </FormRow>
-                    <FormRow
-                        label="Use:"
-                        error={errors.diagnosis?.[index]?.use?.coding?.[0]?.code?.message}
-                    >
-                        <FormInput
-                            {...register(`diagnosis.${index}.use.coding[0].code`)}
-                            placeholder="admission"
-                        />
-                    </FormRow>
-                    <FormRow
-                        label="Rank:"
-                        error={errors.diagnosis?.[index]?.rank?.message}
-                    >
-                        <FormInput
-                            {...register(`diagnosis.${index}.rank`)}
-                            placeholder="1"
-                        />
-                    </FormRow>
+                    <div className="flex justify-end">
+                        <Button type="button" onClick={() => removeType(index)} variant="delete" size="small">
+                            <FaTrash />
+                        </Button>
+                    </div>
                 </div>
             ))}
-            <Button type="button" onClick={() => appendDiagnosis({})}>Add Diagnosis</Button>
-
-            {locationFields.map((item, index) => (
-                <div key={item.id}>
-                    <h3>Location {index + 1}</h3>
-                    <FormRow
-                        label="Location Status:"
-                        error={errors.location?.[index]?.status?.message}
-                    >
-                        <FormInput
-                            {...register(`location.${index}.status`)}
-                            placeholder="active"
-                        />
-                    </FormRow>
-                    <FormRow
-                        label="Location Name:"
-                        error={errors.location?.[index]?.name?.message}
-                    >
-                        <FormInput
-                            {...register(`location.${index}.name`, { required: "Location name is required" })}
-                            placeholder="Main Hospital"
-                        />
-                    </FormRow>
-                    <FormRow
-                        label="Location Type:"
-                        error={errors.location?.[index]?.type?.coding?.[0]?.code?.message}
-                    >
-                        <FormInput
-                            {...register(`location.${index}.type.coding[0].code`)}
-                            placeholder="hospital"
-                        />
-                    </FormRow>
-                    <FormRow
-                        label="Location Contact:"
-                        error={errors.location?.[index]?.contact?.value?.message}
-                    >
-                        <FormInput
-                            {...register(`location.${index}.contact.value`)}
-                            placeholder="123-456-7890"
-                        />
-                    </FormRow>
-                    <FormRow
-                        label="Location Address:"
-                        error={errors.location?.[index]?.address?.line?.[0]?.message}
-                    >
-                        <FormInput
-                            {...register(`location.${index}.address.line[0]`, { required: "Location address is required" })}
-                            placeholder="123 Main St"
-                        />
-                    </FormRow>
-                </div>
-            ))}
-            <Button type="button" onClick={() => appendLocation({})}>Add Location</Button>
-
-            <FormRow
-                label="Part Of Reference:"
-                error={errors.partOf?.reference?.message}
-            >
-                <FormInput
-                    {...register("partOf.reference")}
-                    placeholder="Encounter/123"
-                />
-            </FormRow>
-
-            <div className="flex justify-end space-x-2">
-                <Button type="button" onClick={onCancel} variant="secondary">
-                    Cancel
-                </Button>
-                <Button type="submit" variant="primary" disabled={isPending}>
-                    {isPending ? <Spinner size="small" /> : "Add"}
+            <div className="flex justify-center">
+                <Button type="button" onClick={() => { appendType({}); setFocusIndex(typeFields.length); }} variant="secondary" size="small">
+                    <FaPlus className="mr-1" /> Aggiungi Tipo
                 </Button>
             </div>
-        </form>
+
+            <FormRow label="Tipo di servizio:" error={errors.serviceType?.coding?.[0]?.code?.message}>
+                <FormInput {...register("serviceType.coding[0].code")} placeholder="assistenza primaria" />
+            </FormRow>
+
+            <FormRow label="Priorità:" error={errors.priority?.coding?.[0]?.code?.message}>
+                <FormInput {...register("priority.coding[0].code")} placeholder="urgente" />
+            </FormRow>
+
+            <FormRow label="Soggetto di riferimento:" error={errors.subject?.reference?.message}>
+                <FormInput {...register("subject.reference", { required: "Il riferimento del soggetto è obbligatorio" })} placeholder="67890" />
+            </FormRow>
+
+            <FormRow label="Inizio periodo:" error={errors.period?.start?.message}>
+                <input type="datetime-local" {...register("period.start", { required: "L'inizio del periodo è obbligatorio" })} />
+            </FormRow>
+
+            <FormRow label="Fine periodo:" error={errors.period?.end?.message}>
+                <input type="datetime-local" {...register("period.end", { required: "La fine del periodo è obbligatoria" })} />
+            </FormRow>
+
+            <FormRow label="Durata (in secondi):" error={errors.length?.message}>
+                <FormInput {...register("length.value")} placeholder="3600" />
+            </FormRow>
+            <div className="mb-4 border-b pb-4">
+                <h3 className="mb-4 text-xl font-semibold text-cyan-950">Riferimento del motivo</h3>
+                {reasonReferenceFields.map((item, index) => (
+                    <div key={item.id} className="mb-2 flex space-x-2" >
+                        <FormInput
+                            {...register(`reasonReference[${index}].reference`, { required: `Il riferimento del motivo ${index + 1} è obbligatorio` })}
+                            placeholder="123"
+                        />
+                        <div className="flex justify-end">
+                            <Button
+                                type="button"
+                                variant="delete"
+                                onClick={() => removeReasonReference(index)}
+                                size="small"
+                            >
+                                <FaTrash />
+                            </Button>
+                        </div>
+                    </div>
+                ))
+                }
+            </div>
+            <div className="flex justify-center">
+                <Button type="button" onClick={() => { appendReasonReference({}); setFocusIndex(reasonReferenceFields.length); }} variant="secondary" size="small">
+                    <FaPlus className="mr-1" /> Aggiungi Riferimento del Motivo
+                </Button>
+            </div>
+
+            {
+                diagnosisFields.map((item, index) => (
+                    <div key={item.id} className="mb-2 space-y-2 border p-2">
+                        <h4 className="text-lg font-medium">Diagnosi {index + 1}</h4>
+                        <FormRow label="Riferimento della condizione:" error={errors.diagnosis?.[index]?.condition?.reference?.message}>
+                            <FormInput
+                                {...register(`diagnosis.${index}.condition.reference`, { required: "Il riferimento della condizione è obbligatorio" })}
+                                placeholder="123"
+                            />
+                        </FormRow>
+                        <FormRow label="Utilizzo:" error={errors.diagnosis?.[index]?.use?.coding?.[0]?.code?.message}>
+                            <FormInput {...register(`diagnosis.${index}.use.coding[0].code`)} placeholder="ricovero" />
+                        </FormRow>
+                        <FormRow label="Grado:" error={errors.diagnosis?.[index]?.rank?.message}>
+                            <FormInput {...register(`diagnosis.${index}.rank`)} placeholder="1" type="number" />
+                        </FormRow>
+                        <div className="flex justify-end">
+                            <Button type="button" onClick={() => removeDiagnosis(index)} variant="delete" size="small">
+                                <FaTrash />
+                            </Button>
+                        </div>
+                    </div>
+                ))
+            }
+            <div className="flex justify-center">
+                <Button type="button" onClick={() => { appendDiagnosis({}); setFocusIndex(diagnosisFields.length); }} variant="secondary" size="small">
+                    <FaPlus className="mr-1" /> Aggiungi Diagnosi
+                </Button>
+            </div>
+
+            {
+                locationFields.map((item, index) => (
+                    <div key={item.id} className="mb-2 space-y-2 border p-2">
+                        <h4 className="text-lg font-medium">Posizione {index + 1}</h4>
+                        <FormRow label="Riferimento della posizione:" error={errors.location?.[index]?.location?.reference?.message}>
+                            <FormInput
+                                {...register(`location.${index}.location.reference`, { required: "Il riferimento della posizione è obbligatorio" })}
+                                placeholder="123"
+                            />
+                        </FormRow>
+                        <FormRow label="Stato:" error={errors.location?.[index]?.status?.message}>
+                            <FormInput {...register(`location.${index}.status.coding.[0].code`)} placeholder="attivo" />
+                        </FormRow>
+                        <FormRow label="Inizio periodo:" error={errors.location?.[index]?.period?.start?.message}>
+                            <input type="datetime-local" {...register(`location.${index}.period.start`)} />
+                        </FormRow>
+                        <FormRow label="Fine periodo:" error={errors.location?.[index]?.period?.end?.message}>
+                            <input type="datetime-local" {...register(`location.${index}.period.end`)} />
+                        </FormRow>
+                        <div className="flex justify-end">
+                            <Button type="button" onClick={() => removeLocation(index)} variant="delete" size="small">
+                                <FaTrash />
+                            </Button>
+                        </div>
+                    </div>
+                ))
+            }
+            <div className="flex justify-center">
+                <Button type="button" onClick={() => { appendLocation({}); setFocusIndex(locationFields.length); }} variant="secondary" size="small">
+                    <FaPlus className="mr-1" /> Aggiungi Posizione
+                </Button>
+            </div>
+
+            <div className="flex justify-center space-x-2">
+                <Button type="submit" disabled={isPending}>
+                    {isPending ? <Spinner /> : "Aggiungi Incontro"}
+                </Button>
+                <Button type="button" onClick={onCancel} variant="secondary">
+                    Annulla
+                </Button>
+            </div>
+        </form >
     );
 };
 
