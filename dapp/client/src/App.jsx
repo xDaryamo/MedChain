@@ -27,6 +27,7 @@ import UserProfile from "./features/users/UserProfile";
 import EditCredentals from "./features/users/EditCredentials";
 import EditPractitionerDetails from "./features/users/EditPractitionerDetails";
 import EditPatientDetails from "./features/users/EditPatientDetails";
+import ManageAuth from "./features/users/ManageAuth";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -88,6 +89,14 @@ const App = () => {
               element={
                 <ProtectedRoute>
                   <FollowedPatientsList />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="patients/manage-auth"
+              element={
+                <ProtectedRoute>
+                  <ManageAuth />
                 </ProtectedRoute>
               }
             />

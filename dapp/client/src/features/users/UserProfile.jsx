@@ -60,6 +60,12 @@ const UserProfile = () => {
             >
               Modifica Dettagli
             </Link>
+            <Link
+              to={`/patients/manage-auth`}
+              className="rounded p-2 text-stone-800 transition-all duration-300 hover:bg-gray-700 hover:text-white"
+            >
+              Gestisci Autorizzazioni
+            </Link>
           </>
         ) : (
           <>

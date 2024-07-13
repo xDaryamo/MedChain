@@ -462,6 +462,62 @@ func (c *PatientContract) GetAccessRequests(ctx contractapi.TransactionContextIn
 	return string(requestsJSON), nil
 }
 
+
+// DeletePendingRequest deletes a pending authorization request for a patient
+func (c *PatientContract) DeletePendingRequest(ctx contractapi.TransactionContextInterface, patientID string, requesterID string, isOrg bool) (string, error) {
+	authAsBytes, err := ctx.GetStub().GetState("auth_" + patientID)
+	if err != nil {
+		return `{"error": "failed to get authorization data: ` + err.Error() + `"}`, err
+	}
+	if authAsBytes == nil {
+		return `{"error": "no authorization record found for patient: ` + patientID + `"}`, errors.New("no authorization record found for patient: " + patientID)
+	}
+
+	var auth Authorization
+	err = json.Unmarshal(authAsBytes, &auth)
+	if err != nil {
+		return `{"error": "failed to unmarshal authorization data: ` + err.Error() + `"}`, err
+	}
+
+	clientID, exists, err := ctx.GetClientIdentity().GetAttributeValue("userId")
+	if err != nil {
+		return `{"error": "failed to get client ID attribute: ` + err.Error() + `"}`, err
+	}
+	if !exists {
+		return `{"error": "client ID attribute does not exist"}`, errors.New("client ID attribute does not exist")
+	}
+
+	if clientID != patientID {
+		return `{"error": "only the patient can delete pending requests"}`, errors.New("only the patient can delete pending requests")
+	}
+
+	if isOrg {
+		if _, ok := auth.AuthorizedOrgs[requesterID]; ok {
+			delete(auth.AuthorizedOrgs, requesterID)
+		} else {
+			return `{"error": "no pending request found for organization"}`, errors.New("no pending request found for organization")
+		}
+	} else {
+		if _, ok := auth.Authorized[requesterID]; ok {
+			delete(auth.Authorized, requesterID)
+		} else {
+			return `{"error": "no pending request found for user"}`, errors.New("no pending request found for user")
+		}
+	}
+
+	updatedAuthBytes, err := json.Marshal(auth)
+	if err != nil {
+		return `{"error": "failed to marshal authorization data: ` + err.Error() + `"}`, err
+	}
+
+	err = ctx.GetStub().PutState("auth_"+patientID, updatedAuthBytes)
+	if err != nil {
+		return `{"error": "failed to put authorization data: ` + err.Error() + `"}`, err
+	}
+
+	return `{"message": "Pending request deleted successfully"}`, nil
+}
+
 func main() {
 	chaincode, err := contractapi.NewChaincode(new(PatientContract))
 	if err != nil {

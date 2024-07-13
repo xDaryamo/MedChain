@@ -233,7 +233,7 @@ exports.requestAccess = async (req, res, next) => {
 exports.grantAccess = async (req, res, next) => {
   const patientID = req.user.userId;
   const requesterID = req.params.requesterId;
-  const isOrg = req.body.isOrg;
+  const isOrg = req.body.isOrg || false;
   const organization = req.user.organization;
 
   try {
@@ -263,7 +263,7 @@ exports.grantAccess = async (req, res, next) => {
 exports.revokeAccess = async (req, res, next) => {
   const patientID = req.user.userId;
   const requesterID = req.params.requesterId;
-  const isOrg = req.body.isOrg;
+  const isOrg = req.body.isOrg || false;
   const organization = req.user.organization;
 
   try {
@@ -273,15 +273,39 @@ exports.revokeAccess = async (req, res, next) => {
     await fabric.init(patientID, organization, channel, chaincode);
     console.log("Fabric network initialized successfully.");
 
-    const resultString = await fabric.submitTransaction(
+    const revokeResultString = await fabric.submitTransaction(
       "RevokeAccess",
       patientID,
       requesterID,
       isOrg.toString()
     );
-    const result = JSON.parse(resultString);
 
-    res.status(200).json(result);
+    if (revokeResultString) {
+      const revokeResult = JSON.parse(revokeResultString);
+
+      if (revokeResult.error) {
+        throw new Error(revokeResult.error);
+      }
+
+      const deleteResultString = await fabric.submitTransaction(
+        "DeletePendingRequest",
+        patientID,
+        requesterID,
+        isOrg.toString()
+      );
+
+      const deleteResult = JSON.parse(deleteResultString);
+
+      if (deleteResult.error) {
+        throw new Error(deleteResult.error);
+      }
+
+      res
+        .status(200)
+        .json({ message: "Access revoked and request deleted successfully" });
+    } else {
+      throw new Error("Failed to revoke access");
+    }
   } catch (error) {
     res.status(500).json({ error: error.message });
   } finally {
@@ -369,5 +393,35 @@ exports.getPatientByEmail = async (req, res, next) => {
     res.status(200).json(result);
   } catch (error) {
     res.status(500).json({ error: error.message });
+  }
+};
+
+exports.deletePendingRequest = async (req, res, next) => {
+  const { isOrg = false } = req.body;
+  const requesterID = req.params.requesterId;
+  const organization = req.user.organization;
+
+  try {
+    const channel = "identity-channel";
+    const chaincode = "patient";
+    const userId = req.user.userId;
+
+    await fabric.init(userId, organization, channel, chaincode);
+    console.log("Fabric network initialized successfully.");
+
+    const resultString = await fabric.submitTransaction(
+      "DeletePendingRequest",
+      userId,
+      requesterID,
+      isOrg.toString()
+    );
+
+    const result = JSON.parse(resultString);
+    res.status(200).json(result);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  } finally {
+    fabric.disconnect();
+    console.log("Disconnected from Fabric gateway.");
   }
 };

@@ -25,6 +25,12 @@ router.patch("/:id", verifyToken, patientController.updatePatient);
 router.delete("/:id", verifyToken, patientController.deletePatient);
 
 router.post(
+  "/delete-pending-request/:requesterId",
+  verifyToken,
+  patientController.deletePendingRequest
+);
+
+router.post(
   "/request-access/:id/",
   verifyToken,
   patientController.requestAccess

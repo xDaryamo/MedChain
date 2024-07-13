@@ -81,6 +81,7 @@ export const useGetFollowedPatients = () => {
   const { data: followedPatients, isPending } = useQuery({
     queryKey: ["followedPatients"],
     queryFn: getFollowedPatients,
+    refetchInterval: 5000,
   });
 
   return {

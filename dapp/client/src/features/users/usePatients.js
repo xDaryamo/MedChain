@@ -6,10 +6,11 @@ import {
   deletePatient,
   searchPatients,
   requestAccess as requestAccessApi,
-  grantAccess,
-  revokeAccess,
+  grantAccess as grantAccessApi,
+  revokeAccess as revokeAccessApi,
   getAccessRequests as getAccessRequestsApi,
   getPatientByEmail,
+  deletePendingRequest as deletePendingRequestApi,
 } from "../../services/apiPatients";
 import toast from "react-hot-toast";
 
@@ -110,8 +111,8 @@ export const useRequestAccess = () => {
 export const useGrantAccess = () => {
   const queryClient = useQueryClient();
 
-  const { mutate: grantAccessMutation, isPending } = useMutation({
-    mutationFn: grantAccess,
+  const { mutate: grantAccess, isPending } = useMutation({
+    mutationFn: (id) => grantAccessApi(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["followedPatients"] });
       toast.success("Access granted successfully");
@@ -122,14 +123,14 @@ export const useGrantAccess = () => {
     },
   });
 
-  return { grantAccessMutation, isPending };
+  return { grantAccess, isPending };
 };
 
 export const useRevokeAccess = () => {
   const queryClient = useQueryClient();
 
-  const { mutate: revokeAccessMutation, isPending } = useMutation({
-    mutationFn: revokeAccess,
+  const { mutate: revokeAccess, isPending } = useMutation({
+    mutationFn: (id) => revokeAccessApi(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["followedPatients"] });
       toast.success("Access revoked successfully");
@@ -140,18 +141,47 @@ export const useRevokeAccess = () => {
     },
   });
 
-  return { revokeAccessMutation, isPending };
+  return { revokeAccess, isPending };
+};
+
+export const useDeletePendingRequest = () => {
+  const queryClient = useQueryClient();
+
+  const { mutate: deletePendingRequest, isPending } = useMutation({
+    mutationFn: (id) => deletePendingRequestApi(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["accessRequests"] });
+      toast.success("Pending request deleted successfully");
+    },
+    onError: (error) => {
+      toast.error("Failed to delete pending request");
+      console.error("Delete pending request error", error);
+    },
+  });
+
+  return { deletePendingRequest, isPending };
 };
 
 export const useGetAccessRequests = () => {
-  const { data: accessRequests, isPending } = useQuery({
+  const { data, isPending, error, refetch } = useQuery({
     queryKey: ["accessRequests"],
     queryFn: () => getAccessRequestsApi(),
+    refetchInterval: 5000,
   });
+
+  const grantedRequests = data
+    ? data.filter((request) => request.authorized === true)
+    : [];
+  const pendingRequests = data
+    ? data.filter((request) => request.authorized === false)
+    : [];
 
   return {
     isPending,
-    accessRequests,
+    error,
+    grantedRequests,
+    pendingRequests,
+    refetch,
   };
 };
 

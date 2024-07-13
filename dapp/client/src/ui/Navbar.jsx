@@ -6,8 +6,8 @@ import { useUser } from "../features/authentication/useAuth";
 import NavLink from "./NavLink";
 
 const Navbar = () => {
-  const { isAuthenticated } = useUser();
-
+  const { isAuthenticated, user } = useUser();
+  const role = user?.role;
   return (
     <nav className="border-8 p-6">
       <ul className="flex items-center justify-between">
@@ -18,11 +18,41 @@ const Navbar = () => {
             </div>
           </NavLink>
         </li>
-        {isAuthenticated && (
+
+        {role === "practitioner" && (
           <>
             <li>
               <NavLink to="/patients">Pazienti</NavLink>
             </li>
+          </>
+        )}
+        {role === "patient" && (
+          <>
+            <li>
+              <NavLink to={`/patients/${user.userId}/records`}>
+                Cartelle Cliniche
+              </NavLink>
+            </li>
+            <li>
+              <NavLink to={`/patients/${user.userId}/labresults`}>
+                Risultati Analisi
+              </NavLink>
+            </li>
+            <li>
+              <NavLink to={`/patients/${user.userId}/encounters`}>
+                Visite
+              </NavLink>
+            </li>
+            <li>
+              <NavLink to={`/patients/${user.userId}/prescriptions`}>
+                Prescrizioni
+              </NavLink>
+            </li>
+          </>
+        )}
+
+        {isAuthenticated && (
+          <>
             <li>
               <NavLink to="/profile">Profilo</NavLink>
             </li>

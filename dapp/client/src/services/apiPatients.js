@@ -94,13 +94,19 @@ export const requestAccess = async (id, isOrg = false) => {
   return response.data;
 };
 
-export const grantAccess = async (requesterId) => {
-  const response = await api.post(`/patient/grant-access/${requesterId}`);
+export const grantAccess = async (requesterId, isOrg = false) => {
+  const response = await api.post(
+    `/patient/grant-access/${requesterId}`,
+    isOrg,
+  );
   return response.data;
 };
 
-export const revokeAccess = async (requesterId) => {
-  const response = await api.post(`/patient/revoke-access/${requesterId}`);
+export const revokeAccess = async (requesterId, isOrg = false) => {
+  const response = await api.post(
+    `/patient/revoke-access/${requesterId}`,
+    isOrg,
+  );
   return response.data;
 };
 
@@ -111,6 +117,14 @@ export const getAccessRequests = async () => {
 
 export const getPatientByEmail = async (email) => {
   const response = await api.post(`/patient/email/`, { email });
+  return response.data;
+};
+
+export const deletePendingRequest = async (requesterId, isOrg = false) => {
+  const response = await api.post(
+    `/delete-pending-request/${requesterId}`,
+    isOrg,
+  );
   return response.data;
 };
 
