@@ -1,4 +1,3 @@
-/* eslint-disable react/prop-types */
 import { useForm, useFieldArray } from "react-hook-form";
 import { useEffect } from "react";
 import { useUpdateEncounter, useGetEncounter } from "./useEncounters";
@@ -21,10 +20,33 @@ const statusOptions = [
     { value: "cancelled", label: "Annullato" },
 ];
 
+const defaultLocation = {
+    status: { coding: [{ system: '', code: '', display: '' }] },
+    name: 'Example Location',
+    alias: 'Alias Name',
+    description: 'Description of the location',
+    type: { coding: [{ system: '', code: '', display: '' }] },
+    mode: { code: '' },
+    contact: {
+        telecom: {
+            system: { coding: [{ system: '', code: '', display: '' }] }
+            , value: ''
+        },
+        address: { city: '', district: '', postalCode: '' },
+    },
+    managingOrganization: { reference: '', display: '' },
+    hoursOfOperation: {
+        daysOfWeek: ['monday', 'tuesday'],
+        allDay: false,
+        startTime: '08:00',
+        endTime: '17:00',
+    },
+};
+
 const UpdateEncounterForm = () => {
     const { id } = useParams();
     const navigate = useNavigate();
-    const { isPending: encounterLoading, encounter, error: encounterError } = useGetEncounter(id);
+    const { isPending: encounterLoading, encounter } = useGetEncounter(id);
     const { updateEncounter, isPending: updatePending } = useUpdateEncounter();
 
     const { register, handleSubmit, control, formState: { errors }, reset } = useForm({
@@ -33,7 +55,6 @@ const UpdateEncounterForm = () => {
             participant: [],
             reasonReference: [],
             diagnosis: [],
-            location: [],
         },
     });
 
@@ -57,21 +78,25 @@ const UpdateEncounterForm = () => {
         name: "diagnosis",
     });
 
-    const { fields: locationFields, append: appendLocation, remove: removeLocation } = useFieldArray({
-        control,
-        name: "location",
-    });
-
     useEffect(() => {
         if (encounter) {
             const formattedData = {
                 ...encounter,
-                type: encounter.type?.map((t) => ({ coding: [{ code: t.coding[0].code }] })) || [],
-                participant: encounter.participant?.map((p) => ({ individual: { reference: p.individual.reference } })) || [],
-                reasonReference: encounter.reasonReference?.map((r) => ({ reference: r.reference })) || [],
-                diagnosis: encounter.diagnosis?.map((d) => ({ condition: { reference: d.condition.reference } })) || [],
-                location: encounter.location?.map((l) => ({ status: l.status, location: { reference: l.location.reference } })) || [],
+                status: encounter.encounter.status?.coding[0]?.code,
+                class: encounter.encounter.class?.coding?.code,
+                period: encounter.encounter.period,
+                type: encounter.encounter.type?.coding?.[0].code,
+                serviceType: encounter.encounter.serviceType?.coding?.[0].code,
+                priority: {
+                    coding: [{ code: encounter.encounter.priority?.coding[0]?.code || "", display: encounter.priority?.coding[0]?.display || "" }]
+                },
+                type: encounter.encounter.type?.map((t) => ({ coding: [{ code: t.coding[0].code }] })) || [],
+                participant: encounter.encounter.participant?.map((p) => ({ individual: { reference: p.individual.reference } })) || [],
+                reasonReference: encounter.encounter.reasonReference?.map((r) => ({ reference: r.reference })) || [],
+                diagnosis: encounter.encounter.diagnosis?.map((d) => ({ condition: { reference: d.condition.reference } })) || [],
+                location: encounter.encounter.location || defaultLocation,
             };
+
             reset(formattedData);
         }
     }, [encounter, reset]);
@@ -79,15 +104,28 @@ const UpdateEncounterForm = () => {
     const onSubmit = async (data) => {
         const encounterData = {
             identifier: {
-                system: "http://hospital.smarthealth.org",
+                system: encounter.encounter.identifier.system,
+                value: id
             },
-            status: data.status,
+            subject: encounter.encounter.subject,
+            period: encounter.encounter.period,
+            class: encounter.encounter.class,
+            serviceType: encounter.encounter.serviceType,
+            status: {
+                coding: [
+                    {
+                        system: "http://hl7.org/fhir/R4/valueset-encounter-status.html",
+                        code: data.status,
+                        display: statusOptions.find(option => option.value === data.status)?.label,
+                    },
+                ],
+            },
             priority: {
                 coding: [
                     {
                         system: "http://terminology.hl7.org/CodeSystem/v3-ActPriority",
-                        code: data.priority.coding[0].code,
-                        display: data.priority.coding[0].code,
+                        code: data.priority?.coding?.[0]?.code || "",
+                        display: data.priority?.coding?.[0]?.display || "",
                     },
                 ],
             },
@@ -102,23 +140,18 @@ const UpdateEncounterForm = () => {
             })),
             participant: data.participant.map((part) => ({
                 individual: {
-                    reference: part.individual.reference,
+                    reference: part.individual?.reference || "",
                 },
             })),
             reasonReference: data.reasonReference.map((reason) => ({
-                reference: reason.reference,
+                reference: reason.reference || "",
             })),
             diagnosis: data.diagnosis.map((diag) => ({
                 condition: {
-                    reference: diag.condition.reference,
+                    reference: diag.condition?.reference || "",
                 },
             })),
-            location: data.location.map((loc) => ({
-                status: loc.status,
-                location: {
-                    reference: loc.location.reference,
-                },
-            })),
+            location: [defaultLocation],
         };
 
         try {
@@ -136,9 +169,7 @@ const UpdateEncounterForm = () => {
         }
     };
 
-
     if (encounterLoading) return <Spinner />;
-    if (encounterError) return <p>Errore durante il caricamento dell'incontro</p>;
 
     return (
         <div className="flex-1 overflow-y-auto p-4 md:p-8">
@@ -255,7 +286,7 @@ const UpdateEncounterForm = () => {
                             variant="secondary"
                             size="small"
                         >
-                            <FaPlus className="mr-1" /> Aggiungi Riferimento del Motivo
+                            <FaPlus className="mr-1" /> Aggiungi Riferimento del motivo
                         </Button>
                     </div>
                 </div>
@@ -292,57 +323,10 @@ const UpdateEncounterForm = () => {
                     </div>
                 </div>
 
-                <div className="mb-4 border-b pb-4">
-                    <h3 className="mb-4 text-xl font-semibold text-cyan-950">Posizione</h3>
-                    {locationFields.map((location, index) => (
-                        <div key={location.id} className="mb-2 flex space-x-2">
-                            <FormInput
-                                {...register(`location[${index}].status`, { required: `Lo stato della posizione ${index + 1} è obbligatorio` })}
-                                placeholder="pianificato"
-                            />
-                            <FormInput
-                                {...register(`location[${index}].location.reference`, { required: `Il riferimento della posizione ${index + 1} è obbligatorio` })}
-                                placeholder="123"
-                            />
-                            <div className="flex justify-end">
-                                <Button
-                                    type="button"
-                                    variant="delete"
-                                    onClick={() => removeLocation(index)}
-                                    size="small"
-                                >
-                                    <FaTrash />
-                                </Button>
-                            </div>
-                        </div>
-                    ))}
-                    <div className="flex justify-center">
-                        <Button
-                            type="button"
-                            onClick={() => appendLocation({ status: "", location: { reference: "" } })}
-                            variant="secondary"
-                            size="small"
-                        >
-                            <FaPlus className="mr-1" /> Aggiungi Posizione
-                        </Button>
-                    </div>
-                </div>
-
-                <div className="flex justify-center space-x-2">
-
-                    <Button
-                        type="submit"
-                        variant="primary"
-                        size="large"
-                        disabled={updatePending}
-                    >
-                        {updatePending ? (
-                            <Spinner size="small" />
-                        ) : (
-                            "Modifica incontro"
-                        )}
+                <div className="mt-6 flex justify-end space-x-4">
+                    <Button type="submit" disabled={updatePending} className="w-32">
+                        {updatePending ? <Spinner size="sm" /> : "Aggiorna"}
                     </Button>
-
                 </div>
             </form>
         </div>

@@ -41,7 +41,7 @@ const EncounterPage = () => {
         if (!list || list.length === 0) {
             return (
                 <div className="text-cyan-950">
-                    <span className="font-bold">{title}:</span> N/D
+                    <span className="font-bold">{title}:</span> N/A
                 </div>
             );
         }
@@ -66,7 +66,7 @@ const EncounterPage = () => {
         );
     };
 
-    const renderReason = (reason) => reason.reasonReference?.reference || "N/D";
+    const renderReason = (reason) => reason.reference || "N/D";
 
     const renderDiagnosis = (diag) => diag.condition?.reference || "N/D";
 
@@ -99,7 +99,7 @@ const EncounterPage = () => {
                             {`${formatDate(encounter.encounter.period?.start)} - ${formatDate(encounter.encounter.period?.end)}`}
                         </div>
                         <div className="text-cyan-950">
-                            <strong>Lista delle Diagnosi:</strong>{" "}
+                            <strong>Lista delle Diagnosi:</strong>
                             {renderSingleOrList("Diagnosi", encounter.encounter.diagnosis, renderDiagnosis)}
                         </div>
                     </div>

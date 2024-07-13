@@ -40,9 +40,12 @@ const renderSingleOrList = (title, list, renderItem) => {
   );
 };
 
-const renderReason = (reason) => reason.coding?.[0]?.code || "N/D";
+const renderReason = (reason) => reason?.reference || "N/D";
 
 const EncounterCard = ({ item }) => {
+
+  console.log(item)
+
   const encounterID = item.identifier?.value || "ID non disponibile";
   const encounterSubject = item.subject?.reference || "Paziente Sconosciuto";
   const encounterPeriod = item.period
