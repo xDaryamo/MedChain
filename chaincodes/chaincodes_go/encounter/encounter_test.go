@@ -419,16 +419,10 @@ func TestCreateEncounter(t *testing.T) {
 			},
 			Text: "Patient complaint of headache",
 		},
-		ReasonReference: []CodeableConcept{
+		ReasonReference: []Reference{
 			{
-				Coding: []Coding{
-					{
-						System:  "http://hl7.org/fhir/ValueSet/diagnosis-role",
-						Code:    "CC",
-						Display: "Chief complaint",
-					},
-				},
-				Text: "Chief Complaint",
+				Reference: "123456789",
+				Display:   "123456789",
 			},
 		},
 		Diagnosis: []EncounterDiagnosis{
@@ -613,15 +607,10 @@ func TestReadEncounter(t *testing.T) {
 		},
 		"reasonReference": [
 		  {
-			"coding": [
-			  {
-				"system": "http://hl7.org/fhir/ValueSet/diagnosis-role",
-				"code": "CC",
-				"display": "Chief complaint"
-			  }
-			],
-			"text": "Chief Complaint"
-		  }
+			{
+				Reference: "123456789",
+				Display:   "123456789"
+		  	}
 		],
 		"diagnosis": [
 		  {
@@ -805,16 +794,10 @@ func TestUpdateEncounter(t *testing.T) {
 		  "text": "Patient complaint of headache"
 		},
 		"reasonReference": [
-		  {
-			"coding": [
-			  {
-				"system": "http://hl7.org/fhir/ValueSet/diagnosis-role",
-				"code": "CC",
-				"display": "Chief complaint"
-			  }
-			],
-			"text": "Chief Complaint"
-		  }
+			{
+				"reference": "123456789",
+				"display":   "123456789"
+		  	}
 		],
 		"diagnosis": [
 		  {
@@ -1003,16 +986,10 @@ func TestDeleteEncounter(t *testing.T) {
 		  "text": "Patient complaint of headache"
 		},
 		"reasonReference": [
-		  {
-			"coding": [
-			  {
-				"system": "http://hl7.org/fhir/ValueSet/diagnosis-role",
-				"code": "CC",
-				"display": "Chief complaint"
-			  }
-			],
-			"text": "Chief Complaint"
-		  }
+			{
+				"reference": "123456789",
+				"display":   "123456789"
+		  	}
 		],
 		"diagnosis": [
 		  {
@@ -1201,16 +1178,10 @@ func TestSearchEncountersByType(t *testing.T) {
 				},
 				Text: "Patient complaint of headache",
 			},
-			ReasonReference: []CodeableConcept{
+			ReasonReference: []Reference{
 				{
-					Coding: []Coding{
-						{
-							System:  "http://hl7.org/fhir/ValueSet/diagnosis-role",
-							Code:    "CC",
-							Display: "Chief complaint",
-						},
-					},
-					Text: "Chief Complaint",
+					Reference: "123456789",
+					Display:   "123456789",
 				},
 			},
 			Diagnosis: []EncounterDiagnosis{

@@ -728,3 +728,124 @@ func TestDeletePractitioner_PractitionerNotFound(t *testing.T) {
 	mockCtx.AssertExpectations(t)
 	stub.AssertExpectations(t)
 }
+
+func TestGrantAccess(t *testing.T) {
+	cc := new(PractitionerContract)
+	mockCtx := new(MockTransactionContext)
+	stub := new(MockStub)
+
+	patientID := "patient1"
+	practitionerID := "practitioner1"
+	followedPatientsKey := "followedPatients_" + practitionerID
+
+	mockCtx.On("GetStub").Return(stub)
+	stub.On("GetState", followedPatientsKey).Return(nil, nil)
+	stub.On("PutState", followedPatientsKey, mock.Anything).Return(nil)
+
+	msg, err := cc.GrantAccess(mockCtx, patientID, practitionerID)
+
+	assert.NoError(t, err)
+	assert.Equal(t, `{"message": "Access granted"}`, msg)
+	mockCtx.AssertExpectations(t)
+	stub.AssertExpectations(t)
+}
+
+func TestGetFollowedPatients(t *testing.T) {
+	cc := new(PractitionerContract)
+	mockCtx := new(MockTransactionContext)
+	stub := new(MockStub)
+
+	practitionerID := "practitioner1"
+	followedPatientsKey := "followedPatients_" + practitionerID
+
+	followedPatients := FollowedPatients{
+		Patients: map[string]bool{"patient1": true, "patient2": true},
+	}
+	followedPatientsJSON, _ := json.Marshal(followedPatients)
+
+	mockCtx.On("GetStub").Return(stub)
+	stub.On("GetState", followedPatientsKey).Return(followedPatientsJSON, nil)
+
+	patientIDs, err := cc.GetFollowedPatients(mockCtx, practitionerID)
+	expectedPatientIDs := []string{"patient1", "patient2"}
+
+	assert.NoError(t, err)
+	assert.ElementsMatch(t, expectedPatientIDs, patientIDs)
+	mockCtx.AssertExpectations(t)
+	stub.AssertExpectations(t)
+}
+
+func TestRevokeAccess(t *testing.T) {
+	cc := new(PractitionerContract)
+	mockCtx := new(MockTransactionContext)
+	stub := new(MockStub)
+
+	patientID := "patient1"
+	practitionerID := "practitioner1"
+	followedPatientsKey := "followedPatients_" + practitionerID
+
+	followedPatients := FollowedPatients{
+		Patients: map[string]bool{"patient1": true, "patient2": true},
+	}
+	followedPatientsJSON, _ := json.Marshal(followedPatients)
+
+	mockCtx.On("GetStub").Return(stub)
+	stub.On("GetState", followedPatientsKey).Return(followedPatientsJSON, nil)
+	stub.On("PutState", followedPatientsKey, mock.Anything).Return(nil)
+
+	msg, err := cc.RevokeAccess(mockCtx, patientID, practitionerID)
+
+	assert.NoError(t, err)
+	assert.Equal(t, `{"message": "Access revoked"}`, msg)
+	mockCtx.AssertExpectations(t)
+	stub.AssertExpectations(t)
+}
+
+func TestSearchPractitioners(t *testing.T) {
+	cc := new(PractitionerContract)
+	mockCtx := new(MockTransactionContext)
+	mockStub := new(MockStub)
+	mockCtx.On("GetStub").Return(mockStub)
+
+	// Sample practitioners
+	practitioner1 := Practitioner{
+		ID: &Identifier{
+			System: "http://example.com/systems/practitioner",
+			Value:  "practitioner1",
+		},
+		Active: true,
+	}
+	practitioner2 := Practitioner{
+		ID: &Identifier{
+			System: "http://example.com/systems/practitioner",
+			Value:  "practitioner2",
+		},
+		Active: false,
+	}
+
+	practitioner1JSON, _ := json.Marshal(practitioner1)
+	practitioner2JSON, _ := json.Marshal(practitioner2)
+
+	// Create a mock iterator and add sample practitioners
+	mockIterator := new(MockIterator)
+	mockIterator.AddRecord("practitioner1", practitioner1JSON)
+	mockIterator.AddRecord("practitioner2", practitioner2JSON)
+
+	mockStub.On("GetQueryResult", mock.Anything).Return(mockIterator, nil)
+
+	resultsJSON, err := cc.SearchPractitioners(mockCtx, `{
+		"selector": {
+			"type": "practitioner"
+		}
+	}`)
+	assert.NoError(t, err)
+
+	var practitioners []Practitioner
+	err = json.Unmarshal([]byte(resultsJSON), &practitioners)
+	assert.NoError(t, err)
+
+	assert.Len(t, practitioners, 2, "There should be two practitioners in the results.")
+
+	mockStub.AssertExpectations(t)
+	mockCtx.AssertExpectations(t)
+}

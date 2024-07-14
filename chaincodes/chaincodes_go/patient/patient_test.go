@@ -642,6 +642,8 @@ func TestRequestAccess_NewAuthorization(t *testing.T) {
 	patientID := "patient-001"
 	requesterID := "doctor-001"
 
+	// Assume the patient exists
+	stub.On("GetState", patientID).Return([]byte(generatePatientJSON("patient-001")), nil)
 	// Assume no existing authorization record
 	stub.On("GetState", "auth_"+patientID).Return(nil, nil)
 	stub.On("PutState", "auth_"+patientID, mock.Anything).Return(nil)
@@ -662,7 +664,15 @@ func TestRequestAccess_ExistingAuthorization(t *testing.T) {
 	patientID := "patient-001"
 	requesterID := "doctor-001"
 
-	existingAuth := Authorization{PatientID: patientID, Authorized: make(map[string]bool)}
+	// Assume the patient exists
+	stub.On("GetState", patientID).Return([]byte(generatePatientJSON(patientID)), nil)
+
+	// Existing authorization for the patient
+	existingAuth := Authorization{
+		PatientID:      patientID,
+		Authorized:     make(map[string]bool),
+		AuthorizedOrgs: make(map[string]bool),
+	}
 	existingAuthBytes, _ := json.Marshal(existingAuth)
 	stub.On("GetState", "auth_"+patientID).Return(existingAuthBytes, nil)
 	stub.On("PutState", "auth_"+patientID, mock.Anything).Return(nil)
@@ -733,5 +743,125 @@ func TestRevokeAccess_Success(t *testing.T) {
 	assert.Nil(t, err)
 	assert.Equal(t, msg, `{"message": "Access revoked"}`)
 	stub.AssertExpectations(t)
+	clientIdentity.AssertExpectations(t)
+}
+
+func TestSearchPatients(t *testing.T) {
+	contract := new(PatientContract)
+	stub := new(MockStub)
+	ctx := new(MockTransactionContext)
+
+	ctx.On("GetStub").Return(stub)
+
+	queryString := `{"selector":{"type":"patient"}}`
+
+	// Mock patients data
+	patient1 := &Patient{ID: &Identifier{
+		System: "http://example.com/systems/practitioner",
+		Value:  "patient-001",
+	}}
+	patient2 := &Patient{ID: &Identifier{
+		System: "http://example.com/systems/practitioner",
+		Value:  "patient-002",
+	}}
+
+	patient1Bytes, _ := json.Marshal(patient1)
+	patient2Bytes, _ := json.Marshal(patient2)
+
+	mockIterator := new(MockIterator)
+	mockIterator.AddRecord("patient-001", patient1Bytes)
+	mockIterator.AddRecord("patient-002", patient2Bytes)
+
+	stub.On("GetQueryResult", queryString).Return(mockIterator, nil)
+
+	resultJSON, err := contract.SearchPatients(ctx, queryString)
+
+	assert.Nil(t, err)
+
+	var patients []Patient
+	err = json.Unmarshal([]byte(resultJSON), &patients)
+	assert.Nil(t, err)
+
+	assert.Len(t, patients, 2)
+	assert.Equal(t, "patient-001", patients[0].ID.Value)
+	assert.Equal(t, "patient-002", patients[1].ID.Value)
+
+	stub.AssertExpectations(t)
+	ctx.AssertExpectations(t)
+}
+
+func TestGetAccessRequests(t *testing.T) {
+	contract := new(PatientContract)
+	stub := new(MockStub)
+	ctx := new(MockTransactionContext)
+
+	ctx.On("GetStub").Return(stub)
+	patientID := "patient-001"
+
+	// Mock authorization data
+	auth := Authorization{
+		PatientID:      patientID,
+		Authorized:     map[string]bool{"doctor-001": true},
+		AuthorizedOrgs: map[string]bool{"org1": true},
+	}
+	authBytes, _ := json.Marshal(auth)
+
+	stub.On("GetState", "auth_"+patientID).Return(authBytes, nil)
+
+	resultJSON, err := contract.GetAccessRequests(ctx, patientID)
+
+	assert.Nil(t, err)
+
+	expected := map[string]interface{}{
+		"Authorized":     map[string]interface{}{"doctor-001": true},
+		"AuthorizedOrgs": map[string]interface{}{"org1": true},
+	}
+
+	var result map[string]interface{}
+	err = json.Unmarshal([]byte(resultJSON), &result)
+	assert.Nil(t, err)
+
+	assert.Equal(t, expected, result)
+	stub.AssertExpectations(t)
+	ctx.AssertExpectations(t)
+}
+
+func TestDeletePendingRequest(t *testing.T) {
+	contract := new(PatientContract)
+	stub := new(MockStub)
+	ctx := new(MockTransactionContext)
+	clientIdentity := new(MockClientIdentity)
+
+	ctx.On("GetStub").Return(stub)
+	ctx.On("GetClientIdentity").Return(clientIdentity)
+
+	patientID := "patient-001"
+	requesterID := "doctor-001"
+	isOrg := false
+
+	clientIdentity.On("GetAttributeValue", "userId").Return(patientID, true, nil)
+
+	// Mock authorization data
+	auth := Authorization{
+		PatientID:  patientID,
+		Authorized: map[string]bool{requesterID: true},
+	}
+	authBytes, _ := json.Marshal(auth)
+
+	stub.On("GetState", "auth_"+patientID).Return(authBytes, nil)
+	stub.On("PutState", "auth_"+patientID, mock.Anything).Return(nil)
+
+	resultJSON, err := contract.DeletePendingRequest(ctx, patientID, requesterID, isOrg)
+
+	assert.Nil(t, err)
+	assert.Equal(t, `{"message": "Pending request deleted successfully"}`, resultJSON)
+
+	var updatedAuth Authorization
+	err = json.Unmarshal(stub.Calls[1].Arguments.Get(1).([]byte), &updatedAuth)
+	assert.Nil(t, err)
+	assert.NotContains(t, updatedAuth.Authorized, requesterID)
+
+	stub.AssertExpectations(t)
+	ctx.AssertExpectations(t)
 	clientIdentity.AssertExpectations(t)
 }

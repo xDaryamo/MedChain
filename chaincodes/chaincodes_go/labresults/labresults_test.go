@@ -282,7 +282,10 @@ func (m *MockIterator) Close() error {
 // Helper function to create a sample observation JSON
 func sampleObservationJSON(id string) string {
 	observation := Observation{
-		ID:     id,
+		ID: &Identifier{
+			System: "exampleSys",
+			Value:  id,
+		},
 		Status: "final",
 		Code: &CodeableConcept{
 			Text: "Blood Test",
@@ -298,7 +301,10 @@ func sampleObservationJSON(id string) string {
 // Helper function to create a sample observation JSON that includes patient data
 func sampleObservationJSONWithPatient(id string, patientID string) string {
 	observation := Observation{
-		ID:     id,
+		ID: &Identifier{
+			System: "exampleSys",
+			Value:  id,
+		},
 		Status: "final",
 		Code: &CodeableConcept{
 			Text: "Blood Test",
@@ -416,7 +422,7 @@ func TestGetLabResult_Successful(t *testing.T) {
 	observationJSON := sampleObservationJSON("obs1")
 	mockStub.On("GetState", "obs1").Return([]byte(observationJSON), nil)
 
-	result, err := labChaincode.GetLabResult(mockCtx, "obs1")
+	result, err := labChaincode.ReadLabResult(mockCtx, "obs1")
 	assert.NoError(t, err)
 	assert.Equal(t, observationJSON, result, "The retrieved lab result should match the stored one.")
 	mockStub.AssertExpectations(t)
@@ -431,7 +437,7 @@ func TestGetLabResult_NonExistentResult(t *testing.T) {
 
 	mockStub.On("GetState", "obs2").Return(nil, nil)
 
-	result, err := labChaincode.GetLabResult(mockCtx, "obs2")
+	result, err := labChaincode.ReadLabResult(mockCtx, "obs2")
 	assert.Error(t, err)
 	assert.Equal(t, `{"error": "the lab result does not exist"}`, result, "The result should be an empty string when the lab result does not exist.")
 	assert.Contains(t, err.Error(), "the lab result does not exist", "Error message should indicate that the lab result does not exist.")
@@ -447,7 +453,7 @@ func TestGetLabResult_AccessError(t *testing.T) {
 
 	mockStub.On("GetState", "obs3").Return(nil, errors.New("failed to read from world state"))
 
-	result, err := labChaincode.GetLabResult(mockCtx, "obs3")
+	result, err := labChaincode.ReadLabResult(mockCtx, "obs3")
 	assert.Error(t, err)
 	assert.Equal(t, `{"error": "failed to read from world state"}`, result, "The result should be an empty string when there is an error accessing the world state.")
 	assert.Contains(t, err.Error(), "failed to read from world state", "Error message should indicate a failure to read from the world state.")

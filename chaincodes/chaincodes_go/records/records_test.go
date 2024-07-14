@@ -321,12 +321,6 @@ func TestCreateMedicalRecords(t *testing.T) {
 
 	ctx.On("GetStub").Return(stub)
 
-	stub.On("GetChannelID").Return("testchannel")
-	clientIdentity := new(MockClientIdentity)
-	ctx.On("GetClientIdentity").Return(clientIdentity)
-	clientIdentity.On("GetID").Return("testClientID", nil)
-	clientIdentity.On("GetAttributeValue", "userId").Return("testUserId", true, nil)
-
 	record := &MedicalRecords{
 		RecordID:  "record1",
 		PatientID: "patient1",
@@ -460,22 +454,12 @@ func TestCreateMedicalRecords(t *testing.T) {
 				},
 			},
 		},
-		ServiceRequest: &Reference{
-			Reference: "servicerquest1",
-			Display:   "SerReq1",
-		},
 	}
 
 	recordJSON, _ := json.Marshal(record)
 
 	stub.On("GetState", "record1").Return(nil, nil)
 	stub.On("PutState", "record1", recordJSON).Return(nil)
-
-	invokeResponse := peer.Response{
-		Status:  200,
-		Payload: []byte(""),
-	}
-	stub.On("InvokeChaincode", "patient", mock.AnythingOfType("[][]uint8"), "testchannel").Return(invokeResponse, nil)
 
 	msg, err := mc.CreateMedicalRecords(ctx, string(recordJSON))
 	assert.NoError(t, err)
@@ -490,12 +474,6 @@ func TestReadMedicalRecords(t *testing.T) {
 	stub := new(MockStub)
 
 	ctx.On("GetStub").Return(stub)
-
-	stub.On("GetChannelID").Return("testchannel")
-	clientIdentity := new(MockClientIdentity)
-	ctx.On("GetClientIdentity").Return(clientIdentity)
-	clientIdentity.On("GetID").Return("testClientID", nil)
-	clientIdentity.On("GetAttributeValue", "userId").Return("testUserId", true, nil)
 
 	recordID := "record1"
 	recordJSON := []byte(`{
@@ -630,20 +608,10 @@ func TestReadMedicalRecords(t *testing.T) {
 			  "Display": "John Doe"
 			}
 		  }
-		],
-		"ServiceRequest": {
-		  "Reference": "servicerequest1",
-		  "Display": "SerReq1"
-		}
+		]
 	  }`)
 
 	stub.On("GetState", recordID).Return(recordJSON, nil)
-
-	invokeResponse := peer.Response{
-		Status:  200,
-		Payload: []byte(""),
-	}
-	stub.On("InvokeChaincode", "patient", mock.AnythingOfType("[][]uint8"), "testchannel").Return(invokeResponse, nil)
 
 	resultJSON, err := cc.ReadMedicalRecords(ctx, recordID)
 	assert.NoError(t, err)
@@ -660,12 +628,6 @@ func TestUpdateMedicalRecords(t *testing.T) {
 
 	ctx.On("GetStub").Return(stub)
 
-	stub.On("GetChannelID").Return("testchannel")
-	clientIdentity := new(MockClientIdentity)
-	ctx.On("GetClientIdentity").Return(clientIdentity)
-	clientIdentity.On("GetID").Return("testClientID", nil)
-	clientIdentity.On("GetAttributeValue", "userId").Return("testUserId", true, nil)
-
 	record := &MedicalRecords{
 		RecordID:  "record1",
 		PatientID: "patient1",
@@ -799,10 +761,6 @@ func TestUpdateMedicalRecords(t *testing.T) {
 				},
 			},
 		},
-		ServiceRequest: &Reference{
-			Reference: "servicerquest1",
-			Display:   "SerReq1",
-		},
 	}
 
 	recordID := "record1"
@@ -812,12 +770,6 @@ func TestUpdateMedicalRecords(t *testing.T) {
 
 	stub.On("PutState", recordID, mock.Anything).Return(nil)
 
-	invokeResponse := peer.Response{
-		Status:  200,
-		Payload: nil,
-	}
-	stub.On("InvokeChaincode", "patient", mock.AnythingOfType("[][]uint8"), mock.AnythingOfType("string")).Return(invokeResponse, nil)
-
 	msg, err := chaincode.UpdateMedicalRecords(ctx, recordID, string(existingrecordJSON))
 	assert.NoError(t, err)
 	assert.Equal(t, `{"message": "Record updated successfully"}`, msg)
@@ -826,17 +778,11 @@ func TestUpdateMedicalRecords(t *testing.T) {
 }
 
 func TestDeleteMedicalRecords(t *testing.T) {
-
 	cc := new(MedicalRecordsChaincode)
 	ctx := new(MockTransactionContext)
 	stub := new(MockStub)
 
-	stub.On("GetChannelID").Return("testchannel")
 	ctx.On("GetStub").Return(stub)
-	clientIdentity := new(MockClientIdentity)
-	ctx.On("GetClientIdentity").Return(clientIdentity)
-	clientIdentity.On("GetID").Return("testClientID", nil)
-	clientIdentity.On("GetAttributeValue", "userId").Return("testUserId", true, nil)
 
 	recordID := "record1"
 	recordJSON := []byte(`{
@@ -971,30 +917,16 @@ func TestDeleteMedicalRecords(t *testing.T) {
 			  "Display": "John Doe"
 			}
 		  }
-		],
-		"ServiceRequest": {
-		  "Reference": "servicerequest1",
-		  "Display": "SerReq1"
-		}
+		]
 	  }`)
 
 	stub.On("GetState", recordID).Return(recordJSON, nil)
-	// Mock behavior for InvokeChaincode (assuming it succeeds)
-	invokeResponse := peer.Response{
-		Status:  200,
-		Payload: nil,
-	}
-	stub.On("InvokeChaincode", "patient", mock.AnythingOfType("[][]uint8"), "testchannel").Return(invokeResponse, nil)
-
-	// Mock behavior for DelState to accept encounterID and succeed
 	stub.On("DelState", recordID).Return(nil)
 
-	// Invoke the DeleteEncounter function
 	msg, err := cc.DeleteMedicalRecords(ctx, recordID)
-	assert.Equal(t, msg, `{"message": "Record deleted successfully"}`)
+	assert.Equal(t, `{"message": "Record deleted successfully"}`, msg)
 	assert.NoError(t, err)
 
-	// Assert that all expected methods were called on the stub and context
 	stub.AssertExpectations(t)
 	ctx.AssertExpectations(t)
 }
@@ -1004,20 +936,7 @@ func TestSearchMedicalRecords(t *testing.T) {
 	ctx := new(MockTransactionContext)
 	mc := new(MedicalRecordsChaincode)
 
-	clientIdentity := new(MockClientIdentity)
-	ctx.On("GetClientIdentity").Return(clientIdentity)
-
-	clientIdentity.On("GetID").Return("testClientID", nil)
-	clientIdentity.On("GetAttributeValue", "userId").Return("testUserId", true, nil)
-
-	stub.On("GetChannelID").Return("testchannel")
 	ctx.On("GetStub").Return(stub)
-
-	invokeResponse := peer.Response{
-		Status:  200,
-		Payload: []byte(""),
-	}
-	stub.On("InvokeChaincode", "patient", mock.AnythingOfType("[][]uint8"), "testchannel").Return(invokeResponse, nil)
 
 	record := &MedicalRecords{
 		RecordID:  "record1",
@@ -1151,10 +1070,6 @@ func TestSearchMedicalRecords(t *testing.T) {
 					Display:   "John Doe",
 				},
 			},
-		},
-		ServiceRequest: &Reference{
-			Reference: "servicerquest1",
-			Display:   "SerReq1",
 		},
 	}
 	recordJSON, _ := json.Marshal(record)
@@ -1184,452 +1099,4 @@ func TestSearchMedicalRecords(t *testing.T) {
 	stub.AssertExpectations(t)
 	ctx.AssertExpectations(t)
 
-}
-
-func TestCreateProcedure_ProcedureExists(t *testing.T) {
-	cc := new(MedicalRecordsChaincode)
-	mockCtx := new(MockTransactionContext)
-	stub := new(MockStub)
-
-	// Define a procedure ID that already exists
-	procedure := &Procedure{
-		ID: &Identifier{
-			System: "http://example.com/systems/practitioner",
-			Value:  "practitioner1",
-		},
-		Subject: &Reference{
-			Reference: "practitioners/practitioner1",
-			Display:   "practitioner1",
-		},
-		Code: &CodeableConcept{
-			Coding: []Coding{
-				{
-					System:  "http://example.com/codesystem",
-					Code:    "procedure-code",
-					Display: "pr-cd",
-				},
-			},
-			Text: "English",
-		},
-		Status: &Code{
-			Coding: []Coding{
-				{
-					System:  "useSystem",
-					Code:    "useCode",
-					Display: "executed",
-				},
-			},
-		},
-		Category: &CodeableConcept{
-			Coding: []Coding{
-				{
-					System:  "http://example.com/codesystem",
-					Code:    "procedure-category",
-					Display: "pr-ct",
-				},
-			},
-			Text: "English",
-		},
-		Performer: &Reference{
-			Reference: "practitioners/practitioner1",
-			Display:   "practitioner1",
-		},
-		PartOf: &Reference{
-			Reference: "procedures/emergency1",
-			Display:   "emergency1",
-		},
-	}
-
-	// Mock behavior for GetStub to return stub
-	mockCtx.On("GetStub").Return(stub)
-
-	// Convert the procedure to JSON bytes
-	procedureJSONBytes, err := json.Marshal(procedure)
-	assert.NoError(t, err)
-
-	// Stub behavior to indicate existing procedure
-	stub.On("GetState", procedure.ID.Value).Return(procedureJSONBytes, nil)
-
-	procedureJSON := `{
-		"identifier": {
-		  "System": "http://example.com/systems/practitioner",
-		  "Value": "practitioner1"
-		},
-		"subject": {
-		  "Reference": "practitioners/practitioner1",
-		  "Display": "practitioner1"
-		},
-		"code": {
-		  "Coding": [
-			{
-			  "System": "http://example.com/codesystem",
-			  "Code": "procedure-code",
-			  "Display": "pr-cd"
-			}
-		  ],
-		  "Text": "English"
-		},
-		"status": {
-		  "Coding": [
-			{
-			  "System": "useSystem",
-			  "Code": "useCode",
-			  "Display": "executed"
-			}
-		  ]
-		},
-		"category": {
-		  "Coding": [
-			{
-			  "System": "http://example.com/codesystem",
-			  "Code": "procedure-category",
-			  "Display": "pr-ct"
-			}
-		  ],
-		  "Text": "English"
-		},
-		"performed": {
-		  "Reference": "practitioners/practitioner1",
-		  "Display": "practitioner1"
-		},
-		"contained": {
-		  "Reference": "procedures/emergency1",
-		  "Display": "emergency1"
-		}
-	}`
-
-	// Perform the CreateProcedure operation
-	msg, err := cc.CreateProcedure(mockCtx, procedureJSON)
-
-	// Assertions
-	assert.Error(t, err)
-	assert.Equal(t, msg, `{"error": "procedure already exists: `+procedure.ID.Value+`"}`)
-
-	// Verify expectations
-	mockCtx.AssertExpectations(t)
-	stub.AssertExpectations(t)
-}
-
-func TestCreateProcedure_InvalidJSON(t *testing.T) {
-	cc := new(MedicalRecordsChaincode)
-	mockCtx := new(MockTransactionContext)
-
-	invalidJSON := `{ 
-        "identifier": {
-            "System": "http://example.com/systems/practitioner",
-            "Value": "practitioner1"
-        },
-        "subject": {
-            "Reference": "practitioners/practitioner1",
-            "Display": "practitioner1"
-        },
-        "code": {
-            "Coding": [
-                {
-                    "System": "http://example.com/codesystem",
-                    "Code": "procedure-code",
-                    "Display": "pr-cd"
-                }
-            ],
-            "Text": "English"
-        },
-        "status": {
-            "Coding": [
-                {
-                    "System": "useSystem",
-                    "Code": "useCode",
-                    "Display": "executed"
-                }
-            ]
-        },
-        "category": {
-            "Coding": [
-                {
-                    "System": "http://example.com/codesystem",
-                    "Code": "procedure-category",
-                    "Display": "pr-ct"
-                }
-            ],
-            "Text": "English"
-        },
-        "performed": {
-            "Reference": "practitioners/practitioner1",
-            "Display": "practitioner1"
-        },
-        "contained": {
-            "Reference": "procedures/emergency1",
-            "Display": "emergency1"
-        }
-        "extraField": "unexpected value"
-    }`
-
-	// Perform the CreateProcedure operation with invalid JSON
-	msg, err := cc.CreateProcedure(mockCtx, invalidJSON)
-
-	// Assertions
-	assert.Error(t, err)
-	assert.Equal(t, msg, "{\"error\": \"failed to unmarshal procedure: invalid character '\"' after object key:value pair\"}")
-	// Verify expectations
-	mockCtx.AssertExpectations(t)
-}
-
-func TestReadProcedure(t *testing.T) {
-	cc := new(MedicalRecordsChaincode)
-	mockCtx := new(MockTransactionContext)
-	stub := new(MockStub)
-
-	// Define a procedure ID that exists in the ledger
-	procedureID := "procedure1"
-	procedureJSON := `{
-        "identifier": {
-            "System": "http://example.com/systems/practitioner",
-            "Value": "procedure1"
-        },
-        "subject": {
-            "Reference": "practitioners/practitioner1",
-            "Display": "practitioner1"
-        },
-        "code": {
-            "Coding": [
-                {
-                    "System": "http://example.com/codesystem",
-                    "Code": "procedure-code",
-                    "Display": "pr-cd"
-                }
-            ],
-            "Text": "English"
-        },
-        "status": {
-            "Coding": [
-                {
-                    "System": "useSystem",
-                    "Code": "useCode",
-                    "Display": "executed"
-                }
-            ]
-        },
-        "category": {
-            "Coding": [
-                {
-                    "System": "http://example.com/codesystem",
-                    "Code": "procedure-category",
-                    "Display": "pr-ct"
-                }
-            ],
-            "Text": "English"
-        },
-        "performed": {
-            "Reference": "practitioners/practitioner1",
-            "Display": "practitioner1"
-        },
-        "contained": {
-            "Reference": "procedures/emergency1",
-            "Display": "emergency1"
-        }
-    }`
-
-	mockCtx.On("GetStub").Return(stub)
-	stub.On("GetChannelID").Return("testchannel")
-	stub.On("GetState", procedureID).Return([]byte(procedureJSON), nil)
-
-	clientIdentity := new(MockClientIdentity)
-	mockCtx.On("GetClientIdentity").Return(clientIdentity)
-
-	clientIdentity.On("GetAttributeValue", "userId").Return("testUserId", true, nil)
-
-	invokeResponse := peer.Response{
-		Status:  200,
-		Payload: nil,
-	}
-	stub.On("InvokeChaincode", "patient", mock.AnythingOfType("[][]uint8"), "testchannel").Return(invokeResponse, nil)
-
-	result, err := cc.ReadProcedure(mockCtx, procedureID)
-
-	assert.NoError(t, err)
-	assert.Equal(t, procedureJSON, result)
-
-	mockCtx.AssertExpectations(t)
-	stub.AssertExpectations(t)
-}
-
-func TestReadProcedure_ProcedureNotFound(t *testing.T) {
-	cc := new(MedicalRecordsChaincode)
-	mockCtx := new(MockTransactionContext)
-	stub := new(MockStub)
-
-	procedureID := "nonExistentProcedure"
-
-	mockCtx.On("GetStub").Return(stub)
-
-	stub.On("GetState", procedureID).Return(nil, nil)
-
-	result, err := cc.ReadProcedure(mockCtx, procedureID)
-
-	assert.Error(t, err)
-	assert.Equal(t, result, "{\"error\": \"procedure does not exist: nonExistentProcedure\"}")
-
-	mockCtx.AssertExpectations(t)
-	stub.AssertExpectations(t)
-}
-
-func TestUpdateProcedure(t *testing.T) {
-
-	cc := new(MedicalRecordsChaincode)
-	mockCtx := new(MockTransactionContext)
-	stub := new(MockStub)
-
-	// Define existing procedure ID and updated procedure JSON
-	procedureID := "procedure1"
-	updatedProcedureJSON := `{
-			"identifier": {
-				"System": "http://example.com/systems/practitioner",
-				"Value": "procedure1"
-			},
-			"subject": {
-				"Reference": "practitioners/practitioner1",
-				"Display": "practitioner1"
-			},
-			"code": {
-				"Coding": [
-					{
-						"System": "http://example.com/codesystem",
-						"Code": "procedure-code",
-						"Display": "pr-cd"
-					}
-				],
-				"Text": "English"
-			},
-			"status": {
-				"Coding": [
-					{
-						"System": "useSystem",
-						"Code": "useCode",
-						"Display": "executed"
-					}
-				]
-			},
-			"category": {
-				"Coding": [
-					{
-						"System": "http://example.com/codesystem",
-						"Code": "procedure-category",
-						"Display": "pr-ct"
-					}
-				],
-				"Text": "English"
-			},
-			"performed": {
-				"Reference": "practitioners/practitioner1",
-				"Display": "practitioner1"
-			},
-			"contained": {
-				"Reference": "procedures/emergency1",
-				"Display": "emergency1"
-			}
-		}`
-
-	updatedProcedureJSONBytes, _ := json.Marshal(updatedProcedureJSON)
-
-	mockCtx.On("GetStub").Return(stub)
-	stub.On("GetState", procedureID).Return(updatedProcedureJSONBytes, nil)
-	stub.On("GetChannelID").Return("testchannel")
-	stub.On("PutState", procedureID, mock.Anything).Return(nil)
-
-	clientIdentity := new(MockClientIdentity)
-	mockCtx.On("GetClientIdentity").Return(clientIdentity)
-
-	clientIdentity.On("GetAttributeValue", "userId").Return("testUserId", true, nil)
-
-	invokeResponse := peer.Response{
-		Status:  200,
-		Payload: nil,
-	}
-	stub.On("InvokeChaincode", "patient", mock.AnythingOfType("[][]uint8"), mock.AnythingOfType("string")).Return(invokeResponse, nil)
-
-	msg, err := cc.UpdateProcedure(mockCtx, procedureID, updatedProcedureJSON)
-
-	assert.NoError(t, err)
-	assert.Equal(t, msg, "{\"message\": \"Procedure updated successfully\"}")
-	mockCtx.AssertExpectations(t)
-	stub.AssertExpectations(t)
-
-}
-
-func TestDeleteProcedure(t *testing.T) {
-	cc := new(MedicalRecordsChaincode)
-	mockCtx := new(MockTransactionContext)
-	stub := new(MockStub)
-
-	procedureID := "procedure1"
-	existingProcedureJSON := `{
-        "identifier": {
-            "System": "http://example.com/systems/practitioner",
-            "Value": "procedure1"
-        },
-        "subject": {
-            "Reference": "practitioners/practitioner1",
-            "Display": "practitioner1"
-        },
-        "code": {
-            "Coding": [
-                {
-                    "System": "http://example.com/codesystem",
-                    "Code": "procedure-code",
-                    "Display": "pr-cd"
-                }
-            ],
-            "Text": "English"
-        },
-        "status": {
-            "Coding": [
-                {
-                    "System": "useSystem",
-                    "Code": "useCode",
-                    "Display": "executed"
-                }
-            ]
-        },
-        "category": {
-            "Coding": [
-                {
-                    "System": "http://example.com/codesystem",
-                    "Code": "procedure-category",
-                    "Display": "pr-ct"
-                }
-            ],
-            "Text": "English"
-        },
-        "performed": {
-            "Reference": "practitioners/practitioner1",
-            "Display": "practitioner1"
-        },
-        "contained": {
-            "Reference": "procedures/emergency1",
-            "Display": "emergency1"
-        }
-    }`
-
-	mockCtx.On("GetStub").Return(stub)
-
-	stub.On("GetChannelID").Return("testchannel")
-	stub.On("GetState", procedureID).Return([]byte(existingProcedureJSON), nil)
-	stub.On("DelState", procedureID).Return(nil)
-
-	clientIdentity := new(MockClientIdentity)
-	mockCtx.On("GetClientIdentity").Return(clientIdentity)
-
-	clientIdentity.On("GetAttributeValue", "userId").Return("testUserId", true, nil)
-
-	invokeResponse := peer.Response{
-		Status:  200,
-		Payload: nil,
-	}
-	stub.On("InvokeChaincode", "patient", mock.AnythingOfType("[][]uint8"), mock.AnythingOfType("string")).Return(invokeResponse, nil)
-
-	msg, err := cc.DeleteProcedure(mockCtx, procedureID)
-
-	assert.NoError(t, err)
-	assert.Equal(t, msg, `{"message": "Procedure deleted successfully"}`)
-	mockCtx.AssertExpectations(t)
-	stub.AssertExpectations(t)
 }
