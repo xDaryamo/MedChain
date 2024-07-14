@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { useState } from "react";
 import { useSearchEncounters, useRemoveEncounter } from "./useEncounters";
 import Spinner from "../../ui/Spinner";
@@ -22,7 +23,7 @@ const EncounterList = () => {
   };
 
   const [query, setQuery] = useState(defaultQuery);
-  const { isPending, encounters } = useSearchEncounters(query);
+  const { isPending, encounters, refetch } = useSearchEncounters(query);
   const { removeEncounter, isPending: isDeleting } = useRemoveEncounter();
   const { user, isPending: userLoading, error: userError } = useUser();
   const [isModalOpen, setModalOpen] = useState(false);
@@ -32,18 +33,30 @@ const EncounterList = () => {
   if (userError) return <p>Errore nel caricamento dei dati utente</p>;
 
   const handleRemoveEncounter = async (id) => {
-    removeEncounter(id);
+    await removeEncounter(id);
+    refetch();
   };
 
   const handleModalClose = () => {
     setModalOpen(false);
   };
 
+  const handleModalSuccess = () => {
+    setModalOpen(false);
+    refetch(); // Refetch the encounters after adding a new one
+  };
+
+  const isPharmacyOrLab =
+    user?.organization.toLowerCase().includes("pharmacy") ||
+    user?.organization.toLowerCase().includes("farmacia") ||
+    user?.organization.toLowerCase().includes("laboratory") ||
+    user?.organization.toLowerCase().includes("laboratorio");
+
   if (isPending || userLoading) return <Spinner />;
 
   return (
     <div>
-      <Heading>Lista degli Incontri</Heading>
+      <Heading>Lista delle visite</Heading>
       <List
         items={encounters}
         itemKey="identifier"
@@ -52,11 +65,14 @@ const EncounterList = () => {
         isDeleting={isDeleting}
         user={user}
         onAddNew={() => setModalOpen(true)}
-        hasAddBtn={user?.role === "practitioner"}
+        hasAddBtn={user?.role === "practitioner" && !isPharmacyOrLab}
       />
-      {user?.role === "practitioner" && (
+      {user?.role === "practitioner" && !isPharmacyOrLab && (
         <Modal isOpen={isModalOpen} onClose={handleModalClose}>
-          <AddEncounterForm onSubmitSuccess={handleModalClose} onCancel={handleModalClose} />
+          <AddEncounterForm
+            onSubmitSuccess={handleModalSuccess} // Use handleModalSuccess to refetch after adding
+            onCancel={handleModalClose}
+          />
         </Modal>
       )}
       <Toaster />

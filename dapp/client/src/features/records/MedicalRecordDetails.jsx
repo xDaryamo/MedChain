@@ -6,6 +6,7 @@ import Spinner from "../../ui/Spinner";
 import Heading from "../../ui/Heading";
 import BackButton from "../../ui/BackButton";
 import Button from "../../ui/Button";
+import { FaTrash } from "react-icons/fa";
 import { useEffect } from "react";
 
 const formatDate = (dateString) => {
@@ -252,9 +253,9 @@ const MedicalRecordDetails = () => {
         <BackButton onClick={() => navigate(-1)}>Indietro</BackButton>
       </div>
       <Heading>Dettagli della Cartella Clinica</Heading>
-      <div className="mt-4 space-y-6">
-        <section className="mb-4">
-          <h2 className="text-xl font-bold">Informazioni del Paziente</h2>
+      <section className="mt-4 space-y-6">
+        <div className="rounded bg-white p-4 shadow">
+          <h2 className="mb-2 text-xl font-bold">Informazioni del Paziente</h2>
           <div className="text-cyan-950">
             <span className="font-bold">Nome:</span>{" "}
             {patient.name?.text || "N/A"}
@@ -283,9 +284,11 @@ const MedicalRecordDetails = () => {
             <span className="font-bold">Lingua:</span>{" "}
             {patient.communication?.[0]?.language?.coding[0].display || "N/A"}
           </div>
-        </section>
-        <section className="mb-4">
-          <h2 className="text-xl font-bold">Informazioni sulla Cartella</h2>
+        </div>
+        <div className="rounded bg-white p-4 shadow">
+          <h2 className="mb-2 text-xl font-bold">
+            Informazioni sulla Cartella
+          </h2>
           <div className="text-cyan-950">
             <span className="font-bold">ID Cartella:</span>{" "}
             {record.identifier || "N/A"}
@@ -295,20 +298,28 @@ const MedicalRecordDetails = () => {
           {renderList("Procedura", record.procedures, renderProcedure)}
           {renderList("Prescrizione", record.prescriptions, renderPrescription)}
           {renderList("Risultato di Laboratorio", labResults, renderLabResult)}
-        </section>
-        <div className="flex space-x-4">
-          <Link to={`/records/update/${id}`}>
-            <Button variant="secondary">Modifica</Button>
-          </Link>
-          <Button
-            variant="danger"
-            onClick={handleDeleteRecord}
-            disabled={deletePending}
-          >
-            {deletePending ? <Spinner /> : "Cancella"}
-          </Button>
         </div>
-      </div>
+        <div className="mt-4 flex items-center space-x-4">
+          <Link
+            to={`/records/update/${id}`}
+            className="flex w-full justify-center"
+          >
+            <Button variant="primary" size="large">
+              Modifica
+            </Button>
+          </Link>
+          <div className="flex justify-end">
+            <Button
+              type="button"
+              variant="delete"
+              onClick={handleDeleteRecord}
+              size="small"
+            >
+              {deletePending ? <Spinner /> : <FaTrash />}
+            </Button>
+          </div>
+        </div>
+      </section>
     </div>
   );
 };

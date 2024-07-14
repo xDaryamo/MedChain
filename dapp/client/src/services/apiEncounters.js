@@ -68,7 +68,7 @@ export const searchEncounters = async (query) => {
 
 export const getEncounter = async (id) => {
   const response = await api.get(`/encounters/${id}`);
-  return response.data;
+  return response.data.encounter;
 };
 
 export const createEncounter = async (encounter) => {

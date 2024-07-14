@@ -22,14 +22,14 @@ jobs:
               cd ..
             fi
           done
-      # - name: Run tests in all chaincode modules
-      #   run: |
-      #     cd chaincodes/chaincodes_go
-      #     for d in */ ; do
-      #       if [ -d "$d" ]; then
-      #         echo "Testing in $d"
-      #         cd "$d"
-      #         go test -list=.
-      #         cd ..
-      #       fi
-      #     done
+      - name: Run tests in all chaincode modules
+        run: |
+          cd chaincodes/chaincodes_go
+          for d in */ ; do
+            if [ -d "$d" ]; then
+              echo "Testing in $d"
+              cd "$d"
+              go test -list=.
+              cd ..
+            fi
+          done

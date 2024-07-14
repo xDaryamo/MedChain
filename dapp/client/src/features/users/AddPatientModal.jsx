@@ -6,6 +6,7 @@ import Spinner from "../../ui/Spinner";
 import Modal from "../../ui/Modal";
 import Button from "../../ui/Button";
 import FormInput from "../../ui/FormInput";
+import SmallSpinner from "../../ui/SmallSpinner";
 
 // Email validation regex pattern
 const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -49,7 +50,7 @@ const AddPatientModal = ({ isOpen, onClose, followedPatients }) => {
     <Modal isOpen={isOpen} onClose={onClose}>
       <div className="space-y-4">
         <h2 className="text-center text-2xl font-bold text-cyan-950">
-          Add Patient
+          Aggiungi Paziente{" "}
         </h2>
         <FormInput
           label="Patient Email"
@@ -81,11 +82,11 @@ const AddPatientModal = ({ isOpen, onClose, followedPatients }) => {
                 disabled={isPatientFollowed || isRequestPending}
               >
                 {isPatientFollowed ? (
-                  "Already Followed"
+                  "Paziente già inserito"
                 ) : isRequestPending ? (
-                  <Spinner />
+                  <SmallSpinner />
                 ) : (
-                  "Request Access"
+                  "Richiedi accesso"
                 )}
               </Button>
             </div>

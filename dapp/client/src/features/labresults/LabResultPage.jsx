@@ -6,6 +6,7 @@ import Button from "../../ui/Button";
 import Heading from "../../ui/Heading";
 import BackButton from "../../ui/BackButton";
 import { useEffect } from "react";
+import { useUser } from "../authentication/useAuth";
 
 const formatDate = (dateString) => {
   if (!dateString) return "N/A";
@@ -18,6 +19,8 @@ const LabResultPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
 
+  const { user } = useUser();
+
   const {
     labResult,
     isPending: labResultLoading,
@@ -27,7 +30,7 @@ const LabResultPage = () => {
 
   useEffect(() => {
     refetchLabResult();
-  }, [id]);
+  }, [id, refetchLabResult]);
 
   if (labResultLoading || labResult === undefined) {
     return <Spinner />;
@@ -69,6 +72,9 @@ const LabResultPage = () => {
   const renderNote = (note) => note.text || "N/A";
   const renderComponent = (component) =>
     `${component.code?.text || "N/A"}, ${component.valueQuantity?.value || "N/A"}, ${component.valueQuantity?.unit || "N/A"}`;
+
+  const isPractitioner = user.role === "practitioner";
+  const isPerformer = labResult.performer?.[0]?.reference === user.userId;
 
   return (
     <div className="flex-1 overflow-y-auto p-4 md:p-8">
@@ -112,14 +118,16 @@ const LabResultPage = () => {
             renderComponent,
           )}
         </div>
-        <Link
-          to={`/labresults/update/${id}`}
-          className="mt-4 flex w-full justify-center space-x-4"
-        >
-          <Button variant="primary" size="large">
-            Modifica
-          </Button>
-        </Link>
+        {isPractitioner && isPerformer && (
+          <Link
+            to={`/labresults/update/${id}`}
+            className="mt-4 flex w-full justify-center space-x-4"
+          >
+            <Button variant="primary" size="large">
+              Modifica
+            </Button>
+          </Link>
+        )}
       </section>
     </div>
   );

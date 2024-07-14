@@ -6,7 +6,7 @@ import {
 import Spinner from "../../ui/Spinner";
 import Button from "../../ui/Button";
 import { FaCheck, FaTrashAlt } from "react-icons/fa"; // Ensure you have react-icons installed
-import toast from "react-hot-toast";
+import SmallSpinner from "../../ui/SmallSpinner";
 
 const IncomingAuth = () => {
   const { grantAccess, isPending: isGranting } = useGrantAccess();
@@ -18,7 +18,6 @@ const IncomingAuth = () => {
   const handleGrantAccess = (practitionerId) => {
     grantAccess(practitionerId, {
       onSuccess: () => {
-        toast.success("Access granted successfully");
         refetch();
       },
     });
@@ -55,7 +54,7 @@ const IncomingAuth = () => {
                 onClick={() => handleGrantAccess(request.practitionerId)}
                 disabled={isGranting}
               >
-                {isGranting ? <Spinner /> : <FaCheck />}
+                {isGranting ? <SmallSpinner /> : <FaCheck />}
               </Button>
               <Button
                 variant="delete"
@@ -63,7 +62,7 @@ const IncomingAuth = () => {
                 onClick={() => handleRevokeAccess(request.practitionerId)}
                 disabled={isRevoking}
               >
-                {isRevoking ? <Spinner /> : <FaTrashAlt />}
+                {isRevoking ? <SmallSpinner /> : <FaTrashAlt />}
               </Button>
             </div>
           </li>

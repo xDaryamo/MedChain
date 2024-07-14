@@ -2,6 +2,7 @@ import { useRevokeAccess, useGetAccessRequests } from "../users/usePatients";
 import Spinner from "../../ui/Spinner";
 import Button from "../../ui/Button";
 import { FaTrashAlt } from "react-icons/fa"; // Ensure you have react-icons installed
+import SmallSpinner from "../../ui/SmallSpinner";
 
 const GrantedAuth = () => {
   const { revokeAccess, isPending: isRevoking } = useRevokeAccess();
@@ -39,7 +40,7 @@ const GrantedAuth = () => {
               onClick={() => handleRevokeAccess(request.practitionerId)}
               disabled={isRevoking}
             >
-              {isRevoking ? <Spinner /> : <FaTrashAlt />}
+              {isRevoking ? <SmallSpinner /> : <FaTrashAlt />}
             </Button>
           </li>
         ))}

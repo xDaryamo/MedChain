@@ -9,6 +9,7 @@ import { useSignup } from "../features/authentication/useAuth";
 import Button from "./Button";
 import NavigationButtons from "./NavigationButtons";
 import SmallSpinner from "./SmallSpinner";
+import { differenceInYears } from "date-fns";
 
 const PractitionerSignupForm = () => {
   const {
@@ -36,67 +37,67 @@ const PractitionerSignupForm = () => {
   ];
 
   const qualifications = [
-    { value: "PN", label: "Advanced Practice Nurse" },
-    { value: "AAS", label: "Associate of Applied Science" },
-    { value: "AA", label: "Associate of Arts" },
-    { value: "ABA", label: "Associate of Business Administration" },
-    { value: "AE", label: "Associate of Engineering" },
-    { value: "AS", label: "Associate of Science" },
-    { value: "BA", label: "Bachelor of Arts" },
-    { value: "BBA", label: "Bachelor of Business Administration" },
-    { value: "BE", label: "Bachelor of Engineering" },
-    { value: "BFA", label: "Bachelor of Fine Arts" },
-    { value: "BN", label: "Bachelor of Nursing" },
-    { value: "BS", label: "Bachelor of Science" },
-    { value: "BSL", label: "Bachelor of Science - Law" },
-    { value: "BSN", label: "Bachelor of Science - Nursing" },
-    { value: "BT", label: "Bachelor of Theology" },
-    { value: "CER", label: "Certificate" },
-    { value: "CANP", label: "Certified Adult Nurse Practitioner" },
-    { value: "CMA", label: "Certified Medical Assistant" },
-    { value: "CNP", label: "Certified Nurse Practitioner" },
-    { value: "CNM", label: "Certified Nurse Midwife" },
-    { value: "CRN", label: "Certified Registered Nurse" },
-    { value: "CNS", label: "Certified Nurse Specialist" },
-    { value: "CPNP", label: "Certified Pediatric Nurse Practitioner" },
-    { value: "CTR", label: "Certified Tumor Registrar" },
+    { value: "PN", label: "Infermiera di Pratica Avanzata" },
+    { value: "AAS", label: "Associato in Scienze Applicate" },
+    { value: "AA", label: "Associato in Arti" },
+    { value: "ABA", label: "Associato in Amministrazione Aziendale" },
+    { value: "AE", label: "Associato in Ingegneria" },
+    { value: "AS", label: "Associato in Scienze" },
+    { value: "BA", label: "Laurea in Lettere" },
+    { value: "BBA", label: "Laurea in Amministrazione Aziendale" },
+    { value: "BE", label: "Laurea in Ingegneria" },
+    { value: "BFA", label: "Laurea in Belle Arti" },
+    { value: "BN", label: "Laurea in Infermieristica" },
+    { value: "BS", label: "Laurea in Scienze" },
+    { value: "BSL", label: "Laurea in Scienze Giuridiche" },
+    { value: "BSN", label: "Laurea in Scienze Infermieristiche" },
+    { value: "BT", label: "Laurea in Teologia" },
+    { value: "CER", label: "Certificato" },
+    { value: "CANP", label: "Infermiera Adulta Certificata" },
+    { value: "CMA", label: "Assistente Medico Certificato" },
+    { value: "CNP", label: "Infermiere Professionista Certificato" },
+    { value: "CNM", label: "Ostetrica Certificata" },
+    { value: "CRN", label: "Infermiere Registrato Certificato" },
+    { value: "CNS", label: "Specialista Infermieristico Certificato" },
+    { value: "CPNP", label: "Infermiere Pediatrico Certificato" },
+    { value: "CTR", label: "Registro Tumori Certificato" },
     { value: "DIP", label: "Diploma" },
-    { value: "DBA", label: "Doctor of Business Administration" },
-    { value: "DED", label: "Doctor of Education" },
-    { value: "PharmD", label: "Doctor of Pharmacy" },
-    { value: "PHE", label: "Doctor of Engineering" },
-    { value: "PHD", label: "Doctor of Philosophy" },
-    { value: "PHS", label: "Doctor of Science" },
-    { value: "MD", label: "Doctor of Medicine" },
-    { value: "DO", label: "Doctor of Osteopathy" },
-    { value: "EMT", label: "Emergency Medical Technician" },
-    { value: "EMTP", label: "Emergency Medical Technician - Paramedic" },
-    { value: "FPNP", label: "Family Practice Nurse Practitioner" },
-    { value: "HS", label: "High School Graduate" },
-    { value: "JD", label: "Juris Doctor" },
-    { value: "MA", label: "Master of Arts" },
-    { value: "MBA", label: "Master of Business Administration" },
-    { value: "MCE", label: "Master of Civil Engineering" },
-    { value: "MDI", label: "Master of Divinity" },
-    { value: "MED", label: "Master of Education" },
-    { value: "MEE", label: "Master of Electrical Engineering" },
-    { value: "ME", label: "Master of Engineering" },
-    { value: "MFA", label: "Master of Fine Arts" },
-    { value: "MME", label: "Master of Mechanical Engineering" },
-    { value: "MS", label: "Master of Science" },
-    { value: "MSL", label: "Master of Science - Law" },
-    { value: "MSN", label: "Master of Science - Nursing" },
-    { value: "MTH", label: "Master of Theology" },
-    { value: "MDA", label: "Medical Assistant" },
-    { value: "MT", label: "Medical Technician" },
-    { value: "NG", label: "Non-Graduate" },
-    { value: "NP", label: "Nurse Practitioner" },
-    { value: "PA", label: "Physician Assistant" },
-    { value: "RMA", label: "Registered Medical Assistant" },
-    { value: "RN", label: "Registered Nurse" },
-    { value: "RPH", label: "Registered Pharmacist" },
-    { value: "SEC", label: "Secretarial Certificate" },
-    { value: "TS", label: "Trade School Graduate" },
+    { value: "DBA", label: "Dottorato in Amministrazione Aziendale" },
+    { value: "DED", label: "Dottorato in Educazione" },
+    { value: "PharmD", label: "Dottorato in Farmacia" },
+    { value: "PHE", label: "Dottorato in Ingegneria" },
+    { value: "PHD", label: "Dottorato di Ricerca" },
+    { value: "PHS", label: "Dottorato in Scienze" },
+    { value: "MD", label: "Dottore in Medicina" },
+    { value: "DO", label: "Dottore in Osteopatia" },
+    { value: "EMT", label: "Tecnico Medico di Emergenza" },
+    { value: "EMTP", label: "Paramedico" },
+    { value: "FPNP", label: "Infermiere di Famiglia Certificato" },
+    { value: "HS", label: "Diploma di Scuola Superiore" },
+    { value: "JD", label: "Dottore in Giurisprudenza" },
+    { value: "MA", label: "Laurea Magistrale in Lettere" },
+    { value: "MBA", label: "Master in Amministrazione Aziendale" },
+    { value: "MCE", label: "Master in Ingegneria Civile" },
+    { value: "MDI", label: "Master in Divinità" },
+    { value: "MED", label: "Master in Educazione" },
+    { value: "MEE", label: "Master in Ingegneria Elettrica" },
+    { value: "ME", label: "Master in Ingegneria" },
+    { value: "MFA", label: "Master in Belle Arti" },
+    { value: "MME", label: "Master in Ingegneria Meccanica" },
+    { value: "MS", label: "Master in Scienze" },
+    { value: "MSL", label: "Master in Scienze Giuridiche" },
+    { value: "MSN", label: "Master in Scienze Infermieristiche" },
+    { value: "MTH", label: "Master in Teologia" },
+    { value: "MDA", label: "Assistente Medico" },
+    { value: "MT", label: "Tecnico Medico" },
+    { value: "NG", label: "Non Laureato" },
+    { value: "NP", label: "Infermiere Professionista" },
+    { value: "PA", label: "Assistente Medico" },
+    { value: "RMA", label: "Assistente Medico Registrato" },
+    { value: "RN", label: "Infermiere Registrato" },
+    { value: "RPH", label: "Farmacista Registrato" },
+    { value: "SEC", label: "Certificato di Segreteria" },
+    { value: "TS", label: "Diploma di Scuola Professionale" },
   ];
 
   const qualificationStatuses = [
@@ -205,11 +206,11 @@ const PractitionerSignupForm = () => {
             ],
           },
           text: data.address,
-          line: data.line,
+          line: data.line.toString(),
           city: data.city,
           state: data.state,
-          postalCode: data.postalCode,
-          country: data.country,
+          postalCode: data.postalCode.toString(),
+          country: data.state,
         },
         qualification: [
           {
@@ -299,7 +300,7 @@ const PractitionerSignupForm = () => {
               {steps[0]}
             </h2>
             <FormRow
-              label="Nome utente"
+              label="Nome Utente"
               error={errors?.username?.message}
               className="col-span-1"
             >
@@ -410,6 +411,10 @@ const PractitionerSignupForm = () => {
                 id="birthDate"
                 {...register("birthDate", {
                   required: "Questo campo è obbligatorio",
+                  validate: (value) => {
+                    const age = differenceInYears(new Date(), new Date(value));
+                    return age >= 18 || "La data di nascita è troppo recente";
+                  },
                 })}
               />
             </FormRow>
@@ -486,6 +491,10 @@ const PractitionerSignupForm = () => {
                 id="phone"
                 {...register("phone", {
                   required: "Questo campo è obbligatorio",
+                  pattern: {
+                    value: /^[0-9]{10}$/,
+                    message: "Inserisci un numero di telefono valido",
+                  },
                 })}
               />
             </FormRow>
@@ -505,13 +514,16 @@ const PractitionerSignupForm = () => {
             <FormRow
               label="Numero Civico"
               error={errors?.line?.message}
-              className="col-span-1"
+              className="col-span-2"
             >
               <FormInput
-                type="text"
+                type="number"
                 id="line"
                 {...register("line", {
-                  required: "Questo campo è obbligatorio",
+                  required: "Il numero civico è obbligatorio",
+                  valueAsNumber: true,
+                  validate: (value) =>
+                    !isNaN(value) || "Inserisci un numero valido",
                 })}
               />
             </FormRow>
@@ -551,22 +563,11 @@ const PractitionerSignupForm = () => {
                 id="postalCode"
                 {...register("postalCode", {
                   required: "Questo campo è obbligatorio",
+                  valueAsNumber: true,
                 })}
               />
             </FormRow>
-            <FormRow
-              label="Paese"
-              error={errors?.country?.message}
-              className="col-span-1"
-            >
-              <FormInput
-                type="text"
-                id="country"
-                {...register("country", {
-                  required: "Questo campo è obbligatorio",
-                })}
-              />
-            </FormRow>
+
             <FormRow
               label="Organizzazione"
               error={errors?.organization?.message}
@@ -621,7 +622,7 @@ const PractitionerSignupForm = () => {
               />
             </FormRow>
 
-            <div className="flex w-full justify-center">
+            <div className="flex w-full justify-center md:ml-[13vw]">
               <Button type="submit" size="large" variant="primary">
                 {isPending ? <SmallSpinner /> : "Registrati"}
               </Button>

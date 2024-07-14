@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "react-hot-toast";
-import { format } from "date-fns";
+import { format, differenceInYears } from "date-fns";
 import FormRow from "./FormRow";
 import FormInput from "./FormInput";
 import FormSelect from "./FormSelect";
@@ -119,9 +119,9 @@ const PatientSignupForm = () => {
               ],
             },
             text: data.address,
-            line: data.line,
+            line: data.line.toString(),
             city: data.city,
-            postalcode: data.postalCode,
+            postalcode: data.postalCode.toString(),
             country: data.country,
           },
         ],
@@ -176,7 +176,7 @@ const PatientSignupForm = () => {
               {steps[0]}
             </h2>
             <FormRow
-              label="Username"
+              label="Nome Utente"
               error={errors?.username?.message}
               className="col-span-1"
             >
@@ -184,7 +184,7 @@ const PatientSignupForm = () => {
                 type="text"
                 id="username"
                 {...register("username", {
-                  required: "This field is required",
+                  required: "Questo campo è obbligatorio",
                 })}
               />
             </FormRow>
@@ -197,10 +197,10 @@ const PatientSignupForm = () => {
                 type="email"
                 id="email"
                 {...register("email", {
-                  required: "This field is required",
+                  required: "Questo campo è obbligatorio",
                   pattern: {
                     value: /\S+@\S+\.\S+/,
-                    message: "Please provide a valid email address",
+                    message: "Inserisci un indirizzo email valido",
                   },
                 })}
               />
@@ -214,10 +214,10 @@ const PatientSignupForm = () => {
                 type="password"
                 id="password"
                 {...register("password", {
-                  required: "This field is required",
+                  required: "Questo campo è obbligatorio",
                   minLength: {
                     value: 8,
-                    message: "Password needs a minimum of 8 characters",
+                    message: "La password deve contenere almeno 8 caratteri",
                   },
                 })}
               />
@@ -231,9 +231,10 @@ const PatientSignupForm = () => {
                 type="password"
                 id="confirmPassword"
                 {...register("confirmPassword", {
-                  required: "This field is required",
+                  required: "Questo campo è obbligatorio",
                   validate: (value) =>
-                    value === getValues().password || "Passwords need to match",
+                    value === getValues().password ||
+                    "Le password devono corrispondere",
                 })}
               />
             </FormRow>
@@ -251,7 +252,7 @@ const PatientSignupForm = () => {
               {steps[1]}
             </h2>
             <FormRow
-              label="First Name"
+              label="Nome"
               error={errors?.firstName?.message}
               className="col-span-1"
             >
@@ -259,12 +260,12 @@ const PatientSignupForm = () => {
                 type="text"
                 id="firstName"
                 {...register("firstName", {
-                  required: "This field is required",
+                  required: "Questo campo è obbligatorio",
                 })}
               />
             </FormRow>
             <FormRow
-              label="Last Name"
+              label="Cognome"
               error={errors?.lastName?.message}
               className="col-span-1"
             >
@@ -272,12 +273,12 @@ const PatientSignupForm = () => {
                 type="text"
                 id="lastName"
                 {...register("lastName", {
-                  required: "This field is required",
+                  required: "Questo campo è obbligatorio",
                 })}
               />
             </FormRow>
             <FormRow
-              label="Birth Date"
+              label="Data di Nascita"
               error={errors?.birthDate?.message}
               className="col-span-1"
             >
@@ -285,18 +286,24 @@ const PatientSignupForm = () => {
                 type="date"
                 id="birthDate"
                 {...register("birthDate", {
-                  required: "This field is required",
+                  required: "Questo campo è obbligatorio",
+                  validate: (value) => {
+                    const age = differenceInYears(new Date(), new Date(value));
+                    return age >= 18 || "La data di nascita è troppo recente";
+                  },
                 })}
               />
             </FormRow>
             <FormRow
-              label="Gender"
+              label="Genere"
               error={errors?.gender?.message}
               className="col-span-1"
             >
               <FormSelect
                 id="gender"
-                {...register("gender", { required: "This field is required" })}
+                {...register("gender", {
+                  required: "Questo campo è obbligatorio",
+                })}
                 options={[
                   { value: "male", label: "Maschio" },
                   { value: "female", label: "Femmina" },
@@ -319,7 +326,7 @@ const PatientSignupForm = () => {
               {steps[2]}
             </h2>
             <FormRow
-              label="Phone"
+              label="Telefono"
               error={errors?.phone?.message}
               className="col-span-2"
             >
@@ -327,7 +334,11 @@ const PatientSignupForm = () => {
                 type="tel"
                 id="phone"
                 {...register("phone", {
-                  required: "This field is required",
+                  required: "Questo campo è obbligatorio",
+                  pattern: {
+                    value: /^[0-9]{10}$/,
+                    message: "Inserisci un numero di telefono valido",
+                  },
                 })}
               />
             </FormRow>
@@ -340,7 +351,7 @@ const PatientSignupForm = () => {
                 type="text"
                 id="address"
                 {...register("address", {
-                  required: "This field is required",
+                  required: "Questo campo è obbligatorio",
                 })}
               />
             </FormRow>
@@ -354,6 +365,7 @@ const PatientSignupForm = () => {
                 id="line"
                 {...register("line", {
                   required: "Il numero civico è obbligatorio",
+                  valueAsNumber: true,
                 })}
               />
             </FormRow>
@@ -380,6 +392,7 @@ const PatientSignupForm = () => {
                 id="postalCode"
                 {...register("postalCode", {
                   required: "Il codice postale è obbligatorio",
+                  valueAsNumber: true,
                 })}
               />
             </FormRow>
@@ -407,9 +420,16 @@ const PatientSignupForm = () => {
                 {...register("maritalStatus")}
               />
             </FormRow>
-            <Button type="submit" className="col-span-2">
-              {isPending ? <SmallSpinner /> : "Registrati"}
-            </Button>
+            <div className="col-span-2 flex justify-center">
+              <Button
+                type="submit"
+                className="w-full"
+                variant="primary"
+                size="large"
+              >
+                {isPending ? <SmallSpinner /> : "Registrati"}
+              </Button>
+            </div>
           </>
         )}
       </form>

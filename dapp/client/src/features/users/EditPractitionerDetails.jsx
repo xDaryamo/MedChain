@@ -5,15 +5,15 @@ import {
   useGetPractitioner,
   useUpdatePractitioner,
 } from "../users/usePractitioner";
-import Spinner from "../../ui/Spinner";
 import Button from "../../ui/Button";
 import Heading from "../../ui/Heading";
 import FormRow from "../../ui/FormRow";
 import FormInput from "../../ui/FormInput";
 import FormSelect from "../../ui/FormSelect";
 import { useEffect } from "react";
-import { format, parseISO, isValid } from "date-fns";
+import { format, parseISO, isValid, differenceInYears } from "date-fns";
 import BackButton from "../../ui/BackButton";
+import SmallSpinner from "../../ui/SmallSpinner";
 
 const EditPractitionerDetails = () => {
   const { user } = useUser();
@@ -224,7 +224,7 @@ const EditPractitionerDetails = () => {
   ];
 
   const qualificationCodes = [
-    { value: "PN", label: "Advanced Practice Nurse" },
+    { value: "PN", label: "Infermiere di Pratica Avanzata" },
     { value: "AAS", label: "Associate of Applied Science" },
     { value: "AA", label: "Associate of Arts" },
     { value: "ABA", label: "Associate of Business Administration" },
@@ -239,52 +239,52 @@ const EditPractitionerDetails = () => {
     { value: "BSL", label: "Bachelor of Science - Law" },
     { value: "BSN", label: "Bachelor of Science - Nursing" },
     { value: "BT", label: "Bachelor of Theology" },
-    { value: "CER", label: "Certificate" },
-    { value: "CANP", label: "Certified Adult Nurse Practitioner" },
-    { value: "CMA", label: "Certified Medical Assistant" },
-    { value: "CNP", label: "Certified Nurse Practitioner" },
-    { value: "CNM", label: "Certified Nurse Midwife" },
-    { value: "CRN", label: "Certified Registered Nurse" },
-    { value: "CNS", label: "Certified Nurse Specialist" },
-    { value: "CPNP", label: "Certified Pediatric Nurse Practitioner" },
-    { value: "CTR", label: "Certified Tumor Registrar" },
+    { value: "CER", label: "Certificato" },
+    { value: "CANP", label: "Infermiere Certificato per Adulti" },
+    { value: "CMA", label: "Assistente Medico Certificato" },
+    { value: "CNP", label: "Infermiere Professionale Certificato" },
+    { value: "CNM", label: "Ostetrica Certificata" },
+    { value: "CRN", label: "Infermiere Registrato Certificato" },
+    { value: "CNS", label: "Specialista Infermiere Certificato" },
+    { value: "CPNP", label: "Infermiere Pediatrico Certificato" },
+    { value: "CTR", label: "Registratore Tumori Certificato" },
     { value: "DIP", label: "Diploma" },
-    { value: "DBA", label: "Doctor of Business Administration" },
-    { value: "DED", label: "Doctor of Education" },
-    { value: "PharmD", label: "Doctor of Pharmacy" },
-    { value: "PHE", label: "Doctor of Engineering" },
-    { value: "PHD", label: "Doctor of Philosophy" },
-    { value: "PHS", label: "Doctor of Science" },
-    { value: "MD", label: "Doctor of Medicine" },
-    { value: "DO", label: "Doctor of Osteopathy" },
-    { value: "EMT", label: "Emergency Medical Technician" },
-    { value: "EMTP", label: "Emergency Medical Technician - Paramedic" },
-    { value: "FPNP", label: "Family Practice Nurse Practitioner" },
-    { value: "HS", label: "High School Graduate" },
+    { value: "DBA", label: "Dottore in Business Administration" },
+    { value: "DED", label: "Dottore in Educazione" },
+    { value: "PharmD", label: "Dottore in Farmacia" },
+    { value: "PHE", label: "Dottore in Ingegneria" },
+    { value: "PHD", label: "Dottore di Ricerca" },
+    { value: "PHS", label: "Dottore in Scienze" },
+    { value: "MD", label: "Dottore in Medicina" },
+    { value: "DO", label: "Dottore in Osteopatia" },
+    { value: "EMT", label: "Tecnico Medico di Emergenza" },
+    { value: "EMTP", label: "Tecnico Medico di Emergenza - Paramedico" },
+    { value: "FPNP", label: "Infermiere Professionale di Famiglia" },
+    { value: "HS", label: "Diplomato di Scuola Superiore" },
     { value: "JD", label: "Juris Doctor" },
     { value: "MA", label: "Master of Arts" },
-    { value: "MBA", label: "Master of Business Administration" },
-    { value: "MCE", label: "Master of Civil Engineering" },
-    { value: "MDI", label: "Master of Divinity" },
-    { value: "MED", label: "Master of Education" },
-    { value: "MEE", label: "Master of Electrical Engineering" },
-    { value: "ME", label: "Master of Engineering" },
-    { value: "MFA", label: "Master of Fine Arts" },
-    { value: "MME", label: "Master of Mechanical Engineering" },
-    { value: "MS", label: "Master of Science" },
-    { value: "MSL", label: "Master of Science - Law" },
-    { value: "MSN", label: "Master of Science - Nursing" },
-    { value: "MTH", label: "Master of Theology" },
-    { value: "MDA", label: "Medical Assistant" },
-    { value: "MT", label: "Medical Technician" },
-    { value: "NG", label: "Non-Graduate" },
-    { value: "NP", label: "Nurse Practitioner" },
-    { value: "PA", label: "Physician Assistant" },
-    { value: "RMA", label: "Registered Medical Assistant" },
-    { value: "RN", label: "Registered Nurse" },
-    { value: "RPH", label: "Registered Pharmacist" },
-    { value: "SEC", label: "Secretarial Certificate" },
-    { value: "TS", label: "Trade School Graduate" },
+    { value: "MBA", label: "Master in Business Administration" },
+    { value: "MCE", label: "Master in Ingegneria Civile" },
+    { value: "MDI", label: "Master in Divinità" },
+    { value: "MED", label: "Master in Educazione" },
+    { value: "MEE", label: "Master in Ingegneria Elettrica" },
+    { value: "ME", label: "Master in Ingegneria" },
+    { value: "MFA", label: "Master in Belle Arti" },
+    { value: "MME", label: "Master in Ingegneria Meccanica" },
+    { value: "MS", label: "Master in Scienze" },
+    { value: "MSL", label: "Master in Scienze - Diritto" },
+    { value: "MSN", label: "Master in Scienze - Infermieristica" },
+    { value: "MTH", label: "Master in Teologia" },
+    { value: "MDA", label: "Assistente Medico" },
+    { value: "MT", label: "Tecnico Medico" },
+    { value: "NG", label: "Non-Diplomato" },
+    { value: "NP", label: "Infermiere Professionale" },
+    { value: "PA", label: "Assistente Medico" },
+    { value: "RMA", label: "Assistente Medico Registrato" },
+    { value: "RN", label: "Infermiere Registrato" },
+    { value: "RPH", label: "Farmacista Registrato" },
+    { value: "SEC", label: "Certificato di Segreteria" },
+    { value: "TS", label: "Diplomato di Scuola Professionale" },
   ];
 
   const qualificationStatuses = [
@@ -323,7 +323,17 @@ const EditPractitionerDetails = () => {
           />
         </FormRow>
         <FormRow label="Data di Nascita" error={errors?.birthDate?.message}>
-          <FormInput type="date" id="birthDate" {...register("birthDate")} />
+          <FormInput
+            type="date"
+            id="birthDate"
+            {...register("birthDate", {
+              required: "La data di nascita è obbligatoria",
+              validate: (value) => {
+                const age = differenceInYears(new Date(), new Date(value));
+                return age >= 18 || "Devi avere almeno 18 anni";
+              },
+            })}
+          />
         </FormRow>
         <FormRow label="Genere" error={errors?.gender?.message}>
           <FormSelect
@@ -368,7 +378,13 @@ const EditPractitionerDetails = () => {
           <FormInput
             type="tel"
             id="phone"
-            {...register("phone", { required: "Il telefono è obbligatorio" })}
+            {...register("phone", {
+              required: "Il telefono è obbligatorio",
+              pattern: {
+                value: /^[0-9]{10}$/,
+                message: "Inserisci un numero di telefono valido",
+              },
+            })}
           />
         </FormRow>
         <FormRow label="Indirizzo" error={errors?.address?.message}>
@@ -384,6 +400,8 @@ const EditPractitionerDetails = () => {
             id="line"
             {...register("line", {
               required: "Il numero civico è obbligatorio",
+              validate: (value) =>
+                !isNaN(value) || "Il numero civico deve essere un numero",
             })}
           />
         </FormRow>
@@ -471,7 +489,7 @@ const EditPractitionerDetails = () => {
             variant="primary"
             disabled={updatePractitionerPending}
           >
-            {updatePractitionerPending ? <Spinner /> : "Aggiorna"}
+            {updatePractitionerPending ? <SmallSpinner /> : "Aggiorna"}
           </Button>
         </div>
         {errors && (

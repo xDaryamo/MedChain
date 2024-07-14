@@ -28,7 +28,7 @@ const FollowedPatientsList = () => {
 
   return (
     <div>
-      <Heading>Followed Patients List</Heading>
+      <Heading>Lista Pazienti</Heading>
       {followedPatients.length === 0 ? (
         <div className="flex justify-center">
           <Button onClick={handleAddNew} variant="add" size="add">

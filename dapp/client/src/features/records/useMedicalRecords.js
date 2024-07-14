@@ -60,7 +60,6 @@ export const useAddRecord = () => {
       const createdAllergies = await createAllergiesBatch(
         record.allergies || [],
       );
-      console.log(record.allergies);
       const createdConditions = await createConditionsBatch(
         record.conditions || [],
       );
@@ -73,10 +72,10 @@ export const useAddRecord = () => {
 
       const updatedRecord = {
         ...record,
-        allergies: createdAllergies.allergies,
-        conditions: createdConditions.conditions,
-        procedures: createdProcedures.procedures,
-        prescriptions: createdPrescriptions.prescriptions,
+        allergies: createdAllergies.allergies || [],
+        conditions: createdConditions.conditions || [],
+        procedures: createdProcedures.procedures || [],
+        prescriptions: createdPrescriptions.prescriptions || [],
       };
 
       console.log(updatedRecord);
@@ -103,44 +102,34 @@ export const useUpdateRecord = (id) => {
     mutationFn: async ({ id, record }) => {
       console.log("Updating record:", record);
 
-      // Separate new and existing allergies
-      const newAllergies = record.allergies.filter((a) => !a.identifier?.value);
-      const existingAllergies = record.allergies.filter(
-        (a) => a.identifier?.value,
-      );
-      console.log("newAllergies: ", newAllergies);
-      console.log("existingAllergies: ", existingAllergies);
+      const newAllergies =
+        record.allergies?.filter((a) => !a.identifier?.value) || [];
+      const existingAllergies =
+        record.allergies?.filter((a) => a.identifier?.value) || [];
 
       const createdAllergies = await createAllergiesBatch(newAllergies);
       const updatedAllergies = await updateAllergiesBatch(existingAllergies);
 
-      // Repeat for other subcomponents (conditions, procedures, prescriptions)
-      const newConditions = record.conditions.filter(
-        (c) => !c.identifier?.value,
-      );
-      const existingConditions = record.conditions.filter(
-        (c) => c.identifier?.value,
-      );
+      const newConditions =
+        record.conditions?.filter((c) => !c.identifier?.value) || [];
+      const existingConditions =
+        record.conditions?.filter((c) => c.identifier?.value) || [];
 
       const createdConditions = await createConditionsBatch(newConditions);
       const updatedConditions = await updateConditionsBatch(existingConditions);
 
-      const newProcedures = record.procedures.filter(
-        (p) => !p.identifier?.value,
-      );
-      const existingProcedures = record.procedures.filter(
-        (p) => p.identifier?.value,
-      );
+      const newProcedures =
+        record.procedures?.filter((p) => !p.identifier?.value) || [];
+      const existingProcedures =
+        record.procedures?.filter((p) => p.identifier?.value) || [];
 
       const createdProcedures = await createProceduresBatch(newProcedures);
       const updatedProcedures = await updateProceduresBatch(existingProcedures);
 
-      const newPrescriptions = record.prescriptions.filter(
-        (p) => !p.identifier?.value,
-      );
-      const existingPrescriptions = record.prescriptions.filter(
-        (p) => p.identifier?.value,
-      );
+      const newPrescriptions =
+        record.prescriptions?.filter((p) => !p.identifier?.value) || [];
+      const existingPrescriptions =
+        record.prescriptions?.filter((p) => p.identifier?.value) || [];
 
       const createdPrescriptions =
         await createPrescriptionsBatch(newPrescriptions);
@@ -151,20 +140,20 @@ export const useUpdateRecord = (id) => {
       const updatedRecord = {
         ...record,
         allergies: [
-          ...createdAllergies.allergies,
-          ...updatedAllergies.allergies,
+          ...(createdAllergies.allergies || []),
+          ...(updatedAllergies.allergies || []),
         ],
         conditions: [
-          ...createdConditions.conditions,
-          ...updatedConditions.conditions,
+          ...(createdConditions.conditions || []),
+          ...(updatedConditions.conditions || []),
         ],
         procedures: [
-          ...createdProcedures.procedures,
-          ...updatedProcedures.procedures,
+          ...(createdProcedures.procedures || []),
+          ...(updatedProcedures.procedures || []),
         ],
         prescriptions: [
-          ...createdPrescriptions.prescriptions,
-          ...updatedPrescriptions.prescriptions,
+          ...(createdPrescriptions.prescriptions || []),
+          ...(updatedPrescriptions.prescriptions || []),
         ],
       };
 
@@ -192,18 +181,20 @@ export const useRemoveRecord = () => {
   const { mutate: removeRecord, isPending } = useMutation({
     mutationFn: async (id) => {
       const record = await getMedicalRecord(id);
+
       await deleteAllergiesBatch(
-        record.allergies.map((a) => a.identifier.value),
+        record.allergies?.map((a) => a.identifier.value) || [],
       );
       await deleteConditionsBatch(
-        record.conditions.map((c) => c.identifier.value),
+        record.conditions?.map((c) => c.identifier.value) || [],
       );
       await deleteProceduresBatch(
-        record.procedures.map((p) => p.identifier.value),
+        record.procedures?.map((p) => p.identifier.value) || [],
       );
       await deletePrescriptionsBatch(
-        record.prescriptions.map((p) => p.identifier.value),
+        record.prescriptions?.map((p) => p.identifier.value) || [],
       );
+
       await deleteMedicalRecord(id);
     },
     onSuccess: () => {

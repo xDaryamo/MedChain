@@ -12,13 +12,18 @@ import {
 import toast from "react-hot-toast";
 
 export const useGetPrescription = (id) => {
-  const { data: prescription, isLoading: isPending } = useQuery({
+  const {
+    data: prescription,
+    isLoading: isPending,
+    refetch,
+  } = useQuery({
     queryKey: ["prescription", id],
     queryFn: () => getPrescription(id),
   });
   return {
     isPending,
     prescription,
+    refetch,
   };
 };
 
@@ -55,20 +60,19 @@ export const useAddPrescription = () => {
 export const useUpdatePrescription = () => {
   const queryClient = useQueryClient();
 
-  const { mutate: updatePrescriptionMutation, isLoading: isPending } =
-    useMutation({
-      mutationFn: async ({ id, prescription }) => {
-        await updatePrescriptionApi(id, prescription);
-      },
-      onSuccess: () => {
-        queryClient.invalidateQueries({ queryKey: ["prescriptions"] });
-        toast.success("Prescription updated successfully");
-      },
-      onError: (error) => {
-        toast.error("Failed to update prescription");
-        console.error("Update prescription error", error);
-      },
-    });
+  const { mutate: updatePrescriptionMutation, isPending } = useMutation({
+    mutationFn: async ({ id, prescription }) => {
+      await updatePrescriptionApi(id, prescription);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["prescriptions"] });
+      toast.success("Prescription updated successfully");
+    },
+    onError: (error) => {
+      toast.error("Failed to update prescription");
+      console.error("Update prescription error", error);
+    },
+  });
 
   return { updatePrescription: updatePrescriptionMutation, isPending };
 };

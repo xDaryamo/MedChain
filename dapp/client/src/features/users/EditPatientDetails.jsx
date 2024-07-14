@@ -3,7 +3,6 @@ import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { useUser } from "../authentication/useAuth";
 import { useGetPatient, useUpdatePatient } from "../users/usePatients";
-import Spinner from "../../ui/Spinner";
 import Button from "../../ui/Button";
 import Heading from "../../ui/Heading";
 import FormRow from "../../ui/FormRow";
@@ -11,6 +10,7 @@ import FormInput from "../../ui/FormInput";
 import FormSelect from "../../ui/FormSelect";
 import { format, parseISO, isValid } from "date-fns";
 import BackButton from "../../ui/BackButton";
+import SmallSpinner from "../../ui/SmallSpinner";
 
 const EditPatientDetails = () => {
   const { user } = useUser();
@@ -258,7 +258,7 @@ const EditPatientDetails = () => {
             variant="primary"
             disabled={updatePatientPending}
           >
-            {updatePatientPending ? <Spinner /> : "Aggiorna"}
+            {updatePatientPending ? <SmallSpinner /> : "Aggiorna"}
           </Button>
         </div>
         {errors && (

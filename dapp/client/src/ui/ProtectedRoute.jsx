@@ -3,6 +3,7 @@ import PropTypes from "prop-types";
 import { useUser } from "../features/authentication/useAuth";
 import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
+import Spinner from "./Spinner";
 
 function ProtectedRoute({ children }) {
   const { isAuthenticated, isPending } = useUser();
@@ -15,7 +16,7 @@ function ProtectedRoute({ children }) {
     [isAuthenticated, isPending, navigate],
   );
 
-  if (isPending) return <p>Loading...</p>; //TODO: Spinner
+  if (isPending) return <Spinner />;
 
   if (isAuthenticated) return children;
 }

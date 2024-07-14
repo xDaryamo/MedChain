@@ -7,11 +7,11 @@ import ConditionsForm from "./ConditionsForm";
 import ProceduresForm from "./ProceduresForm";
 import MedicationRequestsForm from "./MedicationRequestsForm";
 import LabResultsForm from "./LabResultsForm";
-import Spinner from "../../ui/Spinner";
 import { useParams } from "react-router-dom";
 import { useGetPatient } from "../users/usePatients";
 import { useUser } from "../authentication/useAuth";
 import { useGetPractitioner } from "../users/usePractitioner";
+import SmallSpinner from "../../ui/SmallSpinner";
 
 const AddMedicalRecordForm = ({ onSubmitSuccess }) => {
   const {
@@ -387,7 +387,7 @@ const AddMedicalRecordForm = ({ onSubmitSuccess }) => {
           variant="primary"
           size="large"
         >
-          {isPending ? <Spinner /> : "Add Record"}
+          {isPending ? <SmallSpinner /> : "Aggiungi cartella clinica"}
         </Button>
       </div>
 

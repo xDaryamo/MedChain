@@ -180,6 +180,7 @@ type EncounterParticipant struct {
 // EncounterDiagnosis represents the diagnosis relevant to the encounter
 type EncounterDiagnosis struct {
 	Condition *Reference       `json:"condition"`      // The condition diagnosed
+	Description string           `json:"description,omitempty"` // Description of the diagnosis
 	Use       *CodeableConcept `json:"use,omitempty"`  // Role that this diagnosis has within the encounter (e.g., admission, billing, discharge)
 	Rank      int              `json:"rank,omitempty"` // Ranking of the diagnosis (primary, secondary, etc.)
 }

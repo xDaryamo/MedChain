@@ -28,7 +28,7 @@ export const searchPrescriptions = async (query) => {
 
 export const getPrescription = async (id) => {
   const response = await api.get(`/prescription/${id}`);
-  return response.data;
+  return response.data.prescription;
 };
 
 export const createPrescription = async (prescription) => {

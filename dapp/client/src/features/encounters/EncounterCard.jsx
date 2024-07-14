@@ -40,11 +40,10 @@ const renderSingleOrList = (title, list, renderItem) => {
   );
 };
 
-const renderReason = (reason) => reason?.reference || "N/D";
+const renderDiagnosis = (diagnosis) => diagnosis?.description || "N/D";
 
 const EncounterCard = ({ item }) => {
-
-  console.log(item)
+  console.log(item);
 
   const encounterID = item.identifier?.value || "ID non disponibile";
   const encounterSubject = item.subject?.reference || "Paziente Sconosciuto";
@@ -57,21 +56,17 @@ const EncounterCard = ({ item }) => {
     <Card>
       <Link to={`/encounters/${encounterID}`} className="mb-4 flex-1">
         <div>
-          <strong>ID dell'incontro:</strong> {encounterID}
+          <strong>ID della Visita:</strong> {encounterID}
         </div>
         <div>
           <strong>Paziente:</strong> {encounterSubject}
         </div>
         <div>
-          <strong>Periodo dell'Incontro:</strong> {encounterPeriod}
+          <strong>Periodo della Visita:</strong> {encounterPeriod}
         </div>
-        {renderSingleOrList(
-          "Ragione dell'Incontro",
-          item.reasonReference,
-          renderReason
-        )}
+        {renderSingleOrList("Diagnosi", item.diagnosis, renderDiagnosis)}
         <div>
-          <strong>Stato dell'Incontro:</strong> {encounterStatus}
+          <strong>Stato della Visita:</strong> {encounterStatus}
         </div>
       </Link>
     </Card>

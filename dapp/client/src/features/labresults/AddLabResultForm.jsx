@@ -5,10 +5,10 @@ import Button from "../../ui/Button";
 import FormInput from "../../ui/FormInput";
 import FormRow from "../../ui/FormRow";
 import FormSelect from "../../ui/FormSelect";
-import Spinner from "../../ui/Spinner";
 import { FaPlus, FaTrash } from "react-icons/fa";
 import { useParams } from "react-router-dom";
 import { useUser } from "../authentication/useAuth";
+import SmallSpinner from "../../ui/SmallSpinner";
 
 const AddLabResultForm = ({ onSubmitSuccess }) => {
   const { id } = useParams();
@@ -20,6 +20,7 @@ const AddLabResultForm = ({ onSubmitSuccess }) => {
     reset,
     control,
     formState: { errors },
+    watch,
   } = useForm();
   const { createResult, isPending } = useCreateLabResult();
 
@@ -158,6 +159,9 @@ const AddLabResultForm = ({ onSubmitSuccess }) => {
     });
   };
 
+  const watchEffectiveStart = watch("effectivePeriod.start");
+  const watchEffectiveEnd = watch("effectivePeriod.end");
+
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
       <h2 className="mb-6 text-center text-2xl font-bold text-cyan-950">
@@ -230,6 +234,10 @@ const AddLabResultForm = ({ onSubmitSuccess }) => {
           type="datetime-local"
           {...register("effectivePeriod.start", {
             required: "Il periodo di validità inizio è obbligatorio",
+            validate: (value) =>
+              !watchEffectiveEnd ||
+              new Date(value) <= new Date(watchEffectiveEnd) ||
+              "Il periodo di validità inizio non può essere più tardi del periodo di validità fine",
           })}
         />
       </FormRow>
@@ -242,6 +250,10 @@ const AddLabResultForm = ({ onSubmitSuccess }) => {
           type="datetime-local"
           {...register("effectivePeriod.end", {
             required: "Il periodo di validità fine è obbligatorio",
+            validate: (value) =>
+              !watchEffectiveStart ||
+              new Date(value) >= new Date(watchEffectiveStart) ||
+              "Il periodo di validità fine non può essere prima del periodo di validità inizio",
           })}
         />
       </FormRow>
@@ -251,6 +263,9 @@ const AddLabResultForm = ({ onSubmitSuccess }) => {
           type="datetime-local"
           {...register("issued", {
             required: "La data di emissione è obbligatoria",
+            validate: (value) =>
+              new Date(value) <= new Date() ||
+              "La data di emissione non può essere nel futuro",
           })}
         />
       </FormRow>
@@ -380,11 +395,7 @@ const AddLabResultForm = ({ onSubmitSuccess }) => {
           size="large"
           disabled={isPending}
         >
-          {isPending ? (
-            <Spinner size="small" />
-          ) : (
-            "Aggiungi risultato laboratorio"
-          )}
+          {isPending ? <SmallSpinner /> : "Aggiungi risultato laboratorio"}
         </Button>
       </div>
     </form>

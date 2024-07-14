@@ -84,6 +84,7 @@ export function useUser() {
     isPending,
     user,
     isAuthenticated: user?.role === "practitioner" || user?.role === "patient",
+    organization: user?.organization,
   };
 }
 export const useUpdateCredentials = () => {
