@@ -43,7 +43,7 @@ const MedicalRecordDetails = () => {
   useEffect(() => {
     refetchRecord();
     refetchLabResults();
-  }, [record?.labResultsIDs]);
+  }, [record.labResultsIDs, refetchLabResults, refetchRecord]);
 
   if (recordLoading || patientLoading || labResultsLoading) return <Spinner />;
   if (recordError || patientError)
