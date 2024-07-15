@@ -57,7 +57,7 @@ const EncounterPage = () => {
 
   const { isPending, encounter, error, refetch } = useGetEncounter(id);
 
-  const { removeEncounter, isPending: deletePending } = useRemoveEncounter();
+  const { removeEncounter } = useRemoveEncounter();
 
   useEffect(() => {
     refetch();
