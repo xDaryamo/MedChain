@@ -21,15 +21,17 @@ export const useGetLabResult = (id) => {
 };
 
 export const useGetLabResultsByIds = (ids) => {
+  const isEnabled = ids && ids.length > 0;
+
   const {
     data: labResults,
-    isPending,
+    isFetching: isPending,
     error,
     refetch,
   } = useQuery({
     queryKey: ["labResults", ids],
     queryFn: () => Promise.all(ids.map((id) => getLabResult(id))),
-    enabled: ids.length > 0,
+    enabled: isEnabled,
     onError: (error) => {
       toast.error("Failed to fetch lab results");
       console.error("Fetch lab results error", error);
@@ -44,7 +46,7 @@ export const useSearchLabResults = (query) => {
 
   const {
     data: labResults,
-    isPending,
+    isFetching: isPending,
     error,
     refetch,
   } = useQuery({

@@ -90,9 +90,7 @@ const MedicationRequestsForm = ({
     <div>
       {fields.map((field, index) => (
         <div key={field.id} className="mb-2 space-y-2 border p-2">
-          <h4 className="text-lg font-medium">
-            Medication Request {index + 1}
-          </h4>
+          <h4 className="text-lg font-medium">Prescrizione {index + 1}</h4>
           <FormRow
             label="Codice del Medicinale"
             error={

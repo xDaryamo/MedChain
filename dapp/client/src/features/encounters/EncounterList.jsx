@@ -43,7 +43,7 @@ const EncounterList = () => {
 
   const handleModalSuccess = () => {
     setModalOpen(false);
-    refetch(); // Refetch the encounters after adding a new one
+    refetch();
   };
 
   const isPharmacyOrLab =
@@ -70,7 +70,7 @@ const EncounterList = () => {
       {user?.role === "practitioner" && !isPharmacyOrLab && (
         <Modal isOpen={isModalOpen} onClose={handleModalClose}>
           <AddEncounterForm
-            onSubmitSuccess={handleModalSuccess} // Use handleModalSuccess to refetch after adding
+            onSubmitSuccess={handleModalSuccess}
             onCancel={handleModalClose}
           />
         </Modal>

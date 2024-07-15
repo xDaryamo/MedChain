@@ -8,6 +8,7 @@ import BackButton from "../../ui/BackButton";
 import Button from "../../ui/Button";
 import { FaTrash } from "react-icons/fa";
 import { useEffect } from "react";
+import { useUser } from "../authentication/useAuth";
 
 const formatDate = (dateString) => {
   if (!dateString) return "N/A";
@@ -18,11 +19,14 @@ const formatDate = (dateString) => {
 
 const MedicalRecordDetails = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
+
+  const { user } = useUser();
+
   const {
     record,
     isPending: recordLoading,
     error: recordError,
-    refetch: refetchRecord,
   } = useGetMedicalRecord(id);
 
   const { removeRecord, isPending: deletePending } = useRemoveRecord();
@@ -31,23 +35,33 @@ const MedicalRecordDetails = () => {
     patient,
     isPending: patientLoading,
     error: patientError,
+    refetch: refetchPatient,
   } = useGetPatient(record?.patientID);
+
   const {
     labResults,
     isPending: labResultsLoading,
+    error: labResultsError,
     refetch: refetchLabResults,
   } = useGetLabResultsByIds(record?.labResultsIDs || []);
 
-  const navigate = useNavigate();
-
   useEffect(() => {
-    refetchRecord();
-    refetchLabResults();
-  }, [record.labResultsIDs, refetchLabResults, refetchRecord]);
+    if (record?.patientID) {
+      refetchPatient();
+    }
+    if (record?.labResultsIDs) {
+      refetchLabResults();
+    }
+  }, [
+    record?.patientID,
+    record?.labResultsIDs,
+    refetchPatient,
+    refetchLabResults,
+  ]);
 
   if (recordLoading || patientLoading || labResultsLoading) return <Spinner />;
-  if (recordError || patientError)
-    return <p>Error loading medical record or patient data</p>;
+  if (recordError || patientError || labResultsError)
+    return <p>Error loading medical record, patient data, or lab results</p>;
 
   const handleDeleteRecord = () => {
     if (window.confirm("Sei sicuro di voler eliminare questo record?")) {
@@ -209,7 +223,7 @@ const MedicalRecordDetails = () => {
   );
 
   const renderLabResult = (labResult) => {
-    if (!labResult || !labResult.labResult) {
+    if (!labResult) {
       return (
         <div>
           <strong>Errore:</strong> Dettagli del risultato di laboratorio non
@@ -218,7 +232,7 @@ const MedicalRecordDetails = () => {
       );
     }
     const { identifier, status, category, code, effectivePeriod, issued } =
-      labResult.labResult;
+      labResult;
     return (
       <div>
         <div>
@@ -246,6 +260,12 @@ const MedicalRecordDetails = () => {
       </div>
     );
   };
+
+  const isPractitioner = user.role === "practitioner";
+  const isPerformer = record?.recorder?.reference === user.userId;
+  const isHospitalMember = user.organization
+    ?.toLowerCase()
+    .includes("hospital");
 
   return (
     <div className="flex-1 overflow-y-auto p-4 md:p-8">
@@ -299,26 +319,28 @@ const MedicalRecordDetails = () => {
           {renderList("Prescrizione", record.prescriptions, renderPrescription)}
           {renderList("Risultato di Laboratorio", labResults, renderLabResult)}
         </div>
-        <div className="mt-4 flex items-center space-x-4">
-          <Link
-            to={`/records/update/${id}`}
-            className="flex w-full justify-center"
-          >
-            <Button variant="primary" size="large">
-              Modifica
-            </Button>
-          </Link>
-          <div className="flex justify-end">
-            <Button
-              type="button"
-              variant="delete"
-              onClick={handleDeleteRecord}
-              size="small"
+        {isPractitioner && (isPerformer || isHospitalMember) && (
+          <div className="mt-4 flex items-center space-x-4">
+            <Link
+              to={`/records/update/${id}`}
+              className="flex w-full justify-center"
             >
-              {deletePending ? <Spinner /> : <FaTrash />}
-            </Button>
+              <Button variant="primary" size="large">
+                Modifica
+              </Button>
+            </Link>
+            <div className="flex justify-end">
+              <Button
+                type="button"
+                variant="delete"
+                onClick={handleDeleteRecord}
+                size="small"
+              >
+                {deletePending ? <Spinner /> : <FaTrash />}
+              </Button>
+            </div>
           </div>
-        </div>
+        )}
       </section>
     </div>
   );

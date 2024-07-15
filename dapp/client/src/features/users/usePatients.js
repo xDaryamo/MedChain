@@ -27,7 +27,11 @@ export const useSearchPatients = (query) => {
 };
 
 export const useGetPatient = (id) => {
-  const { data: patient, isPending } = useQuery({
+  const {
+    data: patient,
+    isPending,
+    refetch,
+  } = useQuery({
     queryKey: ["patient", id],
     queryFn: () => getPatient(id),
     enabled: !!id,
@@ -36,6 +40,7 @@ export const useGetPatient = (id) => {
   return {
     isPending,
     patient,
+    refetch,
   };
 };
 

@@ -52,7 +52,7 @@ const MedicalRecordList = () => {
 
   return (
     <div>
-      <Heading>Medical Records List</Heading>
+      <Heading>Lista Cartelle Cliniche</Heading>
 
       <List
         items={records}

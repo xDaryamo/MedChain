@@ -57,7 +57,6 @@ const EncounterPage = () => {
 
   const { isPending, encounter, error, refetch } = useGetEncounter(id);
 
-  // eslint-disable-next-line no-unused-vars
   const { removeEncounter, isPending: deletePending } = useRemoveEncounter();
 
   useEffect(() => {
@@ -105,6 +104,10 @@ const EncounterPage = () => {
 
   const renderDiagnosis = (diag) => diag.description || "N/D";
 
+  const isPractitioner = user.role === "practitioner";
+  const isAuthor = encounter?.participant?.some(
+    (p) => p.individual?.reference === user.userId,
+  );
   const isPharmacyOrLab =
     user?.organization.toLowerCase().includes("pharmacy") ||
     user?.organization.toLowerCase().includes("farmacia") ||
@@ -164,7 +167,7 @@ const EncounterPage = () => {
               renderDiagnosis,
             )}
           </div>
-          {!isPharmacyOrLab && (
+          {isPractitioner && isAuthor && !isPharmacyOrLab && (
             <div className="mt-4 flex items-center space-x-4">
               <Link
                 to={`/encounters/update/${id}`}

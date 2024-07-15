@@ -53,7 +53,7 @@ const EncounterDetails = ({ encounter }) => {
         Dettagli dell&apos;incontro
       </h4>
       <p className="text-sm text-cyan-950">
-        <strong>ID:</strong> {encounter.id?.value || "N/A"}
+        <strong>ID:</strong> {encounter.identifier?.value || "N/A"}
       </p>
       <p className="text-sm text-cyan-950">
         <strong>Stato:</strong> {encounter.status?.coding[0]?.display || "N/A"}
@@ -154,13 +154,13 @@ const ProceduresForm = ({ control, register, errors, setValue, patientID }) => {
 
   const handleEncounterChange = (index, value) => {
     const selectedEncounter = encounters.find(
-      (encounter) => encounter.id.value === value,
+      (encounter) => encounter.identifier.value === value,
     );
 
     if (selectedEncounter) {
       setValue(
         `procedures.${index}.encounter.reference`,
-        selectedEncounter.id.value,
+        selectedEncounter.identifier.value,
         {
           shouldValidate: true,
           shouldDirty: true,
@@ -184,139 +184,155 @@ const ProceduresForm = ({ control, register, errors, setValue, patientID }) => {
 
   return (
     <div>
-      {fields.map((field, index) => (
-        <div key={field.id} className="mb-2 space-y-2 border p-2">
-          <h4 className="text-lg font-medium">Procedura {index + 1}</h4>
+      {isPendingEncounters ? (
+        <div className="flex justify-center">
+          <SmallSpinner />
+        </div>
+      ) : encounters.length === 0 ? (
+        <p className="text-sm italic text-red-500">
+          Non ci sono visite disponibili e il riferimento alle visite è
+          obbligatorio.
+        </p>
+      ) : (
+        <>
+          {fields.map((field, index) => (
+            <div key={field.id} className="mb-2 space-y-2 border p-2">
+              <h4 className="text-lg font-medium">Procedura {index + 1}</h4>
 
-          {/* Code */}
-          <FormRow
-            label="Codice"
-            error={
-              errors?.procedures?.[index]?.code?.coding?.[0]?.code?.message
-            }
-          >
-            <FormInput
-              {...register(`procedures.${index}.code.coding.[0].code`, {
-                required: "Il codice è obbligatorio",
-              })}
-              placeholder="80146002"
-              id={`procedures.${index}.code`}
-            />
-          </FormRow>
-          <FormRow
-            label="Descrizione del codice"
-            error={
-              errors?.procedures?.[index]?.code?.coding?.[0]?.display?.message
-            }
-          >
-            <FormInput
-              {...register(`procedures.${index}.code.coding.[0].display`, {
-                required: "La descrizione del codice è obbligatoria",
-                onChange: (e) =>
-                  handleCodeDescriptionChange(index, e.target.value),
-              })}
-              placeholder="Appendectomy"
-            />
-          </FormRow>
+              {/* Code */}
+              <FormRow
+                label="Codice"
+                error={
+                  errors?.procedures?.[index]?.code?.coding?.[0]?.code?.message
+                }
+              >
+                <FormInput
+                  {...register(`procedures.${index}.code.coding.[0].code`, {
+                    required: "Il codice è obbligatorio",
+                  })}
+                  placeholder="80146002"
+                  id={`procedures.${index}.code`}
+                />
+              </FormRow>
+              <FormRow
+                label="Descrizione del codice"
+                error={
+                  errors?.procedures?.[index]?.code?.coding?.[0]?.display
+                    ?.message
+                }
+              >
+                <FormInput
+                  {...register(`procedures.${index}.code.coding.[0].display`, {
+                    required: "La descrizione del codice è obbligatoria",
+                    onChange: (e) =>
+                      handleCodeDescriptionChange(index, e.target.value),
+                  })}
+                  placeholder="Appendectomy"
+                />
+              </FormRow>
 
-          {/* Category */}
-          <FormRow
-            label="Categoria"
-            error={
-              errors?.procedures?.[index]?.category?.coding?.[0]?.code?.message
-            }
-          >
-            <FormSelect
-              id={`procedures.${index}.category`}
-              {...register(`procedures.${index}.category.coding[0].code`, {
-                required: "La categoria è obbligatoria",
-                onChange: (e) => handleCategoryChange(index, e.target.value),
-              })}
-              options={[
-                { value: "", label: "Seleziona una categoria" },
-                ...categoryOptions.map((option) => ({
-                  value: option.code,
-                  label: option.label,
-                })),
-              ].filter(
-                (option) =>
-                  option.value !== "" ||
-                  selectedCategories[index] === undefined,
+              {/* Category */}
+              <FormRow
+                label="Categoria"
+                error={
+                  errors?.procedures?.[index]?.category?.coding?.[0]?.code
+                    ?.message
+                }
+              >
+                <FormSelect
+                  id={`procedures.${index}.category`}
+                  {...register(`procedures.${index}.category.coding[0].code`, {
+                    required: "La categoria è obbligatoria",
+                    onChange: (e) =>
+                      handleCategoryChange(index, e.target.value),
+                  })}
+                  options={[
+                    { value: "", label: "Seleziona una categoria" },
+                    ...categoryOptions.map((option) => ({
+                      value: option.code,
+                      label: option.label,
+                    })),
+                  ].filter(
+                    (option) =>
+                      option.value !== "" ||
+                      selectedCategories[index] === undefined,
+                  )}
+                />
+              </FormRow>
+
+              {/* Encounter */}
+              <FormRow
+                label="Riferimento all'incontro"
+                error={
+                  errors?.procedures?.[index]?.encounter?.reference?.message
+                }
+              >
+                <FormSelect
+                  id={`procedures.${index}.encounter`}
+                  {...register(`procedures.${index}.encounter.reference`, {
+                    required: "Il riferimento all'incontro è obbligatorio",
+                    onChange: (e) =>
+                      handleEncounterChange(index, e.target.value),
+                  })}
+                  options={[
+                    {
+                      value: "",
+                      label: "Seleziona un incontro",
+                    },
+                    ...encounters.map((encounter) => ({
+                      value: encounter.identifier.value,
+                      label:
+                        encounter.class?.display || encounter.identifier.value,
+                    })),
+                  ]}
+                />
+              </FormRow>
+              {!isPendingEncounters && encounters.length === 0 && (
+                <p className="text-sm italic text-red-500">
+                  Non ci sono incontri disponibili.
+                </p>
               )}
-            />
-          </FormRow>
+              {selectedEncounters[index] && (
+                <EncounterDetails encounter={selectedEncounters[index]} />
+              )}
 
-          {/* Encounter */}
-          <FormRow
-            label="Riferimento all'incontro"
-            error={errors?.procedures?.[index]?.encounter?.reference?.message}
-          >
-            {isPendingEncounters ? (
-              <SmallSpinner />
-            ) : (
-              <FormSelect
-                id={`procedures.${index}.encounter`}
-                {...register(`procedures.${index}.encounter.reference`, {
-                  required: "Il riferimento all'incontro è obbligatorio",
-                  onChange: (e) => handleEncounterChange(index, e.target.value),
-                })}
-                options={[
-                  {
-                    value: "",
-                    label: "Seleziona un incontro",
-                  },
-                  ...encounters.map((encounter) => ({
-                    value: encounter.id.value,
-                    label: encounter.class?.display || encounter.id.value,
-                  })),
-                ]}
-              />
-            )}
-          </FormRow>
-          {!isPendingEncounters && encounters.length === 0 && (
-            <p className="text-sm italic text-red-500">
-              Non ci sono incontri disponibili.
-            </p>
-          )}
-          {selectedEncounters[index] && (
-            <EncounterDetails encounter={selectedEncounters[index]} />
-          )}
+              {/* Note */}
+              <FormRow
+                label="Nota"
+                error={errors?.procedures?.[index]?.note?.[0]?.text?.message}
+              >
+                <FormInput
+                  {...register(`procedures.${index}.note.[0].text`, {
+                    required: "Il testo della nota è obbligatorio",
+                  })}
+                  placeholder="Procedure was successful with no complications."
+                />
+              </FormRow>
 
-          {/* Note */}
-          <FormRow
-            label="Nota"
-            error={errors?.procedures?.[index]?.note?.[0]?.text?.message}
-          >
-            <FormInput
-              {...register(`procedures.${index}.note.[0].text`, {
-                required: "Il testo della nota è obbligatorio",
-              })}
-              placeholder="Procedure was successful with no complications."
-            />
-          </FormRow>
-
-          <div className="flex justify-end">
+              <div className="flex justify-end">
+                <Button
+                  type="button"
+                  onClick={() => remove(index)}
+                  variant="delete"
+                  size="small"
+                >
+                  <FaTrash />
+                </Button>
+              </div>
+            </div>
+          ))}
+          <div className="flex justify-center">
             <Button
               type="button"
-              onClick={() => remove(index)}
-              variant="delete"
+              onClick={handleAddProcedure}
+              variant="secondary"
               size="small"
             >
-              <FaTrash />
+              <FaPlus className="mr-1" /> Aggiungi Procedura
             </Button>
           </div>
-        </div>
-      ))}
-      <div className="flex justify-center">
-        <Button
-          type="button"
-          onClick={handleAddProcedure}
-          variant="secondary"
-          size="small"
-        >
-          <FaPlus className="mr-1" /> Aggiungi Procedura
-        </Button>
-      </div>
+        </>
+      )}
     </div>
   );
 };

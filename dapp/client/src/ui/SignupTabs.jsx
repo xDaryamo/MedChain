@@ -17,7 +17,7 @@ const SignupTabs = () => {
             }`}
             onClick={() => setActiveTab("patient")}
           >
-            Patient Registration
+            Registrazione pazienti
           </button>
           <button
             className={`border-b-4 px-4 py-2 transition-all duration-500 focus:outline-none ${
@@ -27,7 +27,7 @@ const SignupTabs = () => {
             }`}
             onClick={() => setActiveTab("practitioner")}
           >
-            Practitioner Registration
+            Registrazione personale sanitario/medici
           </button>
         </div>
       </div>
